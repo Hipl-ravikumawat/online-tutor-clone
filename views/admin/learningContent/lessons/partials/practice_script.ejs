@@ -1,0 +1,715 @@
+<script type="text/javascript">
+    /**
+    * @practices script starts.
+    */
+    $(document).ready(function () {
+        // Radio box
+        $('input[type="radio"]').click(function () {
+          var inputValue = $(this).attr("value");
+          var targetBox = $("." + inputValue);
+          $(".addoptionsbar").not(targetBox).hide();
+          $(targetBox).show();
+        });
+
+        // Add new element
+        $(".add-text-option").click(function () {
+            var $div = $(this).parent().closest(".QuestionType").find(".chp-add-section:last");
+                // Finding total number of elements added.
+                var total_element = $(this).parent().closest(".QuestionType").find(".chp-add-section").length;
+                // last <div> with element class id.
+                var lastId = $div.attr("id");
+                var split_id = lastId.split("_");
+                var nextIndex = Number(split_id[1]) + 1;
+                var max = 4;
+
+            // Check total number elements option_image.
+            if (total_element < max) {
+                    // Adding new div container after last occurrence of element class.
+                    $div.after("<div class='chp-add-section appended_div' id='text_" + nextIndex + "'></div>");
+                    let currentIndex = nextIndex - 1;
+                    // Adding element to <div>.
+                    $(this).parent().closest(".QuestionType").find("#text_" + nextIndex).append("<div class='chp-heading lightgray'> <div class='chp-title'><img class='mr-1' src='/images/basic.svg' alt='img'> 0" + nextIndex + " Option </div><div class='right-icons'> <a href='javascript:void(0);' id='remove_" + nextIndex + "' class='remove'><img src='/images/trash.svg' alt='img'></a> </div></div>  <div class='card-body'><div class='row'><div class='col-sm-12 col-md-4 col-lg-3 image'><div class='form-group mb-2 mb-md-0 option-img-upload'><input type='file' name='options[" + currentIndex + "][option_image]' id='option_image' class='form-control practice-question-img h-auto' data-allowed-file-extensions='jpg jpeg png svg' data-max-file-size-preview='2M' data-max-file-size='2M'><input type='hidden' name='options[" + currentIndex + "][is_remove_option]' class='is_image_removed_option' value='0'></div></div><div class='col-sm-12 col-md-8 col-lg-9'><div class='form-group title'><input class='form-control option_text' type='text' placeholder='Option Text' name='options[" + currentIndex + "][option_text]' required></div><div class='switch-yes-no'><span class='label-text'>Correct Answer ?</span><label class='switch-left-right option_toggle'><input class='switch-input option_checkbox' name='options[" + currentIndex + "][option_correct]' type='checkbox'><span class='switch-label' data-on='Yes' data-off='No'></span> <span class='switch-handle'></span> </label></div></div></div></div> </div></div>");
+            }
+            optionDropIfy(); // call dropIfy for appended div.
+            // display preference on appended div.
+            $(".btn-check:checked").siblings('.check-label').trigger('click');
+        });
+
+        // Remove an element.
+        $('.container').on('click', '.remove', function () {
+            let text = 'Are You sure want to delete this option ?';
+                if (confirm(text) == true) {
+                    var id = this.id;
+                    var split_id = id.split("_");
+                    var deleteIndex = split_id[1];
+                    $("#text_" + deleteIndex).remove();
+                }
+        });
+    });
+
+    var initOptions = {
+        "assetRequest": function (mediaRequested, returnType, callback, attributes) {
+            // Do something.
+        },
+        "configuration": {
+            "consumer_key": "yis0TYCu7U9V4o7M"
+        },
+        "base_question_type": {
+            "hidden": ["stimulus", "shuffle_options", "duplicate_responses", "validation.match_all_possible_responses", "ui_style.show_drag_handle", "scoring.heading", "validation.penalty", "validation.unscored", "validation.scoring_type", "validation.automarkable", "validation.min_score_if_attempted", "is_math", "feedback_attempts", "validation.alt_responses", "group_possible_responses","data-lrn-qe-layout-undo-redo"],
+
+            "hidden_sections": ["layout.content","validation.heading","more_options.heading", "details.content","validation.content", "layout.heading", "more_options.content", "details.heading", "metadata.heading", "metadata.content", "tooltipped","data-lrn-qe-toolbar"],
+        },
+        "question_type_groups": [
+            {
+                "reference": "cloze",
+                "template_references": ["51a8c1e7-f34f-4faf-b211-da458e891fcb"],
+                "hidden_sections": ["more_options.heading"],
+            },
+            { "reference": "math", "template_references": [] },
+            { "reference": "chart", "template_references": [] },
+            { "reference": "graph", "template_references": [] },
+            { "reference": "chemistry", "template_references": [] },
+            { "reference": "match", "template_references": [] },
+            { "reference": "mcq", "template_references": [] },
+            { "reference": "highlight", "template_references": [] },
+            { "reference": "writespeak", "template_references": [] },
+            { "reference": "other", "template_references": [] },
+        ],
+    };
+
+    var OptionPreferenceData = [];
+    var questionEditorApp = LearnosityQuestionEditor.init(initOptions);
+
+    $(document).on('click', '.dropify-clear', function () {
+        $(this).parent().siblings('.is_image_removed').val(1);
+        // $(this).parent().siblings('.is_image_removed_option').val(1);
+        $(this).parent().siblings('.is_audio_removed').val(1);
+        $(this).siblings('.practice-question-img').prop('required', true);
+        $('.dropify').attr('required', true);
+    });
+
+    $(document).on('click', '.check-label', function () {
+        $(".btn-check").prop('checked', false);
+        let value = $(this).parent().find(".btn-check").val();
+        $(this).parent().find(".btn-check").prop('checked', true);
+        let currentTab = $('.nav-tab.active').attr("href");
+        if (value == 'text') {
+            $('.image').hide();
+            $('.title').show();
+            $('.practice-question-img').prop('required', false);
+            $('.option_text').prop('required', true);
+        }
+        else if (value == 'image') {
+            $('.image').show();
+            $('.title').hide();
+            $('.option_text').prop('required', false);
+            $('.practice-question-img').prop('required', true);
+        }
+        else {
+            $('.image').show();
+            $('.title').show();
+            $('.option_text').prop('required', true);
+            $('.practice-question-img').prop('required', true);
+        }
+
+        if (OptionPreferenceData.option_value && typeof (OptionPreferenceData.option_value) != "undefined" && currentTab == OptionPreferenceData.current_tab) {
+            $(currentTab).find(`.practice-question-img`).prop('required', false);
+        }
+    });
+
+    $('.nav-tab').click(function () {
+        $('.lrn-qe-tile-preview').trigger('click');
+        let id = $(this).attr('href');
+        $(id).find('.check-label:first').trigger('click');
+        $(".text-danger").remove();
+        $('input:radio').attr('checked', false);
+        $(this).siblings('input:radio').attr('checked', true);
+        $('fieldset').prop('disabled', true);
+        $(id).find('fieldset').prop('disabled', false);
+        if (OptionPreferenceData.option_value && typeof (OptionPreferenceData.option_value) != "undefined" && id == OptionPreferenceData.current_tab) {
+            $(id).find(`.btn-check:input[value=${OptionPreferenceData.option_value}]`).siblings('.check-label').trigger('click');
+            $(id).find(`.practice-question-img`).prop('required', false);
+        } 
+        else {
+            $(id).find('input:radio.btn-check:first').prop('checked', true);
+        }
+        $(".lrn-qe-tile-body").trigger('click');
+    });
+
+    $(document).on('click', '.option_toggle', function () {
+        let currentTab = $('.nav-tab.active').attr("aria-controls");
+        if (currentTab == 'pills-single-sel') {
+            $('.option_checkbox').prop('checked', false);
+            $(this).find('.option_checkbox').prop('checked', true);
+        }
+        if(currentTab == 'pills-multi-sel'){
+            let checkedCount = $('#pills-multi-sel').find(".option_checkbox:checked").length;
+            if(checkedCount == 0){
+                $(this).find('.option_checkbox').prop('checked', true);
+            }
+        }
+    });
+
+    $(document).on('click','.reset-drag-drop',function(){
+        $(this).parents().closest('.drag-question-row').find('.save-option').remove();
+        $(this).parents().closest('.drag-question-row').find('.doing').show();
+        $(this).remove();
+    });
+
+    $(document).on('click', '.addPractice', function () {
+        var OptionPreferenceData = [];
+        $('#storePracticeForm')[0].reset();
+        $('.dropify-preview').hide();
+        let lessonId = $(this).attr('data-id');
+        $("#lesson_id").val(lessonId);
+        $("#storePracticeForm").attr('action', `/learning-content/ ${learningContentSlug}/lessons/${lessonSlug}/practices/store`);
+        $(".lrn-qe-tile-body").trigger('click');
+        $('#practiceModal').show();
+    });
+
+    $(document).on('click', '#storePracticeBtn', function () {
+        // Retrieving necessary data
+        let currentTab = $('.nav-tab.active').attr("aria-controls");
+        let title = $("#" + currentTab).find("#question_title").val();
+        let duration = $("#" + currentTab).find("#question_duration").val();
+        let optionType = $("#" + currentTab).find('.btn-check:checked').val();
+        let tinyContent = '';
+        let tinyContentExplanation = '';
+
+        // Fetching content based on current tab
+        if (currentTab === "pills-single-sel") {
+            tinyContent = tinymce.get('question-1').getContent({ format: 'text' });
+        } else if (currentTab === "pills-multi-sel") {
+            tinyContent = tinymce.get('question-2').getContent({ format: 'text' });
+        } else if (currentTab === "pills-type-text") {
+            tinyContent = tinymce.get('question-3').getContent({ format: 'text' });
+            tinyContentExplanation =  tinymce.get('editorThree').getContent({ format: 'text' });
+        }
+
+        // Validating fields and content
+        $('.duplicate-option').remove();
+        $('.option-image-error').remove();
+        let stopExecution = false;
+
+        if (title === '') {
+            $("#" + currentTab).find(".title-error").show();
+            stopExecution = true;
+        } else {
+            $("#" + currentTab).find(".title-error").hide();
+        }
+
+        if ($.trim(tinyContent) === '' && currentTab !== 'pills-drag-drop') {
+            $("#" + currentTab).find(".question-error").show();
+            stopExecution = true;
+        } else {
+            $("#" + currentTab).find(".question-error").hide();
+        }
+        if ($.trim(tinyContentExplanation) === '' && currentTab == 'pills-type-text') {
+            $("#" + currentTab).find(".explanation-error").show();
+            stopExecution = true;
+        } else {
+            $("#" + currentTab).find(".explanation-error").hide();
+        }
+        if (duration === '') {
+            $("#" + currentTab).find(".duration-error").show();
+            stopExecution = true;
+        } else {
+            $("#" + currentTab).find(".duration-error").hide();
+        }
+
+        // Handling option fields based on type
+        $('.option_text').css('border', '');
+        const allTextsValues = $('#' + currentTab).find('.option_text').map(function () {
+            let value = $(this).val().trim();
+            if (value !== "") {
+                return value;
+            }
+        }).get();
+
+        if(optionType =='text' || optionType == "both"){
+            $('#' + currentTab).find('.option_text').each(function () {
+                $(this).css('border', '');
+                if (this.value == '' || !this.value) {
+                    $(this).css('border', '1px solid red');
+                    this.focus();
+                    return false;
+                }else{
+                    inputValue = this.value;
+                    const counts = {};
+                    allTextsValues.forEach(value => {
+                    counts[value] = (counts[value] || 0) + 1;
+                    });
+
+                    const duplicatesCount = Object.values(counts).reduce((acc, count) => {
+                    return count > 1 ? acc + 1 : acc;
+                    }, 0);
+
+                    // console.log(duplicatesCount,'duplicatesCount');
+                    
+                    if (duplicatesCount > 0) {
+                        // Highlight the duplicate input
+                        let elements = $(this).closest('.addoptionsbar').find('input[type="text"]').filter(function() {
+                            if($(this).val().trim() === inputValue.trim()){
+                                $(this).css('border', '1px solid red');
+                                $(this).after('<span class="text-danger duplicate-option">The option can not same</danger>');
+                            }
+                            return;
+                        });
+                        stopExecution = true;
+                        return false; 
+                    } 
+                }
+            });
+        }
+        if (optionType === 'image' || optionType === "both") {
+            $('#' + currentTab).find('.practice-question-img').each(function () {
+                $(this).parent().css('border', 'none');
+                const selectedFile = $(this).prop('files')[0];
+                let isvalue = $(this).attr('value');
+                if ((isvalue === undefined || isvalue === 'null' || isvalue == '') && selectedFile === undefined) {
+                    $(this).parent().css('border', '2px dotted red');
+                    this.focus();
+                    stopExecution = true;
+                    return false;
+                }
+            });
+        }
+
+        // Checking if execution should stop
+        if (stopExecution) {
+            return false;
+        }
+
+        // Checking checkbox options
+        $('.checkbox-option').remove();
+        var allOptionCheckboxValue = $('#' + currentTab).find('.option_checkbox:checked').map(function () {
+            return $(this).val();
+        }).get();
+        if (allOptionCheckboxValue.length === 0 && (currentTab === "pills-single-sel" || currentTab === "pills-multi-sel")) {
+            $('#' + currentTab).find('.switch-yes-no').after('<span class="text-danger checkbox-option">All option can not be wrong</danger>');
+            return false;
+        }
+    });
+
+
+    $("#storePracticeForm").submit(function (e) {
+      e.preventDefault();
+      tinymce.triggerSave();
+      $('.text-danger').remove();
+        let currentTab = $('.nav-tab.active').attr("href");
+            $('.explanation_error').remove();
+            let questionId = '';
+        if (currentTab == '#pills-type-text') {
+            let explanation = $('#editorThree').val();
+            let questionId = $('#question-3').val();
+            let question = $(currentTab).find(`#question_title`).val();
+            let question_duration = $(currentTab).find(`#question_duration`).val();
+            if (question != '' && question_duration != '' && explanation == '') {
+                $('#editorThree').after('<span class="help-block text-danger explanation_error">Practice explanation  can not be empty!</span>');
+                return false;
+            }
+            if (question == '' && question_duration == '' && explanation == '' && questionId == '') {
+                $(currentTab).find(`#question_title`).after('<span class="help-block text-danger explanation_error">Practice Title  can not be empty!</span>');
+                $(currentTab).find(`#question_duration`).after('<span class="help-block text-danger explanation_error">Practice Duration can not be empty!</span>');
+                $('#editorThree').after('<span class="help-block text-danger explanation_error">Practice explanation can not be empty!</span>');
+                $('#question-3').after('<span class="help-block text-danger explanation_error">Practice Question can not be empty!</span>');
+                return false;
+            }
+        }
+
+        /** validation end **/       
+        var FormType = $(currentTab).find('.question_type').val();
+        var form = $('#storePracticeForm');
+        var formData = new FormData(form[0]);
+        if (FormType == 'drag_and_drop') {
+            var DragDropTitle = questionEditorApp.attribute("stimulus").getValue();
+            var DragDropQuestion = questionEditorApp.attribute("template").getValue();
+            var CorrectOptions = questionEditorApp.attribute("validation.valid_response.value").getValue();
+            var optionsAttribute = questionEditorApp.attribute("possible_responses").getValue();
+            let blankSpaceLength = (DragDropQuestion.match(/{{response}}/g) || []).length;
+            let optionLength = optionsAttribute.length;
+            $('.drag-option-error').hide();
+            if(blankSpaceLength != optionLength){
+                $(".drag-option-error").focus().show();
+                return false;
+            }
+            else{
+                let data = optionsAttribute.filter((t)=> t=='' ).length;
+                if(data != 0){
+                    $(".drag-option-error").text('Possible response value can not be blank');
+                    $(".drag-option-error").focus().show();
+                    return false;
+                }
+            }
+            formData.append('question', DragDropQuestion)
+            formData.append('options', optionsAttribute)
+            formData.append('correct_options', optionsAttribute)
+        }
+
+        formData.append('question_image', this.new_attachments)
+        var url = $('#storePracticeForm').attr('action');
+        // $('#storePracticeBtn').attr("disabled", true);
+        let practiceTitle = formData.get("question_title");
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                // $('.loader').show();
+            },
+            success: function (response) {
+                if (response.success == true) {
+                    if(activeContentId !=''){
+                        renderSliderContent(lessonId, 'challenges', activeContentId);
+                        setTimeout(() => {
+                            $(".sort-practices[data-uniqueid="+activeContentId+"]").find('.slide-anchor').text(practiceTitle);                          
+                            $('.close').trigger('click');
+                            new Noty({
+                                theme: 'relax',
+                                text: response.message,
+                                type: 'success',
+                                layout: 'topRight',
+                                timeout: 1500
+                            }).show();
+                            location.reload();
+                        }, 1000);
+                    }else{
+                        location.reload();
+                    }
+                }else{
+                    new Noty({
+                        theme: 'relax',
+                        text: response.responseJSON.message,
+                        type: 'success',
+                        layout: 'topRight',
+                        timeout: 1500
+                    }).show();
+                }
+            },
+            error: function (response) {
+                if (response.responseJSON.errors) {
+                    let errorMessages = '';
+                    $.each(response.responseJSON.errors, function (field_name, error) {
+                        let questionId = '';
+                        if (FormType === 'single_select') {
+                            questionId = 'question-1';
+                        } else if (FormType === 'multi_select') {
+                            questionId = 'question-2';
+                        } else {
+                            questionId = 'question-3';
+                        }
+
+                        if (error.param == 'question') {
+                            $(document).find('[id=' + questionId + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                        } else {
+                            $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                        }
+                    });
+                }else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.responseJSON.message,
+                    });
+                }
+            },
+            complete: function () {
+                $('.loader').hide();
+                $('#storePracticeBtn').attr("disabled", false);
+            }
+        })
+    });
+
+    $('.edit-practice').click(function () {
+        let practiceId = $(this).data("practiceid");
+        $('#update_practice_data').val(practiceId);
+        $("#lesson_id").val(lessonId);
+        $('.previewfile').remove();
+        $('.dropify-preview').hide();
+        $('.is_image_removed_option').val(0);
+        $('.is_image_removed').val(0);
+        $('.is_audio_removed').val(0);
+        $('#storePracticeForm')[0].reset();
+        $("#storePracticeForm").attr('action', `/learning-content/ ${learningContentSlug}/lessons/${lessonSlug}/practices/update`);
+        $.ajax({
+            type: "POST",
+            url: '/learning-content/' + learningContentSlug + '/lessons/' + lessonSlug + '/practices/edit',
+            data: {
+                lesson_id: lessonId,
+                practice_id: practiceId
+            },
+            dataType: "json",
+            beforeSend: function () {
+                $('.loader').show();
+            },
+            success: function (response) {
+                $('.appended_div').remove();
+                loadEditForm(response.data)
+                $('#practiceModal').show();
+                $(".keywords").removeClass('d-none');
+            },
+            error: function (response) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.responseJSON.message,
+                    });
+            },
+            complete: function () {
+                $('.loader').hide();
+            }
+        })
+    });
+
+    function loadEditForm(data) {
+        let question_type = data.question_type;
+        let options = data.options;
+        $('.nav-tab').removeClass('active');
+        let current_tab = '';
+        let editor = '';
+
+        if (question_type == 'single_select') {
+            $('.nav-tab:nth(0)').trigger('click');
+            current_tab = $('.nav-tab:nth(0)').attr('href');
+            tinymce.get('editorOne').setContent((data.question_explanation != null) ? data.question_explanation : '');
+            tinymce.get('question-1').setContent((data.question != null) ? data.question : '');
+        }
+        else if (question_type == 'multi_select') {
+            $('.nav-tab:nth(1)').trigger('click');
+            current_tab = $('.nav-tab:nth(1)').attr('href');
+            tinymce.get('editorTwo').setContent((data.question_explanation != null) ? data.question_explanation : '');
+            tinymce.get('question-2').setContent((data.question != null) ? data.question : '');
+        }
+        else if (question_type == 'text') {
+            $('.nav-tab:nth(2)').trigger('click');
+            current_tab = $('.nav-tab:nth(2)').attr('href');
+            tinymce.get('editorThree').setContent((data.question_explanation != null) ? data.question_explanation : '');
+            tinymce.get('question-3').setContent((data.question != null) ? data.question : '');
+            let keywordOption = data.options;
+            $('#keywords').tagsinput('removeAll');
+            var keywordToRemove = $('#keywords').val();
+            if(keywordOption !==null && keywordOption.length > 0){
+                const optionTexts = keywordOption.map(option => option.option_text);
+                // console.log(optionTexts);
+                if(optionTexts.length>0){
+                    let tags = optionTexts.join(',');
+                    $('#keywords').tagsinput('add', tags);
+                }
+
+            }
+        } 
+        else {
+            $('.nav-tab:nth(3)').trigger('click');
+            current_tab = $('.nav-tab:nth(3)').attr('href');
+            setTimeout(() => {
+                var stimulusAttribute = questionEditorApp.attribute("template");
+                stimulusAttribute.setValue(`<p>${data.question}</p>`);
+                let i = 0;
+                for (options of data.options) {
+                    if (i < 2) {
+                        var firstOptionAttribute = questionEditorApp.attribute(`possible_responses[0]`);
+                        firstOptionAttribute.remove();
+                    }
+                    var optionsAttribute = questionEditorApp.attribute("possible_responses");
+                    optionsAttribute.addArrayItem(options.option_text);
+                    i++;
+                }
+            }, 1200);
+        }
+
+        $(current_tab).find('#question_title').val(data.question_title);
+        $(current_tab).find('#question_duration').val(data.question_duration);
+        if (data.challenges_listing) {
+            $(current_tab).find('#challenges_listing').prop('checked', true)
+        } 
+        else {
+            $(current_tab).find('#challenges_listing').prop('checked', false)
+        }
+        if (question_type == 'single_select' || question_type == 'multi_select') {
+            $(current_tab).find(`.btn-check:input[value=${data.option_display_preference}]`).siblings('.check-label').trigger('click');
+            $('.option_checkbox').prop('checked', false);
+            for (let i = 0; i < options.length; i++) {
+                if (i > 1) {
+                    $(current_tab).find(`.add-text-option`).trigger('click');
+                }
+                if (options[i].option_correct == true) {
+                    $(current_tab).find(`.option_checkbox:nth(${i})`).prop('checked', true);
+                }
+                $(current_tab).find(`.practice-question-img:nth(${i})`).prop('checked', true);
+                if (data.options[i].option_image) {
+                    resetPreview($(current_tab).find(`.practice-question-img:nth(${i})`), `/LearningContent/${data.content_directory}/${data.options[i].option_image}`);
+                }
+                $(current_tab).find(`.option_text:nth(${i})`).val(options[i].option_text);
+                $(current_tab).find(`.practice-question-img:nth(${i})`).attr("value", `${options[i].option_image}`);
+                OptionPreferenceData['option_value'] = data.option_display_preference;
+                OptionPreferenceData['current_tab'] = current_tab;
+                $(current_tab).find(`.practice-question-img`).prop('required', false);
+            }
+        }
+
+        $(current_tab).find('#questionImage').attr("value", `${data.question_image}`);
+        if (data.question_image) {
+            resetPreview($(current_tab).find('#questionImage'), `/LearningContent/${data.content_directory}/${data.question_image}`);
+        }
+        if (data.question_audio && data.question_audio !== "") {
+            let videoExtension = data.question_audio.split('.').pop();
+            resetPreview($(current_tab).find('#questionAudio'), '', data.question_audio, videoExtension);
+        }
+    }
+
+    function resetPreview(element, src = '', content = '', extension) {
+        let wrapper = element.closest('.dropify-wrapper');
+        let preview = wrapper.find('.dropify-preview');
+        let filename = wrapper.find('.dropify-filename-inner');
+        let fileExtension = wrapper.find('.dropify-extension');
+        let render = wrapper.find('.dropify-render').html('');
+        wrapper.removeClass('has-error').addClass('has-preview');
+        if (src !== "" || extension == 'png') {
+            src = window.location.origin + src;
+            render.append($('<img class="previewfile"/>').attr('src', src).css('max-height', element.data('height') || ''));
+            preview.fadeIn();
+        } 
+        else {
+            render.append($('<i class="dropify-font-file"></i><span class="dropify-extension">' + extension + '</span>'));
+            preview.find('.dropify-filename-inner').html(content)
+            preview.fadeIn();
+        }
+    }
+
+    $(document).on('click', '.check_question', function () {
+        tinymce.triggerSave();
+        $this = $(this).parents('.unassign-content');
+        let form = $this.find('form');
+        var formData = new FormData(form[0]);
+        formData.append('submit_attachment', this.new_attachments)
+        let question_explanation = $this.find('.editorExplanation').val();
+        $('.error').remove();
+        checkPracticeAnswer(formData, $this);
+    });
+
+
+    function checkPracticeAnswer(formData, element) {
+        var parts = window.location.href.split('/');
+        var lastSegment = parts.pop() ;
+        $('.explanation-div').hide();
+        $('.correct-answer-msg').hide();
+        $('.incorrect-answer-msg').hide();
+        $.ajax({
+            type: "POST",
+            url: `/learning-content/${learningContentSlug}/lessons/${lessonSlug}/practices/checkPracticeAnswer`,
+            data: formData,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                $('.loader').show();
+            },
+            success: function (response) {
+                // console.log(response,'response');
+                element.find('.explanation-div').show();
+                if(response.correct_answer.length > 0){
+                    element.find('.description').text(response.correct_answer[0].description);
+                }
+                for (submitted of response.submitted_answer) {
+                    $('input[value="' + submitted.id + '"]').addClass('incorrect');
+                    $('input[value="' + submitted.id + '"]').removeClass('correct');
+                    $('input[value="' + submitted.id + '"]').prop('checked', true);
+                }
+                for (correct of response.correct_answer) {
+                    $('input[value="' + correct.id + '"]').removeClass('incorrect');
+                    $('input[value="' + correct.id + '"]').addClass('correct');
+                }
+                if (JSON.stringify(response.correct_answer) == JSON.stringify(response.submitted_answer)) {
+                    element.find('.correct-answer-msg').show();
+                    element.find('.check-btn').addClass('correct-btn');
+                    element.find('.check-btn').removeClass('incorrect-btn');
+                } 
+                else {
+                    $('input[value="' + response.submitted_answer.id + '"]').addClass('incorrect');
+                    element.find('.incorrect-answer-msg').show();
+                    element.find('.check-btn').addClass('incorrect-btn');
+                    element.find('.check-btn').removeClass('correct-btn');
+                }
+
+                    let practiceType = $('.practice_type').val();
+                    if(practiceType == 'text'){
+                        let options = response.correct_answer;
+                        $('.keyword-listing').html('');
+                        for(let option of options){
+                            $('.keyword-listing').append(`<li> ${option.option_text} <span class="question-action"><img src="/images/${option.option_correct ? 'q-check.svg' : 'q-wrong.svg'}" alt="img"></span></li>`)
+                        }
+                        if(userRole == 3){ 
+                            // set local storage attachment when student add attachment in text type practices
+                            let lessonContent = JSON.parse(localStorage.getItem("lessonContent"));
+                            for(question of lessonContent[1]){
+                                if(question.questionId == activeContentId){
+                                    question.attachment = response.student_assessment_attachment;
+                                }
+                            }
+                            localStorage.setItem("lessonContent", JSON.stringify(lessonContent));
+                            element.find('.assigment_id').val(response.homework_id);
+                            $('.answer-submitted').show(1).delay(1000).hide(1);
+                        }
+                        return ;
+                    }              
+            },
+            error: function (response) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: response.responseJSON.message,
+                });
+            },
+            complete: function () {
+              $('.loader').hide();
+            }
+        });
+    }
+
+
+    $(".practices-sortable").sortable({
+        swapThreshold: 1,
+        group: 'list',
+        animation: 200,
+        onChange: function (update, evt) {
+            var j = 1;
+            $(".sort-practices").each(function () {
+                $(this).attr("data-practice-position", j);
+                $(this).find(".practice-anchor").attr("data-slide", j);
+                j++;
+            });
+        },
+        onSort: function (evt, ui) {
+            var positions = [];
+            $(".sort-practices").each(function () {
+                positions.push([$(this).attr('data-uniqueid'), $(this).attr('data-practice-position')]);
+            });
+            $.ajax({
+                url: '/learning-content/' + learningContentSlug + '/lessons/' + lessonSlug + '/practices/update-position',
+                method: 'POST',
+                data: {
+                    positions: positions
+                },
+                dataType: "json",
+                beforeSend: function () {
+                },
+                success: function (response) {
+                    renderSliderContent(lessonId, 'practices', activeContentId);
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.responseJSON.message,
+                    });
+                },
+                complete: function () {
+                    $('.loader').hide();
+                }
+          });
+        }
+    });
+</script>

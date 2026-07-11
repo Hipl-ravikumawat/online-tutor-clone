@@ -1,0 +1,404 @@
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- bootstrap -->
+<script src="/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- jquery validate -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+<!-- select2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- dateTimePicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.38/moment-timezone-with-data.min.js"></script>
+
+
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+<!-- sweetAlert2  -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- notify toaster -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
+<!-- toggle -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"
+  integrity="sha512-F636MAkMAhtTplahL9F6KmTfxTmYcAcjcCkyu0f0voT3N/6vzAuJ4Num55a0gEJ+hRLHhdz3vDvZpf6kqgEa5w=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+
+<!-- lightbox -->
+<script src="/build/js/lightbox.js"></script>
+
+<!-- dataTables -->
+<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+
+<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+<script src="/vendors/jszip/dist/jszip.min.js"></script>
+<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
+<script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+
+<!-- FullCalendar -->
+<!-- <script src="../vendors/fullcalendar/dist/fullcalendar.min.js"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<!-- custom js -->
+<script src="/build/js/custom.min.js"></script>
+
+<script>
+  /**
+   * common script.
+   * @script start
+   */
+  const timeZone = "<%=loggedUserInfo.time_zone%>";
+  if(timeZone !==''){
+    moment.tz.setDefault(timeZone);
+  }
+
+  $(document).ready(function () {
+    $(".toggle-password").click(function () {
+      $(this).toggleClass("fa-eye fa-eye-slash");
+      var input = $($(this).attr("toggle"));
+      if (input.attr("type") == "password") {
+        input.attr("type", "text");
+      } else {
+        input.attr("type", "password");
+      }
+    });
+
+    lightbox.option({
+      'resizeDuration': 200,
+      'wrapAround': true,
+      'Width': 400,
+      'Height': 400,
+    });
+  });
+
+  <% if (flash.success && flash.success.length > 0) { %>
+    new Noty({
+      theme: 'relax',
+      text: '<%= flash.success %>',
+      type: 'success',
+      layout: 'topRight',
+      timeout: 1500
+    }).show();
+  <% } %>
+
+  <% if (flash.error && flash.error.length > 0) { %>
+      new Noty({
+        theme: 'relax',
+        text: '<%= flash.error %>',
+        type: 'error',
+        layout: 'topRight',
+        timeout: 1500
+      }).show();
+  <% } %>
+
+  $(".updateData").click(function () {
+      $('.modal').modal('show')
+  });
+
+  function confirmBeforeDeletion(url) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch(url);
+        const data = await response.json();
+        if(data.success){
+            if(data.redirectUrl === 'page-reload'){
+              window.location.reload();
+            }else{
+              window.location.href = data.redirectUrl;
+            }
+        }else{
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          });
+        }
+      }
+    })
+  }
+
+  function confirmBeforeSecretLogin(url) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to login this User",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Login In!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = url;
+      }
+    })
+  }
+
+  function confirmBeforeLogout(url,type) {
+    if(type == 1){
+      text = 'You want to logout this User';
+    }else {
+      text = 'You want to logout secret login for this User';
+    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: text,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Logout!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = url;
+      }
+    })
+  }
+
+   function confirmBeforeDuplicate(type,url='',lessonId,id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Want to duplicate this '+type+' ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: {
+              lessonId: lessonId,
+              id: id,
+            },
+            success: function (response) {
+              
+              if(response.success){
+                window.location.reload();
+              }
+            },
+            error: function (response) {
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: response.responseJSON.message,
+                    });
+            },
+            complete: function () {
+            }
+          });
+      }
+    })
+  }
+
+  function showResult(submitChallenge, question_content_type='',lesson_id='',challenge_id=''){
+      Swal.fire({
+        text: 'Do you want to submit this assessment?',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          localStorage.setItem("FormSubmitted", true);
+          submitChallenge();
+            Swal.fire({
+              title: 'View Result',
+              icon: 'warning',
+              showDenyButton: true,
+              confirmButtonText: 'Yes',
+              denyButtonText: `No`,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                if(question_content_type !=''){
+                  $('.view-full-result').show();
+                }
+                $('#finalScore1').modal('show');
+              }else{
+                window.location.href = "/assessments"
+              }
+            })
+        } else if (result.isDenied) {
+        }
+      })
+    }
+
+  $(document).on('change click', '.record-status', function (event) {
+    var action = $(this).attr("data-url");
+    var recordUid = $(this).attr("data-uid");
+    var status = $(this).prop('checked');
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update status of this record?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: `Update`,
+    })
+      .then((result) => {
+        if (!result.isDismissed) {
+          $.ajax({
+            type: "POST",
+            url: action,
+            data: {
+              uid: recordUid,
+              status: status,
+            },
+            success: function (response) {
+              window.location.reload();
+            },
+            error: function (response) {
+              let errorMessages = '';
+              $.each(response.responseJSON.errors, function (key, value) {
+                $.each(value, function (i, message) {
+                  errorMessages += '<li>' + message + '</li>';
+                });
+              });
+            },
+            complete: function () {
+            }
+          });
+        } else {
+          $(this).prop('checked', (status ? false : true));
+          return false;
+        }
+      });
+  });
+
+
+  function cancelEventConfirmation(eventId,page=''){
+    Swal.fire({
+    html: "<p>Are you sure want to cancel this event ? <br> You won't be able to revert this! </p>",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, cancel it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: '/calendar/cancel-event',
+          data: {
+          eventId: eventId,
+          status:'Requested_To_Cancel',
+        },
+        success: function (response) {
+          if(response.success){
+            Swal.fire({
+                title: "Request!",
+                text: response.message,
+                icon: "success"
+            });
+            if(page=='calender'){
+              calendar.refetchEvents();
+            }else{
+              setTimeout(() => {
+                window.location.reload();
+              }, 800);
+            }
+          }else{
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.message,
+            });
+          }
+        },
+        });
+      }
+    });
+  }
+
+  function formatDate(dateString, outputFormat) {
+    // Parse the input date string using the input format
+    var date = new Date(dateString);
+
+    // Check if the input date is valid
+    if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+    }
+
+    // Define months and days arrays for formatting
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    // Extract components of the date
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var day = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var dayOfWeek = date.getDay();
+
+    // Define a function to pad numbers with leading zeros
+    function pad(number) {
+        return ('0' + number).slice(-2);
+    }
+    // Replace placeholders in the output format with corresponding date components
+    var formattedDate = outputFormat.replace(/YYYY/g, year)
+                  .replace(/MMM/g, months[month])
+                  .replace(/ddd/g, days[dayOfWeek])
+                  .replace(/MM/g, pad(month + 1))
+                  .replace(/DD/g, pad(day))
+                  .replace(/hh/g, pad(hours))
+                  .replace(/mm/g, pad(minutes))
+                  .replace(/ss/g, pad(seconds));
+    return formattedDate;
+  }
+
+  function convertUnixToTimeZoneDate(unixTimestamp, timeZone) {
+    const utcDateTime = moment.unix(unixTimestamp).utc();
+    const dateTimeInTimeZone = utcDateTime.tz(timeZone);
+    const formattedDateTime = dateTimeInTimeZone.format('MM-DD-YYYY hh:mm a');
+    return formattedDateTime;
+  }
+
+  function setSessionStorage(key, value){
+    return sessionStorage.setItem(key, value);
+
+  }
+
+  function getSessionStorage(key){
+    return sessionStorage.getItem(key);
+  }
+
+  function removeSessionStorage(key){
+    sessionStorage.removeItem(key);
+    return true;
+  }
+  /**
+   * common script.
+   * @script end
+   */
+</script>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PDF HTML</title>
+    <!-- Consolidated Google Fonts Import -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&family=Inter:wght@500&display=swap" rel="stylesheet">
+    
+    <style>
+      /* Basic reset */
+      table{
+        page-break-inside: auto;
+        border-collapse: collapse;
+      }
+      body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+      }
+      /* Table Styling */
+      .main-text table {
+        width: 100%;
+        text-align: left;
+        border-collapse: collapse;
+        font-size: 156px;
+      }
+      .main-text table td, 
+      .main-text table th {
+        padding: 10px;
+      }
+      .main-text table td {
+        padding: 5px 10px;
+        font-size: 14px;
+      }
+      .main-text table th {
+        background: #F47817;
+        color: #F8FAFB;
+      }
+      .main-text {
+        padding: 10px 0 30px;
+      }
+      /* Note Section Styling */
+      .student-note-dis {
+        border-bottom: solid 1px #ddd;
+      }
+
+      /* Adding media query for page size and pagination */
+      @media print{
+        body{
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            padding-bottom: 70px;
+        }
+        *{
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .print-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 750px;
+            margin: 0px auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <table style="width: 100%; border-collapse: collapse;font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;padding-top: 20px;">
+        <tr>
+          <td>
+            <img src="https://staging.pioneerslearninghub.com.au/images/logo.svg" width="150" alt="Logo">
+          </td>
+          <td style="text-align: right;">
+            <h2 style="font-size: 32px; font-weight: bold;color: #F47817;margin-bottom: 10px;">STUDENT ATTENDANCE</h2>
+            <div class="date"><%= date_range %></div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="color: #333;font-size: 28px;font-weight: bold;padding: 20px 0 15px;">
+            <%= student_name %>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="main-text">
+      <table style="width: 100%; border-collapse: collapse;font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Event</th>
+            <th>Attendance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(let data of newDataArray) { %>
+            <tr>
+              <td><%= data.date %></td>
+              <td><%= data.time %></td>
+              <td><%= data.location %></td>
+              <td><%= data.event %></td>
+              <td><%= data.attendance %></td>
+            </tr>
+            
+            <% if(note_report.includes('1')) { %>
+              <tr>
+                <td colspan="5">
+                  <div class="student-note-dis">
+                    <h3>Student Note:</h3>
+                    <div class="discription"><%- data?.notes?.studentNotes %></div>
+                  </div>
+                </td>
+              </tr>
+            <% } if(note_report.includes('2')) { %>
+              <tr>
+                <td colspan="5">
+                  <div class="student-note-dis">
+                    <h3>Parent Note:</h3>
+                    <div class="discription"><%- data?.notes?.parentNotes %></div>
+                  </div>
+                </td>
+              </tr>
+            <% } if(note_report.includes('3')) { %>
+              <tr>
+                <td colspan="5">
+                  <div class="student-note-dis">
+                    <h3>Private Note:</h3>
+                    <div class="discription"><%- data?.notes?.privateNotes %></div>
+                  </div>
+                </td>
+              </tr>
+            <% } } %>
+        </tbody>
+      </table>
+    </div>
+    <div class="print-footer">
+      <table style="width: 100%; border-collapse: collapse;font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;">
+        <tr>
+          <td style="padding: 10px; background: #F47817; color: #fff;" align="left">HIPL Learning Hub</td>
+          <td style="padding: 10px; background: #F47817; color: #fff;" align="right">Student Attendance</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,405 @@
+<script src="/vendors/tinymce/tinymce.min.js"></script>
+<script>
+    let emailTemplateDataList = []; // Store all email data if multiple rows selected
+    function loadInvoiceEmailDataMultiple(invoiceIds, templateType){
+        $('#invoiceIdField').val(invoiceIds);
+        $.ajax({
+        url: `/families-invoices/invoices/get-email`,
+        type: 'POST', // or GET with query string
+        contentType: 'application/json',
+        data: JSON.stringify({
+            invoiceIds,
+            templateType
+        }),
+        dataType: 'json'
+        })
+        .then(results => {
+        $(".select-box-user, .select-comma-user").hide();
+        $("#subject_field").val(results.subject);
+        tinymce.get("message-notes").setContent(results.message);
+
+        if(results.isDropdown){
+            // Clear old options
+            $("#to_mail").empty();
+            // Append new options
+            results.sendTo.forEach(item => {
+            const option = new Option(item.label, item.value, true, true); // text, value, defaultSelected, selected
+            $("#to_mail").append(option);
+            });
+            // Trigger change so Select2 updates UI
+            // $("#to_mail").trigger("change");
+            // results will already be an array of invoice email data
+            $(".select-box-user").show();
+        }else{
+            const commaSeparated = results.sendTo.map(item => item.label).join(", ");
+            $(".select-comma-user").text(commaSeparated);
+            $(".select-comma-user").show();
+        }
+        
+        })
+        .catch(err => console.error("Error fetching email info:", err));
+    }
+
+    $(document).on('submit', '.form-design', function (e) {
+  e.preventDefault();
+  $('.error-message').text('');
+  $('.form-control, .select2').removeClass('is-invalid');
+
+  const $form = $(this);
+  const $btn = $form.find('.send-email-btn');
+  $btn.text('Sending...').prop("disabled", true);
+
+  if (tinymce.get('message-notes')) {
+    tinymce.triggerSave(); // Ensure <textarea> has content synced
+  }
+
+  const formData = $form.serialize(); // Serialize all form fields
+
+  $.ajax({
+    type: 'POST',
+    url: '/families-invoices/invoices/send-email',
+    data: formData,
+    success: function (res) {
+      $('#sendEmailInvoice').modal('hide');
+        $btn.text('Send').prop("disabled", false);
+    },
+    error: function (xhr) {
+      if (xhr.status === 422 && xhr.responseJSON?.errors) {
+        xhr.responseJSON.errors.forEach(err => {
+          const errorField = `#error-${err.param}`;
+          $(errorField).text(err.msg);
+
+          const inputField = $(`[name="${err.param}"]`);
+          inputField.addClass('is-invalid');
+
+          if (inputField.hasClass('select2')) {
+            inputField.next('.select2').find('.select2-selection')
+              .addClass('is-invalid');
+          }
+        });
+      } else {
+        console.error("Unexpected error", xhr);
+        Swal.fire("Error", "Something went wrong while sending the email.", "error");
+      }
+    },
+    complete: function () {
+      $btn.text('Send').prop("disabled", false);
+      if (typeof invoiceDataTable !== 'undefined') {
+        invoiceDataTable.ajax.reload(); // Reload if available
+      }
+    }
+  });
+});
+    // When subject/message should be updated
+    function updateSubjectAndMessage(label) {
+        const firstData = emailTemplateDataList[0];
+        if (!firstData || !firstData.subject || !firstData.message) return;
+
+        const selectedInvoiceCount = emailTemplateDataList.length;
+        let subject = '';
+        let message = '';
+
+        if (selectedInvoiceCount === 1) {
+        subject = firstData.subject.replace(/^(.*?)(?=\s\d{1,2}\/\d{1,2}\/\d{4})/, label);
+        message = firstData.message.replace(/Dear (.*?),/, `Dear ${label},`);
+        } else {
+        subject = `<< Parent Last Name >> << Invoice Date >> Invoice`;
+        message = firstData.message.replace(/Dear (.*?),/, `Dear << Parent First Name >>,`)
+            .replace(/\d{1,2}\/\d{1,2}\/\d{4}/, '<< Invoice Date >>')
+            .replace(/₹\s?[-]?\d+(?:\.\d{1,2})?/, '₹ 123.45');
+        }
+
+        $('#subject_field').val(subject);
+        if (tinymce.get('message-notes')) {
+        tinymce.get('message-notes').setContent(message);
+        } else {
+        $('#message-notes').val(message);
+        }
+    }
+    
+    
+    $(document).on("click", ".dropdown-item.download-selected-family-invoice-zip", function () {
+        let selectedIds = [];
+        $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+            let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+            if (rowId) selectedIds.push(rowId);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one invoice.");
+            return;
+        }
+        window.location.href = `/families-invoices/invoice/download-zip?ids=${selectedIds.join(",")}`;
+    });
+
+    $(document).on("click", ".dropdown-item.download-family-invoice-details", function () {
+        let selectedIds = [];
+        $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+            let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+            if (rowId) selectedIds.push(rowId);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one invoice.");
+            return;
+        }
+        window.location.href = `/families-invoices/invoice/download-excel?ids=${selectedIds.join(",")}`;
+    });
+
+
+    $(document).ready(function () {
+        $('#from_mail, #to_mail').select2({ width: '100%' });    
+        
+        /*-------------------tinyMce---------------------*/
+        tinymce.init({
+            selector: '.message-notes',
+            height: 200,
+            resize: true,
+            menubar: false,
+            toolbar: false,       // disables all toolbar buttons
+            statusbar: false,
+            image_title: true,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            file_picker_callback: (cb, value, meta) => {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.addEventListener('load', () => {
+                        const id = 'blobid' + (new Date()).getTime();
+                        const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                        const base64 = reader.result.split(',')[1];
+                        const blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+                        cb(blobInfo.blobUri(), { title: file.name });
+                    });
+                    reader.readAsDataURL(file);
+                });
+                input.click();
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+            plugins: [],
+            mobile: { theme: 'mobile' },
+            toolbar: '',
+            setup: function (editor) {
+                editor.on("change", function () {
+                    let descriptionId = jQuery(this)[0].id;
+                    tinymce.triggerSave();
+                });
+                editor.on("keyup", function () {
+                    let descriptionId = jQuery(this)[0].id;
+                    tinymce.triggerSave();
+                });
+            },
+        });
+
+
+        $(document).on("click", ".sendSingleEmailInvoice", function () {
+            const selectedTemplate = $('input[name="template_type"]:checked').val();
+            const selectedValues = $(this).data('id');
+            loadInvoiceEmailDataMultiple([selectedValues], selectedTemplate);
+            $("#sendEmailInvoice").modal('show');
+        });
+        
+        // When action button is clicked
+        $(document).on("click", '.email-invoice-btn', function () {
+            const selectedTemplate = $('input[name="template_type"]:checked').val();
+            const table = $('#familyInvoiceTable').DataTable();
+
+            const selectedValues = $(".invoice-select-checkbox:checked").map(function () {return $(this).val();}).get();
+            if (selectedValues.length === 0) {
+            sweetAlertMsg("Please select at least one invoice.");
+            return;
+            }else{
+            loadInvoiceEmailDataMultiple(selectedValues, selectedTemplate);
+            }
+        });
+
+        // Template changed (radio)
+        $(document).on("change", 'input[name="template_type"]', function () {
+            const selectedTemplate = $('input[name="template_type"]:checked').val();
+
+            // if (!invoiceId) return;
+            const table = $('#familyInvoiceTable').DataTable();
+            const selectedValues = $(".invoice-select-checkbox:checked").map(function () {return $(this).val();}).get();
+            const invoiceValue = $("#invoiceIdField").val();
+            const invoiceId = invoiceValue ? invoiceValue: selectedValues;
+            if (selectedValues.length === 0 && invoiceValue =='')  {
+            sweetAlertMsg("Please select at least one invoice.");
+            return;
+            }else{
+            loadInvoiceEmailDataMultiple([invoiceId], selectedTemplate); // only reload for main one
+            }
+        });
+
+        // When TO email is changed
+        $(document).on("change", '#to_mail', function () {
+            const selectedLabel = $(this).find('option:selected').data('label');
+            const selectedTemplate = $('input[name="template_type"]:checked').val();
+
+            const selectedValues = $(".invoice-select-checkbox:checked").map(function () {return $(this).val();}).get();
+            const invoiceValue = $("#invoiceIdField").val();
+            const invoiceId = invoiceValue ? invoiceValue: selectedValues;
+            loadInvoiceEmailDataMultiple([invoiceId], selectedTemplate, true); // only reload for main one
+
+            updateSubjectAndMessage(selectedLabel);
+
+        });
+
+        $('#familyInvoiceTable,body').on('click', '.download-btn', function (e) {
+        e.preventDefault();
+        const txnId = $(this).data('txn-id');
+        window.location.href = `/families-invoices/invoice/pdf/${txnId}?download=true`;
+        });
+
+
+        $('#familyInvoiceTable,body').on('click', '.view-btn', function (e) {
+        e.preventDefault();
+        const txnId = $(this).data('txn-id');
+        window.open(`/families-invoices/invoice/pdf/${txnId}`, "_blank");
+        });
+
+
+        $(document).on("click", ".sendSingleEmailInvoice", function () {
+            const selectedTemplate = $('input[name="template_type"]:checked').val();
+            const selectedValues = $(this).data('id');
+            (selectedValues, selectedTemplate);
+            $("#sendEmailInvoice").modal('show');
+        });
+
+        // Mark as Paid
+        $(document).on("click", ".mark-as-paid", function (e) {
+            e.preventDefault();
+            const id = $(this).data("id");
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to mark this invoice as Paid?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, mark as Paid",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/families-invoices/invoices/${id}/mark-paid`,
+                        type: "POST",
+                        success: function (res) {
+                            Swal.fire("Success", "Invoice marked as Paid", "success");
+                            invoiceDataTable.ajax.reload();
+                        },
+                        error: function (err) {
+                            Swal.fire("Error", "Failed to update invoice", "error");
+                        },
+                    });
+                }
+            });
+        });
+
+        // Mark as Void
+        $(document).on("click", ".mark-as-void", function (e) {
+            e.preventDefault();
+            const id = $(this).data("id");
+
+            Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to mark this invoice as Void?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, mark as Void",
+            cancelButtonText: "Cancel",
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                url: `/families-invoices/invoices/${id}/mark-void`,
+                type: "POST",
+                success: function (res) {
+                    Swal.fire("Success", "Invoice marked as Void", "success");
+                    invoiceDataTable.ajax.reload();
+                },
+                error: function (err) {
+                    Swal.fire("Error", "Failed to update invoice", "error");
+                },
+                });
+            }
+            });
+        });
+
+        // Mark Archive / Unarchive
+        // $(document).on("click", ".archive-action", function (e) {
+        //     e.preventDefault();
+        //     const ids = [];
+        //     const id = $(this).data("id"); // Single row
+        //     const action = $(this).data("action"); // archive / unarchive
+
+        //     if (id) ids.push(id);
+
+        //     // Collect selected checkboxes for bulk actions
+        //     $(".invoice-select-checkbox:checked").each(function () {
+        //     ids.push($(this).val());
+        //     });
+
+        //     if (ids.length === 0) {
+        //     Swal.fire("Warning", "No invoices selected", "warning");
+        //     return;
+        //     }
+
+        //     Swal.fire({
+        //     title: "Are you sure?",
+        //     text: `Do you want to ${action} the selected invoices?`,
+        //     icon: "warning",
+        //     showCancelButton: true,
+        //     confirmButtonText: `Yes, ${action}`,
+        //     cancelButtonText: "Cancel",
+        //     }).then((result) => {
+        //     if (result.isConfirmed) {
+        //         $.ajax({
+        //         url: `/families-invoices/invoices/change-archive-status`,
+        //         type: "POST",
+        //         data: { invoice_ids: ids, action },
+        //         success: function (res) {
+        //             Swal.fire("Success", `Invoices ${action}d successfully`, "success");
+        //             invoiceDataTable.ajax.reload();
+        //         },
+        //         error: function (err) {
+        //             Swal.fire("Error", `Failed to ${action} invoices`, "error");
+        //         },
+        //         });
+        //     }
+        //     });
+        // });
+
+    });
+
+</script>
+
+<script>
+    // Dropdown move in body when I click on action button
+    $(document).on('show.bs.dropdown', '.table .dropdown.table_dropdown', function () {
+        var $menu = $(this).find('.dropdown-menu.invoice_body_dropdown');
+        $('body').append($menu.detach());
+
+        var $btn = $(this).find('[data-toggle="dropdown"]');
+        var offset = $btn.offset();
+        $menu.css({
+        'display': 'block',
+        'position': 'absolute',
+        'top': offset.top + $btn.outerHeight(),
+        'left': offset.left,
+        'z-index': 1050
+        });
+    });
+
+    $(document).on('hide.bs.dropdown', '.table .dropdown.table_dropdown', function () {
+        var $menu = $('body > .dropdown-menu.invoice_body_dropdown');
+        $(this).append($menu.detach().css({
+        'display': '',
+        'position': '',
+        'top': '',
+        'left': '',
+        'z-index': ''
+        }));                
+    });
+</script>

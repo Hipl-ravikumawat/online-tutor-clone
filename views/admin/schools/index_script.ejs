@@ -1,0 +1,191 @@
+<script>
+  /**
+   * school index page script.
+   * @script start
+   */
+  $(document).ready(function () {
+    dataTable();
+
+    $("#school").select2({
+      placeholder: "Select School",
+      allowClear: false,
+    });
+
+    $("#status").select2({
+      allowClear: false,
+    });
+
+    $(".filter").click(function () {
+      let school = $("#school").val();
+      let status = $("#status").val();
+      dataTable(school, status);
+    });
+
+    $(".reset").click(function () {
+      $(".select2").val(null).trigger("change");
+      dataTable();
+    });
+  });
+
+  function dataTable(school = "", status = "") {
+    $("#schoolTable").dataTable().fnDestroy();
+    var schoolTable = $("#schoolTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [],
+      dom: "Bfltip",
+      buttons: {
+        buttons: [
+          { extend: "excel" },
+          {
+            extend: "pdfHtml5",
+            orientation: "landscape",
+            pageSize: "A0",
+            title: "Users List PDF",
+            exportOptions: {
+              modifier: {
+                page: "current",
+              },
+            },
+          },
+        ],
+      },
+      buttons: [
+        {
+          extend: "collection",
+          text: "Schools List",
+          className: "btn-default-option",
+          autoClose: true,
+          buttons: [
+            {
+              text: "Excel",
+              extend: "excelHtml5",
+              className: "btn-default",
+              title: "Schools List",
+              exportOptions: {
+                columns: [0, 1, 2],
+              },
+            },
+            {
+              extend: "pdfHtml5",
+              className: "btn-default",
+              title: "Schools List",
+              exportOptions: {
+                columns: [0, 1, 2],
+              },
+              customize: function (doc) {
+                doc.styles.tableHeader.alignment = "left";
+                (doc.content[1].margin = [20, 0, 20, 0]),
+                  (doc.styles.tableBodyOdd.padding = 20);
+                doc.styles.tableBodyEven.alignment = "left";
+                (doc.content[1].table.widths = ["33%", "33%", "33%"]),
+                  (objLayout = {});
+                // Horizontal line thickness
+                objLayout["hLineWidth"] = function (i) {
+                  return 0;
+                };
+                // Vertikal line thickness
+                objLayout["vLineWidth"] = function (i) {
+                  return 0;
+                };
+                // Horizontal line color
+                objLayout["hLineColor"] = function (i) {
+                  return "#aaa";
+                };
+                // Left padding of the cell
+                objLayout["padding"] = function (i) {
+                  return 5;
+                };
+                // Right padding of the cell
+                objLayout["paddingRight"] = function (i) {
+                  return 5;
+                };
+                // Left padding of the cell
+                objLayout["paddingTop"] = function (i) {
+                  return 10;
+                };
+                // Right padding of the cell
+                objLayout["paddingBottom"] = function (i) {
+                  return 10;
+                };
+                // Inject the object in the document
+                doc.content[1].layout = objLayout;
+              },
+            },
+          ],
+          fade: true,
+        },
+      ],
+      ajax: {
+        url: "/schools/dataTable",
+        type: "POST",
+        data: {
+          id: school,
+          status: status,
+        },
+      },
+      columns: [
+        { data: "name", name: "name" },
+        {
+          data: "email",
+          render: function (data, type, row) {
+            return row.email ? row.email : "N/A";
+          },
+        },
+        {
+          data: "phone",
+          render: function (data, type, row) {
+            return row.phone ? "+" + row.dial_code + " " + row.phone : "N/A";
+          },
+        },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return ` <label class="checkbox-inline switch-btn">
+                            <input type="checkbox" name="status" class="record-status" data-toggle="toggle" data-on="Active"
+                                data-off="Deactive" data-onstyle="info" data-offstyle="danger" data-url="/schools/update-status"
+                                data-uid="${row._id}" id="toggle-trigger" ${
+              row.status ? "checked" : ""
+            }>
+                                <span class="slider-toggle"></span>  
+                            </label>`;
+          },
+        },
+        {
+          data: "",
+          render: function (data, type, row) {
+            return `<div class="d-flex align-items-center">
+                            <a class="" href="/schools/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                title="Edit"><img src="/images/edit.svg" alt="icon"></a>
+                                
+                            <a href="javascript:void(0)" class="ml-2"
+                                onclick="confirmBeforeDeletion('/schools/destroy/${row._id}')"><img src="/images/trash.svg"
+                                alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+                            </div>`;
+          },
+        },
+      ],
+      columnDefs: [
+        {
+          targets: [2, 4] /* column index */,
+          orderable: false /* true or false */,
+        },
+      ],
+    });
+    schoolTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+  /**
+   * school index page script.
+   * @script end
+   */
+</script>

@@ -1,0 +1,56 @@
+<div class="right_col" role="main">
+  <!-- edit grade page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Edit Group Tag</h2>
+      </div>
+      <div class="x_content">
+        <form id="updateGroupTagForm" action="/group-tags/update" method="post" class="form-horizontal form-label-left">
+          <input type="hidden" name="group_tag_id" value="<%=data._id %>" />
+          
+          <%- include('./partials/_form',{ data, tag_colors, students }) %>
+
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="updateBtn" class="btn theme-btn">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- edit grade page content end -->
+</div>
+
+<%- include('./partials/form_script'); %>
+
+<script type="text/javascript">
+  $("#updateGroupTagForm").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+
+    var formData = $('#updateGroupTagForm').serialize();
+    var url = $('#updateGroupTagForm').attr('action');
+    $("#updateBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#updateBtn").prop('disabled', false);
+      },
+    })
+  });
+</script>

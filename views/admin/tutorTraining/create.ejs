@@ -1,0 +1,127 @@
+<div class="right_col" role="main">
+    <!-- create tutor-training page content starts -->
+    <div class="form-wizard">
+      <form id="createContent" action="./store" class="form-design" method="post" enctype="multipart/form-data"
+        autocomplete="off">
+        <fieldset class="wizard-fieldset show">
+          <div class="d-flex align-items-center justify-content-between mb-30">
+            <h3 class="title-text mb-0">Basic Information</h3>
+            <a class="back-link" href="/tutor-training"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
+          </div>
+  
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="title">Title<span class="required">*</span>
+                </label>
+                <input type="text" name="title" class="form-control wizard-required" value="" placeholder="Enter Title"
+                  id="title" maxlength="200">
+                <div class="wizard-form-error text-red"></div>
+              </div>
+            </div>
+  
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="topic">Topic<span class="required">*</span>
+                </label>
+                <select class="form-control select2 wizard-required" name="topic_id" id="topic_id" tabindex="-1" single>
+                  <option value="">Select Topic</option>
+                  <% for(topic of topics) { %>
+                    <option value="<%=topic.id%>">
+                      <%=topic.name%>
+                    </option>
+                    <% } %>
+                </select>
+                <div class="wizard-form-error text-red"></div>
+              </div>
+            </div>
+  
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="subTopic">Sub Topic
+                </label>
+                <select class="form-control select2" name="sub_topic_id" id="subTopic" tabindex="-1" single>
+                  <option value="">Select SubTopic</option>
+                </select>
+                <div class="wizard-form-error"></div>
+              </div>
+            </div>
+  
+  
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label class="form-label" for="shortDescription">Short Description<span class="required">*</span>
+                </label>
+                <textarea name="short_description" rows="5" class="form-control wizard-required"
+                  placeholder="Enter Short Description" id="short_description"></textarea>
+                <div class="wizard-form-error text-red"></div>
+              </div>
+            </div>
+  
+            <div class="col-sm-12">
+              <div class="drop-file">
+                <label class="form-label">Upload Thumbnail</label>
+                <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
+                  data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="2M">
+                <div class="wizard-form-error text-red"></div>
+              </div>
+            </div>
+  
+          </div>
+  
+          <div class="form-group mb-0 mt-4 clearfix">
+            <button class="form-wizard-submit theme-btn float-right" id="createContentBtn">Save</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+      <!-- create tutor-training page content end -->
+  </div>
+  
+  <%- include('./partials/form_script'); %>
+  
+  <script type="text/javascript">
+    $("#createContent").submit(function (e) {
+      e.preventDefault();
+    $('.wizard-form-error').html('');
+    $('.wizard-form-error').hide();
+      $("#createContentBtn").attr("disabled", true);
+      var form = $("#createContent");
+      var formData = new FormData(form[0]);
+      formData.append("thumbnail", this.new_attachments);
+      var url = $("#createContent").attr("action");
+      $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function () {
+          $(".loader").show();
+        },
+        success: function (response) {
+          if (response.success == true) {
+            window.location = response.redirectUrl;
+          }
+        },
+        error: function (response) {
+          let errorMessages = "";
+          $.each(response.responseJSON.errors, function (field_name, error) {
+            $(document)
+              .find("[id=" + error.param + "]")
+              .siblings(".wizard-form-error")
+              .slideDown();
+            $(document)
+              .find("[id=" + error.param + "]")
+              .siblings(".wizard-form-error")
+              .html(error.msg);
+          });
+        },
+        complete: function () {
+          $(".loader").hide();
+          $("#createContentBtn").attr("disabled", false);
+        },
+      });
+    });
+  </script>

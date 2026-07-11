@@ -1,0 +1,192 @@
+<div class="tab-pane fade" id="pills-email" role="tabpanel" aria-labelledby="pills-email-tab">
+    <div class="row row-gap-30 mx-0">
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                <h3 class="setting_title">Email Settings <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+                <form class="notification" id="email-setting">
+                    <div class="settings">
+                        <div class="row mx-0 row-gap-20">
+                        <div class="col-xl-6 col-lg-12 col-md-6 px-0 pr-md-3">
+                            <div class="row mx-0 row-gap-20">
+                                <div class="col-12 px-0">
+                                    <h6 class="setting_name m-0">Business Email Address</h6>
+                                    <div class="form-areablock">
+                                        <input type="email" name="primary_email" id="business-email" class="event-schedule-input-group" value="<%=businessSetting?.primary_email%>" placeholder="Business Name.." required disabled>
+                                    </div>
+                                </div>
+                                <div class="col-12 px-0">
+                                    <h6 class="setting_name">Email Options</h6>
+                                    <ul class="settinglist flex-column align-items-start">
+                                        <li>
+                                            <div class="form-group form-check">
+                                                <input type="checkbox" name="send_birthday_email" class="form-check-input event-schedule-input-group" <% if (businessSetting?.notification_settings[0].send_birthday_email == true) { %> checked <% } %> id="send_birthday_email" disabled>
+                                                <label class="form-check-label" for="send_birthday_email">Send birthday emails</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 col-md-6 px-0">
+                            <div class="row mx-0 row-gap-20">
+                            <div class="col-12 px-0">
+                                <div class="emaildetails_card">
+                                <h6 class="setting_name"><%=businessSetting?.primary_email%> - Business Email</h6>
+                                <ul class="list">
+                                    <li><span class="iconimg"><img src="/images/info-icon.svg" alt=""></span>Public Email Provider</li>
+                                    <li>behalf using <%=businessSetting?.name%></li>
+                                </ul>
+                                <ul class="list">
+                                    <li><span class="iconimg"><img src="/images/mailicon.svg" alt=""></span>From: <%=businessSetting?.name%> &lt;<%=businessSetting?.primary_email%>&gt;</li>
+                                    <li><span class="iconimg"><img src="/images/reply-icon.svg" alt=""></span>Reply-To: <%=businessSetting?.name%> &lt;<%=businessSetting?.primary_email%>&gt;</li>
+                                </ul>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-12 px-0 text-right btngroup">
+                            <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                            <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <h3 class="setting_title">System Email Templates</h3>
+                    <div class="settings">
+                        <div class="row mx-0 row-gap-20">
+                        <% for(let email of emailTemplates) { %>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate">
+                                <span><img src="/images/email-icon.svg" alt="icon"></span><%=email.title%>
+                                <span class="edit" data-toggle="modal" data-target="#systemEmail"  data-id="<%=email.id%>"><img src="/images/edit.svg" alt="icon"></span>
+                                <!-- <span class="delete" data-toggle="modal" onclick="confirmBeforeDeletion('/business-settings/destroy-template/<%=email.id%>')"><img src="/images/trash.svg" alt="icon"></span> -->
+                            </h6>
+                        </div>
+                        <% } %>
+                        <!-- <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/danger-icon.svg" alt="icon"></span>Bank Transfer Failed<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/cake-icon.svg" alt="icon"></span>Birthday Email<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/note-text.svg" alt="icon"></span>Event Cancelled<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/timer-pause.svg" alt="icon"></span>Event Reminder<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/archive-book.svg" alt="icon"></span>Invoice<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/timer-pause.svg" alt="icon"></span>Invoice Reminder<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/stickynote.svg" alt="icon"></span>Lesson Notes<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/document-upload.svg" alt="icon"></span>New File Added<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/dollar-square.svg" alt="icon"></span>Payment<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/rotate-left.svg" alt="icon"></span>Refund Issued<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/tick-circle.svg" alt="icon"></span>Sign-Up Confirmation<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/key-square.svg" alt="icon"></span>Student Portal Login Setup<span class="edit"  data-toggle="modal" data-target="#systemEmail"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div> -->
+                        <div class="col-12 px-0 text-right btngroup">
+                            <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                            <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <h3 class="setting_title">System SMS Templates</h3>
+                    <div class="settings">
+                        <div class="row mx-0 row-gap-20">
+                            <%
+                             for(let sms of smsTemplates) { %>
+                                <div class="col-12 px-0">
+                                    <h6 class="setting_name emailtemplate">
+                                        <span><img src="/images/email-icon.svg" alt="icon"></span><%=sms.title%>
+                                        <span class="edit" data-toggle="modal" data-target="#systemSMS"  data-id="<%=sms.id%>"><img src="/images/edit.svg" alt="icon"></span>
+                                        <span class="delete" data-toggle="modal" data-id="<%=sms.id%>" onclick="confirmBeforeDeletion('/business-settings/destroy-template/<%=sms.id%>')"><img src="/images/trash.svg" alt="icon"></span>
+                                    </h6>
+                                </div>
+                            <% } %>
+                        <!-- <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/danger-icon.svg" alt="icon"></span>Automatic Payment Failed<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/calendar.svg" alt="icon"></span>Cancelled Event<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/archive-book.svg" alt="icon"></span>Invoice<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/timer-pause.svg" alt="icon"></span>Invoice Reminder<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/dollar-square.svg" alt="icon"></span>Payment<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/rotate-left.svg" alt="icon"></span>Refund Issued<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div>
+                        <div class="col-12 px-0">
+                            <h6 class="setting_name emailtemplate"><span><img src="/images/timer-pause.svg" alt="icon"></span>Event Reminder<span class="edit"  data-toggle="modal" data-target="#systemSMS"><img src="/images/edit.svg" alt="icon"></span></h6>
+                        </div> -->
+                        <div class="col-12 px-0 text-right btngroup">
+                            <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                            <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <h3 class="setting_title flex-column align-items-start">Custom Email Templates<span class="subtitle">Create email templates that you can use when manually sending a new email. For example: A welcome email to send new students.</span></h3>
+                    <div class="settings">
+                        <div class="row mx-0 row-gap-20">
+                            <div class="col-12 px-0 d-flex flex-column row-gap-20">
+                                <% if (emailTemplates.length===0) { %>
+                                    <h6 class="setting_name">
+                                        <span class="subtitle">There are no custom email templates.</span>
+                                    </h6>
+                                    <% } %>
+                                <!-- <h6 class="setting_name"><span class="subtitle">There are no custom email templates.</span></h6> -->
+                                <div class="emailbtn">
+                                    <button type="button" class="btn form-button theme-btn" onclick="openCustomModal('customEmail')">Add New Custom Email Template</button>
+                                    <button type="button" class="btn form-button theme-btn" onclick="openCustomModal('customSMS')">Add New Custom SMS Template</button>
+                                </div>
+                            </div>
+                            <div class="col-12 px-0 text-right btngroup">
+                                <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                                <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

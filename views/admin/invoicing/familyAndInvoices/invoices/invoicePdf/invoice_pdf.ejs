@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @page {
+        padding-bottom: 0;
+    }
+    .watermark {
+        position: fixed;
+        top: 45%;
+        left: 30%;
+        transform: rotate(-45deg);
+        font-size: 120px;
+        font-weight: 400;
+        color: rgba(255, 128, 128, 0.6);
+        z-index: 9999;        
+        pointer-events: none;
+        user-select: none;
+        font-family: Arial, sans-serif;
+    }
+
+    @media print{
+        body{
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            margin: 0;
+        }
+        *{
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .page-footer{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 730px;
+            margin: 0px auto;
+            background-color: #F47817;
+            color: #fff;
+            padding: 10px;
+        }
+        table{
+            page-break-inside: auto;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        thead{ 
+            display: table-header-group;
+        }
+        tfoot{
+            display: table-footer-group;
+            height: 50px;
+        }
+    }
+</style>
+
+<body>
+    <% if (invoiceData.is_paid) { %>
+        <div class="watermark">PAID</div>
+    <% }else if (invoiceData.is_void) { %>
+        <div class="watermark">VOID</div>
+    <% } %>
+  <div id="pdf-content-<%= txnId %>">
+    <table border="0" style="width: 100%; max-width: 750px; margin: 0px auto; border-collapse: collapse; box-sizing: border-box; color: #333; background: #fff; font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;">
+        <thead>
+            <tr>
+                <td colspan="2" style="vertical-align: top;">
+                    <img src="<%= absoluteLogoPath %>" width="150" alt="logo">
+                </td>
+                <td align="right" style="color: #F47817;vertical-align: top;">
+                    <h2 style="font-size: 40px; font-weight: bold;margin: 0;">INVOICE</h2>
+                    <p style="margin: 0;"><strong>Date:</strong> <span style="min-width: 100px;display: inline-block;"><%= invoiceDate %></span></p>
+                    <% if(dueDate){ %>
+                    <p style="margin: 0;"><strong>Due Date:</strong><span style="min-width: 100px;display: inline-block;"><%= dueDate %></span></p>
+                    <% } %>
+                    <p style="margin: 0;"><strong>Invoice #:</strong><span style="min-width: 100px;display: inline-block;"><%= invoiceNumber %></span></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px 0 30px;vertical-align: top;">
+                    <p style="margin: 0px; color: #000;font-size: 16px;">
+                        <strong><%= userDetail?.first_name %> <%= userDetail?.last_name %></strong>
+                    </p>
+                    <!-- <p style="margin: 4px 0px;">PO Box 1146, St Albans, VIC 3021</p>
+                    <p style="margin: 0px;">Phone: 1800 272 344</p> -->
+                </td>
+                <td style="padding: 10px 0px 30px;vertical-align: top;">
+                    <p style="margin: 0px; color: #000;font-size: 16px;"><strong>Bill To:</strong></p>
+                    <p style="margin: 4px 0px;"><%= studentName %></p>
+                    <p style="margin: 4px 0px;"><%= studentAddress %></p>
+                    <% if(ndisNumber){ %>
+                        <p style="margin: 0px;">NDIS Number: <%= ndisNumber %></p>
+                    <% } %>
+                </td>
+                <td style="padding: 10px 0px 30px;vertical-align: top;">
+                    <% if(invoiceData.include_balance_type == "balance"){ %>
+                        <p style="margin: 0px; font-size: 14px; text-align: end;">
+                            Previous Balance: <span style="min-width: 100px;display: inline-block;"><%= previousBalance %></span>
+                        </p>
+                        <p style="margin: 0px; font-size: 14px; text-align: end;">
+                            Payments: <span style="min-width: 100px;display: inline-block;"><%= paymentsTotal %></span>
+                        </p>
+                        <p style="margin: 0px; font-size: 14px; text-align: end;">
+                            New Charges: <span style="min-width: 100px;display: inline-block;"><%= chargesTotal %></span>
+                        </p>
+                    <% } %> 
+                    <p style="margin: 10px 0 0; color: #F47817; font-size: 30px; text-align: end;">
+                        <strong>Total Due: <%= invoiceAmount %></strong>
+                    </p>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th align="left" style="color: #fff; background: #F47817; padding: 10px; font-size: 18px;">Date</th>
+                                <th align="left" style="color: #fff; background: #F47817; padding: 10px; font-size: 18px;">Description</th>
+                                <th align="right" style="color: #fff; background: #F47817; padding: 10px; font-size: 18px;">Charges</th>
+                                <th align="right" style="color: #fff; background: #F47817; padding: 10px; font-size: 18px;">Payments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%- transactionRows %>
+                            <tr><td colspan="4" style="padding: 10px;"></td></tr>
+                            <tr>
+                                <% if(invoiceFooterTxt){ %>
+                                    <td colspan="2" style="background: #f5f5f5; padding: 10px;">
+                                        <%- invoiceFooterTxt %>
+                                    </td>
+                                <% } %>
+                                <td align="right" colspan="2" style="color: #F47817; font-size: 18px;vertical-align: top;">
+                                    <strong>Total Due: <%= invoiceAmount %></strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <!-- <table style="width: 100%; border-collapse: collapse;font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td style="padding: 10px; background: #F47817; color: #fff;" align="left"></td>
+                            <td style="padding: 10px; background: #F47817; color: #fff;" align="right">Invoice</td>
+                        </tr>
+                    </table> -->
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+  </div>
+    <div class="page-footer">
+        <div style="font-size: 15px; line-height: 1.4; font-family: Arial, sans-serif;display: flex;justify-content: space-between;width: 100%;">
+            <div><%= userDetail?.first_name %> <%= userDetail?.last_name %></div>
+            <div>Invoice</div>
+        </div>
+    </div>
+</body>
+</html>

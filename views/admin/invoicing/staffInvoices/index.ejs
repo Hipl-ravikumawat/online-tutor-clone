@@ -1,0 +1,113 @@
+<div class="right_col" role="main">
+  <div class="bussniess_setting">
+    <div class="settings_content">
+      <div class="bussniess_setting">
+        <h2 class="titleheading">Staff Invoices</h2>
+        <div class="card tabcard mb-3">
+          <div class="card-body p-3">
+            <!-- Tab Navigation -->
+            <div class="setting_tab families-tab">
+              <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="pills-general-tab" data-toggle="pill" href="#staffAccounts" role="tab"
+                    aria-controls="staffAccounts" aria-selected="true">Staff Accounts</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="pills-invoices-tab" data-toggle="pill" href="#invoices" role="tab"
+                    aria-controls="invoices" aria-selected="false">Invoices</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Staff Accounts Tab -->
+            <%- include('./staffAccounts/index.ejs') %>
+            
+            <!-- Invoices Tab -->
+            <%- include('./invoices/index.ejs') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include('./staffAccounts/index_script.ejs') %>
+<%- include('./transaction/index_script.ejs') %>
+<script>
+  // Function to show the correct tab based on URL hash
+  function showActiveTab(hash = "#staffAccounts") {
+      const normalizedHash = hash.toLowerCase();
+      const tabMap = {
+          "#staffAccounts": {
+              el: $('[href="#staffAccounts"]'),
+              handler: () => loadDatatableStaffAccounts()
+          },
+          "#invoices": {
+              el: $('[href="#invoices"]'),
+              handler: () => loadInvoicesDatatable()
+          }
+      };
+
+      const tabEntry = tabMap[normalizedHash] || tabMap["#staffAccounts"];
+
+      if (tabEntry?.el) {
+          tabEntry.el.tab('show');
+
+          // Trigger associated logic explicitly
+          setTimeout(() => {
+              tabEntry.handler?.();
+          }, 10); // allow Bootstrap's tab transition to complete
+      }
+  }
+
+  $(document).ready(function() {
+    // 1. On page load: Show tab based on current URL hash
+    const currentHash = window.location.hash || "#staffAccounts";
+    showActiveTab(currentHash);
+
+    // 2. When a tab is clicked: Update URL and load data
+    $('a[data-toggle="pill"]').on('shown.bs.tab', async function(e) {
+      // Get which tab was clicked
+      const targetHref = $(e.target).attr('href').toLowerCase();
+      // console.log(targetHref,'targetHref');
+      
+      // Determine the new hash and load appropriate data
+      let newHash = '';
+      switch (targetHref) {
+        case '#staffAccounts':
+          newHash = 'StaffAccounts';
+          await loadDatatableStaffAccounts();
+          break;
+          
+        case '#invoices':
+          newHash = 'Invoices';
+          await loadInvoicesDatatable();
+          break;
+          
+        case '#transactions':
+          newHash = 'Transactions';
+          await transactionTable();
+          break;
+      }
+      
+      // Update browser URL without page reload
+      if (history.pushState) {
+        history.pushState(null, null, '#' + newHash);
+      } else {
+        window.location.hash = '#' + newHash;
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+

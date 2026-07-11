@@ -1,0 +1,36 @@
+<div class="tab-pane fade" id="assign-tutors" role="tabpanel" aria-labelledby="assign-tutors-tab">
+    <div class="row row-gap-30 mx-0">
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                   <div class="d-flex flex-wrap align-items-center">
+                     <h3 class="setting_title mr-auto">Assigned Specialist</h3>
+                     <% if(userRole===1){ %>
+                       <a href="javascript:void(0)" class="theme-btn add-tutor">Assigned Specialist</a>
+                     <% } %>
+                   </div>
+                    <div class="settings" id="tutors-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../modals/edit-assigned-tutor.ejs'); %>
+<%- include('../modals/add-assign-tutor.ejs'); %>
+
+
+    <script>
+    $(document).ready(function () {
+        $('.add-tutor').on('click', function () {
+        console.log("Add Tutor clicked");
+        $('#assigned-tutor-form')[0].reset();
+        $('.tutor_id').val('');
+
+        $('#addAssignedTutor').modal('show');
+        console.log($('#addAssignedTutor').length);
+        });
+    });
+    </script>
+

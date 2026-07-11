@@ -1,0 +1,1166 @@
+<style>
+  .layout{
+    display: flex;
+    gap: 30px;
+  }
+  .main{
+    flex: 0 0 calc(100% - 310px); 
+    max-width: calc(100% - 310px);
+    flex-shrink: 0;
+  }
+  .top-controls{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -48px;
+    width: max-content;
+    margin-left: auto;
+    position: relative;
+    z-index: 1;
+    gap: 12px;
+  }
+  .top-controls .time-range-picker{
+    background-color: var(--lightgray);
+    border: none;
+    border-radius: 8px;
+    height: 40px;
+    padding: 0 15px;
+    color: var(--dblue);
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 270px;
+  }
+
+  .view-select{
+    background-color: var(--lightgray);
+    color: var(--dblue);
+    padding: 8px 20px 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    min-width: 126px;
+    appearance: none;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none"><g clip-path="url(%23clip0_1861_2)"><path d="M12.2309 0.966797L7.90028 5.31346C7.38885 5.8268 6.55196 5.8268 6.04053 5.31346L1.70996 0.966797" stroke="%23020202" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_1861_2"><rect width="13" height="7" fill="white"/></clipPath></defs></svg>');
+    background-repeat: no-repeat;
+    background-position: calc(100% - 10px) center;
+  }
+
+  
+  #calendar{
+    margin-top: 0;
+    min-height: calc(100vh - 210px);
+  }
+  .fc-header-toolbar .fc-toolbar-chunk:first-child{
+    margin-top: 0;
+  }
+  .fc-theme-standard td,
+  .fc-theme-standard th,
+  .fc-theme-standard .fc-scrollgrid{
+    border-color: #e5e7eb;
+  }
+  .fc .fc-button-group{
+    gap: 8px;
+  }
+  .fc .fc-button-group .fc-button{
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+  .fc-daygrid-day-events .fc-event,
+  .fc-timegrid-event-harness .fc-v-event{
+    padding: 4px 5px !important;
+  }
+  .fc-daygrid-day-events{
+    padding: 0 5px 5px;
+  }
+  .fc-daygrid-event-harness + .fc-daygrid-event-harness{
+    margin-top: 3px !important;
+  }
+  .fc-event{
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  .fc-col-header-cell-cushion,
+  .fc-daygrid-day-number{
+    text-decoration: none !important;
+    color: #111827;
+    font-weight: 600;
+  }
+  .fc-h-event .fc-event-title,
+  .fc-daygrid-dot-event .fc-event-title{
+    text-overflow: ellipsis;
+  }
+  thead th .fc-scroller,
+  tbody tr:first-child td .fc-scroller{
+    overflow: auto !important;
+  }
+  
+
+  .tooltip{
+    position: fixed;
+    display: none;
+    background: #111827;
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 9999;
+    pointer-events: none;
+    max-width: 220px;
+  }
+
+  #calendar-container {
+    flex: 1;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 10px 10px 0 10px; /* keep the padding inside the scroll */
+  }
+
+
+  /* Sidebar */
+  .sidebar{
+    width: 280px;
+    flex: 0 0 280px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
+    background-color: #fff;
+    border-radius: 5px;
+  }
+  .sidebar>h3{
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 18px;
+    color: var(--dblue);
+    font-weight: 600;
+    padding: 12px 25px;
+    border-bottom: 1px solid #cbd5e1;
+  }
+  /* .sidebarInner{
+    padding: 14px 25px;
+  } */
+  .sidebarInner_top{
+    padding: 14px 25px 0;
+  }
+  .sidebarInner_top h5{
+    color: var(--dblue);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .sidebarInner_top>input{
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    outline: none;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 14px;
+  }
+  #userList{
+    padding: 0 25px 14px;
+    max-height: calc(100vh - 314px);
+    overflow-y: auto;
+  }
+  #userList::-webkit-scrollbar-track,
+  .fc-scroller::-webkit-scrollbar-track{
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  #userList::-webkit-scrollbar,
+  .fc-scroller::-webkit-scrollbar{
+    width: 6px;
+    height: 6px;
+    background-color: #fff;
+  }
+  #userList::-webkit-scrollbar-thumb,
+  .fc-scroller::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    background-color: #bfbfbf;
+  }
+
+
+  .fc-scroller::-webkit-scrollbar:vertical {
+    width: 6px;
+    display: none;
+  }
+  .fc-scroller::-webkit-scrollbar-track:vertical,
+  .fc-scroller::-webkit-scrollbar-thumb:vertical {
+    display: none;
+  }
+  .fc-scroller:hover::-webkit-scrollbar:vertical {
+    display: block;
+  }
+  .fc-scroller:hover::-webkit-scrollbar-track:vertical {
+    display: block;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  .fc-scroller:hover::-webkit-scrollbar-thumb:vertical {
+    display: block;
+    border-radius: 10px;
+    background-color: #bfbfbf;
+  }
+  .fc-direction-ltr .fc-timegrid-slot-label-frame{
+    text-align: left;
+  }
+
+  table.fc-col-header thead th.fc-col-header-cell{
+    vertical-align: middle;
+  }
+
+  .user-item{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #495460;
+  }
+  .user-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .custom-event{
+    /* background-color: #54dc86; */
+    padding: 8px;
+    border-radius: 5px;
+    border-left: 4px solid #99fcbd;
+  }
+  .fc-timeGridWeek-view .fc-event .fc-event-main{
+    z-index: 4;
+  }
+  /* .fc-timeGridWeek-view .fc-timegrid-col-events{
+    z-index: 0;
+  } */
+  .fc-timeGridWeek-view .fc-timegrid-col-events{
+    z-index: auto;
+  }
+  .fc-timeGridWeek-view .custom-event{
+    padding: 4px;
+    height: inherit;
+    overflow: hidden;
+  }
+  .fc-timeGridWeek-view .custom-event .event-desc{
+    white-space: nowrap;
+    -webkit-line-clamp: none;
+    text-overflow: ellipsis;
+  }
+  .fc-timeGridWeek-view  .custom-event .event-time,
+  .fc-timeGridWeek-view .custom-event .event-title{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .fc-timeGridWeek-view .custom-event .event-btn{
+    display: none;
+  }
+
+  .custom-event .event-time{
+    color: #fff;
+    font-size: 11px;
+  }
+  .custom-event .event-title{
+    font-size: 12px;
+    color: #fff;
+    margin: 2px 0;
+  }
+  .custom-event .event-desc{
+    font-size: 13px;
+    color: #fff;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    line-height: 18px;
+  }
+  .custom-event .event-btn{
+    margin: 3px 0 0;
+    font-size: 12px;
+    text-decoration: underline;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color: #fff;
+    font-weight: 500;
+  }
+  .fc-toolbar-chunk .fc-toolbar-title{
+    margin: 0;
+  }
+  .fc-header-toolbar .fc-toolbar-chunk:last-child{
+    min-width: 408px;
+  }
+  #calendar-container .fc-day .fc-daygrid-event{
+    white-space: normal;
+  }
+
+  #calendar-container .fc-timegrid-cols .fc-day .fc-timegrid-event{
+    background-color: transparent !important;
+    border: none !important;
+  }
+
+  @media screen and (min-width: 992px) and (max-width: 1599px){
+    .fc-header-toolbar .fc-toolbar-chunk:last-child{
+      min-width: 0;
+    }
+    .fc-header-toolbar .fc-toolbar-chunk:nth-child(2){
+      margin-left: auto;
+    }
+    .top-controls{
+      margin-bottom: 0;
+    }
+  }
+  @media screen and (max-width: 991px){
+    .layout{
+      flex-wrap: wrap;
+    }
+    .main,
+    .sidebar{
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    .sidebar{
+      order: -1;
+    }
+    #userList{
+      max-height: 200px;
+    }
+    
+    .top-controls {
+      margin-bottom: 6px;
+      margin-right: auto;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+    }
+    .fc .fc-toolbar.fc-header-toolbar {
+      flex-wrap: wrap;
+      -webkit-flex-wrap: wrap;
+      gap: 10px;
+    }
+    .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk{
+      flex: 0 0 100%;
+      -webkit-flex: 0 0 100%;
+      text-align: center;
+    }
+    .days_group>label{
+      text-align: center;
+    }
+    .days_group .settinglist{
+      justify-content: center;
+    }
+  }
+
+  #daysFilterRow {
+  display: none;
+  }
+  #daysFilterRow.visible {
+    display: block;
+  }
+
+  @media screen and (max-width: 575px){
+    .top-controls{
+      margin-bottom: 6px;
+      margin-right: auto;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .top-controls>*{
+      width: 100%;
+    }
+  }
+  .col-lg-12 {
+    position: relative;
+    min-height: 1px;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px
+}
+
+.settinglist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.settinglist li {
+  display: flex;
+  align-items: center;
+}
+
+.form-control form .form-group input{
+    background-color: var(--lightgray);
+    border: none;
+    border-radius: 8px;
+    height: 40px;
+    padding: 0 15px;
+    color: var(--dblue);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#tooltip2{
+  position: absolute;
+  z-index: 1;
+  display: none;
+  padding: 6px;
+  background: #ffffff;
+  color: #000;
+  border-radius: 5px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+  min-width: 130px;
+}
+#tooltip2 .tooltip-title{
+  font-size: 13px;
+  font-weight: 600;
+}
+#tooltip2 .tooltip-time{
+  opacity: 0.9;
+  margin: 3px 0;
+}
+#tooltip2 .tooltip-desc{
+  opacity: 0.85;
+}
+#tooltip2 .event-btn{
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  text-decoration: underline;
+}
+
+</style>
+
+<div class="right_col" role="main">
+  <div class="layout">
+    <div class="main">
+      <div class="card-block">
+        <div class="top-controls">
+          <div class="form-group mb-0 position-relative">
+            <input type="text"class="form-control time-range-picker" name="time_range" placeholder="Time" autocomplete="off">
+          </div>
+          <select id="viewSelect" class="view-select">
+            <option value="resourceTimeGridDay">Day View</option>
+            <option value="timeGridWeek">Week View</option>
+            <option value="dayGridMonth">Month View</option>
+          </select>
+        </div>
+        <div class="col-md-12" id="daysFilterRow">
+          <div class="form-group days_group">
+            <label class="mb-2">Days</label>
+            <ul class="settinglist mt-0">
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilitySun" class="form-check-input days-checkbox" checked
+                    value="0">
+                  <label class="form-check-label fw-400" for="availabilitySun">Sun</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilityMon" class="form-check-input days-checkbox" checked
+                    value="1">
+                  <label class="form-check-label fw-400" for="availabilityMon">Mon</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilityTue" class="form-check-input days-checkbox" checked
+                    value="2">
+                  <label class="form-check-label fw-400" for="availabilityTue">Tue</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilityWed" class="form-check-input days-checkbox" checked
+                    value="3">
+                  <label class="form-check-label fw-400" for="availabilityWed">Wed</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilityThu" class="form-check-input days-checkbox" checked
+                    value="4">
+                  <label class="form-check-label fw-400" for="availabilityThu">Thu</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilityFri" class="form-check-input days-checkbox" checked
+                    value="5">
+                  <label class="form-check-label fw-400" for="availabilityFri">Fri</label>
+                </div>
+              </li>
+              <li>
+                <div class="form-check">
+                  <input type="checkbox" name="days[]" id="availabilitySat" class="form-check-input days-checkbox" checked
+                    value="6">
+                  <label class="form-check-label fw-400" for="availabilitySat">Sat</label>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="calendar-container">
+          <div id="calendar"></div>
+          <div id="tooltip2" class="tooltip-data"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <h3>Manage View</h3>
+      <div class="sidebarInner">
+        <div class="sidebarInner_top">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              margin-bottom: 14px;
+              justify-content: space-between;
+            ">
+        <h5>Tutors</h5>
+
+        <label class="user-item mb-2">
+          <input type="checkbox" id="selectAllTutors">
+          <span><strong>Select All</strong></span>
+        </label>
+      </div>
+        <input 
+          type="text" 
+          id="userSearch" 
+          class="sidebar-search" 
+          placeholder="Search tutors..." 
+        />
+      </div>
+        <div id="userList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
+  
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>
+<script>
+  const allTutors = <%- JSON.stringify(tutors) %>;
+    
+    const getColorFromId = (id) => {
+      const str = id.toString(); 
+
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+
+      const hue = Math.abs(hash) % 360;
+      return `hsl(${hue}, 65%, 55%)`;
+    };
+
+    const allUsers = allTutors.map((user) => {
+
+      const userColor = user.calendar_color
+        ? user.calendar_color.trim().toLowerCase()
+        : "";
+
+      const isWhiteColor =
+        userColor === "#fff" ||
+        userColor === "#ffffff" ||
+        userColor === "white";
+
+      return {
+        id: user.id,
+        title: user.title,
+        color:
+          userColor && !isWhiteColor
+            ? user.calendar_color
+            : getColorFromId(user.id)
+      };
+    });
+
+    const selectAllTutors = document.getElementById("selectAllTutors");
+
+    function syncSelectAllCheckbox() {
+      selectAllTutors.checked = selectedUsers.length === allUsers.length;
+    }
+
+    let selectedUsers = JSON.parse(localStorage.getItem('availabilitySelectedTutors')) || (allUsers.length > 0 ? [allUsers[0].id] : []);
+    let tutorColors = {};
+    allUsers.forEach(function(user) {
+      tutorColors[user.id] = user.color; 
+    });
+    let currentView = "resourceTimeGridDay";
+    let currentDate = new Date();
+    let calendar = null;
+    let userSearchText = "";
+
+    let selectedTimeFrom = "";
+    let selectedTimeTo   = "";
+    let excludedDays = [];
+
+    const tooltip = document.getElementById("tooltip");
+    const tooltip2 = document.getElementById("tooltip2");
+    const userList = document.getElementById("userList");
+    const viewSelect = document.getElementById("viewSelect");
+    const calendarEl = document.getElementById("calendar");
+    const userSearch = document.getElementById("userSearch");
+
+    let activeEvent = null;
+    let activeEventEl = null;
+    let scrollContainers = [];
+
+    document.querySelectorAll(".days-checkbox").forEach(function(checkbox) {
+      checkbox.addEventListener("change", function() {
+        const day = parseInt(this.value);
+        if (this.checked) {
+          excludedDays = excludedDays.filter(d => d !== day);
+        } else {
+          if (!excludedDays.includes(day)) excludedDays.push(day);
+        }
+        calendar.refetchEvents();
+      });
+    });
+
+    const daysFilterRow = document.getElementById("daysFilterRow");
+
+    function syncDaysFilterVisibility() {
+      const isDayView = currentView === "resourceTimeGridDay";
+      daysFilterRow.classList.toggle("visible", !isDayView);
+    }
+
+    function eventPassesFilters(startDate, endDate) {
+      if (!startDate) return true;
+
+      if (currentView !== "resourceTimeGridDay" && excludedDays.length > 0) {
+        if (excludedDays.includes(startDate.getDay())) return false;
+      }
+
+      if (selectedTimeFrom || selectedTimeTo) {
+        const evStartMins = startDate.getHours() * 60 + startDate.getMinutes();
+        const evEndMins   = endDate ? (endDate.getHours() * 60 + endDate.getMinutes()) : evStartMins;
+
+        if (selectedTimeFrom) {
+          const [fh, fm] = selectedTimeFrom.split(":").map(Number);
+          if (evEndMins <= fh * 60 + fm) return false;
+        }
+        if (selectedTimeTo) {
+          const [th, tm] = selectedTimeTo.split(":").map(Number);
+          if (evStartMins >= th * 60 + tm) return false;
+        }
+      }
+
+      return true;
+    }
+
+    function getFilteredResources() {      
+      return allUsers.filter(u => selectedUsers.includes(u.id));
+    }
+
+    function getVisibleUsersForSidebar() {
+      const q = userSearchText.trim().toLowerCase();
+      if (!q) return allUsers;
+
+      return allUsers.filter(user =>
+        user.title.toLowerCase().includes(q)
+      );
+    }
+
+    function buildCalendar() {
+      if (calendar) {
+        currentDate = calendar.getDate();
+        calendar.destroy();
+      }
+
+      const options = {
+        schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
+        initialView: currentView,
+        initialDate: currentDate,
+        height: "100%",
+        nowIndicator: true,
+        allDaySlot: true,
+        dayMaxEvents: 4,
+        moreLinkClick: "popover",
+        slotMinTime: "00:00:00",
+        slotMaxTime: "24:00:00",
+
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: ""
+        },
+
+        events: function(info) {
+          return $.ajax({
+            type: "POST",
+            url: '/calendar/fetch-availability-new',
+            data: {
+              tutors: selectedUsers,
+              startDate: info.startStr,
+              endDate: info.endStr
+            }
+          }).then(response => {
+            console.log(response.availabilityArr);
+            const events = Array.isArray(response.availabilityArr)
+              ? response.availabilityArr
+              : [];
+
+            /** Reset colors */
+            /** Always use tutor original calendar color */
+            tutorColors = {};
+
+            allUsers.forEach(function(user) {
+              tutorColors[user.id] = user.color;
+            });
+
+            /** If API sends tutorColor then overwrite */
+            events.forEach(event => {
+              if (!event.resourceId) return;
+
+              const tutorColor = event.tutorColor
+                ? event.tutorColor.trim().toLowerCase()
+                : "";
+
+              const isWhiteColor =
+                tutorColor === "#fff" ||
+                tutorColor === "#ffffff" ||
+                tutorColor === "white";
+
+              if (tutorColor && !isWhiteColor) {
+                tutorColors[event.resourceId] = event.tutorColor;
+              } else {
+                tutorColors[event.resourceId] = getColorFromId(event.resourceId);
+              }
+            });
+
+            /** Re-render sidebar */
+            renderUsers();
+
+            return events.filter(ev => {
+              const s = ev.start ? new Date(ev.start) : null;
+              const e = ev.end   ? new Date(ev.end)   : null;
+              return eventPassesFilters(s, e);
+            });
+          });
+        },
+        views: {
+          timeGridWeek: {
+            dayHeaderContent: function(args) {
+              const day = args.date.getDate();
+              const weekday = args.date.toLocaleDateString("en-US", { weekday: "short" });
+              return day + " " + weekday;
+            }
+          },
+          dayGridMonth: {
+            dayMaxEvents: 4
+          }
+        },
+
+        eventMouseEnter: function(info) {
+          tooltip.style.display = "block";
+          const startTime = info.event.start ? info.event.start.toLocaleTimeString() : '';
+          const endTime = info.event.end ? info.event.end.toLocaleTimeString() : '';
+          tooltip.innerHTML = `
+            <strong>${info.event.title}</strong><br/>
+            ${startTime} - ${endTime}
+          `;
+        },
+
+        eventMouseLeave: function() {
+          tooltip.style.display = "none";
+        },
+
+        eventContent: function(arg) {
+          const startTime = arg.event.start
+            ? arg.event.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+            : "";
+
+          const endTime = arg.event.end
+            ? arg.event.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+            : "";
+
+          const extended = arg.event.extendedProps || {};
+          // console.log("Event extended properties:", extended);
+          const isAvailable = extended.isAvailable === true || extended.isAvailable === 'true' || extended.isAvailable === 1 || extended.isAvailable === '1';
+          const isBooked = extended.isBooked === true || extended.isBooked === 'true' || extended.isBooked === 1 || extended.isBooked === '1';
+          const startDate = arg.event.start
+            ? `${arg.event.start.getFullYear()}-${String(arg.event.start.getMonth() + 1).padStart(2, '0')}-${String(arg.event.start.getDate()).padStart(2, '0')}`
+            : '';
+          const tutorId = extended.tutor_id || extended.resourceId || (arg.event.getResources ? (arg.event.getResources()[0]?.id || '') : '');
+          const bookButton = isAvailable && !isBooked && tutorId && startDate && startTime
+            ? `<button type="button" class="event-btn book-event-button" data-start-date="${startDate}" data-start-time="${startTime}" data-tutor-id="${tutorId}">Book an event</button>`
+            : '';
+
+          const currentCalendarView = calendar.view.type;
+          const resourceId =
+            extended.tutor_id ||
+            extended.resourceId ||
+            (arg.event.getResources ? (arg.event.getResources()[0]?.id || '') : '');
+
+          const eventColor =
+            tutorColors[resourceId] ||
+            arg.event.backgroundColor ||
+            "#22c55e";
+
+          return {
+            html: `
+              <div 
+                  class="custom-event"
+                  style="
+                    background:${eventColor};
+                    border-left:4px solid ${eventColor};
+                  "
+              >
+              ${
+                currentCalendarView !== 'resourceTimeGridDay'
+                  ? `
+                    <div class="event-desc">
+                     ${arg.event.extendedProps.tutorName || ''}
+                    </div>
+                  `
+                  : ''
+              }
+              
+                <div class="event-time">${startTime} - ${endTime}</div>
+                <div class="event-title">${arg.event.title}</div>
+                
+                ${bookButton}
+              </div>
+            `
+          };
+        },
+
+        eventDidMount: function(arg) {
+          const button = arg.el.querySelector('.book-event-button');
+          if (!button) return;
+
+          button.addEventListener('click', function(event) {
+            event.stopPropagation();
+            const tutorId = button.dataset.tutorId;
+            const startDate = button.dataset.startDate;
+            const startTime = button.dataset.startTime;
+            if (!tutorId || !startDate || !startTime) return;
+
+            const url = `/calendar/add-new-event?start_date=${encodeURIComponent(startDate)}&start_time=${encodeURIComponent(startTime)}&tutor_id=${encodeURIComponent(tutorId)}`;
+            window.location.href = url;
+          });
+        },
+
+
+        // For Tooltip2
+        eventClick: function(info) {
+          if (calendar.view.type !== "timeGridWeek") return;
+
+          activeEvent = info.event;
+          activeEventEl = info.el;
+
+          const extended = info.event.extendedProps || {};
+
+          const startTime = info.event.start
+            ? info.event.start.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              })
+            : '';
+
+          const endTime = info.event.end
+            ? info.event.end.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              })
+            : '';
+
+          const isAvailable =
+            extended.isAvailable === true ||
+            extended.isAvailable === 'true' ||
+            extended.isAvailable === 1 ||
+            extended.isAvailable === '1';
+
+          const isBooked =
+            extended.isBooked === true ||
+            extended.isBooked === 'true' ||
+            extended.isBooked === 1 ||
+            extended.isBooked === '1';
+
+          const startDate = info.event.start
+            ? `${info.event.start.getFullYear()}-${String(info.event.start.getMonth() + 1).padStart(2, '0')}-${String(info.event.start.getDate()).padStart(2, '0')}`
+            : '';
+
+          const tutorId =
+            extended.tutor_id ||
+            extended.resourceId ||
+            (info.event.getResources
+              ? (info.event.getResources()[0]?.id || '')
+              : '');
+
+          const bookButton =
+            isAvailable && !isBooked && tutorId && startDate && startTime
+              ? `
+                <button
+                  type="button"
+                  class="event-btn book-event-button"
+                  data-start-date="${startDate}"
+                  data-start-time="${startTime}"
+                  data-tutor-id="${tutorId}"
+                >
+                  Book an event
+                </button>
+              `
+              : '';
+
+          tooltip2.innerHTML = `
+            <div class="custom-event-hover">
+
+              ${extended.tutorName
+                ? `<div class="event-desc">${extended.tutorName}</div>`
+                : ''
+              }
+
+              <div class="event-time">${startTime} - ${endTime}</div>
+
+              <div class="event-title">${info.event.title}</div>
+
+              ${bookButton}
+
+            </div>
+          `;
+
+          tooltip2.style.display = "block";
+
+          const tooltipBookBtn = tooltip2.querySelector('.book-event-button');
+          if (tooltipBookBtn) {
+            tooltipBookBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              const tId    = tooltipBookBtn.dataset.tutorId;
+              const sDate  = tooltipBookBtn.dataset.startDate;
+              const sTime  = tooltipBookBtn.dataset.startTime;
+              if (!tId || !sDate || !sTime) return;
+
+              const url = `/calendar/add-new-event?start_date=${encodeURIComponent(sDate)}&start_time=${encodeURIComponent(sTime)}&tutor_id=${encodeURIComponent(tId)}`;
+              window.location.href = url;
+            });
+          }
+
+          // wait for render
+          setTimeout(() => {
+            positionTooltip();
+            bindScrollListeners();
+          }, 0);
+        },
+
+        dayMinWidth: 150,
+        stickyScrollbar: "bottom"
+      };
+
+      function positionTooltip() {
+        if (!activeEventEl || tooltip2.style.display !== "block") return;
+        const rect = activeEventEl.getBoundingClientRect();
+        const tooltipWidth = tooltip2.offsetWidth || 200;
+        let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+        let top = rect.bottom + 8;
+        tooltip2.style.left = `${left}px`;
+        tooltip2.style.top = `${top}px`;
+      }
+
+      function getScrollParents(element) {
+        const parents = [];
+        let parent = element?.parentElement;
+        while (parent) {
+          const style = window.getComputedStyle(parent);
+          if (
+            style.overflowY === "auto" ||
+            style.overflowY === "scroll" ||
+            style.overflowX === "auto" ||
+            style.overflowX === "scroll"
+          ) {
+            parents.push(parent);
+          }
+          parent = parent.parentElement;
+        }
+        return parents;
+      }
+
+      function bindScrollListeners() {
+        // remove old listeners
+        scrollContainers.forEach(el => {
+          el.removeEventListener("scroll", positionTooltip);
+        });
+        scrollContainers = getScrollParents(activeEventEl);
+        // also include FullCalendar scrollers explicitly (important)
+        document.querySelectorAll(".fc-scroller").forEach(el => {
+          if (!scrollContainers.includes(el)) {
+            scrollContainers.push(el);
+          }
+        });
+        scrollContainers.forEach(el => {
+          el.addEventListener("scroll", () => {
+            requestAnimationFrame(positionTooltip);
+          });
+        });
+      }
+      
+
+      if (currentView === "resourceTimeGridDay") {
+        options.resources = getFilteredResources();
+      }
+
+      calendar = new FullCalendar.Calendar(calendarEl, options);
+      calendar.render();
+      viewSelect.value = currentView;
+      syncDaysFilterVisibility();
+    }
+
+    document.addEventListener("click", function (e) {
+      if (tooltip2.style.display !== "block") return;
+
+      if (tooltip2.contains(e.target)) return;
+
+      if (e.target.closest(".fc-event")) return;
+
+      tooltip2.style.display = "none";
+      activeEvent = null;
+      activeEventEl = null;
+    });
+
+    
+    
+
+    viewSelect.addEventListener("change", function() {
+      currentView = this.value;
+      currentDate = new Date();
+
+      calendar.changeView(currentView);
+      syncDaysFilterVisibility();
+    });
+
+    function renderUsers() {
+      syncSelectAllCheckbox();
+      const visibleUsers = getVisibleUsersForSidebar();
+      userList.innerHTML = "";
+
+      if (visibleUsers.length === 0) {
+        userList.innerHTML = `<div class="no-users">No users found</div>`;
+        return;
+      }
+
+      visibleUsers.forEach(user => {
+        const checked = selectedUsers.includes(user.id) ? "checked" : "";
+
+        const row = document.createElement("label");
+        row.className = "user-item";
+        row.innerHTML = `
+          <input type="checkbox" ${checked} data-id="${user.id}">
+          <span class="user-dot" style="background:${tutorColors[user.id] || user.color}"></span>
+          <span>${user.title}</span>
+        `;
+
+        row.querySelector("input").addEventListener("change", function() {
+          const id = this.dataset.id;
+          
+          if (!this.checked && selectedUsers.length === 1) {
+            this.checked = true;
+            return;
+          }
+
+          if (this.checked) {
+            if (!selectedUsers.includes(id)) selectedUsers.push(id);
+          } else {
+            selectedUsers = selectedUsers.filter(x => x !== id);
+          }
+
+          localStorage.setItem("availabilitySelectedTutors", JSON.stringify(selectedUsers));
+
+          calendar.setOption('resources', getFilteredResources());
+          calendar.refetchEvents();
+
+          renderUsers();
+        });
+
+        userList.appendChild(row);
+      });
+    }
+
+    userSearch.addEventListener("input", function() {
+      userSearchText = this.value;
+      renderUsers();
+    });
+
+    selectAllTutors.addEventListener("change", function() {
+
+      if (this.checked) {
+        selectedUsers = allUsers.map(user => user.id);
+      } else {
+
+        // keep at least one selected
+        selectedUsers = allUsers.length > 0
+          ? [allUsers[0].id]
+          : [];
+      }
+
+      localStorage.setItem(
+        "availabilitySelectedTutors",
+        JSON.stringify(selectedUsers)
+      );
+
+      calendar.setOption('resources', getFilteredResources());
+      calendar.refetchEvents();
+
+      renderUsers();
+    });
+
+    initializeDateTimePicker();
+    renderUsers();
+    buildCalendar();
+
+    function initializeDateTimePicker() {
+      $('.time-range-picker').daterangepicker({
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker24Hour: false,
+        locale: {
+          format: 'hh:mm A'
+        }
+      });
+
+      $('.time-range-picker').on('show.daterangepicker', function(ev, picker) {
+        picker.container.addClass('TimeRangePicker');
+      });
+
+      $('.time-range-picker').on('apply.daterangepicker', function(ev, picker) {
+        selectedTimeFrom = picker.startDate.format('HH:mm');
+        selectedTimeTo   = picker.endDate.format('HH:mm');
+        if (calendar) calendar.refetchEvents();
+      });
+
+      $('.time-range-picker').on('cancel.daterangepicker', function() {
+        selectedTimeFrom = "";
+        selectedTimeTo   = "";
+        $(this).val('');
+        if (calendar) calendar.refetchEvents();
+      });
+    }
+   
+    
+
+    document.addEventListener("mousemove", function(e) {
+      if (tooltip.style.display === "block") {
+        tooltip.style.left = (e.clientX + 12) + "px";
+        tooltip.style.top = (e.clientY + 12) + "px";
+      }
+    });
+</script>

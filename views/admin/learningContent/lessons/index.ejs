@@ -1,0 +1,90 @@
+<div class="right_col" role="main">
+  <!-- lesson listing page content starts -->
+  <div class="back-page">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="/learning-content">Learning Content List</a>
+      </li>
+      <li class="breadcrumb-item active"><%=learningContent.title%></li>
+    </ol>
+  </div>
+  <div class="card-block">
+    <% if(loggedUserRole==1 || loggedUserRole==4){ %>
+    <div class="add_lesson_form focus">
+      <form
+        action="/learning-content/<%=learningContent.slug%>/lessons/store"
+        method="post"
+        id="lessonForm"
+      >
+        <input
+          type="hidden"
+          name="contentSlug"
+          id="content-slug"
+          value="<%=learningContent.slug%>"
+        />
+        <ul class="filter-row">
+          <li class="filter-col">
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              id="title"
+              placeholder="Enter Lesson Name"
+            />
+          </li>
+          <li class="filter-col w-auto flex-shrink-0">
+            <button
+              type="submit"
+              class="btn theme-btn addLesson"
+              id="lessonCrudBtn"
+            >
+              Save Lesson
+            </button>
+          </li>
+        </ul>
+      </form>
+    </div>
+    <% } %>
+
+    <div class="lesson_search">
+      <div class="row">
+        <div class="col-sm-12 col-md-4 align-self-center text-center text-md-left">
+          <h2 class="title-text mb-0">
+            Lessons List
+            <span class="total-count">Total Lessons: <%=totalLessons%> </span>
+          </h2>
+        </div>
+        <div class="col-sm-12 col-md-8 align-self-center">
+          <div class="course-pagination">
+            <div class="input-group my-3 m-md-0 input-search">
+              <input
+                type="search"
+                name="search"
+                id="searchString"
+                class="form-control filter"
+                placeholder="Search..."
+                autocomplete="off"
+              />
+              <span class="input-group-btn">
+                <button class="btn" type="button">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lessons_list">
+      <div class="row">
+        <div class="col-sm-12 p-0" id="myContent">
+          <div class="course-list sortable clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- lesson listing page content end -->
+</div>
+
+<%- include('./index_script'); %>

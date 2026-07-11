@@ -1,0 +1,45 @@
+<!-- <label for="category" class="form-label">Category <span class="text-muted small">(Optional)</span></label>
+<div class="category-dropdown position-relative" style="width: 100%;">
+    <input type="hidden" id="category" name="category">
+    <div class="selected d-flex justify-content-between align-items-center category-selected form-control"
+    style="cursor:pointer;">
+    <span>Select Category</span>
+        <i class="fa fa-chevron-down"></i>
+    </div>
+
+    <div class="drop-options border" style="display: none; position: absolute; background: #fff; width: 100%; z-index: 999;">
+        <ul id="category-list" class="list-unstyled mb-0">
+            <li class="add-category-trigger p-2" style="cursor: pointer;">+ Add Category</li>
+            <li class="add-category-box p-2 border-bottom" style="display: none;">
+                <div class="new-category-input-wrap">
+                    <input type="text" class="form-control" id="new-category-name" placeholder="Enter category name">
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-success" onclick="addNewCategory()">Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" id="cancel-add-category">Cancel</button>
+                    </div>
+                </div>
+            </li>
+
+            
+            <% chargeCategories.forEach(cat=> { %>
+            <li class="category-list-item p-2" data-id="<%= cat._id %>" style="cursor: pointer;">
+                <%= cat.name %>
+            </li>
+            <% }); %>
+        </ul>
+    </div>
+</div> -->
+
+
+<label for="category" class="form-label">
+  Category <span class="text-muted small">(Optional)</span>
+</label>
+<select id="category-select" name="category" class="form-control" style="width: 100%;">
+  <option></option>
+  <% chargeCategories.forEach(cat => { %>
+    <!-- <option value="<%= cat._id %>"> -->
+    <option value="<%= cat.type %>:<%= cat._id %>" <%= transaction?.category?.refId?.toString() === cat._id.toString() && transaction.category.kind === 'charge' ? 'selected' : '' %>>
+        <%= cat.name %>
+    </option>
+  <% }) %>
+</select>

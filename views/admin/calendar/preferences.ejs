@@ -1,0 +1,339 @@
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+        <a href="/calendar" class="back-link back-linkwicon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+          <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#cd4236" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg> Back to Calendar</a>
+        <h2 class="title-text mt-3 mb-4">Categories & Locations</h2>
+        <div class="bussniess_setting">
+            <div class="row row-gap-30">
+                <div class="col-12">
+                    <div class="card setting_tab">
+                        <div class="card-body">
+                          <ul class="nav nav-pills" id="categorieslocations-tab" role="tablist">
+                            <li class="nav-item">
+                              <a class="nav-link calender-preferences active" id="calendar-categories-tab" data-toggle="pill" href="#calendar-categories" role="tab" aria-controls="calendar-cate-categories" aria-selected="false">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link calender-preferences" id="calendar-locations-tab" data-toggle="pill" href="#calendar-locations" role="tab" aria-controls="calendar-locations" aria-selected="false">Locations</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                </div>
+                <div class="col-12">
+                    <div class="tab-content" id="categorieslocations-tabContent">
+                        <div class="tab-pane fade show active" id="calendar-categories" role="tabpanel" aria-labelledby="calendar-categories-tab">
+                            <div class="row row-gap-30 mx-0">
+                              <div class="col-12 px-0">
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2 class="title-text" style="overflow: inherit;">All Categories</h2>
+                                        <a href="javascript:void(0)" class="theme-btn add-category" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Add Category">Add Category</a>
+                                    </div>
+                                    <div class="x_content">
+                                        <div class="card-box table-responsive allselect-table nowrap-table">
+                                            <table id="categoriesTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                                                width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Color</th>
+                                                        <th>Reminders</th>
+                                                        <th>Events</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% for(let category of categories){ %> 
+                                                        <tr>
+                                                            <td><%=category.name%><br><span class="stu-unrecorded" data-toggle="tooltip" data-placement="right" title="This is a required category for the calendar">System</span></td>
+                                                            <td><span class="color-block background-<%=category.color%>"><%=category.color%></span></td>
+                                                            <td>
+                                                                <% if(category.email_reminder != '') { %>
+                                                                    <p>
+                                                                        <img src="/images/email2.svg"> <%=category.email_reminder %> hours before
+                                                                    </p>
+                                                                <% } if(category.sms_reminder != '') { %>
+                                                                    <p>
+                                                                        <img class="loc-icons" src="/images/comment.svg"> <%=category.sms_reminder %> hours before
+                                                                    </p>
+                                                                <% } %>
+                                                            </td>
+                                                            <td><%=category.eventCount%></td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <a href="javascript:void(0);" class="ml-2 edit-category" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit" data-id="<%=category._id%>"> <img src="/images/edit.svg" alt="icon">
+                                                                    </a>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% } %> 
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="calendar-locations" role="tabpanel" aria-labelledby="calendar-locations-tab">
+                            <div class="row row-gap-30 mx-0">
+                              <div class="col-12 px-0">
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2 class="title-text" style="overflow: inherit;">All Locations</h2>
+                                        <a href="javascript:void(0)" class="theme-btn add-location" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Add Category">Add Location</a>                                        
+                                    </div>
+                                    <div class="x_content">
+                                        <div class="card-box table-responsive allselect-table nowrap-table">
+                                            <table id="locationTable" class="table table-striped table-bordered dt-responsive nowrap no-footer dtr-inline dataTable" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Address</th>
+                                                        <th>Color</th>
+                                                        <th>Icon</th>
+                                                        <th>Events</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% for(let location of locations){ %> 
+                                                        <tr>
+                                                            <td><%=location.name%><br><span class="stu-unrecorded" data-toggle="tooltip" data-placement="right" title="This is a required category for the calendar">System</span></td>
+                                                            <% 
+                                                            let address = location.specific_address_details;
+                                                            if(location.location_type == 'student_address') { 
+                                                                address = "Student's Address";
+                                                            }else if(location.location_type == 'virtual_meeting') { 
+                                                                address = 'Virtual Meeting';
+                                                            } 
+                                                            %>
+                                                            <td><%=address%></td>
+                                                            <td><span class="color-block background-<%=location.color%>"><%=location.color%></span></td>
+                                                            <td><img class="loc-icons" src="<%=location.icons%>"></td>
+                                                            <td><%=location.eventCount%></td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <a href="javascript:void(0);" class="ml-2 edit-location" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit" data-id="<%=location._id%>"> <img src="/images/edit.svg" alt="icon">
+                                                                    </a>
+                                                                    <a href="javascript:void(0);" class="ml-2 delete-category" onclick="confirmBeforeDeletion('/location/destroy/<%=location._id%>')"><img src="/images/trash.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete">
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./models/calendar_category'); %>
+
+<%- include('./models/calendar_location'); %>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $(".drop-down .selected").on("click", function() {
+            $(this).next(".drop-options").toggle();
+        });
+
+        $(".drop-down .drop-options ul li a").on("click", function() {
+            let html = $(this).html();
+            let text = $(this).text();
+            let imageSrc = $(this).find('.loc-icons').attr('src');
+            if(imageSrc !='' &&  imageSrc != undefined){
+                $(this).parents(".drop-down").find('.location-icons').val(imageSrc)
+            }
+
+            if(text !='' &&  text != undefined){
+                $(this).parents(".drop-down").find('.color').val(text.toLowerCase())
+            }
+
+            $(this).parents(".drop-options").prev(".selected").html(html);
+            $(this).parents(".drop-options").hide();
+        }); 
+
+        $(document).bind('click', function(e) {
+            var $clicked = $(e.target);
+            if (! $clicked.parents().hasClass("drop-down"))
+            $(".drop-down .drop-options").hide();
+        });
+
+        // Select Value Textarea hide/show
+        $('#select_location_type').change(function() {
+            if ($(this).val() == 'specify_address') {
+                $('#specify_address_area').show();
+            } else {
+                $('#specify_address_area').hide();
+            }
+        });
+
+        $('.add-category').click(function(){
+            $('.category-id').val('');
+            $(".categories-save").text("Save");
+            $('.error').remove();
+            $(document).find("span.text-danger").remove();
+            $("#addCalendarCategory").modal('show');
+            $("#categories-form")[0].reset(); 
+        });
+        
+        $(document).on('click', '.edit-category', function() {
+            $("#categories-form")[0].reset(); 
+            let categoryId = $(this).data('id');
+            $('.category-id').val(categoryId);
+            $(".categories-save").text("Update");
+            $.ajax({
+                method:'POST',
+                url:'/categories/edit',
+                data:{
+                    category_id:categoryId,
+                },
+                success:function(response){
+                    $('.name').val(response.name);
+                    $('.email-reminder').val(response.email_reminder);
+                    $('.sms-reminder').val(response.sms_reminder);
+                    $('.categories-color').val(response.color);
+                    $('.color-selected').html(`<span class="color-block background-${response.color}">${response.color}</span>`);
+                    $("#addCalendarCategory").modal('show');
+                },
+                error: function (response) {
+                },
+            })
+        });
+
+        $(document).on('submit', '#categories-form', function(e) {
+            e.preventDefault();
+            setCurrentTab();
+            let url = $(this).attr('action');
+            let name = $(this).find('.name').val();
+            let form = $(this)[0];
+            let formData = new FormData(form);
+            $('.error').remove();
+            $(document).find("span.text-danger").remove();
+            $.ajax({
+                method:'POST',
+                url:url,
+                data:formData,
+                contentType: false,  // Important for FormData
+                processData: false,  // Important for FormData
+                success:function(response){
+                    location.reload();
+                },
+                error: function (response) {
+                    let errorMessages = '';
+                    $.each(response.responseJSON.errors, function (field_name, error) {
+                    $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                    })
+                },
+            })
+        });
+
+        $('.add-location').click(function(){
+            $("#location-form")[0].reset(); 
+            $(document).find("span.text-danger").remove();
+            $('#specify_address_area').hide();
+            $('#addCalendarLocation').modal('show');
+        });
+
+        $(document).on('click', '.edit-location', function() {
+            $("#location-form")[0].reset(); 
+            let locationId = $(this).data('id');
+            $('.location-id').val(locationId);
+            $('.location-save').text("Update");
+            $.ajax({
+                method:'POST',
+                url:'/location/edit',
+                data:{
+                    location_id:locationId,
+                },
+                success:function(response){
+                    $('.name').val(response.name);
+                    $("#specify_address_area").hide();
+                    if(response.location_type == 'specify_address'){
+                        $("#specify_address_area").show();
+                        $("#specific_address_details").val(response.specific_address_details);
+                    }
+                    $('#select_location_type').val(response.location_type);
+                    $('.location-icons').val(response.icons);
+                    $('.icons-selected').html(`<img class="loc-icons" src="${response.icons}">`);
+                    $('.color-selected').html(`<span class="color-block background-${response.color}">${response.color}</span>`);
+                    $('.location-color').val(response.color);
+                    $("#addCalendarLocation").modal('show');
+                },
+                error: function (response) {
+                },
+            })
+        });
+
+        $(document).on('submit', '#location-form', function(e) {
+            e.preventDefault();
+            setCurrentTab();
+            let url = $(this).attr('action');
+            let name = $(this).find('.name').val();
+            let form = $(this)[0];
+            let formData = new FormData(form);
+            $('.error').remove();
+            $(document).find("span.text-danger").remove();
+            $.ajax({
+                method:'POST',
+                url:url,
+                data:formData,
+                contentType: false,  // Important for FormData
+                processData: false,  // Important for FormData
+                success:function(response){
+                    location.reload();
+                },
+                error: function (response) {
+                    let errorMessages = '';
+                    $.each(response.responseJSON.errors, function (field_name, error) {
+                    $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                    })
+                },
+            })
+        });
+    });
+
+    function categoriesDataTable(){
+        let assessmentTable = $('#categoriesTable').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": [2, 3, 4] }
+            ]
+        })
+    }
+    function locationDataTable(){
+        let assessmentTable = $('#locationTable').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": [1, 3, 4, 5] }
+            ]
+        })
+    }
+
+    function setCurrentTab(){
+        let currentTab = $('.calender-preferences.active').attr('id');
+        sessionStorage.setItem('preferencesTab', currentTab);
+    }
+
+    categoriesDataTable();
+    locationDataTable();
+
+    (function(){
+        const storedUser = sessionStorage.getItem('preferencesTab');
+        let currentTab = storedUser;
+        if(currentTab !='' && currentTab != null){
+            $(`#${currentTab}`).trigger('click');
+        }
+    })();
+</script>

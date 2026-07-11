@@ -1,0 +1,179 @@
+<div class="tab-pane fade show active" id="staffAccounts" role="tabpanel" aria-labelledby="pills-general-tab">
+    <div class="card mb-3 position-relative">
+        <div class="card-body date_dropdown position-relative">
+            <div class="date_dropdown_block">
+                <h2 class="title-text">
+                    You're owed <strong>0</strong> as of
+                    <div class="contents" id="display-date"></div>
+                    <div class="position-relative">
+                        <span class="owed_date_family" style="cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
+                                <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1"
+                                    stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <input type="text" id="hidden-date-input" class="hidden_input_area" />
+                    </div>
+                </h2>
+            </div>
+            <p class="mb-0 prepaid_balance_summary">Prepaid Balance: <strong>0</strong></p>
+        </div>
+        <%- include('../partials/balance_date_prompt') %>
+    </div>
+    <div class="x_panel">
+        <div class="x_title">
+            <div class="left-btns">
+                <ul>
+                    <li>
+                        <a href="/staff-invoices/transaction-details" class="btn theme-btn" data-toggle="tooltip"
+                            rel="tooltip" data-placement="top" title="Add Transaction">+ Add Transaction</a>
+                    </li>
+                    <% if(loggedUserInfo.role == 1) { %>
+                    <li>
+                        <a href="/families-invoices/categories" class="bus-outline-btn"><img
+                                src="/images/categories-icon.svg" alt="Categories" class="mr-2">Charge Categories</a>
+                    </li>
+                    <% } %>
+                    <li class="both-btnli">
+                        <div class="dropdown" id="auto-invoicing">
+                            <button class="bus-outline-btn dropdown-toggle action-btn" type="button" data-toggle="dropdown"
+                                aria-expanded="false" disabled><img src="/images/refresh-icon.svg" alt="Refresh"
+                                    class="mr-2">Auto Invoicing</button>
+                            <div class="dropdown-menu">
+                                <button type="button" class="dropdown-item" data-toggle="modal" data-target="#automaticInvoicing" id="enable-auto-invoice" data-action="enable-auto-invoice">Enable Auto-Invoicing</button>
+                                <button type="button" class="dropdown-item" data-toggle="modal" data-target="#disableAutoInvoicing" data-action="disable-auto-invoice">Disable Auto-Invoicing</button>
+                                <button type="button" class="dropdown-item resend-summary">Resend Summary</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <ul class="right-btns">
+                <li class="both-btnli">
+                    <div class="dropdown select_all_dropdown" id="colvis-dropdown">
+                        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <img src="/images/columns-icon.svg" alt="Email" class="mr-2">Columns
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="select-all custom-colvis column-checkbox show-all" data-column="all" /><span></span>Show All</label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="show-default custom-colvis column-checkbox" data-column="default" /><span></span>Show Default</label>
+                            </div>
+                            <hr style="margin:0;" />
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="balance" data-column-index="3" /><span></span>Balance</label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="auto_pay" data-column-index="4" /><span></span>Auto-Pay</label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="auto_invoice" data-column-index="5" /><span></span>Auto-Invoice</label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="auto_invoice_setting" data-column-index="6" /><span></span>Auto-Invoice Settings</label></div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="last_invoice_date" data-column-index="7" /><span></span>Last Invoice Date</label>
+                            </div>
+                            <div class="dropdown-item">
+                                <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="last_payment_date" data-column-index="8" /><span></span>Last Payment Date</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="both-btnli">
+                    <div class="dropdown short_dropdown" id="sort-dropdown">
+                        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/short-icon.svg" alt="Sort" class="mr-2">Sort</button>
+                        <div class="dropdown-menu">
+                        <!-- <button type="button" class="dropdown-item shortbtn clear-sort sort-trigger">Clear Sort</button> -->
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="auto_pay" data-column="4" data-order="1">Auto Pay</button>
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="auto_invoice" data-column="5" data-order="1">Auto-Invoice</button>
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="balance" data-column="3" data-order="1">Balance</button>
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="staff" data-column="1" data-order="1">Staff</button>
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="last_invoice_date" data-column="7" data-order="1">Last Invoice Date</button>
+                        <button type="button" class="dropdown-item sort-trigger" data-column-name="last_payment_date" data-column="8" data-order="1">Last Payment Date</button>
+                        </div>
+                    </div>
+                </li>
+                <li class="search_box searchDropdownCount both-btnli search_btn">
+                    <div class="dropdown">
+                        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <img src="/images/search-icon.svg" alt="Search" class="mr-2">
+                            Search
+                            <span class="sounts" style="display: none;"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
+                            <form id="familyAccountSearchForm">
+                                <div class="position-relative form-group">
+                                    <input type="search" name="staff_search" class="form-control search-input" placeholder="Search by staff..." />
+                                    <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
+                                </div>
+                                <div class="form-group form-check mt-20 mb-20">
+                                    <input class="form-check-input search-input" type="checkbox" value="1" id="inactive_staffs" name="inactive_staffs">
+                                    <label class="form-check-label" for="inactive_staffs">Show Inactive Staffs</label>
+                                </div>
+                                <div class="d-flex mt-20">
+                                    <button type="button" class="btn cancel-btn theme-btn mr-3 w-100">Clear</button>
+                                    <button type="submit" class="btn theme-btn w-100">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="card-box allselect-table">
+                <table id="staffAccountTable" class="table family_Account_table table-striped table-bordered without-crop-table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="min-w-180 _id" style="text-align: center"><input type="checkbox" id="family_select_all" /></th>
+                            <th class="min-w-180 staff">Staff</th>
+                            <th class="min-w-180 staff_email">Staff Email</th>
+                            <th class="balance">Balance</th>
+                            <th class="auto-pay">Auto-Pay</th>
+                            <th class="auto-invoice">Auto-Invoice</th>
+                            <th class="min-w-190 auto-invoice-settings">Auto-Invoice Settings</th>
+                            <th class="last-invoice-date">Last Invoice Date</th>
+                            <th class="last-payment-date">Last Payment Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead> 
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/auto-invoicing/_modals',{ invoiceTypes }); %>
+
+<!-- Summary Resend Popup -->
+<div class="modal fade invoices-modal" data-backdrop="static" id="summeryResend" tabindex="-1" role="dialog" aria-labelledby="summeryResendLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered normal_form_block" style="--max-width: 440px" role="document">
+        <div class="modal-content form-wizard border-0">
+            <div class="modal-header pt-0 px-0">
+                <h3 class="modal-title title_style m-0" id="summeryResendLabel">Summary Resend</h3>
+                <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
+            </div>
+            <div class="modal-body form_normal settings_content px-0">
+                <h4 class="body-title m-0">The auto-invoicing summary has been sent via Email.</h4>
+            </div>
+            <div class="modal-footer d-flex align-items-center flex-sm-row flex-column px-0 pb-0 border-0 pt-2">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn theme-btn m-0 w-100">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/auto-invoicing/_script'); %>
+
+<%- include('./common_script',{ businessSettingValue }); %>
+
+<%- include('../partials/common_script'); %>

@@ -1,0 +1,546 @@
+<div class="right_col" role="main">
+    <div class="card-block mb-30">
+        <h3 class="title-text">Filter Events</h3>
+        <ul class="filter-row canceled_filter_row">
+            <li class="filter-col">
+                <select class="form-control select2 filter-option"  id="tutor" tabindex="-1" single data-placeholder="Select Tutor">
+                    <option value="">Select A Tutor</option>
+                    <% for(tutor of tutors) { %>
+                        <option value="<%=tutor.id%>">
+                        <%=tutor.first_name+' '+tutor.last_name %>
+                        </option>
+                    <% } %>            
+                </select>
+            </li>
+            <li class="filter-col size-12">
+                <input type="text" class="form-control filter-option" name="date_range" id="dateRangeBlock">
+            </li>
+            <li class="filter-col">
+              <button class="btn theme-btn filter">Filter</button>
+              <button class="btn theme-btn reset" disabled>Reset</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="x_panel">
+                <div class="x_title mb-2 d-flex justify-content-between align-items-center">
+                  <h2 class="title-text">Cancelled Events</h2>
+                  <div class="button-group">
+                    <button type="button" class="btn theme-btn approve-selected-events mr-2" disabled>Approve Selected</button>
+                    <button type="button" class="btn theme-btn reject-selected-events" disabled>Reject Selected</button>
+                  </div>
+                </div>
+                <div class="x_content">
+                    <div class="card-box table-responsive allselect-table">
+                      <table id="cancelEventTable" class="table table-striped table-bordered dt-responsive nowrap"
+                        cellspacing="0" width="100%">
+                        <thead>
+                          <tr>
+                            <th><input type="checkbox" id="selectAllCancelEvents"></th>
+                            <th>Tutor</th>
+                            <th>Reason</th>
+                            <th>Event Date/Time</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let requestedEventId = '<%=eventId%>';
+    $(document).ready(function() {
+        initializeSelect2();
+        initializeDateRangePicker();
+        initializeEventHandlers();
+        cancelEventDataTable();  // Ensure this is called only once on page load
+    });
+
+    function initializeSelect2() {
+        $('.select2').each(function() {
+            // Determine if the select element has a placeholder attribute
+            const placeholderText = $(this).data('placeholder') || "Select an option";
+            
+            // Initialize select2 with the placeholder and allowClear options
+            $(this).select2({
+                placeholder: placeholderText,
+                allowClear: true
+            });
+        });
+    }
+    
+    function initializeDateRangePicker() {
+        $('#dateRangeBlock').daterangepicker({
+            opens: 'left',
+            format: 'dd-mm-yyyy',
+        });
+    }
+
+    function initializeEventHandlers() {
+        $(document).on('click', '.cancel-lesson-request', function() {
+            let status = $(this).data('value');
+            let eventId = $(this).data('id');
+            cancelEventConfirmation(eventId, status);
+        });
+
+        $('.filter').click(function() {
+            let tutor = $("#tutor").val();
+            let dateRangeBlock = $("#dateRangeBlock").val();
+            cancelEventDataTable(tutor, dateRangeBlock);
+        });
+
+        $(".reset").click(function () {
+            $("#tutor").val(null).trigger("change");
+            $('#dateRangeBlock').data('daterangepicker').setStartDate(moment().startOf('month'));
+            $('#dateRangeBlock').data('daterangepicker').setEndDate(moment().endOf('month'));
+            $(this).prop('disabled', true);
+            cancelEventDataTable();
+        });
+
+        $('.filter-option').change(function() {
+            $('.reset').prop('disabled', false);
+        });
+    }
+
+    function cancelEventDataTable(tutor = '', dateRangeBlock = '') {
+        $("#cancelEventTable").dataTable().fnDestroy();
+        $('#cancelEventTable').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "language": {
+                "searchPlaceholder": "Search",
+                "processing": '<div><div></div><div></div><div></div><div></div></div>'
+            },
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                "url": "/calendar/cancel-event-listing",
+                "type": "POST",
+                "data": {
+                    tutor: tutor,
+                    dateRangeBlock: dateRangeBlock,
+                    requestedEventId: requestedEventId,
+                }
+            },
+            "drawCallback": function (settings) {
+
+                $('[data-toggle="tooltip"]').tooltip('dispose');
+                $('[data-toggle="tooltip"]').tooltip();
+
+                // Check if any row checkbox exists
+                const hasRowCheckbox =
+                    $('.cancel-event-checkbox').length > 0;
+
+                if (hasRowCheckbox === true) {
+                    $('#cancelEventTable thead tr th:first-child').show();
+                    $('#cancelEventTable tbody tr td:first-child').show();
+                } else {
+                    $('#cancelEventTable thead tr th:first-child').hide();
+                    $('#cancelEventTable tbody tr td:first-child').hide();
+                }
+                // Show/Hide select all checkbox
+                $('#selectAllCancelEvents')
+                    .closest('th')
+                    .toggle(hasRowCheckbox);
+
+                // Reset select all state
+                $('#selectAllCancelEvents').prop('checked', false);
+ 
+                updateCancelActionButtons();
+            },
+            "columns": [
+                {
+                    "data": "_id",
+                    "orderable": false,
+                    "render": function (data, type, row) {
+                        return row.status === 'Requested_To_Cancel'
+                            ? `<input type="checkbox" class="cancel-event-checkbox" data-id="${data}">`
+                            : '';
+                    }
+                },
+                {
+                    "data": "tutor_id",
+                    "render": function (data, type, row) {
+                        if(row.substitute_tutor_id !== '' && row.substitute_tutor_id !== null){
+                            return `${row.substitute_tutor_id.first_name + ' ' + row.substitute_tutor_id.last_name}`;
+                        }
+                            return `${data.first_name + ' ' + data.last_name}`;
+                    }
+                },
+                {
+                    "data": "comment",
+                    "render": function (data, type, row) {
+                        return data + (row.cancel_requested_whole_day ? '<br><span class="badge badge-info">Whole day request</span>' : '');
+                    }
+                },
+                {
+                    "data": "start_time",
+                    "render": function (data, type, row) {
+                        let startTime = moment(row.start_time).format('MMMM Do YYYY, h:mm:ss a');
+                        let endTime = moment(row.end_time).format('MMMM Do YYYY, h:mm:ss a');
+                        return `<span class="fw-600">Start Date :</span> ${startTime} <br> <span class="fw-600">End Date :</span> ${endTime}`;
+                    }
+                },
+                {
+                    "data": "status",
+                    "render": function (data, type, row) {
+                        let html = '';
+                        if (data === 'Requested_To_Cancel') {
+                            html = `<div class="canecl_event_rbtn">
+                                        <a href="javascript:void(0)" class="cancel-lesson-request" data-id="${row._id}" data-value="Cancelled" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Approve">
+                                            <img src="/images/check-icon.svg">
+                                        </a>
+                                        <a href="javascript:void(0)" class="cancel-lesson-request" data-value="Rejected" data-id="${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Reject">
+                                            <img src="/images/close-icon.svg">
+                                        </a>
+                                    </div>`;
+                        } else if (data === 'Cancelled') {
+                            html = `<div class="canecl_event_rbtn"><p class="event_approve">Approved</p></div>`;
+                        } else if (data === 'Rejected') {
+                            html = `<div class="canecl_event_rbtn"><p class="event_reject">Rejected</p></div>`;
+                        }
+                        return html;
+                    }
+                }
+            ],
+            "columnDefs": [{
+                'targets': [0, 1, 2, 3, 4], /* column index */
+                'orderable': false, /* true or false */
+            }]
+        });
+        // $('#selectAllCancelEvents').prop('checked', false);
+        // updateCancelActionButtons();
+        //ajax.reload(function() {
+            // Reinitialize tooltips after reload
+            // $('[data-toggle="tooltip"]').tooltip('dispose');
+            // $('[data-toggle="tooltip"]').tooltip();
+        // });
+    }
+
+    function getSelectedCancelEventIds() {
+        return $('.cancel-event-checkbox:checked').map(function () {
+            return $(this).data('id');
+        }).get();
+    }
+
+    function updateCancelActionButtons() {
+        const selectedCount = getSelectedCancelEventIds().length;
+        $('.approve-selected-events, .reject-selected-events').prop('disabled', selectedCount === 0);
+    }
+
+    $(document).on('change', '.cancel-event-checkbox', function () {
+        updateCancelActionButtons();
+    });
+
+    $(document).on('change', '#selectAllCancelEvents', function () {
+        $('.cancel-event-checkbox').prop('checked', $(this).is(':checked'));
+        updateCancelActionButtons();
+    });
+
+    $('.approve-selected-events').click(function () {
+        batchCancelEventAction('Cancelled');
+    });
+
+    $('.reject-selected-events').click(function () {
+        batchCancelEventAction('Rejected');
+    });
+
+    function getNotificationOptionsHtml() {
+
+        return `
+            <div class="notify-options text-center mt-3">
+
+                <p class="mb-2 fw-600">Notify parent:</p>
+
+                <div class="form-group days_group mb-0">
+                    <ul class="settinglist mt-0 justify-content-center">
+
+                        <li>
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox"
+                                    id="notifyEmail"
+                                    class="form-check-input days-checkbox"
+                                    checked
+                                >
+
+                                <label 
+                                    class="form-check-label fw-400"
+                                    for="notifyEmail"
+                                >
+                                    By Email
+                                </label>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox"
+                                    id="notifySMS"
+                                    class="form-check-input days-checkbox"
+                                    checked
+                                >
+
+                                <label 
+                                    class="form-check-label fw-400"
+                                    for="notifySMS"
+                                >
+                                    By SMS
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        `;
+    }
+
+        function initializeNotificationCheckboxLogic() {
+
+        }
+
+        function getNotificationSelections() {
+
+            return {
+                sendEmail: $('#notifyEmail').is(':checked') ? 1 : 0,
+                sendSMS: $('#notifySMS').is(':checked') ? 1 : 0,
+            };
+        }
+
+    function batchCancelEventAction(status) {
+
+            const selectedIds = getSelectedCancelEventIds();
+
+            if (selectedIds.length === 0) {
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Select events',
+                    text: 'Please select at least one event to continue.',
+                });
+
+                return;
+            }
+
+            let textStatus =
+                status === 'Rejected' ? 'Reject' : 'Approve';
+
+            let notificationHtml = '';
+
+            // Show notification options only on approve
+            if (status === 'Cancelled') {
+                notificationHtml = getNotificationOptionsHtml();
+            }
+
+            Swal.fire({
+
+                html: `
+            <p>
+                Are you sure want to ${textStatus}
+                selected request(s)?
+                <br>
+                You won't be able to revert this!
+            </p>
+
+            ${notificationHtml}
+        `,
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonColor: '#3085d6',
+
+                cancelButtonColor: '#d33',
+
+                confirmButtonText: textStatus,
+
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $('.loader').show();
+
+                    const notificationData =
+                        status === 'Cancelled'
+                            ? getNotificationSelections()
+                            : {
+                                sendEmail: 0,
+                                sendSMS: 0
+                            };
+
+                    $.ajax({
+
+                        type: 'POST',
+
+                        url: '/calendar/cancel-this-event',
+
+                        traditional: true,
+
+                        data: {
+                            eventIds: selectedIds,
+                            status: status,
+                            sendEmail: notificationData.sendEmail,
+                            sendSMS: notificationData.sendSMS
+                        },
+
+                        success: function (response) {
+
+                            Swal.fire({
+                                title: 'Okay!',
+                                text: response.message,
+                                icon: 'success',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+
+                            }).then((result) => {
+
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+                            });
+                        },
+
+                        error: function (response) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops..,',
+                                text: response.message || response.responseJSON?.message || 'Something went wrong!',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                            }).then((result) => {
+                                
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+                                
+                            });
+                        },
+
+                        complete: function () {
+                            $('.loader').hide();
+                        }
+                    });
+                }
+            });
+    }
+
+    function cancelEventConfirmation(eventId, status) {
+
+            let textStatus =
+                status == 'Rejected' ? 'Reject' : 'Approve';
+
+            let notificationHtml = '';
+
+            // Show notification options only on approve
+            if (status === 'Cancelled') {
+                notificationHtml = getNotificationOptionsHtml();
+            }
+
+            Swal.fire({
+
+                html: `
+            <p>
+                Are you sure want to ${textStatus}
+                this request?
+                <br>
+                You won't be able to revert this!
+            </p>
+
+            ${notificationHtml}
+        `,
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonColor: "#3085d6",
+
+                cancelButtonColor: "#d33",
+
+                confirmButtonText: textStatus,
+
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $('.loader').show();
+
+                    const notificationData =
+                        status === 'Cancelled'
+                            ? getNotificationSelections()
+                            : {
+                                sendEmail: 0,
+                                sendSMS: 0
+                            };
+
+                    $.ajax({
+
+                        type: "POST",
+
+                        url: '/calendar/cancel-this-event',
+
+                        data: {
+                            eventId: eventId,
+                            status: status,
+                            sendEmail: notificationData.sendEmail,
+                            sendSMS: notificationData.sendSMS
+                        },
+
+                        success: function (response) {
+
+                            Swal.fire({
+                                title: "Okay!",
+                                text: response.message,
+                                icon: "success",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+
+                            }).then((result) => {
+
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+                            });
+                        },
+
+                        error: function (response) {
+
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: response.responseJSON?.message || response.message || 'Something went wrong!',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                            }).then((result) => {
+
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+
+                            });
+                        },
+
+                        complete: function () {
+                            $('.loader').hide();
+                        }
+                    });
+                }
+            });
+    }
+
+</script>

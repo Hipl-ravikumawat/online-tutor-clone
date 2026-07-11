@@ -1,0 +1,367 @@
+<style>
+  .daterangepicker{
+    z-index: 9999;
+  }
+</style>
+<div class="tab-pane fade" id="invoices" role="tabpanel" aria-labelledby="pills-invoices-tab">
+  <div class="x_panel">
+    <div class="x_title">
+      <div class="left-btns">
+        <ul>
+          <li>
+            <a href="/families-invoices/add-invoice-details" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Add New Invoice">+ New Invoice</a>
+          </li>
+          <li>
+            <button class="bus-outline-btn mb-0 mr-0 action-btn email-invoice-btn"  disabled><img src="/images/email-icon.svg" alt="Email">Email</button>
+          </li>
+          <li class="both-btnli">
+            <div class="dropdown">
+              <button class="bus-outline-btn dropdown-toggle action-btn" type="button" data-toggle="dropdown" aria-expanded="false" disabled><img src="/images/categories-icon.svg" alt="Options">Options</button>
+              <div class="dropdown-menu">
+                <button type="button" class="dropdown-item download-selected">Download Selected Invoices</button>
+                <button type="button" class="dropdown-item download-invoice-details">Download Invoice Details</button>
+                <button type="button" class="dropdown-item archive-action" data-action="archive">Archive</button>
+                <button type="button" class="dropdown-item archive-action" data-action="unarchive">Unarchive</button>
+                <button type="button" class="dropdown-item delete-invoice">Delete</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <ul class="right-btns">
+        <li class="both-btnli">
+          <div class="dropdown select_all_dropdown" id="invoice-colvis-dropdown">
+            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+              <img src="/images/columns-icon.svg" alt="Email" class="mr-2">Columns
+            </button>
+            <div class="dropdown-menu max-h-scroll">
+              <div class="dropdown-item">
+                  <label><input type="checkbox" class="select-all custom-colvis show-all column-checkbox" data-column="all" /><span></span>Show All</label>
+              </div>
+              <div class="dropdown-item">
+                  <label><input type="checkbox" class="show-default custom-colvis column-checkbox" data-column="default" /><span></span>Show Default</label>
+              </div>
+              <hr style="margin:0;" />
+              <div class="dropdown-item"><label><input type="checkbox" class="column-checkbox custom-colvis" data-column="date-range" data-column-index="6" /><span></span>Date Range</label></div>
+              <div class="dropdown-item"><label><input type="checkbox" class="column-checkbox custom-colvis" data-column="due-date" data-column-index="3"/><span></span>Due Date</label></div>
+              <div class="dropdown-item"><label><input type="checkbox" class="column-checkbox custom-colvis" data-column="invoice-number" data-column-index="2"/><span></span>Invoice #</label></div>
+              <div class="dropdown-item"><label><input type="checkbox" class="column-checkbox custom-colvis" data-column="private-note"  data-column-index="7"/><span></span>Private Note</label></div>
+              <div class="dropdown-item"><label><input type="checkbox" class="column-checkbox custom-colvis" data-column="student"  data-column-index="5"/><span></span>Student</label></div>
+            </div>
+          </div>
+        </li>
+        <li class="both-btnli">
+          <div class="dropdown short_dropdown" id="invoices-sort-dropdown">
+            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/short-icon.svg" alt="Sort" class="mr-2">Sort</button>
+            <div class="dropdown-menu">
+              <button type="button" class="dropdown-item shortbtn sort-trigger" data-column="">Clear Sort</button>
+              <button type="button" class="dropdown-item sort-trigger" data-column-name="family" data-column="4" data-order="1" >Family</button>
+              <button type="button" class="dropdown-item sort-trigger" data-column-name="invoice_amount" data-column="7" data-order="1">Invoice Amount</button>
+              <button type="button" class="dropdown-item sort-trigger" data-column-name="invoice_date" data-column="1" data-order="1">Invoice Date</button>
+            </div>
+          </div>
+        </li>
+        <li class="search_box searchDropdownCount both-btnli search_btn" id="invoicesDropdown">
+          <div class="dropdown">
+            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"> 
+              <img src="/images/search-icon.svg" alt="Search" class="mr-2">
+              Search
+              <span class="sounts"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
+              <form id="invoicesSearchForm">
+                <div class="position-relative form-group">
+                  <input type="search" class="form-control" id="family_or_invoice_number" name="family_or_invoice_number" placeholder="Family or invoice number..." />
+                  <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
+                </div>
+                <div class="form-group form-check mt-20 mb-20">
+                  <input class="form-check-input search-input" type="checkbox" value="1" id="filter_invoice_date" name="filter_invoice_date" />
+                  <label class="form-check-label" for="filter_invoice_date">Filter By Invoice Date</label>
+                </div>
+                <div class="form-group position-relative mb-0">
+                  <label label="" for="date_range_block" class="form-label">Date Range <span class="text-muted small">(Optional)</span></label>
+                  <input type="text" name="date_range_block" id="date_range_block" class="pl-40 w-100" />
+                  <span class="input-icon"><img src="/images/date-icon.svg" alt="date-icon"></span>
+                </div>
+                <div class="mt-20 mb-20">
+                  <div class="form-group form-check mb-2">
+                    <input class="form-check-input search-input" type="checkbox" value="0" id="hide_emailed" name="hide_emailed" />
+                    <label class="form-check-label" for="hide_emailed">Hide Emailed Invoices</label>
+                  </div>
+                  <div class="form-group form-check mb-2">
+                    <input class="form-check-input search-input" type="checkbox" value="0" id="hide_voided" name="hide_voided" />
+                    <label class="form-check-label" for="hide_voided">Hide Void Invoices</label>
+                  </div>
+                  <div class="form-group form-check">
+                    <input class="form-check-input search-input" type="checkbox" value="0" id="hide_due_invoices" name="hide_due_invoices">
+                    <label class="form-check-label" for="hide_due_invoices">Hide ₹0.00 Due & Paid</label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="archive_status">Archive Status</label>
+                  <select name="archive_status" id="archive_status" class="form-control search-input">
+                    <option value="all">All</option>
+                    <option value="archived">Archived</option>
+                    <option value="unarchived">Unarchived</option>
+                  </select>
+                </div>
+                <div class="d-flex mt-20">
+                  <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100">Clear</button>
+                  <button type="submit" class="btn theme-btn w-100">Search</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+      <div class="card-box allselect-table">
+        <table id="familyInvoiceTable" class="table table-striped table-bordered without-crop-table" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th style="text-align: center" class="_id"><input type="checkbox" id="invoice_select_all" /></th>
+              <th class="invoice-date">Invoice Date</th>
+              <th class="invoice-number">Invoice #</th>
+              <th class="due-date">Due Date</th>
+              <th class="family">Family</th>
+              <th class="student">Student</th>
+              <th class="date-range">Date Range</th>
+              <th class="private-note">Private Note</th>
+              <th class="invoice-amount">Invoice Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- Send Email Invoice Modal -->
+<div class="modal fade common-modal" data-backdrop="static" id="sendEmailInvoice" tabindex="-1" role="dialog" aria-labelledby="sendEmailInvoiceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered max-928 normal_form_block" role="document">
+    <div class="modal-content form-wizard">
+      <div class="modal-header">
+        <h3 class="modal-title title_style" id="sendEmailInvoiceLabel">Send Email Invoice</h3>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <form class="form-design" method="post">
+        <input type="hidden" name="invoiceId" id="invoiceIdField" />
+        <div class="modal-body form_normal settings_content">
+          <div class="form-group">
+            <label for="from_mail" class="form-label">From</label>
+            <select multiple name="from_mail" id="from_mail" class="form-control select2">
+              <% sentFrom.forEach(function(user, index) { %>
+                <option value="<%= user.value %>" <%= index === 0 ? 'selected' : '' %>>
+                  <%= user.label %>
+                </option>
+              <% }); %>
+            </select>
+            <div class="error-message text-danger" id="error-from_mail"></div>
+          </div>
+          <div class="form-group ">
+              <label for="to_mail" class="form-label">To</label>
+              <div id="to_mail_wrapper" class="select-box-user">
+                  <select name="to_mail[]" id="to_mail" class="form-control select2" multiple="multiple"></select>
+                  <div class="error-message text-danger" id="error-to_mail"></div>
+              </div>
+              <p class="select-comma-user" style="display: none;"></p>
+              <div id="to_mail_summary" class="mt-2" style="display: none;"></div>
+          </div>
+          <div class="form-group form-check">
+            <input class="form-check-input" type="checkbox" value="1" id="bcc_email" name="bcc_email">
+            <label class="form-check-label" for="bcc_email">BCC me on this Email.</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Template</label>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="radio_group form-check form-check-inline w-100 m-0">
+                  <input class="form-check-input" type="radio" name="template_type" id="invoiceEmail" value="invoice_email" checked>
+                  <label class="radiolabel w-100 m-0" for="invoiceEmail">Invoice Email</label>
+                </div>
+              </div>
+              <div class="col-md-6 mt-2 mt-md-0">
+                <div class="radio_group form-check form-check-inline w-100 m-0">
+                  <input class="form-check-input" type="radio" name="template_type" id="invoiceReminder" value="invoice_reminder">
+                  <label class="radiolabel w-100 m-0" for="invoiceReminder">Invoice Reminder</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subject_field" class="form-label">Subject</label>
+            <input type="text" name="subject" id="subject_field" placeholder="Doe 13-06-2025 Invoice" class="form-control" />
+            <div class="error-message text-danger" id="error-subject"></div>
+          </div>
+          <div class="form-group">
+            <label for="message-notes" class="form-label">Message</label>
+            <textarea class="message-notes" name="message" id="message-notes" name="message_note"></textarea>
+            <div class="error-message text-danger" id="error-message"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex w-100">
+            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
+            <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0 send-email-btn">Send</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Void Invoice Modal -->
+<div class="modal fade common-modal" data-backdrop="static" id="voidInvoice" tabindex="-1" role="dialog" aria-labelledby="voidInvoiceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered max-626 normal_form_block" role="document">
+    <div class="modal-content form-wizard">
+      <div class="modal-header">
+        <h3 class="modal-title title_style" id="voidInvoiceLabel">Void Invoice</h3>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+        <div class="modal-body form_normal settings_content">
+          <p class="main-color mb-0">Are you sure you want to void this invoice? You'll still be able to view, email, and download it from the list of invoices, but payments added to the Family Account will not mark this invoice as paid.</p>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex w-100">
+            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
+            <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0">Void Invoice</button>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+  
+<script src="/vendors/tinymce/tinymce.min.js"></script>
+<%- include('./index_script'); %>
+<script>
+$(document).ready(function () {
+  // $(".search_box .cancel-btn").on("click", function(){
+  //   $(".search_box .dropdown-menu-area").toggleClass("show");
+  // });
+  $(".search_box .cancel-btn").on("click", function () {
+    $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+  });
+
+  // Table Inner dropdown
+  $('.dropdown-submenu > a.inner-toggle').on('click', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var $submenu = $(this).next('.dropdown-menu');
+    var $icon = $(this).find('img');
+
+    $('.dropdown-submenu .dropdown-menu').not($submenu).removeClass('show');
+    $('.dropdown-submenu .inner-toggle img').not($icon).removeClass('rotate-down');
+    $submenu.toggleClass('show');
+    $icon.toggleClass('rotate-down');
+  });
+  
+  $(document).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-submenu').length) {
+      $('.dropdown-submenu .dropdown-menu').removeClass('show');
+      $('.dropdown-submenu .inner-toggle img').removeClass('rotate-down');
+    }
+  });
+
+  // Select 2
+  $('#from_mail, #to_mail').select2({ width: '100%' });    
+
+  /*-------------------tinyMce---------------------*/
+  tinymce.init({
+    selector: '.message-notes',
+    height: 200,
+    resize: true,
+    menubar: false,
+    toolbar: false,       // disables all toolbar buttons
+    statusbar: false,
+    image_title: true,
+    automatic_uploads: true,
+    file_picker_types: 'image',
+    file_picker_callback: (cb, value, meta) => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                const id = 'blobid' + (new Date()).getTime();
+                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                const base64 = reader.result.split(',')[1];
+                const blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+                cb(blobInfo.blobUri(), { title: file.name });
+            });
+            reader.readAsDataURL(file);
+        });
+        input.click();
+    },
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+    plugins: [],
+    mobile: { theme: 'mobile' },
+    toolbar: '',
+    setup: function (editor) {
+        editor.on("change", function () {
+            let descriptionId = jQuery(this)[0].id;
+            tinymce.triggerSave();
+        });
+        editor.on("keyup", function () {
+            let descriptionId = jQuery(this)[0].id;
+            tinymce.triggerSave();
+        });
+    },
+  });
+
+});
+
+
+$(document).on("click", ".dropdown-item.download-selected", function () {
+  let selectedIds = [];
+  $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+    let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+    if (rowId) selectedIds.push(rowId);
+  });
+
+  if (selectedIds.length === 0) {
+    alert("Please select at least one invoice.");
+    return;
+  }
+  window.location.href = `/families-invoices/invoice/download-zip?ids=${selectedIds.join(",")}`;
+});
+
+$(document).on("click", ".dropdown-item.download-invoice-details", function () {
+  let selectedIds = [];
+  $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+    let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+    if (rowId) selectedIds.push(rowId);
+  });
+
+  if (selectedIds.length === 0) {
+    alert("Please select at least one invoice.");
+    return;
+  }
+  window.location.href = `/families-invoices/invoice/download-excel?ids=${selectedIds.join(",")}`;
+});
+
+
+
+</script>
+
+
+

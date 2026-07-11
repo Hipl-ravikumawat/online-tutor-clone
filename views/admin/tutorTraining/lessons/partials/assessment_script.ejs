@@ -1,0 +1,187 @@
+<script type="text/javascript">
+let currentUrl = window.location.href.split('/');
+
+ $(document).on('click', '.mark-tutor-read', function () {
+    $('.btn-loader').show();
+    $('.btn-mark').hide();
+    let assessmentId = currentUrl[currentUrl.length - 2];
+    let slideId = $(this).data('id');
+    let lessonId = $(this).data('lessonid');    
+    submitTutorAssessmentSlides(assessmentId, lessonId,slideId,'slides');
+})
+
+function submitTutorAssessmentSlides(assessmentId, lessonId,id,type){
+    $.ajax({
+        type:"POST",
+        url:'/tutor-training-assessments/submit-tutor-assessment-slides',
+        dataType: "json",
+        data:{
+            assessmentId:assessmentId,
+            lessonId:lessonId,
+            id:id,
+            type:type,
+        },
+        success:function(response){
+            if(response.success){
+                new Noty({
+                    theme: "relax",
+                    text: response.message,
+                    type: "success",
+                    layout: "topRight",
+                    timeout: 1500,
+                }).show();
+                // $('.btn-section').html('<div class="col-md-12 text-right"><span class="marked-btns"><img src="/images/double-check.svg" alt="">Marked Read</span></div>')
+                $(".sort-slides1.active").addClass('read');
+                renderSliderContent(lessonId, activeContentType, activeContentId);
+
+            }
+            $('.btn-loader').hide();
+            $('.btn-mark').show();
+        }
+    })
+}
+/*--------------submit practice assessment-------------------*/
+// Attach the event handler to the click event
+$(document).on('click', '.submit_question', handleSubmitQuestion);
+
+handleSaveLocalStorage();
+
+// Define a function to handle the click event
+async function handleSubmitQuestion (event) {
+    const $this = $(event.target).parents(".unassign-content");
+    let assessmentId = currentUrl[currentUrl.length - 2];
+    const lessonId = $this.find('.lesson_id').val();
+    const practiceId = $this.find(".practice_id").val();
+    const practiceType = $this.find(".practice_type").val();
+    let submittedAnswer = [];
+    let attachment = "";
+
+    if (practiceType === "single_select") {
+        const answer = $this.find(".custom-option:checked").val();
+        submittedAnswer.push(answer);
+    } else if (practiceType === "multi_select") {
+        const selectButtonValues = $this.find(":checkbox:checked").toArray().map(item => item.value);
+        submittedAnswer = selectButtonValues;
+    } else if (practiceType === "text") {
+        tinyMCE.triggerSave();
+        const answer = $this.find(".editorExplanation").val();
+        const form = $("#textForm");
+        const formData = new FormData(form[0]);
+        formData.append('submit_attachment', this.new_attachments);
+        const fileData = formData.get('submit_attachment');
+        if (fileData.name) {
+            attachment = await uploadTextQuestionAttachment(formData);
+        }
+        submittedAnswer.push(answer);
+    } else if (practiceType === "drag_and_drop") {
+        const textValues = $this.find(".para-gap").map(function () {
+            return $(this).find(".task").text();
+        }).get();
+        submittedAnswer = textValues;
+        $(".answer-submitted").show(1).delay(1000).hide(1);
+    }
+
+    const lessonContent = JSON.parse(localStorage.getItem("assessmentDetails"));
+    if (lessonContent) {
+        for (const question of lessonContent) {
+            if (question.questionId === practiceId) {
+                question.submittedAnswer = submittedAnswer;
+                question.attachment = attachment;
+                break;
+            }
+        }
+        localStorage.setItem("assessmentDetails", JSON.stringify(lessonContent));
+    }
+
+    const totalSortPractices = $('.sort-practices').length;
+    const currentMenuIndex = $('.sort-practices.active').data('position');
+    console.log(totalSortPractices, 'totalSortPractices', currentMenuIndex);
+    $(".unassign-next").trigger("click");
+
+    if (totalSortPractices === currentMenuIndex) {
+        Swal.fire({
+            html: "<p>Are you sure want to submit the assessment?</p><p>You won't be able to revert this!</p>",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+               submitTutorAssessmentPractices(assessmentId, lessonId,lessonContent,'practices');
+            }
+        });
+    }
+}
+
+function handleSaveLocalStorage() {
+    const practicesQuestionArray = $(".sort-practices")
+    .map(function () {
+        let practiceObject = {
+        questionId: this.dataset.uniqueid,
+        attachment: "",
+        type: this.dataset.type,
+        submittedAnswer: "",
+        isCorrect: "",
+        };
+        return practiceObject;
+    })
+    .get();
+    localStorage.setItem("assessmentDetails", JSON.stringify(practicesQuestionArray));
+} 
+
+function uploadTextQuestionAttachment(formData) {
+    return new Promise((resolve, reject) => {
+        console.log("enter function !!");
+        $.ajax({
+            type: "POST",
+            url: `/tutor-training-assessments/upload-attachment`,
+            dataType: "json",
+            data: formData,
+            processData: false, // Prevent jQuery from processing the formData object
+            contentType: false, // Prevent jQuery from setting the content type
+            success: function (response) {
+                if (response.success) {
+                    const filename = response.file;
+                    resolve(filename);
+                } else {
+                    reject(new Error("Upload failed")); // Reject the promise with an error
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reject(new Error(`AJAX error: ${textStatus}, ${errorThrown}`)); // Reject on network errors
+            }
+        });
+    });
+}
+function submitTutorAssessmentPractices(assessmentId, lessonId,formData,type){
+    $.ajax({
+        type:"POST",
+        url:'/tutor-training-assessments/submit-tutor-assessment-practices',
+        dataType: "json",
+        data:{
+            assessmentId:assessmentId,
+            lessonId:lessonId,
+            data:formData,
+            type:type,
+        },
+        success:function(response){
+            if(response.success){
+             window.location.href = response.redirectUrl;
+            }
+            $('.btn-loader').hide();
+            $('.btn-mark').show();
+        }
+    })
+}
+
+
+$(window).scroll(function() {    
+    var scroll = $(window).scrollTop();
+    if (scroll >= 115) {
+        $("body").addClass("button-fixed");
+    } else {
+        $("body").removeClass("button-fixed");
+    }
+});
+</script>

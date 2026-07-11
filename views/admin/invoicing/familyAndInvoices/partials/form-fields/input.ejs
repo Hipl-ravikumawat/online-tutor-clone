@@ -1,0 +1,10 @@
+<div class="form-group">
+    <% if (label) { %> 
+        <label class="form-label" for="<%= id %>">
+            <%= label %>
+                <% if (required) { %><span class="required">*</span>
+            <% } %>
+        </label>
+    <% } %> 
+    <input type="<%= type || 'text' %>" class="form-control <%= className || '' %>" id="<%= id %>" name="<%= name %>" value="<%= value || '' %>" <%=required ? 'required' : '' %> <%= attrs || '' %> />
+</div>

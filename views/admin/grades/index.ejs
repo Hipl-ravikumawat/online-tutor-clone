@@ -1,0 +1,104 @@
+<div class="right_col" role="main">
+  <!-- grade index page content starts -->
+  <div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+      <div class="stcard-box">
+        <span class="shade5"> <%= data.gradeObject.length > 0 ? data.gradeObject[0].totalGrade : '0' %> </span>
+        <h3 class="title-text mb-0">Total</h3>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-4">
+      <div class="stcard-box">
+        <span class="shade1"> <%= data.gradeObject.length > 0 ? data.gradeObject[0].activeGrade : '0' %> </span>
+        <h3 class="title-text mb-0">Active</h3>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-4">
+      <div class="stcard-box">
+        <span class="shade3"> <%= data.gradeObject.length > 0 ? data.gradeObject[0].deactiveGrade : '0' %> </span>
+        <h3 class="title-text mb-0">Deactive</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-block mb-30">
+    <h2 class="title-text">Filter Grades</h2>
+    <ul class="filter-row">
+      <li class="filter-col">
+        <select
+          class="form-control select2"
+          id="grade-name"
+          tabindex="-1"
+          single
+        >
+          <option value="">Select Grade</option>
+          <% if(data.gradeObject.length > 0) { %>
+          <% for(grade of data.gradeObject[0].grades) { %>
+          <option value="<%=grade._id%>"><%=grade.name%></option>
+          <% } } %>
+        </select>
+      </li>
+      <li class="filter-col">
+        <select class="form-control select2" id="status" tabindex="-1" single>
+          <option value="">Select Status</option>
+          <option value="1">Active</option>
+          <option value="0">Deactive</option>
+        </select>
+      </li>
+      <li class="filter-col">
+        <button class="btn theme-btn filter">Filter</button>
+        <button class="btn theme-btn reset">Reset</button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text">Grades List</h2>
+          <ul class="right-btns">
+            <li>
+              <a
+                href="./grades/create"
+                class="btn theme-btn"
+                data-toggle="tooltip"
+                rel="tooltip"
+                data-placement="top"
+                title="Add Grade"
+                >+ Add Grade</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive">
+                <table
+                  id="gradeTable"
+                  class="table table-striped table-bordered dt-responsive nowrap"
+                  cellspacing="0"
+                  width="100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>Grade</th>
+                      <th>Status</th>
+                      <th>Created At</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- grade index page content end -->
+</div>
+
+<%- include('./index_script'); %>

@@ -1,0 +1,76 @@
+<div class="tab-content" id="count">
+    <!-- slide reading content starts -->
+    <div class="row">
+        <div class="slide-duration" style="max-width: unset;">
+            <h3 class="title-text mb-0" style="font-size: 30px;"><%=slide.title%></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 <%=slide.video ? "col-md-7" : "col-md-12" %>" style="text-align: justify;">
+            <%-slide.description%>
+            <% if (slide.attachments != "") { %>
+            <div class="attachment-block">
+                <% if(pdfExtension === ".png") { %>
+                    <div class="row"> 
+                        <div class="col-sm-12 col-md-4 drop-objects">
+                            <h3 class="title-text mb-3">Attachment</h3>
+                            <div class="rounded border overflow-hidden">
+                                <img src="/LearningContent/<%=slide.content_directory%>/<%=slide.attachments%>" alt="" class="img-fluid rounded">  
+                            </div>
+                        </div>
+                    </div>
+                <% }%>
+            </div>
+            <% } if (slide.video_url != "") { %>
+            <div class="attachment-block video drop-objects">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <h3 class="title-text mb-3">Video</h3>
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe  src="<%=slide.video_url%>" width="100%" height="1000"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% if (slide.video) { %>
+        <div class="col-sm-12 col-md-5">
+            <% if(videoExtension === ".mp4") { %>
+                <div class="preview-thumb drop-objects embed-responsive embed-responsive-16by9">
+                    <video loop autoplay muted controls class="audio-stop">
+                        <source src="/LearningContent/<%=slide.content_directory%>/<%=slide.video%>" type="video/mp4"> 
+                    </video>
+                </div>
+            <% }else if(videoExtension === ".mp3" || videoExtension === ".m4a" ) { %>
+                <div class="audio drop-objects">
+                    <p>Click on the play button to play a sound:</p>
+                    
+                    <% if(videoExtension === ".mp3") { %>
+                    <audio controls class="audio-stop">
+                        <source src="/LearningContent/<%=slide.content_directory%>/<%=slide.video%>" type="audio/mpeg">
+                    </audio>
+                    <% } %>
+
+                    <% if(videoExtension === ".m4a") { %>
+                        <audio controls class="audio-stop"> 
+                            <source src="/LearningContent/<%=slide.content_directory%>/<%=slide.video%>" type="audio/ogg">
+                            <source src="/LearningContent/<%=slide.content_directory%>/<%=slide.video%>" type="audio/mp4">
+                        </audio>
+                        
+                        <% } %>
+
+                </div>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="text-align: center;margin-top: 20px;">
+            <% if(pdfExtension === ".pdf") { %>
+                <iframe id="myFrame" src="<%=baseUrl%>/LearningContent/<%=slide.content_directory%>/<%=slide.attachments%>" width="1000" height="900"></iframe>
+            <% } %>
+        </div>
+    </div>
+    <!-- slide reading content end -->
+</div>

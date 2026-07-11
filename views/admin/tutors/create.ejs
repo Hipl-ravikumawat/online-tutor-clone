@@ -1,0 +1,368 @@
+<div class="right_col" role="main">
+  <!-- tutor page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Add Tutor</h2>
+      </div>
+      <div class="x_content">
+        <form id="createTutor" action="./store" method="post" class="form-horizontal form-label-left tutor_form"
+          enctype="multipart/form-data" autocomplete="off">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="row">
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="register_number">Registration No.
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="register_number" class="form-control" placeholder="Registration No..."
+                         value="<%=data.register_number %>">
+                    </div>
+                  </div>
+                </div>  
+                <br>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control" name="title" id="title" tabindex="-1" single>
+                        <option value="Mr">Mr</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Mrs">Mrs</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="first_name">First Name<span class="required" >*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.."
+                        id="first_name" maxlength="50">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" maxlength="50" name="last_name" class="form-control" placeholder="Enter Last Name.."
+                        id="last_name">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="first_name">Qualification
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="qualification" class="form-control" placeholder="Enter Qualification"
+                        id="qualification" maxlength="50">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <input type="hidden" name="dial_code" id="dial_code">
+                    <input type="hidden" name="iso_code" id="iso_code">
+                    <label class="col-form-label label-align" for="phone">Contact No.
+                      <span class="required">*</span>
+                    </label>
+                    <div class="form-group">
+                      <input type="number" name="phone" class="form-control " id="phone" placeholder="Enter contact number" autocomplete="off">
+                      <p id="error-msg" class="hide"></p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="email">Email<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="email" class="form-control" placeholder="Enter Email.." id="email" autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="password">Password<span
+                        class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span>
+                      <input type="password" name="password" class="form-control" placeholder="Enter Password.."
+                        id="password" autocomplete="new-password">
+                      <span toggle="#password"
+                        class="fa fa-fw fa-eye-slash field-icon form-control-feedback right toggle-password"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="gender" id="gender">
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="gender">Time Zone<span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="time_zone" id="time_zone">
+                        <% for(let timeZone of timeZones) { %> 
+                          <option value="<%=timeZone.tzid%>"><%=timeZone.name%></option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="calendar_color">Calendar Color
+                    </label>
+                    <div class="colorpicker-input">
+                      <div class="input-group">
+                        <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                        <label class="form-control pb-0">
+                          <input type="color" id="colorPicker" name="calendar_color" value="#ffffff"/>
+                          <span id="colorCode"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control" name="subject_ids" id="subject_ids" tabindex="-1" multiple>
+                        <% let i=0; for(subject of data) { %>
+                          <option value="<%=subject.id%>">
+                            <%=subject.name%>
+                          </option>
+                          <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="start_date">Start Date
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <input type="date" name="start_date" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="start_date">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="end_date">End Date
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <input type="date" name="end_date" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="end_date">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="address">Address</span>
+                    </label>
+                    <div class="form-group">
+                      <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
+                        id="address"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="note">Note</span>
+                    </label>
+                    <div class="form-group">
+                      <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
+                        id="note"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control" name="status" id="status" tabindex="-1" single>
+                        <option value="1">Activate</option>
+                        <option value="0">Deactivate</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6"></div>
+
+                
+
+                
+
+                <div class="col-md-6"  id="pay-rate-wrap">
+                      <div class="form-group">
+                        <label class="col-form-label label-align">Pay Rate</span>
+                        </label>
+                        <div class="form-group">
+                            <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" style="display: none;" /> -->
+                            <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="payroll_type">Payroll</span>
+                    </label>
+                    <div class="form-group">
+                      <% for(let payrollType of tutorPayrollTypes){ %>
+                        <div class="form-check">
+                          <input type="radio" name="payroll[type]" class="form-check-input payroll_type"
+                            value="<%= payrollType.key %>"
+                            id="<%= payrollType.key %>"
+                            checked
+                            />
+                            <!-- <%= (payrollType.key =="no_auto_calc") ? "checked" : "" %>  -->
+                          <label class="form-check-label" for="<%= payrollType.key %>"><%= payrollType.label %></label>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+
+                
+              </div>
+            </div>
+
+              <div class="col-md-4">
+                <div class="form-group drop-file">
+                  <label class="col-form-label label-align" for="profile_image">Profile
+                    Image
+                  </label>
+                  <div class="input-group">
+                    <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto"
+                      data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M">
+                  </div>
+                </div>
+              </div>
+
+              </div>
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="storeTutorBtn" class="btn form-button theme-btn">Save</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  <!-- tutor page content end -->
+</div>
+
+<%- include('./form_script'); %>
+
+<script type="text/javascript">
+  $("#createTutor").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var form = $('#createTutor');
+    var formData = new FormData(form[0]);
+    console.log(formData,"formData");
+    formData.append('profile_image', this.new_attachments)
+    var url = $('#createTutor').attr('action');
+    $("#storeTutorBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          let inputElement = $(document).find('[name="' + error.param + '"]');
+          if (inputElement.length > 0) {
+            inputElement.closest('.form-group').append('<span class="text-danger help-block">' + error.msg + '</span>');
+          }
+        });
+      },
+      complete: function () {
+        $("#storeTutorBtn").prop('disabled', false);
+      },
+    })
+  });
+  
+ $(".payroll_type").change(function () {
+    let value = $(this).val();
+    if(value == "revenue_percentage"){  
+      $('#pay-rate-wrap').find('.hourly_rate_inp').val("").hide();
+      $('#pay-rate-wrap').find('.revenue_percentage_inp').show();
+      $('#pay-rate-wrap').show();
+    }else if(value == "hourly_rate"){
+      $('#pay-rate-wrap').find('.revenue_percentage_inp').val("").hide();
+      $('#pay-rate-wrap').find('.hourly_rate_inp').show();
+      $('#pay-rate-wrap').show();
+    }else{
+      $('#pay-rate-wrap').find('.revenue_percentage_inp').val("").hide();
+      $('#pay-rate-wrap').find('.hourly_rate_inp').val("").hide();
+      $('#pay-rate-wrap').hide();
+    }
+  });
+
+   $("#createTutor input, #createTutor select, #createTutor textarea").on('input change', function () {
+      $(this).closest('.form-group').find(".text-danger").remove();
+    });
+
+
+  $("#start_date").change(function(){
+    let startDate = $(this).val();
+    $("#end_date").val('');
+    $("#end_date").attr('min', startDate);
+  });
+  $("#end_date").change(function(){
+    let startDate = $(this).val();
+    $("#start_date").attr('max', startDate);
+  })
+</script>

@@ -1,0 +1,56 @@
+
+<div class="modal fade common-modal change-family-modal" id="editFamilyContact" tabindex="-1" role="dialog" aria-labelledby="changeFamilyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="changeFamilyLabel">Edit Family Details</h3>
+        </div>
+        <form method="post" action="/student-preferences/update" class="modal-form-area common-form update-family-contact-form" id="family-contact-form">
+          <div class="modal-body">
+              <input type="hidden" name="family_contact_id" class="family_contact_id">
+              <input type="hidden" name="student_id" class="student_id">
+              <%- include('../partials/family-contact-form.ejs',{"formType" : "edit"}) %>
+          </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea">
+            </div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+              <button type="submit" class="btn theme-btn">Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+<script>
+  $(document).ready(function () {
+    function toggleContactFields(selected) {
+      if (selected === 'company') {
+        $('.contact-company').removeClass('d-none');   
+        $('.contact-person').addClass('d-none');     
+      } else {
+        $('.contact-company').addClass('d-none');   
+        $('.contact-person').removeClass('d-none'); 
+      }
+    }
+
+    $('#editFamilyContact').on('shown.bs.modal', function () {
+      const selected = $('#editFamilyContact input[name="contact_type"]:checked').val();
+      toggleContactFields(selected);
+    });
+
+    $('#editFamilyContact').on('change','input[name="contact_type"]', function () {
+      const selected = $(this).val(); 
+      console.log("Selected contact type:", selected); 
+      toggleContactFields(selected);
+    });
+    $('.contact-type-radio').on('change', function() {
+      var selectedValue = $(this).val();
+     const selected = $(this).val(); 
+      console.log("Selected contact type:", selected); 
+      toggleContactFields(selected);
+    });
+  });
+</script>

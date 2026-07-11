@@ -1,0 +1,43 @@
+<div class="modal fade common-modal" data-backdrop="static" id="addVoucher" tabindex="-1" role="dialog"
+  aria-labelledby="addVoucherLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="addVoucherLabel">Voucher Form</h3>
+      </div>
+      <form class="modal-form-area voucher-form" action="./store-voucher">
+        <div class="modal-body">
+          <input type="hidden" name="slug" id="slug" value="">
+          <div class="pt-1">
+            <div class="form-group">
+              <label class="mb-1">Title</label>
+              <input type="text" name="title" placeholder="Enter Voucher Title" id="title">
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="mb-1">Enter Required Points</label>
+                  <input type="number" min="1" name="required_points" placeholder="Enter Required Points"
+                    id="required_points" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="mb-1">Enter Price (AUD)</label>
+                  <input type="number" min="1" name="equivalent_amount" placeholder="Enter Equivalent Amount"
+                    id="equivalent_amount" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+            <button type="submit" class="btn theme-btn" id="saveVoucherBtn">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

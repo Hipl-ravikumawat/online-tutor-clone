@@ -1,0 +1,317 @@
+<script type="text/javascript">
+  /**
+   * student index page script.
+   * @script start
+   */
+  let userRole = '<%=userRole%>';
+  $(document).ready(function () {
+    dataTable();
+    $(".select2").select2({
+      allowClear: false,
+    });
+  });
+
+  $(".filter").click(function () {
+    let student = $("#student").val();
+    let grade = $("#grade").val();
+    let status = $("#status").val();
+    dataTable(student, grade, status);
+  });
+
+  $(".reset").click(function () {
+    $(".select2").val(null).trigger("change");
+    dataTable();
+  });
+
+  function dataTable(student = "", grade = "", status = "") {
+    $("#studentTable").dataTable().fnDestroy();
+    var studentTable = $("#studentTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [],
+      dom: "Bfltip",
+      buttons: {
+        buttons: [
+          { extend: "excel" },
+          {
+            extend: "pdfHtml5",
+            orientation: "landscape",
+            pageSize: "A0",
+            title: "Users List PDF",
+            exportOptions: {
+              modifier: {
+                page: "current",
+              },
+            },
+          },
+        ],
+      },
+      buttons: [
+        {
+          extend: "collection",
+          text: "Students List",
+          className: "btn-default-option",
+          autoClose: true,
+          buttons: [
+            {
+              text: "Excel",
+              extend: "excelHtml5",
+              className: "btn-default",
+              title: "Students List",
+              exportOptions: {
+                columns: [1, 3, 4, 5],
+              },
+            },
+            {
+              extend: "pdfHtml5",
+              className: "btn-default",
+              title: "Students List",
+              exportOptions: {
+                columns: [1, 3, 4, 5],
+              },
+              customize: function (doc) {
+                doc.styles.tableHeader.alignment = "left";
+                (doc.content[1].margin = [20, 0, 20, 0]),
+                  (doc.styles.tableBodyOdd.padding = 20);
+                doc.styles.tableBodyEven.alignment = "left";
+                (doc.content[1].table.widths = ["33%", "33%", "33%"]),
+                  (objLayout = {});
+                // Horizontal line thickness
+                objLayout["hLineWidth"] = function (i) {
+                  return 0;
+                };
+                // Vertikal line thickness
+                objLayout["vLineWidth"] = function (i) {
+                  return 0;
+                };
+                // Horizontal line color
+                objLayout["hLineColor"] = function (i) {
+                  return "#aaa";
+                };
+                // Left padding of the cell
+                objLayout["padding"] = function (i) {
+                  return 5;
+                };
+                // Right padding of the cell
+                objLayout["paddingRight"] = function (i) {
+                  return 5;
+                };
+                // Left padding of the cell
+                objLayout["paddingTop"] = function (i) {
+                  return 10;
+                };
+                // Right padding of the cell
+                objLayout["paddingBottom"] = function (i) {
+                  return 10;
+                };
+                // Inject the object in the document
+                doc.content[1].layout = objLayout;
+              },
+            },
+          ],
+          fade: true,
+        },
+      ],
+      ajax: {
+        url: "/Students/dataTable",
+        type: "POST",
+        data: {
+          id: student,
+          grade: grade,
+          status: status,
+        },
+      },
+      drawCallback: function (settings) {        
+      },
+      columns: [
+        {
+          data: "",
+          render: function (data, type, row) {
+            return `<input class="select-checkbox" type="checkbox" value="${row._id}"/>`;
+          },
+        },
+        {
+          data: "first_name",
+          render: function (data, type, row) {
+            return `<a href="/student-preferences/${row._id}">${row.first_name + " " + row.last_name}</a>`;
+          },
+        },
+        {
+          data: "username",
+          name: "username",
+          defaultContent: ""
+        },
+        {
+          data: "email",
+          name: "email",
+          defaultContent: "",
+        },
+        {
+          data: "phone",
+          render: function (data, type, row) {
+            return row.phone ? "+" + row.dial_code + " " + row.phone : "";
+          },
+        },
+        {
+          data: "awarded_reward_points",
+          name: "awarded_reward_points",
+          defaultContent: "0",
+          render: function (data, type, row) {
+            return data || 0;
+          },
+        },
+        {
+          data: "grade_id",
+          render: function (data, type, row) {
+            return row.grade_id ? row.grade_id.name : "";
+          },
+        },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return `
+              <select class="form-control form-control-sm status-select" data-id="${row._id}">
+                <option value="1" ${data == 1 ? 'selected' : ''}>Active</option>
+                <option value="2" ${data == 2 ? 'selected' : ''}>Trial</option>
+                <option value="3" ${data == 3 ? 'selected' : ''}>Waiting</option>
+                <option value="0" ${data == 0 ? 'selected' : ''}>Deactive</option>
+              </select>
+            `;
+          },
+        },
+        {
+          data: "",
+          render: function (data, type, row) {
+            let html ='';
+            if (userRole == 1 || userRole == 2) {
+
+              html = `<div class="d-flex align-items-center">
+                
+                <a href="/students/${row._id}/view-session" 
+                  class="" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Program"><img src="/images/eye.svg" alt="icon"></a>`;
+            }
+
+            if (userRole == 1) {
+              html += `<a class="ml-2" href="/students/edit/${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                title="Edit"><img src="/images/edit.svg" alt="icon"></a>`;
+              
+              html += `<a href="javascript:void(0)"  onclick="confirmBeforeSecretLogin('/secret/${row._id}')" class="ml-2 secret_login"><img src="/images/lock2.svg"
+                  alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Secret Login"></a>`;
+
+              html += `<a href="javascript:void(0)" class="ml-2"
+                onclick="confirmBeforeDeletion('/students/destroy/${row._id}')"><img src="/images/trash.svg"
+                alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+              </div>`;
+            }
+            return html;
+          },
+        },
+      ],
+    select: {
+      style: "multi",
+      selector: ".select-checkbox"
+    },
+    // Select Column
+    columnDefs: [{
+        targets: 0,
+        data: "select",
+        searchable: false,
+        orderable: false,
+        width: "3%"
+      },
+      {
+        targets: [2, 3, 4, 8] /* column index */,
+        orderable: false /* true or false */,
+      }
+    ],
+    });
+    //select all checkbox
+    $("#select_all").on( "click", function(e) {
+      if ($(this).is( ":checked" )) {
+        studentTable.rows().select();  
+        $('.select-checkbox').prop('checked',true);  
+      } else {
+        studentTable.rows().deselect(); 
+        $('.select-checkbox').prop('checked',false);  
+      }
+    });
+    if (userRole != 1) {
+      $(".secret_login").remove();
+      studentTable.column(5).visible(false);
+      studentTable.column(6).visible(false);
+    }
+    studentTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+
+
+
+ $(document).off('change', '.status-select').on('change', '.status-select', function() {
+  const $select = $(this);
+  const studentId = $select.data('id');
+  const newStatus = $select.val();
+  
+  // Disable dropdown while processing
+  $select.prop('disabled', true);
+  
+  $.ajax({
+    url: '/students/update-status',
+    method: 'POST',
+    data: { 
+      uid: studentId,
+      status: newStatus
+    },
+    success: function(response) {
+      if(response.success) {
+        // Show success message and reload after popup
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.message || 'Status updated successfully',
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          // This runs AFTER the popup closes
+          location.reload();
+        });
+      } else {
+        // Show error message
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.message || 'Failed to update status'
+        });
+        // Re-enable dropdown on error
+        $select.prop('disabled', false);
+        // Refresh to revert dropdown
+        studentTable.ajax.reload(null, false);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Error updating status:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error updating status. Please try again.'
+      });
+      // Re-enable dropdown on error
+      $select.prop('disabled', false);
+      // Refresh to revert dropdown
+      studentTable.ajax.reload(null, false);
+    }
+  });
+});
+  /**
+   * student index page script.
+   * @script end
+   */
+</script>

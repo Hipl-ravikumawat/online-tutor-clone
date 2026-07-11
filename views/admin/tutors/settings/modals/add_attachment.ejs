@@ -1,0 +1,34 @@
+<div class="modal fade common-modal" data-backdrop="static" id="tutorAttachments" tabindex="-1" role="dialog" aria-labelledby="tutorAttachmentsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="tutorAttachmentsLabel">Add New Attachments</h3>
+      </div>
+      <form class="modal-form-area common-form"  id="upload_user_attachments" enctype="multipart/form-data">
+        <div class="modal-body">
+          <input type="hidden" name="user_id" value="<%=user.id%>">
+          <div class="form-area">
+            <div class="form-group">
+              <label>Attachments</label>
+              <small>(Only .jpg, .png .mp4 .mp3 .pdf .docx .xlsx and .csv formats are allowed!)</small>
+              <div class="needsclick dropzone" id="images-dropzone">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description <small>(Optional)</small></label>
+              <textarea name="attachment_note" id="private-note-text-area" cols="30" rows="10" maxlength="50"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea">
+          </div>
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+            <button type="submit" class="btn theme-btn save-attachments">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

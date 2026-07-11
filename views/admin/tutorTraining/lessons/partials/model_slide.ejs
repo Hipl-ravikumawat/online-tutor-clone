@@ -1,0 +1,65 @@
+<!-- tutor training slide modal starts -->
+<div class="custum-modal modal-design" id="slideModal">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title title-text">Slide Form</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/slides/store" id="storeSlideForm" enctype="multipart/form-data" autocomplete="off">
+        <div class="modal-body">
+          <input type="hidden" name="slide_id" id="update_data" value="">
+          <input type="hidden" name="content_directory" id="content_directory"value="<%=learningContent.content_directory%>">
+          <div class="form-group">
+            <label for="title">Title <span class="text-red">*</span></label>
+            <input type="text" class="form-control" placeholder="Enter Title" name="title" id="title">
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Duration <span class="text-red">*</span></label>
+            <input type="text" class="form-control timepicker" placeholder="Enter Duration" name="duration" id="duration">
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description <span class="text-red">*</span></label>
+            <textarea class="form-control editor" placeholder="Enter Description" name="description"
+              id="description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="video_url">Video Url</label>
+            <input type="url" class="form-control" placeholder="Enter Video URL" name="video_url" id="video_url">
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group dropblock">
+                <label for="video">Upload Video</label>
+                <input type="file" class="form-control h-auto" id="video" data-allowed-file-extensions="mp4 mp3 m4a"
+                  data-max-file-size-preview="35M" data-max-file-size="35M" name="video" value="">
+                <input type="hidden" name="is_video_remove" id="is_video_removed" value="0">
+              </div>
+            </div>
+
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group dropblock">
+                <label class="form-label">Upload Attachment</label>
+                <input type="file" class="form-control select-attachments h-auto"
+                  data-allowed-file-extensions="pdf png" data-max-file-size-preview="15M" name="attachments" data-max-file-size="15M" id="attachments"
+                  data-default-file="">
+                <input type="hidden" name="is_attachment_remove" id="is_attachment_removed" value="0">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="theme-btn" id="storeSlideBtn"><img src="/images/save.svg">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- tutor training slide modal end -->

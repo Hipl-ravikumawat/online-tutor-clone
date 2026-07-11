@@ -1,0 +1,307 @@
+<div class="right_col" role="main">
+    <div class="bussniess_setting settings_content">
+        <h2 class="titleheading"></h2>
+        <div class="row mx-0 row-gap-30">
+            <div class="col-12 px-0">
+                <div class="card tabcard average-attendance">
+                    <div class="card-body">
+                      <h3 class="setting_title">Average Attendance</h3>
+                      <div class="settings">
+                        <div class="row row-gap-20">
+                          <div class="col col-block">
+                            <div class="attendance-box">
+                              <div class="full-attendance-area"><%=studentEventData.percentage%>%</div>
+                            </div>
+                          </div>
+                          <div class="col col-block">
+                            <div class="attendance-box">
+                              <span class="attendance-number"><%=studentEventData.present%></span>
+                              <p class="student-record">Present</p>
+                            </div>
+                          </div>
+                          <div class="col col-block">
+                            <div class="attendance-box">
+                              <span class="attendance-number"><%=studentEventData.unrecorded%></span>
+                              <p class="student-record">Unrecorded</p>
+                            </div>
+                          </div>
+                          <div class="col col-block">
+                            <div class="attendance-box">
+                              <span class="attendance-number"><%=studentEventData.absent%></span>
+                              <p class="student-record">Student Absences</p>
+                            </div>
+                          </div>
+                          <div class="col col-block">
+                            <div class="attendance-box">
+                              <span class="attendance-number"><%=studentEventData.totalEvent%></span>
+                              <p class="student-record">Total Events</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 px-0">
+              <div class="card tabcard">
+                  <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between">
+                        <h3 class="setting_title m-0 d-inline-block">Attendance Lists</h3>
+                        <!-- <a href="javascript:void(0)" class="btn theme-btn" data-toggle="modal" data-target="#AttendancecreateReport">Create Report 
+                        </a> -->
+                      </div>
+                      <div class="settings">
+                        <div class="x_content">
+                          <div class="table-responsive x-scroll">
+                            <table id="attendance-NotesTable" class="table v-align-table firstDivWidth" style="width:100%">
+                              <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Duration</th>
+                                    <th>Tutor</th>
+                                    <th>Attendance</th>
+                                    <th>Notes</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Attendance Details Modal -->
+<div class="modal fade common-modal" data-backdrop="static" id="AttendanceNoteAttach" tabindex="-1" role="dialog" aria-labelledby="AttendanceNoteAttachLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="AttendanceNoteAttachLabel">Attendance Details</h3>
+        </div>
+        <form class="modal-form-area common-form"  id="">
+          <div class="modal-body">
+            <div class="assign-tutor-block">
+                <div class="assigntutoe-content st-notes common-form pl-0 pt-0">
+                  <h2 class="text-center">No Data Available</h2>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea">
+            </div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Report Modal -->
+  <div class="modal fade common-modal modal-label-style create-report-modal" data-backdrop="static" id="AttendancecreateReport" tabindex="-1" role="dialog" aria-labelledby="AttendancecreateReportLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="AttendancecreateReportLabel">Attendance Report</h3>
+        </div>
+        <form method="post" action="/attendance-notes/create-report" class="modal-form-area" id="attendance-report-form">
+          <input type="hidden" name="student_id" value="<%=loggedUserInfo._id%>">
+          <input type="hidden" name="student_name" value="<%=loggedUserInfo.first_name +" "+ loggedUserInfo.last_name%>">
+          <div class="modal-body settings_content">
+            <div class="form-area">
+              <div class="form-group mb-3 dateRangeBlock position-relative">
+                <label class="cursor-none">Date Range <span class="AttendancedateQuickselect qselect-label">Quick Select</span></label>
+                <input type="text" name="date_range" id="AttendancedateRangeblock">
+                <span class="datecal-icons"><img src="/images/datecal-icons.svg" alt=""></span>
+              </div>
+              <div class="form-group">
+                <label class="cursor-none">Include</label>
+                <ul class="settinglist mt-0">
+                  <li>
+                    <div class="form-check">
+                      <input type="checkbox" name="note_report[]" value="1" id="studentNotesReport" class="form-check-input">
+                      <label class="form-check-label fw-400" for="studentNotesReport">Student Notes</label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea"></div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+              <button type="button" class="btn theme-btn create-report-btn">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    renderStudentAttendanceDataTable();
+  });
+
+  $(function() {
+    $('.AttendancedateQuickselect').daterangepicker({
+        ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    });
+    $('#AttendancedateRangeblock').daterangepicker({
+      opens: 'right',
+      format: 'dd-mm-yyyy',
+    });
+  });
+
+  function renderStudentAttendanceDataTable(){
+      const studentId  = '<%=loggedUserInfo._id%>';
+      
+      var gradeTable = $('#attendance-NotesTable').DataTable({
+          paging: true,
+          pageLength: 10,
+          language: { 
+              searchPlaceholder: "Search",
+              processing: '<div><div></div><div></div><div></div><div></div></div>'
+          },
+          processing: true,
+          serverSide: true,
+          columnDefs: [
+              { orderable: false, targets: [0, 1, 2, 3, 4] } // Specify the column indices where sorting should be disabled
+          ],
+          ajax: {
+              url: '/attendance-notes/students-notes-listing',
+              type: 'POST',
+              data: {
+                  studentId: studentId
+              }
+          },
+          drawCallback: function (settings) {},
+          columns: [
+              {
+                  data: "event_id",
+                  render: function (data, type, row) {
+                      let html = '';
+                      if (data) {
+                          html = `<span class="fw-600">Start Date : </span>${moment(data.start_time).format('D MMM YYYY, h:mm A')} <br/><span class="fw-600">End Date : </span>${moment(data.end_time).format('D MMM YYYY, h:mm A')} `;
+                      }
+                      return html;
+                  }
+              },
+              {
+                  data: "event_id",
+                  render: function (data, type, row) {
+                      return data ? `${data.duration} min` : '';
+                  }
+              },
+              {
+                  data: "tutor",
+                  render: function (data, type, row) {
+                      return data ? `${data.first_name} ${data.last_name}` : '';
+                  }
+              },
+              {
+                  data: "attendees",
+                  render: function (data, type, row) {
+                      let attendance = data[0].status;
+                      if (attendance !== '') {
+                          attendance = attendance.charAt(0).toUpperCase() + attendance.slice(1);
+                      }
+                      let status = data[0].std_was_late ? 'Student was late' : data[0].std_absent_billing_option ? 'Billable' : 'Not Billable';              
+                      return `${attendance} (${status})`;
+                  }
+              },
+              {
+                  data: "group_note_id",
+                  render: function (data, type, row) {
+                      if (row.event_id === null) {
+                          return '';
+                      }
+                      let status = 'Unrecorded';
+                      let attendees = row.attendees;
+                      let eventDateTime = row.event_id.start_date;
+                      let dateTimeString = `${row.event_id.start_date} ${row.event_id.start_time}`;
+                      let momentObj = moment(dateTimeString, 'YYYY-MM-DD HH:mm');
+                      let formattedDateTime = momentObj.format('DD-MM-YYYY HH:mm');
+                      let tutorName = `${row.tutor.first_name} ${row.tutor.last_name}`;
+                      if (attendees.length > 0) {
+                          const studentRecord = attendees.find(record => record.student_id === studentId);
+                          status = studentRecord.status;
+                      }
+                      let html = 'N/A';
+                      if(data){
+                        html =  `<a href="javascript:void(0)" data-id="${data}" data-tutor="${tutorName}" data-status="${status}" data-date="${formattedDateTime}" onclick="studentsNoteAndAttachments(this)" class="attachnote" data-toggle="modal" data-target="#AttendanceNoteAttach"><img src="/images/clipboard.svg" alt=""></a>`;
+                      }
+                      return html;
+                  }
+              },
+          ]
+      });
+  }
+
+
+  function studentsNoteAndAttachments(element){
+    let groupNoteId = $(element).data('id');
+    let tutorName = $(element).data('tutor');
+    let status = $(element).data('status');
+    let eventDate = $(element).data('date');
+    $('.st-notes').html('<h2 class="text-center">No Data Available</h2>');
+    $.ajax({
+      type: "POST",
+      url: '/attendance-notes/students-note-attachments',
+      data: {
+        groupNoteId:groupNoteId,
+        tutorName:tutorName,
+        status:status,
+        eventDate:eventDate
+      },
+      success: function (response) {
+        console.log(response,'response');
+        $('.st-notes').html(response);
+      }
+    });
+  }
+
+  $(".create-report-btn").click(function(){
+   let dateRange =  $('#AttendancedateRangeblock').val();
+   const anyChecked = $('input[name="note_report[]"]:checked').length > 0;
+   let isValid = true;
+   $('.error').remove();
+   if(dateRange ==''){
+    console.log("case 1");
+    isValid = false;
+    $("#AttendancedateRangeblock").after('<span class="error" style="color:red;">Please choose date</a>');
+   }
+   if(!anyChecked){
+    console.log("case 2");
+    isValid = false;
+    $(".settinglist").after('<span class="error" style="color:red;">Please choose atleast one checkbox</a>');
+   }
+   console.log(anyChecked,'isValid',isValid)
+   if(isValid){
+    console.log("case 3");
+
+    $("#attendance-report-form").submit();
+   }
+  });
+  
+</script>

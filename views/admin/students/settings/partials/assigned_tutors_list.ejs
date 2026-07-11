@@ -1,0 +1,60 @@
+<% 
+    if(assignedTutors.length > 0){
+        for(let assignedTutor of assignedTutors){ 
+            let tutor = assignedTutor?.tutor_id ?? null;
+            %> 
+            <div class="assign-tutor-block">
+                <div class="assigntutor-top d-flex flex-wrap align-items-center">
+                    <span class="student-tut-profile"><%= (tutor) ? tutor.first_name.charAt(0).toUpperCase()+tutor.last_name.charAt(0).toUpperCase() : "" %></span>
+                    <h3 class="ass-tutorname common-text"><%=(tutor) ? tutor.first_name +" "+tutor.last_name : "" %> 
+                        <% if(tutor.qualification != "" && tutor.qualification != undefined){ %>
+                            (<span><%= tutor.qualification +" "+ (tutor.register_number || "") %></span>)
+                        <% } %>
+                    </h3>
+
+                    <% if(userRole === 1){ %>
+                    <ul class="multi-btn d-flex pl-3">
+                        <li><button class="icon-btn edit-assigned-tutor" data-id="<%= currentStudent._id %>" data-tutor-id="<%=tutor._id%>"><img src="/images/edit.svg" alt=""></button></li>
+                    </ul>
+                    <% } %>
+                </div>
+                <div class="assigntutoe-content common-form">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label class="mb-1">Default Lesson Category</label>
+                                <p class="mb-0"><%= lessonCategory[assignedTutor.default_lesson_category] || "" %></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label class="mb-1">Default Duration (In Mins)</label>
+                                <p class="mb-0"><%= assignedTutor.default_duration ?? 0 %> minutes</p>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label class="mb-1">Price</label>
+                                <p class="mb-0"><i class="fa fa-usd" aria-hidden="true"></i> <%= assignedTutor.price ?? 0 %>/lesson</p>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="mb-1">Default Billing</label>
+                                 <p class="mb-0"><%= billingLabels[assignedTutor.default_billing] || assignedTutor.default_billing %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <% } }else{ %>
+       <div class="blank-family-cont <%= assignedTutors.length === 0 ? '' : 'd-none' %>">
+            <div class="bfamily-img text-center py-4">
+                <img src="/images/blank-family.svg" alt="No Tutors Assigned">
+            </div>
+            <h3 class="text-center">You have no tutors assigned for this student yet</h3>
+            <p class="text-center size-14 mb-4">You can assign tutors to manage lessons, schedules, and more!</p>
+        </div>
+    <% }%>
+</div>

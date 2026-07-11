@@ -1,0 +1,147 @@
+<% if(count > 0) {%>
+<div class="right_col" role="main">
+    <h2 class="title-text"><%=data.lesson_id.title%></h2>
+    <% 
+    let counter = 0;
+    for(answers of data.answers) { 
+        if(answers.type =='text' && (answers.attachment !='' || answers.submittedAnswer[0] !='')) {
+            let Extension = '';
+            if(answers.attachment !=''){
+                Extension = answers.attachment.split('.').pop();
+            }
+            counter++;
+        %>
+        <div class="lesson-summition-block lesson-wrap">
+            <div class="card-block mb-30">
+                <div class="sended_explanation">
+                    <h2>Q: <%=answers.question_title%> <i class="fa fa-chevron-down"></i></h2>
+                    <div class="answers_full">
+                        <%-answers.question%>
+                        <% if(answers.question_explanation !='') {%> 
+                        <p><strong>Explanation</strong></p>
+                        <span>
+                            <%-answers.question_explanation%>
+                        </span>
+                    </div>
+                </div>
+                <% } %>
+                <div class="lesson-sub-detail">
+                    <div>
+                        <p><%-answers.submittedAnswer[0]%></p>
+                    </div>
+                    <div class="sum-result-btn">
+                        <div class="form-group">
+                            <label for="inputState">Examine Answer</label>
+                            <select id="inputState" class="form-control marked-answer" data-index="<%=counter%>" data-assessment-id="<%=data.assessment_id%>" data-student-id="<%=data.student_id%>" data-lesson-id="<%=data.lesson_id.id%>" data-question-id="<%=answers.questionId%>">
+                            <option value ="1" >Select an option</option>
+                            <option value="2" <%=(answers.isCorrect === true) ? "selected": "" %>>Pass</option>
+                            <option value="3" <%=(answers.isCorrect === false) ? "selected": "" %>>Almost,Try Again</option>
+                            </select>
+                        </div>
+                    </div>
+                    <%  if(answers.keyword !== null && answers.keyword.length > 0){  %>
+                        <div class="keywords explanation p-0 w-100 border-0 m-0 ">
+                            <h4 class="text-dgreen keywordheading">Keywords</h4>
+                            <ul class="keyword-listing">
+                                <% for (option of answers.keyword) { %>
+                                <li> <%=option.option_text%>  <span class="question-action"><img src="/images/<%=option.option_correct ? 'q-check.svg' : 'q-wrong.svg'%>" alt="img"></span></li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    <% } %>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label>Comment</label>
+                            <textarea class="form-control comment-section comment-<%=counter%>" rows="3"><%=answers.comment%></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-3">
+                        <% if(Extension != '') { %> 
+                        <div class="lesson-sub-pre-detail p-0" style="min-height: auto;">
+                            <label>Attachment</label>
+                            <% if(Extension == 'pdf'){ %>
+                                <a href="/Assessment/<%=answers.attachment%>" target="_blank" class="btn theme-btn">View PDF</a>
+                            <% } else { %>
+                            <div class="img-wrapper text-left">
+                                <a href="/Assessment/<%=answers.attachment%>" data-lightbox="image_123465"><img src="/Assessment/<%=answers.attachment%>" alt="" srcset=""></a>
+                            </div>
+                            <%}%>
+                            
+                        </div>
+                        <% } %> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }}%>
+    <div class="col-md-12" style="text-align: right;">
+        <button class="btn btn-primary submit theme-btn">Submit</button>
+    </div>
+</div>
+<% }else{ %>
+    <div class="right_col" role="main">
+        <h2 class="text-center">No data found</h2>
+    </div>
+<% } %>
+<script>
+     
+$(document).on('click','.submit',function(){
+  let lessonId = $('.marked-answer').data('lesson-id');
+  let assessmentId = $('.marked-answer').data('assessment-id');
+  let studentId = $('.marked-answer').data('student-id');
+  let answers = [];
+  $('.errors').remove();
+  let isError = false;
+
+    $(".marked-answer").each(function() {
+        let index = $(this).data('index');
+        let answer = $(this).val();
+        let questionId = $(this).data('question-id');
+        let comment = $(`.comment-${index}`).val();
+        let isChecked = '';
+        if(answer == 2){
+            isChecked = 'true';
+        }else if(answer == 3){
+            isChecked = 'false';
+        }else {
+            $(this).after('<p class="errors" style="color:red;">This field is required</p>')
+            $(this).focus();
+            isError = true;
+        }
+        answers.push({
+            isChecked:isChecked,
+            questionId:questionId,
+            comment:comment,
+        })
+    });
+    if(isError){
+        return false;
+    }
+    $.ajax({
+      type: "POST",
+      url: '/attempted-assessments/detailed-report/text-assessment/add-comment',
+      dataType: 'json',
+      data: {
+        assessment_id: assessmentId,
+        student_id:studentId,
+        lesson_id:lessonId,
+        answers:answers,
+      },
+      success: function (response) {
+        if(response.success){
+            window.location = response.redirectUrl;
+        }
+      
+      },
+    })
+
+ });
+
+ $(document).on('click','.sended_explanation>h2',function(){
+    $(this).next(".answers_full").slideToggle(350);
+    $(this).toggleClass("question-active");
+ });
+</script>

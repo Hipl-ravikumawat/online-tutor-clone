@@ -1,0 +1,125 @@
+<div class="right_col" role="main">
+  <div class="back-page">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="javascript:void(0)">Rewards</a>
+      </li>
+      <li class="breadcrumb-item active">Request A Voucher</li>
+    </ol>
+  </div>
+
+  <div class="bussniess_setting">
+    <h2 class="titleheading"></h2>
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="x_content voucher-request">
+            <div class="row">
+              <div class="col-md-12 col-sm-12">
+                <div class="dash-leftblock">
+                  <span class="bg-shoftGreen total-rewalrds-points" id="totalPoints">
+                    <%=stdPointBalanceData?.balance%>
+                  </span>
+                  <h3 class="title-text mb-0">Total Rewards Points</h3>
+                </div>
+                <form id="request-voucher-form" action="./store-redemption-request">
+                  <div class="form-group mt-3">
+                    <h2 class="title-text" id="selectVoucher">Select Voucher</h2>
+                    <span id=""></span>
+                    <div class="voucher-request-check">
+                      <% let increment=1; for(voucher of vouchers){ %>
+                        <div><input type="checkbox" name="voucher[]" id="checkbox_<%=increment%>"
+                            value="<%=voucher?._id.toString()%>" data-voucher-amount="<%=voucher?.required_points%>">
+                          <label for="checkbox_<%=increment%>">
+                            <%= `${voucher?.title} - ${appSymbol}${voucher?.equivalent_amount}
+                              ${appCurrency}=${voucher?.required_points} Points` %>
+                          </label>
+                        </div>
+                        <% increment++; } %>
+                    </div>
+                  </div>
+                  <div class="form-btn">
+                    <button type="submit" class="btn form-button theme-btn" id="submitVoucherRequest"
+                      disabled>Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+    const totalPoints = parseInt($('#totalPoints').text());  // Total available points
+    const $checkboxes = $('.voucher-request-check input[type="checkbox"]');
+    const $submitButton = $('#submitVoucherRequest');
+    let selectedCheckboxes = [];
+
+    $checkboxes.on('change', handleCheckboxChange);
+
+    function handleCheckboxChange(event) {
+      const checkboxAmount = parseInt($(event.target).data('voucher-amount')); // Using data-voucher-amount
+      const isChecked = $(event.target).prop('checked');
+
+      const totalSelectedPoints = selectedCheckboxes.reduce((acc, amount) => acc + amount, 0);
+      const remainingPoints = totalPoints - totalSelectedPoints;
+
+      if (isChecked && checkboxAmount > remainingPoints) {
+        $(event.target).prop('checked', false);
+        alert('You cannot select this checkbox. Points exceed remaining balance.');
+        return;
+      }
+
+      if (isChecked) {
+        selectedCheckboxes.push(checkboxAmount);
+      } else {
+        selectedCheckboxes = selectedCheckboxes.filter(amount => amount !== checkboxAmount);
+      }
+
+      const updatedTotalPoints = selectedCheckboxes.reduce((acc, amount) => acc + amount, 0);
+
+      if (selectedCheckboxes.length > 2 || updatedTotalPoints > totalPoints) {
+        $(event.target).prop('checked', false);
+        selectedCheckboxes = selectedCheckboxes.filter(amount => amount !== checkboxAmount);
+      }
+
+      if (selectedCheckboxes.length >= 1 && updatedTotalPoints <= totalPoints) {
+        $submitButton.prop('disabled', false);
+      } else {
+        $submitButton.prop('disabled', true);
+      }
+    }
+  });
+
+  $('#request-voucher-form').submit(function (e) {
+    e.preventDefault();
+    var formData = $('#request-voucher-form').serialize();
+    let url = $('#request-voucher-form').attr('action');
+
+    $('#submitVoucherRequest').prop('disabled', true);
+    $.ajax({
+      type: "post",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success === true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        $(document).find('.text-danger').remove();
+        
+        if(response.responseJSON.message != ''){
+          $(document).find(`[id=selectVoucher]`).after(`<span class="help-block text-danger">${response.responseJSON.message}</span>`);
+        }
+      },
+      complete: function (response) {
+        $('#submitVoucherRequest').prop('disabled', false);
+      }
+    });
+  });
+</script>

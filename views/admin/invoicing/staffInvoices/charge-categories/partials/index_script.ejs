@@ -1,0 +1,57 @@
+<script>
+function dataTable(name = "", status = "") {
+  $("#chargeTable").dataTable().fnDestroy();
+
+  var chargeTable = $("#chargeTable").DataTable({
+    paging: true,
+    pageLength: 10,
+     language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+    processing: true,
+    serverSide: true,
+    order: [[0, "asc"]],
+    ajax: {
+      url: "/families-invoices/categories/dataTable",
+      type: "POST",
+      data: {
+        id: name,
+        status: status,
+      },
+    },
+    columns: [
+      { data: "name", name: "name" },
+      {
+        data: "_id",
+        render: function (data, type, row) {
+          return `
+            <div class="d-flex align-items-center">
+              <a href="/families-invoices/categories/edit/${data}" data-id="${data}" data-toggle="tooltip" title="Edit" class="edit-location">
+                <img src="/images/edit.svg" alt="Edit icon">
+              </a>
+              <a href="javascript:void(0)" class="ml-2"
+                 onclick="confirmBeforeDeletion('/families-invoices/categories/destroy/${data}')">
+                <img src="/images/trash.svg" alt="Delete icon" data-toggle="tooltip" title="Delete">
+              </a>
+            </div>`;
+        },
+        orderable: false,
+        searchable: false,
+      },
+    ],
+  });
+
+  chargeTable.ajax.reload(() => {
+    $('[data-toggle="tooltip"]').tooltip('dispose');
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+}
+
+$(document).ready(() => {
+  dataTable();
+});
+</script>
+
+
+

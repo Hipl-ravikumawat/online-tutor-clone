@@ -1,0 +1,12 @@
+  <div class="card student-notes mt-4">
+    <div class="note-top d-flex justify-content-between align-items-center pb-3">
+      <h4>Notes</h4>
+      <% if(userRole !== 2){ %>
+      <a href="javascript:void(0)" class="note-edit cursor-pointer" data-student-id="<%=currentStudent._id%>"><img src="/images/edit.svg" alt=""></a>
+      <% } %>
+    </div>
+
+    <div class="private-note">
+      <p class="mb-0 text-justify"><%=currentStudent.note ? currentStudent.note : 'Click the edit button to add a private note about this student' %></p>
+    </div>
+  </div>

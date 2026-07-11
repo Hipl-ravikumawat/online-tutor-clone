@@ -1,0 +1,249 @@
+<% if (dashboardEvents && dashboardEvents.length > 0) { %>
+
+  <% for (let eventData of dashboardEvents) { %>
+    <%
+      const currentDateTime = moment.tz(userTimeZone);
+      const startDateTime = moment.tz(eventData.start_time, userTimeZone);
+      const diffInMinutes = startDateTime.diff(currentDateTime, 'minutes');
+
+      let studentNames = '';
+      if (eventData.student_ids && eventData.student_ids.length) {
+        const names = [];
+        for (let student of eventData.student_ids) {
+          names.push(student.first_name + ' ' + student.last_name);
+        }
+        studentNames = names.join(', ');
+      }
+
+      const isCancelled = eventData.status === 'Cancelled';
+    %>
+
+    <div class="scheduled_event_item">
+      <div class="event_item_top">
+        <div class="event_item_top_left">
+          <p class="event_item_time mb-0"><%= moment.utc(eventData.start_time).tz(userTimeZone).format('hh:mm A') %> - <%= moment.utc(eventData.end_time).tz(userTimeZone).format('hh:mm A') %></p>
+          <div class="event_item_timePara">
+            <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.272 7.60927L8.38536 1.7226C8.1387 1.47594 7.7987 1.33594 7.44536 1.33594H2.66536C1.93203 1.33594 1.33203 1.93594 1.33203 2.66927V7.44927C1.33203 7.8026 1.47203 8.1426 1.72536 8.38927L7.61203 14.2759C8.13203 14.7959 8.9787 14.7959 9.4987 14.2759L14.2787 9.49594C14.7987 8.97594 14.7987 8.13594 14.272 7.60927ZM4.33203 5.33594C3.7787 5.33594 3.33203 4.88927 3.33203 4.33594C3.33203 3.7826 3.7787 3.33594 4.33203 3.33594C4.88536 3.33594 5.33203 3.7826 5.33203 4.33594C5.33203 4.88927 4.88536 5.33594 4.33203 5.33594Z" fill="#201b53"></path></svg></span>
+            <%= eventData.event_category_id?.name || 'Session' %>
+          </div>
+          <p class="lesson-assign mb-0">
+            Lesson with <%= studentNames || 'Student' %>
+            <% if (eventData.is_substitute_tutor) { %>
+              <span class="lesson_staus dbg-red">substituted by <%= eventData.substitute_tutor_id?.first_name + ' ' + eventData.substitute_tutor_id?.last_name %></span>
+            <% } %>
+          </p>
+        </div>
+
+        <div class="event_item_top_right">
+          <% if (isCancelled) { %>
+
+            <!-- Show only Cancelled badge, no buttons -->
+            <div class="canecl_event_rbtn"><p class="event_reject" style="color: #fff;">Cancelled</p></div>
+
+          <% } else { %>
+
+            <% const isAttendanceMarked = !!eventData.event_attendance_id; %>
+
+            <% if (isAttendanceMarked) { %>
+            <a href="javascript:void(0)"
+                class="btn bus-outline-btn view-notes-btn"
+                data-note-id="<%= eventData.event_attendance_id?.group_note_id?._id || '' %>"
+                data-event-id="<%= eventData._id %>">
+                View Recent Notes
+            </a>
+            <% } else { %>
+                <a href="javascript:void(0)" 
+                    class="btn bus-outline-btn" 
+                    data-toggle="tooltip" 
+                    rel="tooltip" 
+                    data-placement="top" 
+                    title="Please mark attendance first to view notes" 
+                    style="cursor: not-allowed;">
+                    View Recent Notes
+                </a>
+            <% } %>
+
+            <a href="/attendance-notes/take-attendance/<%= eventData._id %>" target="_blank" class="btn theme-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1"><path d="M5.52505 16.1749L9.07505 12.6249C9.27505 12.4249 9.50838 12.3291 9.77505 12.3374C10.0417 12.3457 10.275 12.4499 10.475 12.6499C10.6584 12.8499 10.75 13.0832 10.75 13.3499C10.75 13.6166 10.6584 13.8499 10.475 14.0499L6.25005 18.2999C6.05005 18.4999 5.81672 18.5999 5.55005 18.5999C5.28338 18.5999 5.05005 18.4999 4.85005 18.2999L2.70005 16.1499C2.51672 15.9666 2.42505 15.7332 2.42505 15.4499C2.42505 15.1666 2.51672 14.9332 2.70005 14.7499C2.88338 14.5666 3.11672 14.4749 3.40005 14.4749C3.68338 14.4749 3.91672 14.5666 4.10005 14.7499L5.52505 16.1749ZM5.52505 8.17491L9.07505 4.62491C9.27505 4.42491 9.50838 4.32908 9.77505 4.33741C10.0417 4.34575 10.275 4.44991 10.475 4.64991C10.6584 4.84991 10.75 5.08325 10.75 5.34991C10.75 5.61658 10.6584 5.84991 10.475 6.04991L6.25005 10.2999C6.05005 10.4999 5.81672 10.5999 5.55005 10.5999C5.28338 10.5999 5.05005 10.4999 4.85005 10.2999L2.70005 8.14991C2.51672 7.96658 2.42505 7.73325 2.42505 7.44991C2.42505 7.16658 2.51672 6.93325 2.70005 6.74991C2.88338 6.56658 3.11672 6.47491 3.40005 6.47491C3.68338 6.47491 3.91672 6.56658 4.10005 6.74991L5.52505 8.17491ZM14 16.9999C13.7167 16.9999 13.4792 16.9041 13.2875 16.7124C13.0959 16.5207 13 16.2832 13 15.9999C13 15.7166 13.0959 15.4791 13.2875 15.2874C13.4792 15.0957 13.7167 14.9999 14 14.9999H21C21.2834 14.9999 21.5209 15.0957 21.7125 15.2874C21.9042 15.4791 22 15.7166 22 15.9999C22 16.2832 21.9042 16.5207 21.7125 16.7124C21.5209 16.9041 21.2834 16.9999 21 16.9999H14ZM14 8.99991C13.7167 8.99991 13.4792 8.90408 13.2875 8.71241C13.0959 8.52075 13 8.28325 13 7.99991C13 7.71658 13.0959 7.47908 13.2875 7.28741C13.4792 7.09575 13.7167 6.99991 14 6.99991H21C21.2834 6.99991 21.5209 7.09575 21.7125 7.28741C21.9042 7.47908 22 7.71658 22 7.99991C22 8.28325 21.9042 8.52075 21.7125 8.71241C21.5209 8.90408 21.2834 8.99991 21 8.99991H14Z" fill="#ffffff"></path></svg>
+              Take Attendance
+            </a>
+
+          <% } %>
+        </div>
+      </div>
+
+      <div class="event_item_middle">
+        <a href="#" class="zoom_link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20C3.45 20 2.97917 19.8042 2.5875 19.4125C2.19583 19.0208 2 18.55 2 18V6C2 5.45 2.19583 4.97917 2.5875 4.5875C2.97917 4.19583 3.45 4 4 4H16C16.55 4 17.0208 4.19583 17.4125 4.5875C17.8042 4.97917 18 5.45 18 6V10.5L21.15 7.35C21.3167 7.18333 21.5 7.14167 21.7 7.225C21.9 7.30833 22 7.46667 22 7.7V16.3C22 16.5333 21.9 16.6917 21.7 16.775C21.5 16.8583 21.3167 16.8167 21.15 16.65L18 13.5V18C18 18.55 17.8042 19.0208 17.4125 19.4125C17.0208 19.8042 16.55 20 16 20H4Z" fill="#f45624"></path></svg>
+          Zoom Meeting
+        </a>
+      </div>
+    </div>
+
+  <% } %>
+
+<% } else { %>
+  <div class="scheduled_event_item">
+    <p class="lesson-assign-notHave mb-0 text-center">No scheduled events for this date.</p>
+  </div>
+<% } %>
+
+<script>
+$(document).on('click', '.view-notes-btn', function () {
+    let noteId = $(this).data('note-id');
+    let eventId = $(this).data('event-id');
+
+    noteId = noteId ? String(noteId).trim() : '';
+
+    $('.gp_note_id').val(noteId);
+    $('input[name="event_id"]').val(eventId);
+
+    $("#StudentNotes").modal('show');
+
+    if (noteId && noteId !== '' && noteId !== 'undefined' && noteId !== 'null') {
+        $.ajax({
+            type: "POST",
+            url: '/attendance-notes/edit-note-and-attachments',
+            data: { noteId: noteId },
+            success: function (response) {
+                const tutorNoteElement = $(`.option-smalltext[data-type="${response.type}"]`);
+                const optionText = tutorNoteElement.closest('.option').find('.option-text').text();
+                const optionSmallText = tutorNoteElement.text();
+
+                setTimeout(function () {
+                    if (typeof tinymce !== 'undefined' && tinymce.get('event_note')) {
+                        tinymce.get('event_note').setContent((response[response.type] != null) ? response[response.type] : '');
+                    }
+                    $('.note-type').val(response.type);
+                    $('#email_to_all_attendees').prop('checked', response.email_to_all_attendees);
+                    $('#email_to_all_parents').prop('checked', response.email_to_all_parents);
+                    $('#email_to_tutor_only').prop('checked', response.email_to_tutor_only);
+                    $('.sBtn-text').text(optionText);
+                    $('.sub_select_text').text(optionSmallText);
+                    $('.sub_select_text').attr('data-type', response.type);
+                    renderAttachments(response.attachments);
+                }, 300);
+            },
+            error: function (error) {
+                console.error('Error fetching note:', error);
+            }
+        });
+    } else {
+        setTimeout(function () {
+            if (typeof tinymce !== 'undefined' && tinymce.get('event_note')) {
+                tinymce.get('event_note').setContent('');
+            }
+            $('.gp_note_id').val('');
+            $('.note-type').val('student_note');
+            $('#email_to_all_attendees').prop('checked', false);
+            $('#email_to_all_parents').prop('checked', false);
+            $('#email_to_tutor_only').prop('checked', false);
+            clearAttachments();
+        }, 300);
+    }
+});
+
+function renderAttachments(attachments) {
+    let $attachmentsContainer = $('#dynamic-attachments-container');
+
+    if ($attachmentsContainer.length === 0) {
+        $('.needsclick.dropzone').after('<div id="dynamic-attachments-container" class="dynamic-attachments-area"></div>');
+        $attachmentsContainer = $('#dynamic-attachments-container');
+    }
+
+    $attachmentsContainer.empty();
+
+    if (!attachments || attachments.length === 0) return;
+
+    for (let attachment of attachments) {
+        let attachmentHtml = `
+            <div class="form-group">
+                <label class="mb-1">Linked Online Resource</label>
+                <ul class="linked_resource">
+                    <li>
+                        <div class="linked_resource_top">
+                            <h6>${escapeHtml(attachment.name)}</h6>
+                            <a class="delete-note-attachment"
+                               data-attachment-id="${attachment._id}"
+                               data-id="${$('.gp_note_id').val()}"
+                               href="javascript:void(0)"
+                               data-toggle="tooltip"
+                               rel="tooltip"
+                               data-placement="top"
+                               title="Delete">
+                                <img src="/images/trash-icon.svg" alt="">
+                            </a>
+                        </div>
+                        <div class="linked_resource_bottom">
+                            <ul class="notes-file-size pb-2">
+                                <li><img src="/images/files.svg" alt="files" class="img-fluid"> <span>${escapeHtml(attachment.extension || 'file')}</span></li>
+                                <li>${escapeHtml(attachment.size || '')}</li>
+                            </ul>
+                            <a href="/EventAttachments/${encodeURIComponent(attachment.name)}"
+                               class="note_download"
+                               download>
+                                <img src="/images/download-orange.svg" alt="" class="mr-2">Download
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        `;
+        $attachmentsContainer.append(attachmentHtml);
+    }
+
+    $('.delete-note-attachment').off('click').on('click', function () {
+        let attachmentId = $(this).data('attachment-id');
+        let notesId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: '/attendance-notes/delete-note-attachments',
+                    data: { attachmentId: attachmentId, notesId: notesId },
+                    success: function (response) {
+                        if (response.success) {
+                            var $attachmentElement = $(`[data-attachment-id="${attachmentId}"]`);
+                            if ($attachmentElement.length) {
+                                $attachmentElement.closest('.form-group').remove();
+                            }
+                            new Noty({
+                                theme: 'relax',
+                                text: response.message,
+                                type: 'success',
+                                layout: 'topRight',
+                                timeout: 1500
+                            }).show();
+                        }
+                    }
+                });
+            }
+        });
+    });
+}
+
+function clearAttachments() {
+    let $attachmentsContainer = $('#dynamic-attachments-container');
+    if ($attachmentsContainer.length) {
+        $attachmentsContainer.empty();
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+</script>

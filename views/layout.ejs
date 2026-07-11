@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/_head'); %>
+    <%- style %>
+</head>
+
+<body class="nav-md">
+    
+    <div class="loader" style="display:none;">
+        <%- include('./partials/_loader'); %>
+    </div>
+    <div class="container body">
+        <div class="main_container">
+            <%- include('./partials/sidebars/_sidebar'); %>
+
+                <%- include('./partials/_topNavigation'); %>
+
+                    <%- body %>
+
+                    <%- include('./partials/_footer'); %>
+        </div>
+    </div>
+
+   <%- include('./partials/_assessment_result'); %>
+    <%- include('./partials/_common_js'); %>
+    <%- script %>
+</body>
+</html>

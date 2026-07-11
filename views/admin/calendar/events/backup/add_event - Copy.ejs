@@ -1,0 +1,293 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.css">
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+      <a class="back-link" href="/calendar"><span class="fa fa-chevron-left mr-2"></span>Back to calendar</a>
+      <h2 class="titleheading mt-3">Calender Events</h2>
+      <div class="settings_content">
+        <div class="row">
+          <div class="col-12">
+            <div class="card tabcard">
+              <div class="card-body">
+                <h3 class="setting_title">Add New Event</h3>
+                <form id="create-new-event" method="POST" action="/calendar/store-new-event">
+                  <div class="settings">
+                    <div class="attendance-pref common-form add-event-block">
+                      <div class="row row-gap-20">
+                        <div class="col-md-12 col-lg-6">
+                          <div class="form-group mb-0 attendess_select2">
+                            <label class="mb-1 w-100">Tutor</label>
+                            <div class="input-group mb-0">
+                              <select name="tutor_id" id="tutor_id" class="form-control w-100 single-select dt-scheduling-conflict" single>
+                                <option value="">Select A Tutor</option>
+                                <% for(tutor of tutors) { %>
+                                  <option value="<%=tutor.id%>">
+                                    <%=tutor.first_name+' '+tutor.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>  
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="is_substitute_tutor" value="1" class="form-check-input" id="add_substitute_tutor">
+                              <label class="form-check-label" for="add_substitute_tutor">Add substitute tutor</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12 col-lg-6">
+                                  <div class="form-group mb-0 attendess_select2 add_substitute_block width-block">
+                                    <label class="mb-1">Add A Substitute Tutor</label>
+                                      <div class="input-group">
+                                        <select name="substitute_tutor_id" id="substitute_tutor_id" class="form-control w-100 single-select dt-scheduling-conflict" single>
+                                          <option value="">Select A Substitute Tutor</option>
+                                        </select>
+                                      </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group attendess_select2">
+                            <label class="mb-1">Attendees</label>
+                            <div class="input-group">
+                              <select class="form-control dt-scheduling-conflict" id="student_ids" tabindex="-1" multiple>
+                                <% for(student of students) { %>
+                                  <option value="<%=student.id%>">
+                                    <%=student.first_name+' '+student.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group attendess_select2">
+                            <label class="mb-1">Classes</label>
+                            <div class="input-group">
+                              <select name="classes" id="classes" class="form-control multiple-classes classes-content" data-type="default" multiple>
+                                <% for(let program of programContent) { %>
+                                <optgroup label="<%=program.title%>">
+                                  <% for(let lessons of program.lessons) { %>
+                                  <option value="<%=lessons._id%>" data-learning-content-id="<%=program._id%>" data-learning-content-title="<%=program.title%>"><%=lessons.title%></option>
+                                  <% } %>
+                                </optgroup>
+                                <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 selected-content-preview" style="display: none;">
+                          <div class="more-content-section"style="display:none;">
+                            <div class="form-group attendess_select2">
+                              <label class="mb-1">Add More Lessons</label>
+                              <div class="input-group">
+                                <select name="additional_lessons" class="form-control multiple-classes more-content" multiple>
+                                  <% for(let learningContent of learningContents){%>
+                                    <% for(let lesson of learningContent.lesson_ids) { %>
+                                      <option value="<%=lesson._id%>" data-learning-content-id="<%=learningContent._id%>" data-learning-content-title="<%=learningContent.title%>"><%=lesson.title%></option>
+                                    <% } %>
+                                  <% } %>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="mb-1">Event Lessons</label>
+                            <div class="selected_less_preview">
+                              <div class="text-right">
+                                <a href="javascript:void(0)" class="outline-btn clear-all">Clear All</a>
+                              </div>
+                              <ul class="content-listing">
+                              </ul>
+                            </div>
+                          </div>
+                          <div class="text-right">
+                            <span class="badge bg-success add-more-content">+ Add more content</span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Category</label>
+                            <select class="form-control single-select" name="event_category_id" id="event_category_id" tabindex="-1" single>
+                              <option value="">Select Event Category</option>
+                              <% for(category of eventCategories) { %>
+                                <option value="<%=category.id%>">
+                                  <%=category.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Location</label>
+                            <select class="form-control single-select" name="event_location_id" id="event_location_id" tabindex="-1" single>
+                              <option value="">Select Event Location</option>
+                              <% for(location of eventLocations) { %>
+                                <option value="<%=location.id%>">
+                                  <%=location.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                              <label class="mb-1">Date</label>
+                              <input type="date" name="start_date" min="<%=moment().add(1, 'days').format('YYYY-MM-D');%>" class="form-control pl-40 dt-scheduling-conflict" id="start_date" autocomplete="off" value="<%=moment().add(1, 'days').format('YYYY-MM-D');%>">
+                              <span class="input-icon"><img src="../images/calendar.svg" alt="calendar-icon"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                            <label class="mb-1">Time</label>
+                            <input class="form-control time-picker pl-40 dt-scheduling-conflict" name="start_time" type="text" id="start_time" placeholder="" autocomplete="off" />
+                            <span class="input-icon"><img src="../images/timer.svg" alt="clock-icon"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Duration</label>
+                            <div class="input-wrapper">
+                              <input class="form-control dt-scheduling-conflict" name="duration" id="duration" type="text" value="" autocomplete="off">
+                              <span class="duration-label">Hours</span>
+                            </div>
+                            <span class="label-after duration-value">(In Minutes)</span>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="will_repeat" value="1" class="form-check-input dt-scheduling-conflict" id="will_repeat">
+                              <label class="form-check-label" for="will_repeat">This event repeats</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12">
+                                  <div class="event-repeat-area" id="recurringSettings">
+                                    <h2 class="title-text mb-3">Recurring Event</h2>
+                                    <div class="form-group event_occurrence m-0">
+                                      <label>Frequency</label>
+                                      <ul class="settinglist flex-column mt-0">
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_weekly" value="weekly">
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_weekly">Weekly</label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control recurring_count dt-scheduling-conflict" name="no_of_week" type="number" id="no_of_week" placeholder="" value="" min="2" max="10">
+                                                <span class="label-after">Week(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_fortnightly" value="fortnightly">
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_fortnightly">Fortnightly </label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control recurring_count" name="no_of_fortnightly" type="number" id="no_of_fortnightly" placeholder="" value="" min="2" max="10">
+                                                <span class="label-after">Fortnight(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      </ul>
+                                      <span class="error-msg-rec-event"></span>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                      <div class="form-check uncheck-dropshow">
+                                        <input type="checkbox" name="repeat_indefinitely" value="1" class="form-check-input" id="repeat_indefinitely" >
+                                        <label class="form-check-label d-inline-block" for="repeat_indefinitely">Repeat indefinitely</label>
+                                        <div class="open_group row pl-0">
+                                          <div class="col-md-12">
+                                            <div class="form-group mb-0 position-relative">
+                                              <label class="mb-1">Repeat Until</label>
+                                              <input class="form-control date-picker pl-40" name="repeat_until_end_date" type="text" id="repeat_until_end_date" placeholder="" >
+                                              <span class="input-icon"><img src="../images/calendar.svg" alt="calendar-icon"></span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 conflict_area" id="conflict_area"></div>
+                        <div class="col-md-12">
+                          <div class="form-group" id="student_pricing_option">
+                            <label>Student Pricing <small>Optional</small></label>
+                            <ul class="settinglist flex-column mt-0">
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input std-lesson-pricing" type="radio" name="student_pricing_option" id="std_price_default" value="std_price_default">
+                                  <label class="radiolabel" for="std_price_default">Student Default</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input std-lesson-pricing" type="radio" name="student_pricing_option" id="std_price_no_charge" value="std_price_no_charge">
+                                  <label class="radiolabel" for="std_price_no_charge">No charge (₹ 0.00)</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input std-lesson-pricing" type="radio" name="student_pricing_option" id="std_price_specify" value="std_price_specify">
+                                  <label class="radiolabel" for="std_price_specify">Specify price per student</label>
+                                  <div class="open_group mt-2">
+                                    <div class="form-group position-relative">
+                                      <input type="text" name="per_std_lesson_price" id="per_std_lesson_price" class="form-control pl-40" value="0.00" min="0">
+                                      <span class="label-before"><img src="../images/rupee-square.svg" alt="rupees-icon"></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Public Description <small>Optional</small></label>
+                            <textarea name="public_note" id="event_public_note"></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Private Description <small>Optional</small><small class="d-block mat-5">Visible only to you.</small></label>
+                            <textarea name="private_note" id="event_private_note"></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12 text-right pt-4">
+                          <button type="button" class="btn form-button cancel-btn theme-btn cancel-event">Cancel</button>
+                          <button type="submit" class="btn form-button save-btn theme-btn store-an-event">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.js"></script>
+<script type="text/javascript">
+    $('#duration').timepicker({
+          timeFormat: 'H:i',
+          minTime: '00:30',
+          maxTime: '08:00',
+          step: 30,
+    });
+</script>
+
+<%-include('./partials/add_event_script.ejs')%>

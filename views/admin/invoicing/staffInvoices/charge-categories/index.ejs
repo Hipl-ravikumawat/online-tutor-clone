@@ -1,0 +1,129 @@
+<div class="right_col" role="main">
+  <div class="bussniess_setting">
+    <div class="settings_content">
+      <div class="card tabcard">
+        <div class="card-body">
+          <div class="flex-panel">
+            <div class="setting_voucher">
+              <div class="flex-col">
+                <a class="back-link" href="/families-invoices#FamilyAccounts"><span class="fa fa-chevron-left mr-2"></span>Back to family & invoices</a>
+                <h2 class="setting_title mt-3">Charges Categories</h2>
+              </div>
+            </div>
+            <button type="button" class="btn theme-btn ml-2 create-charge-btn" data-toggle="tooltip"
+              title="Add Charges">
+              + Add Category
+            </button>
+          </div>
+          <div class="voucher_card_list">
+          </div>
+          <div class="x_content">
+            <div class="card-box table-responsive allselect-table nowrap-table">
+              <table
+                id="chargeTable"
+                class="table table-striped table-bordered dt-responsive nowrap no-footer dtr-inline dataTable"
+                cellspacing="0"
+                width="100%"
+                >
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade common-modal change-family-modal" id="createCharges" tabindex="-1" role="dialog"
+  aria-labelledby="changeFamilyLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="changeFamilyLabel">Add Category</h3>
+      </div>
+      <form id="createChargesForm" action="/families-invoices/categories/store" method="post" class="modal-form-area common-form update-charge-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="col-form-label label-align" for="name">Name<span class="required">*</span>
+            </label>
+            <div class="input-group">
+              <input type="text" name="name" class="form-control" id="name"
+                maxlength="50">
+            </div>
+            <span class="text-danger error-name"></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+          <button type="submit" class="btn theme-btn form-button">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include("./partials/edit_charges") %>
+<%- include('./partials/index_script'); %>
+  <script>
+      $(document).on("click",".edit-location", function (e) {
+        e.preventDefault();
+        const chargeId = $(this).data("id");
+        $.ajax({
+          url: `/families-invoices/categories/edit/${chargeId}`,
+          type: "GET",
+          success: function (data) {
+            $("#edit-charges .title").val(data.name);
+            $("#edit-charges .charges_id").val(data._id);
+            $("#edit-charges").modal("show");
+          },
+          error: function () {
+            alert("Failed to load charge data");
+          }
+        });
+      });
+      $(".create-charge-btn").on("click", function () {
+        $("#createCharges").modal("show");
+      });
+      
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#createChargesForm").submit(function (e) {
+        e.preventDefault();
+        $(document).find("span.text-danger").remove();
+        var form = $(this);
+        var formData = form.serialize();
+        $.ajax({
+          type: "POST",
+          url: form.attr("action"),
+          dataType: "json",
+          data: formData,
+          success: function (response) {
+            if (response.success == true) {
+              $("#createCharges").modal("hide");
+            }
+            window.location.href = response.redirectUrl;
+          },
+          error: function (response) {
+            let errorMessages = '';
+            $.each(response.responseJSON.errors, function (field_name, error) {
+              $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+            })
+          },
+          complete: function () {
+          }
+        })
+      });
+    });
+  </script>

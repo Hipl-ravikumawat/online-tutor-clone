@@ -1,0 +1,77 @@
+<div class="right_col" role="main">
+  <!-- create grade page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Add Grade</h2>
+      </div>
+      <div class="x_content">
+        <form id="storeGrade" action="./store" method="post" class="form-horizontal form-label-left">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="name">Grade Name<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name" maxlength="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                </label>
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control" name="status" id="status" tabindex="-1" single>
+                    <option value="1">Activate</option>
+                    <option value="0">Deactivate</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="storeGradeBtn" class="btn theme-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- create grade page content end -->
+</div>
+
+<%- include('./form_script'); %>
+
+<script type="text/javascript">
+  $("#storeGrade").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var formData = $('#storeGrade').serialize();
+    var url = $('#storeGrade').attr('action');
+    $("#storeGradeBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#storeGradeBtn").prop('disabled', false);
+      },
+    })
+  });
+</script>

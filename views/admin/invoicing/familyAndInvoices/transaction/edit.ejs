@@ -1,0 +1,47 @@
+<style>
+  .select2-results__message {
+    padding: 0 !important;
+  }
+</style>
+
+<div class="right_col" role="main">
+  <div class="bussniess_setting">
+    <div class="row row-gap-30">
+      <div class="col-xl-9 col-lg-8 m-auto">
+        <a class="back-link" href="<%= (studentId) ? '/families-invoices/family/'+ studentId +'#account' : '/families-invoices#FamilyAccounts' %>"><span class="fa fa-chevron-left mr-2"></span>Back to Family Accounts</a>
+
+        <h2 class="title-text my-4">Edit Transaction</h2>
+
+        <div class="card">
+          <div class="card-body settings_content">
+            <h2 class="title-text mb-4" id="transactionHeading"><%= editTransaction.transaction_type %> Details</h2>
+              <div class="form-wizard">
+                <form id="multi-step-form" method="post" action="/families-invoices/transaction/update/<%= editTransaction._id %>" class="form-design" autocomplete="off">
+                  <%- include('./partials/_form',{studentId:editTransaction.student_id, families: families, recurringFrequency: recurringFrequency, repeatDays: repeatDays, taxes: taxes, chargeCategories: chargeCategories, formType: 'edit', transaction: editTransaction }); %>
+
+                  <div>
+                    <input type="hidden" name="transaction_type" value="<%= editTransaction.type %>">
+                    <button type="submit" class="btn btn-success">Update</button>
+                  </div>
+                </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./form_script'); %>
+
+<script>
+  $(function(){
+    if($('#student_id').length > 0){
+      $('#student_id').val(`<%= editTransaction.student_id?._id %>`).trigger('change');
+    }
+
+    if($('#category-select').length > 0){
+      $('#category-select').val(`<%= editTransaction.category %>`).trigger('change');
+    }
+  });
+</script>

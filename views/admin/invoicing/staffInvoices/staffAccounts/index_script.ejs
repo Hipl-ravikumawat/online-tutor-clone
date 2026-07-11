@@ -1,0 +1,272 @@
+<script>
+  let table;
+  const STORAGE_KEY = 'staffAccountTable_columns';
+  const SORT_STORAGE_KEY = 'staffAccountTable_sort';
+  const SEARCH_STORAGE_KEY = 'staffAccountSearchFilters';
+
+async function loadDatatableStaffAccounts() {
+    if ($.fn.DataTable.isDataTable("#staffAccountTable")) {
+        table = $("#staffAccountTable").DataTable(); 
+        table.ajax.reload(); 
+        return; 
+    }
+
+    table = $('#staffAccountTable').DataTable({
+        serverSide: true,
+        processing: true,
+        pageLength: 10,
+        responsive: false,
+        // scrollX: true,
+        autoWidth: false,
+        dom: '<"table-responsive families-invoices-responsive"t><"bottom_table_field"<""l><""i><""p>>r',
+        ajax: {
+            url: "/staff-invoices/staffs/dataTable",
+            type: "POST",
+            data: function (d) {
+                const selectedDate = $('#hidden-date-input').data('daterangepicker')?.startDate?.format('DD-MM-YYYY');
+                d.filterDate = selectedDate;
+
+                // Custom Search Filters
+                d.searchStaff = $('.searchDropdownCount input[name="staff_search"]').val()?.trim() || '';  
+                d.showInactive = $('#inactive_staffs').is(':checked') ? 1 : 0;
+                d.groupTag = $('#family_group_tags').val() || '';
+                
+                // let sortInfo = $('#sort-dropdown').data('sort-info');
+                // if (sortInfo) {
+                //     d.order = [
+                //         { column: sortInfo.column, dir: sortInfo.direction }
+                //     ];
+                // }else{
+                //   d.order = [
+                //       { column: 1, dir: 'asc' }
+                //   ];
+                // }
+            }
+        },
+        order: [[1, 'asc']],
+        columns: [
+            { data: "_id", orderable:false, render: id => `<input class="tutor_id" type="checkbox" value="${id}" />`, orderable: false },
+            { data: "staff", render: (data, type, row) => `<div class="family-contacts-links"><a href="/staff-invoices/staff/${row._id}#Account">${row.staff_name}</a></div>` },
+            { data: "staff_email", orderable:false, render: (data, type, row) => `<div class="family-contacts-wrap">${row.staff_email}</div><div class="btn_trigger" style="display:none;">Show More</div>` },
+            { data: "balance",type: 'num', render: (staff, type, row) => `<span class="status-label background-${row.balance >= 0 ? 'success' : 'danger'}">${row.balance_txt}</span>` },
+            { data: "auto_pay" },
+            { data: "auto_invoice", render: val => val === "Enabled" ? `<span class="badge badge-success">Enabled</span>` : `<span>-</span>` },
+            { data: "auto_invoice_setting", orderable:false, render: (data, type, row) => data || '-' },
+            { data: "last_invoice_date", orderable:false, render: (data) => `${data ? moment(new Date(data)).format('DD-MM-YYYY') : "-"}` },
+            { data: "last_payment_date", orderable:false, render: (data) => `${data ? moment(new Date(data)).format('DD-MM-YYYY') : "-"}` },
+            { data: "_id", render: id => `<a href="/staff-invoices/staff/${id}" title=""><img src="/images/eye.svg" alt="Eye" /></a>`, orderable: false, responsivePriority: 1 }
+        ],
+        select: {
+          style: "multi",
+          selector: ".select-checkbox"
+        },
+        columnDefs: [{
+            targets: 0,
+            data: "select",
+            searchable: false,
+            orderable: false,
+            width: "3%"
+        }],
+        initComplete: function(settings, json) {
+          applySavedSort(table,'sort-dropdown',SORT_STORAGE_KEY);
+        }
+    });
+}
+
+
+$(document).ready(async function () {
+  const formId = 'familyAccountSearchForm';
+
+    try {
+      await loadDatatableStaffAccounts();
+
+      setTimeout(() => {
+          initColumnVisibilityControls({
+              table: table, // your DataTable instance
+              storageKey: STORAGE_KEY,
+              defaultCols: ['balance', 'auto_invoice']
+          });
+      }, 200);
+      
+      // Load saved filters
+      loadSearchFilters(formId,SEARCH_STORAGE_KEY);
+
+      // Update count after loading
+      updateSearchCount(formId);
+
+      // Date picker change handler
+      $('#hidden-date-input').on('apply.daterangepicker', function (ev, picker) {
+          if (table) {
+              table.ajax.reload();
+          }
+      });
+
+    } catch (e) {
+        console.error("Initialization error:", e);
+    }
+
+    // Keep sort dropdown synced with column visibility changes
+    table.on('column-visibility.dt', function () {
+        const visibleCols = table.columns(':visible').eq(0).map(function (idx) {
+            return table.settings().init().columns[idx].data;
+        }).toArray();
+
+        $('#sort-dropdown .sort-trigger').each(function () {
+            const colName = $(this).data('column-name');
+            if (colName === 'family') {
+                $(this).show(); // always show family
+            } else {
+                $(this).toggle(visibleCols.includes(colName));
+            }
+        });
+    }); 
+    
+    $('#sort-dropdown .sort-trigger').on('click', function () {
+      const $btn = $(this);
+      triggerSortClick(table, $btn,'sort-dropdown', SORT_STORAGE_KEY);
+    });
+   
+    // Search button click
+    $(`#${formId}`).on('submit', function (e) {
+        e.preventDefault();
+        saveSearchFilters(formId, SEARCH_STORAGE_KEY);
+        updateSearchCount(formId, SEARCH_STORAGE_KEY);
+        if (table) {
+            table.ajax.reload();
+        }
+        $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+    });
+
+    // Clear button
+    $('.searchDropdownCount .cancel-btn').on('click', function () {
+        $(`#${formId}`)[0].reset();
+        $('#family_group_tags').val('').trigger('change'); // reset select2
+        $('.search-input:checkbox').prop('checked', false);
+        localStorage.removeItem(SEARCH_STORAGE_KEY);
+        updateSearchCount(formId, SEARCH_STORAGE_KEY);
+        if (table) {
+            table.ajax.reload();
+        }
+    });
+});
+
+function toggleActionButtons(tableId,section) {
+  const anyChecked = $(`#${tableId} tbody input[type="checkbox"]:checked`).length > 0;
+  $(`#${section} .action-btn`).prop('disabled', !anyChecked);
+}
+
+$(document).ready(async function () {
+  if (table) {
+    table.on('xhr.dt', function (e, settings, json, xhr) {
+      const currency = json.currency || '$';
+      const owed = parseFloat(json.totalOwed || 0);
+      const prepaid = parseFloat(json.totalPrepaid || 0);
+      const today = moment().format('DD-MM-YYYY');
+
+      $('.date_dropdown_block .title-text strong').text(`${currency}${Math.abs(owed)}`);
+      $('.prepaid_balance_summary strong').text(`${currency}${prepaid}`);
+    }); 
+  }
+
+  // Listen to individual row checkbox clicks
+  $('#staffAccountTable').on('change', 'input[type="checkbox"]', function () {
+    toggleActionButtons('staffAccountTable','staffAccounts');
+  });
+
+  // Listen to 'select all' checkbox
+  $('#family_select_all').on('change', function () {
+    const isChecked = $(this).prop('checked');
+    $('#staffAccountTable tbody input[type="checkbox"]').prop('checked', isChecked);
+    toggleActionButtons('staffAccountTable','staffAccounts');
+  });
+
+  $(".drop-down .selected").on("click", function () {
+    $(this).next(".drop-options").toggle();
+  });
+
+  $(".drop-down .drop-options ul li a").on("click", function () {
+    let text = $(this).text();
+
+    // Update selected value
+    $(".drop-down .selected").html(
+      '<a href="javascript:void(0)" class="item-selected">' + text + '</a>'
+    );
+
+    // Remove "active" from all options
+    $(".drop-options ul li a").removeClass("active");
+
+    // Add "active" to selected option
+    $(this).addClass("active");
+
+    // Hide dropdown
+    $(this).parents(".drop-options").hide();
+  });
+
+  $(document).on("click", function (e) {
+    if (!$(e.target).closest(".drop-down").length) {
+      $(".drop-down .drop-options").hide();
+    }
+  });
+
+  // $('#sort-dropdown .dropdown-item').on('click', function () {
+  //   const columnIndex = $(this).data('column');
+
+  //   if (columnIndex === '') {
+  //     table.order([]).draw();
+  //     return;
+  //   }
+
+  //   // Toggle between asc and desc if already sorted on same column
+  //   const currentOrder = table.order();
+  //   let direction = 'asc';
+
+  //   if (currentOrder.length && currentOrder[0][0] === columnIndex) {
+  //     direction = currentOrder[0][1] === 'asc' ? 'desc' : 'asc';
+  //   }
+
+  //   // Apply the new sorting
+  //   table.order([columnIndex, direction]).draw();
+  // });
+
+  // Show More & Less More Button functionality
+  $('#staffAccountTable').on('draw.dt', function () {
+    $('.family-contacts-wrap').each(function () {
+      const familyBlock = $(this);
+      familyBlock.css('max-height', 'none');
+      const realHeight = familyBlock.innerHeight();
+      familyBlock.css('max-height', '108px');
+      //console.log("realHeight", realHeight);
+      if (realHeight > 108) {
+        familyBlock.next('.btn_trigger').show().text('Show More');
+      }
+    });
+  });
+
+  $(document).on('click', '.btn_trigger', function () {
+    const btn = $(this);
+    const familyBlock = btn.prev('.family-contacts-wrap');
+
+    if (familyBlock.hasClass('expanded')) {
+      familyBlock.removeClass('expanded').css({
+        'max-height': '108px',
+        '-webkit-line-clamp': '3'
+      });
+      btn.text('Show More');
+    } else {
+      familyBlock.addClass('expanded').css({
+        'max-height': 'none',
+        '-webkit-line-clamp': 'unset'
+      });
+      btn.text('Show Less...');
+    }
+  });
+  
+});
+
+
+// 
+$(".expansion_close").on("click", function(){
+  $(".expansion-panel").hide();
+})
+
+</script>

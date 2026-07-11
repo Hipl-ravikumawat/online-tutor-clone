@@ -1,0 +1,253 @@
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+        <a href="/calendar" class="back-link back-linkwicon"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+                <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#cd4236" stroke-width="1.5"
+                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg> Back to Calendar</a>
+        <h2 class="title-text mt-3 mb-4">Lesson Note Templates</h2>
+        <div class="settings_content">
+            <div class="row row-gap-30">
+                <div class="col-12">
+                    <div class="card tabcard">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h3 class="setting_title m-0 d-inline-block">Shared Templates</h3><br>
+                                    <span>These templates are available for all tutors in your business to use</span>
+                                </div>
+                                <a href="javascript:void(0)" class="theme-btn add-contact">Add New Template</a>
+                            </div>
+                            <div class="settings">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="templates_note_main">
+                                            <div class="templates_note_top">
+                                                <div class="templates_note_tleft">
+                                                    <span class="nottemp_number">
+                                                        <%=templates.length%>
+                                                    </span>
+                                                    <span>Templates</span>
+                                                </div>
+                                                <div class="templates_note_tright">
+                                                    <img src="/images/arrowdown.svg" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="templates_note_details">
+                                                <% if(templates.length> 0) { %>
+                                                    <% for(let template of templates){ %>
+                                                        <div class="template_note_lists">
+                                                            <ul class="linked_resource">
+                                                                <li>
+                                                                    <div class="linked_resource_top">
+                                                                        <h6>
+                                                                            <%=template.name%>
+                                                                        </h6>
+                                                                        <div class="multi-btn d-flex pl-3">
+                                                                            <a href="javascript:void(0)"
+                                                                                data-id="<%=template.id%>"
+                                                                                class="edit-template mr-1"
+                                                                                data-toggle="tooltip" rel="tooltip"
+                                                                                data-placement="top" title="Edit"
+                                                                                class="mr-3"><img src="/images/edit.svg"
+                                                                                    alt="Edit"></a>
+                                                                            <a href="javascript:void(0)"
+                                                                                onclick="confirmBeforeDeletion('/attendance-notes/delete-note-templates/<%=template.id%>')"
+                                                                                data-toggle="tooltip" rel="tooltip"
+                                                                                data-placement="top" title="Delete"><img
+                                                                                    src="/images/trash-icon.svg"
+                                                                                    alt="Delete"></a>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="linked_resource_bottom">
+                                                                        <p class="mb-0"><span
+                                                                                class="fw-500">Description:</span><br>
+                                                                            <%=template.description%>
+                                                                        </p>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <% } %>
+                                                            <% }else { %>
+                                                                <div class="blank-family-cont">
+                                                                    <div class="bfamily-img text-center py-4">
+                                                                        <img src="/images/attendance-blank.svg"
+                                                                            alt="Attendance Notes">
+                                                                    </div>
+                                                                    <h3>You haven't created any lesson note templates
+                                                                        yet</h3>
+                                                                </div>
+                                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade common-modal" data-backdrop="static" id="addNotesTemplates" tabindex="-1" role="dialog"
+    aria-labelledby="addNotesTemplatesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="addNotesTemplatesLabel">Add New Shared Template</h3>
+            </div>
+            <form class="modal-form-area common-form" id="event-template-form" method="post"
+                action="/attendance-notes/store-note-templates">
+                <div class="modal-body settings_content">
+                    <input type="hidden" name="template_id" value="" class="template-id">
+                    <div class="lesson_details pt-1">
+                        <div class="form-group">
+                            <label class="mb-1">Template Name</label>
+                            <input type="text" name="name" class="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="mb-1">Description <small>Optional</small><br><small> Visible to this student &
+                                    their parent(s)</small></label>
+                            <textarea name="description" class="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="mb-1">Notes</label>
+                            <textarea class="template-notes" name="template_note"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-leftarea">
+                    </div>
+                    <div class="btn-rightarea">
+                        <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+                        <button type="submit" class="btn theme-btn shared-template-btn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- tinyMCE -->
+<script src="/vendors/tinymce/tinymce.min.js"></script>
+<script type="text/javascript">
+    /*-------------------tinyMce---------------------*/
+    tinymce.init({
+        selector: '.template-notes',
+        height: 300,
+        resize: true,
+        menubar: true,
+        statusbar: true,
+        image_title: true,
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        file_picker_callback: (cb, value, meta) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.addEventListener('load', () => {
+                    const id = 'blobid' + (new Date()).getTime();
+                    const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                    const base64 = reader.result.split(',')[1];
+                    const blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
+                    cb(blobInfo.blobUri(), { title: file.name });
+                });
+                reader.readAsDataURL(file);
+            });
+            input.click();
+        },
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor textcolor searchreplace visualblocks code fullscreen insertdatetime media table contextmenu paste code help wordcount image code'
+        ],
+        mobile: { theme: 'mobile' },
+        toolbar: 'insert | table | undo redo | code | formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help | styleselect | fontsizeselect | underline ',
+        setup: function (editor) {
+            editor.on("change", function () {
+                let descriptionId = jQuery(this)[0].id;
+                tinymce.triggerSave();
+            });
+            editor.on("keyup", function () {
+                let descriptionId = jQuery(this)[0].id;
+                tinymce.triggerSave();
+            });
+        },
+    });
+
+    $(document).ready(function () {
+        $(".templates_note_top").on("click", function () {
+            $(this).next(".templates_note_details").slideToggle(300);
+            $(this).toggleClass("active");
+        });
+    });
+
+    $('.add-contact').click(function () {
+        $('.template-id').val('');
+        $("#event-template-form")[0].reset();
+        $('.shared-template-btn').text('Add');
+        $("#addNotesTemplates").modal('show');
+    });
+
+    $('.edit-template').click(function () {
+        $("#event-template-form")[0].reset();
+        let templateId = $(this).data('id');
+        $('.template-id').val(templateId);
+        $.ajax({
+            method: 'POST',
+            url: './edit-note-templates',
+            data: {
+                template_id: templateId,
+            },
+            success: function (response) {
+                $('.name').val(response.name);
+                $('.description').val(response.description);
+                if (tinymce.get('template_note')) {
+                    tinymce.get('template_note').setContent(response.template_note || ''); 
+                }
+                $('.shared-template-btn').text('Update');
+                $("#addNotesTemplates").modal('show');
+            },
+        })
+    });
+
+    $("#event-template-form").submit(function (e) {
+        e.preventDefault();
+        tinymce.triggerSave();
+        let url = $(this).attr('action');
+        let name = $(this).find('.name').val();
+        let notes = tinymce.get('template_note').getContent({ format: 'text' });
+        let form = $(this)[0];
+        let formData = new FormData(form);
+        $('.error').remove();
+        let isError = false;
+        if (name.trim() == '') {
+            $(this).find('.name').after('<p class="error" style="color:red;">This field is required</p>');
+            isError = true;
+        }
+        if (notes.trim() == '') {
+            $(this).find('.template-notes').after('<p class="error" style="color:red;">This field is required</p>');
+            isError = true;
+        }
+        if (isError) {
+            return false;
+        }
+        $.ajax({
+            method: 'POST',
+            url: url,
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                location.reload();
+            },
+        })
+    });
+</script>

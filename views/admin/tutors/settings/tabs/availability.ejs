@@ -1,0 +1,397 @@
+<div class="tab-pane fade availability-block" id="tutor-availability" role="tabpanel"
+    aria-labelledby="tutor-availability-tab">
+    <div class="row row-gap-30 mx-0">
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <div class="setting_title justify-content-between page-tabtitle p-0">
+                        <h3 class="m-0">Availability</h3>
+                        <% if(loggedUserInfo.role==2){ %>
+                            <button class="btn theme-btn add-availability" type="button">Add</button>
+                            <% } %>
+                    </div>
+
+                    <div class="settings">
+                        <p class="not_truncate">Enter their tutoring availability here to provide a visual cue of their
+                            availability on the
+                            calendar (visible in "Day" view or "Timeline" view). Setting their availability will not add
+                            or remove lessons from the calendar, or prevent lessons from being scheduled outside of
+                            these days/times.</p>
+                        <% let allDays=new Set(); for(let tutorAvailability of fetchTutorAvailability){ let
+                            weekNames=['Sun', 'Mon' , 'Tue' , 'Wed' , 'Thu' , 'Fri' , 'Sat' ]; let
+                            weekIndex=tutorAvailability.days; weekIndex.forEach(index=>
+                            allDays.add(weekNames[parseInt(index)]));
+                            let weeks = weekIndex.map(index => weekNames[parseInt(index)]).join(', ');
+                            let uniqueWeeks = Array.from(allDays).join(', ');
+                            let text = 'Waiting For Approval';
+                            if(tutorAvailability.isApproved == '2'){
+                            text ='Approved';
+                            }else if(tutorAvailability.isApproved == '3'){
+                            text = 'Not Approved';
+                            }
+                            let timeZone = user.time_zone;
+                            const utcStartDateTime = moment.unix(tutorAvailability.start_date_time).utc();
+                            const StartDateTimeInTimeZone = utcStartDateTime.tz(timeZone);
+                            const formattedStartDateTime = StartDateTimeInTimeZone.format('DD-MM-YYYY hh:mm A');
+                            const utcEndDateTime = moment.unix(tutorAvailability.end_date_time).utc();
+                            const EndDateTimeInTimeZone = utcEndDateTime.tz(timeZone);
+                            const formattedEndDateTime = EndDateTimeInTimeZone.format('DD-MM-YYYY hh:mm A');
+                            %>
+                            <div class="availability-box">
+                                <div class="avail-left">
+                                    <label class="main_label">Days</label>
+                                    <p class="avail-day">
+                                        <%=uniqueWeeks%>
+                                    </p>
+
+                                    <div class="avail_se_timedate">
+                                        <div>
+                                            <label class="main_label">Start Date & Time</label>
+                                            <p class="avail-date">
+                                                <%=formattedStartDateTime%>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="main_label">End Date & Time</label>
+                                            <p class="avail-date">
+                                                <%=formattedEndDateTime%>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="avail-content-availability">
+                                        <a href="javascript:void(0)" class="avail-morebtn mb-1 d-inline-block">
+                                            <img src="/images/eye-open.svg" alt="View Icon" /> View Note
+                                        </a>
+                                        <div class="view-morecontent">
+                                            <span class="mb-0">
+                                                <%=tutorAvailability.note%>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="avail-right">
+                                    <% /* %> <span class="avail-time">
+                                            <%=tutorAvailability.start_time%> to <%=tutorAvailability.end_time%>
+                                        </span>
+                                        <% */ %>
+                                            <ul
+                                                class="multi-btn d-flex justify-content-end align-items-center assign-btn-area">
+                                                <% if(tutorAvailability.isApproved=='1' && loggedUserInfo.role==1){ %>
+                                                    <li>
+                                                        <% if(loggedUserInfo.role===1) { %>
+                                                            <button class="green-btns availability-status"
+                                                                data-value="2" data-id="<%=tutorAvailability._id%>"
+                                                                data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                                title="Approved"><img src="/images/check.svg"
+                                                                    alt="check icon" class="mr-2">Approved</button>
+
+                                                            <button class="red-btns availability-status" data-value="3"
+                                                                data-id="<%=tutorAvailability._id%>"
+                                                                data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                                title="Not Approved"><img src="/images/close-white.svg"
+                                                                    alt="close icon" class="mr-2">Not Approved</button>
+                                                            <% } %>
+                                                    </li>
+                                                    <% } %>
+
+                                                        <% if(loggedUserInfo.role===2) { %>
+                                                            <% if(tutorAvailability.isApproved !='2' ) { %>
+
+                                                                <li><button class="icon-btn edit-availability"
+                                                                        data-id="<%=tutorAvailability._id%>"
+                                                                        data-toggle="tooltip" rel="tooltip"
+                                                                        data-placement="top" title="Edit"><img
+                                                                            src="/images/edit.svg" alt=""></button></li>
+                                                                <li><button class="icon-btn"
+                                                                        onclick="confirmBeforeDeletion('/tutor-availability/destroy/<%=tutorAvailability._id%>')"
+                                                                        data-toggle="tooltip" rel="tooltip"
+                                                                        data-placement="top" title="Delete"><img
+                                                                            src="/images/trash-icon.svg"
+                                                                            alt=""></button>
+                                                                </li>
+
+                                                                <% } if(tutorAvailability.isApproved=='2' ) { %>
+                                                                    <li>
+                                                                        <img src="/images/approve-check.svg" alt=""
+                                                                            data-toggle="tooltip" rel="tooltip"
+                                                                            data-placement="top" title="Approved">
+                                                                        <% } if(tutorAvailability.isApproved=='3' ) { %>
+                                                                            <img src="/images/approve-cancel.svg" alt=""
+                                                                                data-toggle="tooltip" rel="tooltip"
+                                                                                data-placement="top"
+                                                                                title="Not Approved">
+                                                                            <% } if(tutorAvailability.isApproved=='1' )
+                                                                                { %>
+                                                                                <img src="/images/approve-pending.svg"
+                                                                                    alt="" data-toggle="tooltip"
+                                                                                    rel="tooltip" data-placement="top"
+                                                                                    title="Waiting For Approval">
+                                                                                <% } %>
+                                                                    </li>
+                                                                    <% } %>
+                                            </ul>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../modals/availability_form.ejs'); %>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".avail-content-availability .avail-morebtn").on("click", function () {
+                $(this).next(".view-morecontent").slideToggle(300);
+
+                $(this).toggleClass("more-active");
+
+                var buttonHtml = $(this).html();
+
+                if (buttonHtml.includes("View Note")) {
+                    $(this).html('<img src="/images/eye-close.svg" alt="Hide Icon" /> Hide Note');
+                } else {
+                    $(this).html('<img src="/images/eye-open.svg" alt="View Icon" /> View Note');
+                }
+            });
+
+            $('.submit-availability').click(function () {
+                // $("#tutorAvailability .submit-availability").prop('disabled', true);
+
+                $(document).find("span.text-danger").remove();
+                var selectedDays = $('.days-checkbox:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                $('.errors').remove();
+                if (selectedDays.length === 0) {
+                    $('.settinglist').after('<p class="errors" style="color:red;">Please select at least one day</p>');
+                    return false;
+                }
+                if (!validateAvailabilityTime()) {
+                    return false;
+                }
+
+                setCurrentTab();
+                var formData = $('.availability-form').serialize();
+                $.ajax({
+                    url: '/tutor-availability/store',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    },
+                    error: function (response) {
+                        let errorMessages = '';
+                        $(document).find('.text-danger').remove();
+                        $('.availability-flash').remove();
+                        if (response.status === 409) {
+                            //location.reload();
+                            $('#tutorAvailability .modal-body').prepend(`
+                                <div class="alert alert-danger availability-flash alert-dismissible fade show" role="alert">
+                                    ${response.responseJSON.message}
+                                    <button type="button" class="btn-close" data-dismiss="alert">X</button>
+                                </div>
+                            `);
+
+                            return;
+                        }
+                        if (response.responseJSON.errors) {
+                            $.each(response.responseJSON.errors, function (index, error) {
+                                if (error.param != '') {
+                                    $(document).find(`[name=${error.param}]`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                                } else {
+                                    $(document).find(`#tutorAvailabilityLabel`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                                }
+                            });
+                        }
+
+                        // if (response.responseJSON.message) {
+                        //     $(document).find(`#tutorAvailabilityLabel`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                        // }
+                    },
+                    complete: function () {
+                        // $("#tutorAvailability .submit-availability").prop('disabled', false);
+                    }
+                });
+            });
+
+            initializeAvailabilityDatepickers();
+
+            $('#tutAvailEtime').on('change blur', function () {
+
+                validateAvailabilityTime();
+            });
+
+            $('#tutAvailStime').on('change blur', function () {
+
+                $('#tutAvailEtime').val('');
+                $('.time-error').remove();
+
+                validateAvailabilityTime();
+            });
+
+            $('#tutAvailSdate, #tutAvailEdate').on('change', function () {
+
+                validateAvailabilityTime();
+            });
+
+            $('.add-availability').click(function () {
+                resetForm();
+                $('#tutorAvailability').modal('show');
+            });
+
+            $('.edit-availability').click(function () {
+                resetForm();
+                let availabilityId = $(this).data('id');
+                loadAvailabilityData(availabilityId);
+                $('#tutorAvailability').modal('show');
+            });
+
+            $(".availability-status").click(function () {
+                let availabilityStatus = $(this).data('value');
+                let id = $(this).data('id');
+                changeAvailabilityStatus(availabilityStatus, id);
+            });
+        });
+
+        function initializeAvailabilityDatepickers() {
+            console.log("Initializing date pickers");
+            var today = moment();
+            $('#tutAvailSdate, #tutAvailEdate').daterangepicker({
+                singleDatePicker: true,
+                minDate: today,
+                autoUpdateInput: false,
+                locale: { format: 'DD-MM-YYYY' }
+            });
+
+            $('#tutAvailSdate').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD-MM-YYYY'));
+                $('#tutAvailEdate').data('daterangepicker').minDate = picker.startDate;
+                $('#tutAvailEdate').data('daterangepicker').updateView();
+                $('#tutAvailEdate').data('daterangepicker').updateCalendars();
+            });
+
+            $('#tutAvailEdate').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD-MM-YYYY'));
+                $('#tutAvailSdate').data('daterangepicker').maxDate = picker.startDate;
+                $('#tutAvailSdate').data('daterangepicker').updateView();
+                $('#tutAvailSdate').data('daterangepicker').updateCalendars();
+            });
+        }
+
+        function validateAvailabilityTime() {
+
+            $('.time-error').remove();
+
+            let startDate = $('#tutAvailSdate').val();
+            let endDate = $('#tutAvailEdate').val();
+
+            let startTime = $('#tutAvailStime').val();
+            let endTime = $('#tutAvailEtime').val();
+
+            // Only validate if all values exist
+            if (!startDate || !endDate || !startTime || !endTime) {
+                return true;
+            }
+
+            // Validate only when dates are same
+            if (startDate === endDate) {
+
+                let startMoment = moment(startTime, 'hh:mm A');
+                let endMoment = moment(endTime, 'hh:mm A');
+
+                if (endMoment.isSameOrBefore(startMoment)) {
+
+                    $('#tutAvailEtime')
+                        .closest('.form-group')
+                        .append(`
+                        <span class="text-danger time-error d-block mt-1">
+                            End time must be greater than start time
+                        </span>
+                    `);
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function resetForm() {
+            $('.errors').remove();
+            $('#availability_id').val('');
+            $('input[name="days[]"]').prop('checked', false);
+            $('#tutAvailSdate').val('');
+            $('#tutAvailEdate').val('');
+            $('#tutAvailStime').val('');
+            $('#tutAvailEtime').val('');
+            $("#note").val('');
+        }
+
+        function loadAvailabilityData(availabilityId) {
+            $.ajax({
+                type: "POST",
+                data: { id: availabilityId },
+                url: '/tutor-availability/edit',
+                success: function (response) {
+                    if (response) {
+                        var startTime12hr = moment(response.start_time, 'HH:mm').format('hh:mm A');
+                        var endTime12hr = moment(response.end_time, 'HH:mm').format('hh:mm A');
+
+                        $('#availability_id').val(response._id); // Set start date
+                        $('#tutAvailSdate').val(response.start_date);
+                        $('#tutAvailEdate').val(response.end_date);
+                        $('#tutAvailStime').val(startTime12hr);
+                        $('#tutAvailEtime').val(endTime12hr);
+                        $('#note').val(response.note);
+
+                        $('input[name="days[]"]').prop('checked', false);
+
+                        var selectedDays = Array.isArray(response.days)
+                            ? response.days.map(String)
+                            : [];
+
+                        selectedDays.forEach(function (dayIndex) {
+                            $('input[name="days[]"][value="' + dayIndex + '"]').prop('checked', true);
+                        });
+                    } else {
+                        console.error("Failed to load availability data");
+                    }
+                },
+                error: function () {
+                    console.error("Error loading availability data");
+                }
+            });
+        }
+
+        function changeAvailabilityStatus(status, id) {
+            $.ajax({
+                method: "POST",
+                url: '/tutor-availability/availability-approval',
+                data: {
+                    availability_status: status,
+                    availability_id: id
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        console.error("Failed to update status", response);
+                    }
+                },
+                error: function () {
+                    console.error("Error updating availability status");
+                }
+            });
+        }
+
+
+    </script>

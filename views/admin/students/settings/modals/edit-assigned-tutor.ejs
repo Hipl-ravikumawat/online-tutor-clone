@@ -1,0 +1,96 @@
+<div class="modal fade common-modal" data-backdrop="static" id="studentAssignedTutor" tabindex="-1" role="dialog"
+  aria-labelledby="studentAssignedTutorLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="studentAssignedTutorLabel">Edit Assigned Tutor</h3>
+      </div>
+      <form method="post" action="/student-preferences/update-assigned-tutor" class="modal-form-area assigned-tutor-form"
+        id="assigned-tutor-form">
+        <input type="hidden" name="assigned_tutor_id" class="tutor_id" value="the_existing_record_id">
+
+        <div class="modal-body">
+          <input type="hidden" name="student_id" class="student_id" value="<%=currentStudent.id%>" />
+          <div class="form-area">
+            <div class="form-group">
+              <label>Tutors</label>
+  
+              <select name="tutor_id" id="tutor_id" class="">
+                <option value="">Select A Tutor</option>
+                <% for (let tutor of tutors) { %>
+                  <option value="<%= tutor.id %>">
+                    <%= tutor.first_name + ' ' + tutor.last_name %>
+                  </option>
+                  <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Default Lesson Category</label>
+
+              <select name="default_lesson_category" id="default_lesson_category" class="">
+                <option value="">Select</option>
+                <% for(let category of lessonCategory){ %>
+                  <option value="<%= category.key %>">
+                    <%= category.label %>
+                  </option>
+                  <% } %>
+              </select>
+            </div>
+            
+            <div class="position-relative form-group flaticon caption-group">
+                <label>Default Duration (In Mins)</label>
+                <input type="number" name="default_duration" id="default_duration" step="any" min="0"/>
+                <span class="input-icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                <span class="caption-title">Minutes</span>
+            </div>
+
+            <div class="position-relative form-group flaticon caption-group">
+              <label>Price</label>
+              <input type="number" name="price" id="price" step="any" min="0"/>
+              <span class="input-icon"><i class="fa fa-usd" aria-hidden="true"></i></span>
+              <span class="caption-title">Per Hour</span>
+            </div>
+
+
+
+            <div class="form-group">
+              <label class="mb-2">Default Billing</label>
+              <% const billing=[ { id: 'no_calendar_generated_charges' , value: 'no_calendar_generated_charges' ,
+                label: "Don't automatically create any calendar-generated charges" }, { id: 'lesson_based_payment' ,
+                value: 'lesson_based_payment' , label: 'Student pays based on the number of lessons taken' }, {
+                id: 'fixed_monthly_payment' , value: 'fixed_monthly_payment' ,
+                label: 'Student pays the same amount each month regardless of number of lessons' }, {
+                id: 'hourly_rate_payment' , value: 'hourly_rate_payment' , label: 'Student pays an hourly rate' ,
+                note: 'Charges will automatically adjust to lesson duration' } ]; %>
+                <% billing.forEach(bill=> { %>
+                  <div class="form-check radio_group w-100">
+                    <input type="radio" name="billing_list" value="<%= bill.value %>" id="edit_<%= bill.id %>"
+                      class="form-check-input bill-type-radio">
+                    <label class="radiolabel" for="edit_<%= bill.id %>">
+                      <%= bill.label %>
+                        <% if (bill.note) { %>
+                          <small class="d-block text-muted">
+                            <%= bill.note %>
+                          </small>
+                          <% } %>
+                    </label>
+                  </div>
+                  <% }); %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea"></div>
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">
+              Cancel
+            </button>
+            <button type="submit" class="btn theme-btn edit-assigned-tutor-submit-btn">
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

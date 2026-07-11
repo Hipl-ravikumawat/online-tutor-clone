@@ -1,0 +1,272 @@
+<style>
+    .bootstrap-tagsinput{
+      width: calc(100% - 38px);
+      border-top-right-radius: 0px !important;
+      border-bottom-right-radius: 0px !important;
+    }
+     .input-group-append .btn{
+      border-color: #ccc;
+      width: 38px;
+    }
+    .nav-md .container.body .col-md-3.left_col {
+      width: 300px;
+      max-width: 300px;
+    }
+  
+    .nav-md .container.body .right_col {
+      margin-left: 300px;
+      width: calc(100% - 300px);
+    }
+  
+    .nav_menu {
+      box-shadow: 20px 4px 14px rgb(32 27 83 / 11%);
+    }
+  
+    .nav-md .container.body .col-md-3.left_col,
+    .nav-sm .container.body .col-md-3.left_col {
+      background: #fff;
+    }
+  
+    .container.body .col-md-3.left_col .profile {
+      display: none;
+    }
+  
+    .menu_section {
+      display: none;
+    }
+  
+    .courses-sidebar {
+      display: block;
+      margin-top: 70px;
+    }
+  
+    .nav-sm .container.body .right_col {
+      margin-left: 0;
+    }
+  
+    .nav-sm .main_container .top_nav {
+      margin-left: 0;
+    }
+  
+    .nav-sm .container.body .col-md-3.left_col {
+      display: none;
+    }
+  
+    table.summary-table {
+      width: 100%;
+      border: 1px solid #7c8fa3;
+    }
+    table.summary-table th,
+    table.summary-table td {
+      border: 1px solid #7c8fa3;
+      padding: 5px 10px;
+      text-align: center;
+    }
+  
+    @media (max-width: 991px) {
+      .nav-md .container.body .right_col {
+        margin-left: 0px;
+        width: calc(100% - 0px);
+      }
+  
+      .nav-sm .container.body .col-md-3.left_col.menu_fixed {
+        width: 300px;
+        max-width: 300px;
+      }
+  
+      .nav-sm .container.body .col-md-3.left_col {
+        display: block;
+      }
+  
+      .nav-sm .main_container .top_nav {
+        margin-left: 70px;
+      }
+  
+      .nav-sm .container.body .right_col {
+        margin-left: 0;
+      }
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet"/>
+
+  <!-- tutor-training single lesson view content -->
+  <div class="right_col" role="main">
+    <% if(lessonContentStatics.is_assessment !== true) {%>
+    <div class="back-page">
+      <!-- breadcrumb starts -->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/tutor-training">Training Content List</a>
+        </li>
+        <li class="breadcrumb-item active">
+          <%=learningContent.title%> 
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/tutor-training/<%=learningContent.slug%>/lessons">Lessons </a>
+        </li>
+        <li class="breadcrumb-item active"><%=lesson.title%></li>
+      </ol>
+      <!-- breadcrumb end -->
+    </div>
+    <% } %>
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="reminder-timer text-center">
+          </h2>
+        </div>
+      </div>
+    <div class="outer-element" id="fullscreen-element">
+      <div class="multiple-tab card-block">
+        <div class="unassign-nav">
+          <span class="unassign-prev">Prev</span>
+          <span class="page-count"></span>
+          <span class="unassign-next">Next</span>
+        </div>
+        <h2 class="no-data-found text-center d-none">No Data Found.</h2>
+        <div class="unassign-content"></div>
+        <button id="toggle-fullscreen">Fullscreen</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main content -->
+  <%- include('./partials/model_slide'); %> 
+  <%-include('./partials/model_practice'); %> 
+  <!-- sortable -->
+  <script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+  
+  <!-- draggable -->
+  <script src="//cdn.jsdelivr.net/interact.js/1.2.8/interact.min.js"></script>
+   
+  <!-- tinyMCE -->
+  <script src="/vendors/tinymce/tinymce.min.js"></script>
+  
+  <!-- drag & drop -->
+  <script src="https://questioneditor.learnosity.com/?v3"></script>
+  
+  <!-- dracula -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.js"></script>
+  <!-- tag input -->
+  <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
+  <script type="text/javascript">
+    const userRole = "<%=loggedUserInfo.role%>";
+    const contentDirectory = "<%=learningContent.content_directory%>";
+    const learningContentId = "<%=learningContent.id%>";
+    const learningContentSlug = "<%=learningContent.slug%>";
+    const lessonId = "<%=lesson.id%>";
+    const lessonSlug = "<%=lesson.slug%>";
+    const assessmentId = "<%=lessonContentStatics.assessment_id%>"
+    const isAssessment = "<%=lessonContentStatics.is_assessment%>"
+    const parts = window.location.href.split('/');
+    var lastSegment = parts.pop();
+  
+    let activeContentType = '';
+    let activeContentId = '';
+    let sliderTarget = '';
+    let totalTabsOfSliderTarget = 0;
+    let currentTab = 1;
+    $(document).ready(function() {
+      var drake = dragula({
+            // options here
+      });
+      
+      $('.slider-menu').click(function () {
+        $('.content-collapse').removeClass('show');
+        $($(this).data('data-target')).toggleClass('show');
+        $('.active-slick-list li').removeClass('active');
+        $('.active-slick-list li a').removeClass('active');
+        $('.slide-action').removeClass('active-slick-list');
+        activeContentType = $(this).data('type');
+        sliderTarget = $(this).data('target');
+        $(sliderTarget).find('.slide-action').addClass('active-slick-list');
+        $('.active-slick-list li:first-child').addClass('active');
+        initiatePagination(sliderTarget);
+        activeContentId = $('.active-slick-list li:first-child').data('uniqueid');
+        
+        if(activeContentType == 'challenges'){
+          resetChallenge();
+          setTimeout(function () {
+            startChallenge();
+          }, 1000);
+        }
+        renderSliderContent(lessonId, activeContentType, activeContentId);
+      });
+        
+      // Trigger the click on the first element immediately
+      $('.slider-menu:first').trigger('click');
+    });
+  
+    function initiatePagination(sliderTarget) {
+      totalTabsOfSliderTarget  = $(sliderTarget + " .sort-slides1").length;
+      currentTab = 1;
+      $(".unassign-content .tab-content").first().addClass("active-tab");
+      setPageCount();  
+    }
+  
+    function setPageCount() {
+        $(".page-count").text(currentTab + "/" + totalTabsOfSliderTarget);
+    }
+  
+    function animateTabs() {
+      $('.active-slick-list li').removeClass('active');
+      $('.active-slick-list li a').removeClass('active');
+      // $('.slide-action li').removeClass('active');
+      // $('.slide-anchor, .practice-anchor, .challenge-anchor').removeClass('active');
+      $('.active-slick-list li[data-position="'+currentTab+'"]').addClass('active');
+      $('.active-slick-list li[data-position="'+currentTab+'"] a').addClass('active');
+      activeContentId = $('.active-slick-list li.active').data('uniqueid');
+      renderSliderContent(lessonId, activeContentType, activeContentId);
+      setPageCount();
+      
+    }
+  
+    $(".unassign-next").on("click", function () {
+      if (currentTab < totalTabsOfSliderTarget) {
+        currentTab++;
+        animateTabs();
+      }
+    });
+  
+    $(".unassign-prev").on("click", function () {
+      if (currentTab > 1) {
+        currentTab--;
+        animateTabs();
+      }
+    });
+  
+    // full screen.
+    const fullscreenElement = document.getElementById('fullscreen-element');
+      const toggleFullscreenButton = document.getElementById('toggle-fullscreen');
+      function toggleFullScreen() {
+          if (!document.fullscreenElement) {
+              fullscreenElement.requestFullscreen().catch(err => {
+                  console.error('Error attempting to enable fullscreen:', err);
+              });
+          } else {
+              document.exitFullscreen();
+          }
+      }
+  
+      function updateButtonLabel() {
+          toggleFullscreenButton.innerHTML = document.fullscreenElement ? "Exit" : "Fullscreen";
+      }
+      
+      toggleFullscreenButton.addEventListener('click', toggleFullScreen);
+      document.addEventListener('fullscreenchange', updateButtonLabel);
+      document.addEventListener('keydown', event => {
+          if (event.key === 'Escape') {
+              toggleFullscreenButton.innerHTML = "Fullscreen";
+          }
+    });
+  
+    function previewDropify() {
+      $(".unassign-content").find('.submit-attachment').closest('.dropify-wrapper').addClass('has-preview');
+    }
+  </script>
+
+<%- include('./partials/page_script'); %> 
+<%-include('./partials/slide_script'); %>
+<%-include('./partials/practice_script'); %>
+<%-include('./partials/assessment_script'); %>

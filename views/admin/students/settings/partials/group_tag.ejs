@@ -1,0 +1,20 @@
+<div class="card student-notes mt-4">
+  <div class="note-top d-flex justify-content-between align-items-center pb-3">
+    <h4>Group Tags</h4>
+  </div>
+
+  <div class="private-note">
+    <p class="mb-0 text-justify">
+
+      <% if (currentStudent.groupTags && currentStudent.groupTags.length > 0) { %>
+        <%- Array.isArray(currentStudent.groupTags) 
+              ? currentStudent.groupTags.join(', ') 
+              : currentStudent.groupTags 
+        %>
+      <% } else { %>
+        Group tags not found
+      <% } %>
+
+    </p>
+  </div>
+</div>

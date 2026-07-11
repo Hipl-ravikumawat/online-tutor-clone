@@ -1,0 +1,417 @@
+<div class="right_col" role="main">
+    <div class="card-block">
+      <div class="tutor_availability_top">
+        <h3 class="title-text mb-0">Tutor Availability</h3>
+        <div class="tutor_availability_right">
+          <form id="availabilityForm" onsubmit="return fetchTutorAvailability(event);">
+            <div class="form-group mb-0">
+              <input type="text" class="form-control" id="dateRangeBlock" name="date_range" placeholder="Date" autocomplete="off">
+            </div>
+            <div class="form-group mb-0 position-relative">
+              <input type="text"class="form-control time-range-picker" name="time_range" placeholder="Time" autocomplete="off">
+            </div>
+            <div class="form-group mb-0">
+              <select class="form-control single-select" name="tutors" id="tutors" tabindex="-1" single data-placeholder="Select Tutor" >
+                <% for(let tutor of tutors){ %>
+                  <option value="<%=tutor._id%>"><%=tutor.first_name + ' '+ tutor.last_name%></option>
+                <% } %>
+              </select>
+            </div>
+            <button type="submit" class="btn theme-btn">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="card-block mt-4 pb-0">
+      <div class="tutors_area">
+        <h3 class="title-text">Tutors</h3>
+        <!-- <div class="tutors_area_top">
+          <ul>
+            <% 
+            let i= 0;
+            for(let tutor of tutors){ 
+            i++;
+            %>
+              <li>
+                <a href="javascript:void(0)" class="tutor-tab <%=i==1 ? 'active' : '' %>" data-id="<%=tutor._id%>">
+                  <span><svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                  <path d="M4.16797 5C5.54868 5 6.66797 3.88071 6.66797 2.5C6.66797 1.11929 5.54868 0 4.16797 0C2.78726 0 1.66797 1.11929 1.66797 2.5C1.66797 3.88071 2.78726 5 4.16797 5Z" fill="#A9C3D0"/>
+                  <path d="M4.16667 5.8335C1.87019 5.8335 0 7.5835 0 9.73975C0 9.88558 0.100843 10.0002 0.22919 10.0002H8.10414C8.23249 10.0002 8.33333 9.88558 8.33333 9.73975C8.33333 7.5835 6.46315 5.8335 4.16667 5.8335Z" fill="#A9C3D0"/>
+                  </svg></span><%=tutor.first_name + ' '+ tutor.last_name%>
+                </a>
+              </li>
+            <% } %>
+          </ul>
+          <div class="tutors_arrow">
+            <a href="javascript:void(0)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="7" height="13" viewBox="0 0 7 13" fill="none">
+                <path d="M6 12L1.40683 7.47222C0.864389 6.9375 0.864389 6.0625 1.40683 5.52778L6 1" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a href="javascript:void(0)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="7" height="13" viewBox="0 0 7 13" fill="none">
+                <path d="M1 1L5.59317 5.52778C6.13561 6.0625 6.13561 6.9375 5.59317 7.47222L1 12" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div> -->
+        <div class="tutors_area_table">
+          <div class="table-responsive availability_data">
+            <div class="row text-center no-data-found">
+              <!-- <h2 class="w-100">No Data Available </h2> -->
+              <div class="col-12 no-data-found-img"><img src="/images/no-data-found.svg" alt="no-data"></div>
+            </div>
+            <!-- <table>
+              <tr>
+                <th></th>
+                <th>16-07-2024</th>
+                <th>17-07-2024</th>
+                <th>18-07-2024</th>
+                <th>19-07-2024</th>
+                <th>20-07-2024</th>
+                <th>21-07-2024</th>
+                <th>22-07-2024</th>
+              </tr>
+              <tr>
+                <td>07:30AM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>08:00AM</td>
+                <td><span class="Book_Btn">Booked</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>08:30AM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>09:00AM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>09:30AM</td>
+                <td></td>
+                <td><span class="Book_Btn">Booked</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>10:00AM</td>
+                <td><span class="Book_Btn">Booked</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>10:30AM</td>
+                <td></td>
+                <td><span class="Book_Btn">Booked</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>11:00AM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>11:30AM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>12:00PM</td>
+                <td></td>
+                <td><span class="Book_Btn">Booked</span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>12:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>1:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>1:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>2:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>2:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>3:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>3:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>4:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>4:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>5:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>5:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>6:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>6:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>7:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>7:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>8:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>8:30PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>9:00PM</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table> -->
+            <!-- <div class="overlay-wborder"></div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<script type="text/javascript">
+  $(document).ready(function() {
+    initializeDateRangePicker();
+    initializeDateTimePicker();
+    initializeSingleSelect();
+  });
+
+  function initializeSingleSelect(){
+    $(".single-select").select2({
+      allowClear: false,
+    });
+  }
+  function initializeDateTimePicker(){
+    $('.time-range-picker').daterangepicker({
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker24Hour: false,
+        locale: {
+            format: 'hh:mm A'
+        }
+    });
+    $('.time-range-picker').on('show.daterangepicker', function(ev, picker) {
+        picker.container.addClass('TimeRangePicker');
+    });
+  }
+  function initializeDateRangePicker() {
+    $('#dateRangeBlock').daterangepicker({
+        opens: 'left',
+        locale: {
+            format: 'DD/MM/YYYY',
+        },
+        maxSpan: {
+            days: 6
+        }
+    });
+  }
+
+  function fetchTutorAvailability(event){
+    event.preventDefault();
+    let form = $('#availabilityForm');
+    let formData = new FormData(form[0]);
+    $.ajax({
+      type: "POST",
+      url: '/calendar/fetch-availability',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        console.log(response,"response !!");
+        $('.table-responsive').html(response.html);
+      }
+    })
+  }
+</script>
+  

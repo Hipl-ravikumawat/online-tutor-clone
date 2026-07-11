@@ -1,0 +1,169 @@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Title <small>Optional</small></label>
+            <select class="form-control title" name="title" id="title" tabindex="-1" single>
+                <option value="">Select Title</option>
+                <option value="Mr">Mr</option>
+                <option value="Ms">Ms</option>
+                <option value="Mrs">Mrs</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Contact Type <span class="text-danger">*</span></label><br>
+            <div class="d-flex">
+                <div class="form-check radio_group contact-radio-grp">
+                    <input class="form-check-input contact-type-radio" type="radio" name="contact_type"
+                        id="<%= formType %>contactTypeCompany" value="company">
+                    <label class="radiolabel" for="<%= formType %>contactTypeCompany">Company</label>
+                </div>
+                <div class="form-check radio_group contact-radio-grp">
+                    <input class="form-check-input contact-type-radio" type="radio" name="contact_type"
+                        id="<%= formType %>contactTypePerson" value="person">
+                    <label class="radiolabel" for="<%= formType %>contactTypePerson">Person</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 contact-company">
+        <div class="form-group">
+            <label>Company Name<span class="text-danger">*</span></label>
+            <input type="text" name="company_name" class="company_name ">
+        </div>
+    </div>
+    <div class="contact-person d-none w-100">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>First Name<span class="text-danger">*</span></label>
+                <input type="text" name="first_name" class="first_name">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Last Name<span class="text-danger">*</span></label>
+                <input type="text" name="last_name" class="last_name">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Relationship<span class="text-danger">*</span></label>
+            <input type="text" name="relationship" class="relationship ">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group custom_lang_prefix">
+            <label>Mobile Number <span class="text-danger">*</span></label>
+            <input type="hidden" class="dial_code mobile_number_dial_code" name="mobile_number_dial_code" id="mobile_number_dial_code" value/>
+            <input type="hidden" class="iso_code mobile_number_iso_code" name="mobile_number_iso_code" id="mobile_number_iso_code" />
+            <input type="text" class="phone mobile_number" name="mobile_number" id="mobile_number" />
+
+            <div class="common-checkbox mt-2 d-inline-block position-relative">
+                <input type="checkbox" value="1" name="mobile_number_sms_capable" id="mobileNumberCap" onclick="checkboxClicked('mobile_number', this)" class="position_input" />
+                <label for="mobileNumberCap" class="mb-0">SMS Capable</label>
+            </div>
+            <div class="error-message text-danger" id="mobile_number_error"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group custom_lang_prefix">
+            <label>Home Number <small>Optional</small></label>
+            <input type="hidden" name="home_number_dial_code" id="home_number_dial_code" />
+            <input type="hidden" name="home_number_iso_code" id="home_number_iso_code" />
+            <input type="text" class="phone home_number" name="home_number" id="home_number" />
+
+            <div class="common-checkbox mt-2 d-inline-block position-relative">
+                <input type="checkbox" value="1" name="home_number_sms_capable" id="homeNumberCap" onclick="checkboxClicked('home_number', this)" class="position_input" />
+                <label for="homeNumberCap" class="mb-0">SMS Capable</label>
+            </div>
+            <div class="error-message text-danger" id="home_number_error"></div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group custom_lang_prefix">
+            <label>Work Number <small>Optional</small></label>
+            <input type="hidden" name="work_number_dial_code" id="work_number_dial_code" />
+            <input type="hidden" name="work_number_iso_code" id="work_number_iso_code" />
+            <input type="text" class="phone work_number" name="work_number" id="work_number" />
+
+            <div class="common-checkbox mt-2 d-inline-block position-relative">
+                <input type="checkbox" value="1" name="work_number_sms_capable" id="workNumberCap" onclick="checkboxClicked('work_number', this)" class="position_input" />
+                <label for="workNumberCap" class="mb-0">SMS Capable</label>
+            </div>
+            <div class="error-message text-danger" id="work_number_error"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Email Address<span class="text-danger">*</span></label>
+            <input type="email" name="email" class="email">
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Address <small>Optional</small></label>
+            <textarea name="address" class="address"></textarea>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Private Note <small>Optional</small></label>
+            <textarea name="private_note" class="private_note"></textarea>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Preferences</label>
+            <ul class="settinglist mt-0">
+                <li class="w-100">
+                    <div class="form-check">
+                        <input type="checkbox" name="preferred_invoice_recipient" value="1" id="<%= formType %>preferencRecipient" class="form-check-input preferred_invoice_recipient preferencRecipient">
+                        <label class="form-check-label" for="<%= formType %>preferencRecipient">Set as the preferred invoice recipient
+                        </label>
+                    </div>
+                </li>
+                <li class="w-100">
+                    <div class="form-check">
+                        <input type="checkbox" name="show_in_student_portal" value="1" id="<%= formType %>preferencContacts"
+                            class="form-check-input preferencContacts">
+                        <label class="form-check-label" for="<%= formType %>preferencContacts">Show in Student Portal
+                            contacts</label>
+                    </div>
+                </li>
+                <li class="w-100">
+                    <div class="form-check">
+                        <input type="checkbox" name="email_lesson_reminders" value="1"
+                            id="<%= formType %>preferencEmailReminders" class="form-check-input preferencEmailReminders">
+                        <label class="form-check-label" for="<%= formType %>preferencEmailReminders">Send email lesson
+                            reminders</label>
+                    </div>
+                </li>
+                <li class="w-100">
+                    <div class="form-check">
+                        <input type="checkbox" name="sms_lesson_reminders" value="1" id="<%= formType %>preferencSmsReminders"
+                            class="form-check-input preferencSmsReminders">
+                        <label class="form-check-label" for="<%= formType %>preferencSmsReminders">Send SMS lesson reminders
+                            <small class="d-block">Will only be sent if SMS messaging is allowed</small></label>
+                    </div>
+                </li>
+                <li class="w-100">
+                    <div class="form-check">
+                        <input type="hidden" name="force_update_legal_parents" value="1">
+                        <input type="checkbox" name="legal_parents" value="1" id="<%= formType %>preferencLegalParents"
+                            class="form-check-input legal_parents preferencLegalParents">
+
+                        <label class="form-check-label" for="<%= formType %>preferencLegalParents">Legal Guardian/Parent <small
+                                class="d-block">Will only be Legal Guardian/Parent</small></label>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    
+</div>
+    

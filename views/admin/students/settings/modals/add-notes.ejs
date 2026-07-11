@@ -1,0 +1,51 @@
+<div class="modal fade common-modal" data-backdrop="static" id="studentNotes" tabindex="-1"
+  role="dialog" aria-labelledby="studentNotesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="studentNotesLabel">Edit Note</h3>
+      </div>
+      <form
+        method="post"
+        action="/student-preferences/store-private-note"
+        class="modal-form-area"
+      >
+        <div class="modal-body">
+          <input
+            type="hidden"
+            name="student_id"
+            class="student_id"
+            value="<%=currentStudent.id%>"
+          />
+          <div class="form-area">
+            <div class="form-group">
+              <label>Note</label>
+              <small
+                >This note is private and will not be shared with others</small
+              >
+              <textarea
+                name="note"
+                id="private-note-text-area"
+                cols="30"
+                rows="10"
+                maxlength="50"
+              ><%=currentStudent.note%></textarea
+              >
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea"></div>
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">
+              Cancel
+            </button>
+            <button type="submit" class="btn theme-btn submit-note">
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

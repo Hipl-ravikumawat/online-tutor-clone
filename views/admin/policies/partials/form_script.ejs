@@ -1,0 +1,25 @@
+<!-- dropIfy-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+
+<script type="text/javascript">
+  /**
+   * topic form script.
+   * @script start
+   */
+  $(document).ready(function () {
+    $("#status").select2({
+      allowClear: false,
+    });
+
+    $(".dropify").dropify();
+
+    $(".dropify-clear").on("click", function () {
+      $("#is_image_removed").val("1");
+      $(".dropify").attr("required", true);
+    });
+  });
+  /**
+   * topic form script.
+   * @script end
+   */
+</script>

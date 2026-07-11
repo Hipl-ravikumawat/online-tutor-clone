@@ -1,0 +1,72 @@
+
+<div class="drag-question-block">
+  <form method="post" action="/learning-content/course-1/lessons/lesson-slug/practices/checkDragAndDropAnswer" id="DragAndDropForm">
+    <input type="hidden" class="lesson_id" name="lesson_id" value="<%=lessonId%>">
+    <input type="hidden" class="practice_id" name="practice_id" value="<%=practice.id%>">
+    <input type="hidden" class="practice_type" value="<%=practice.question_type%>" name="practice_type">
+    <input type="hidden" class="question_content_type" value="practices">
+    
+    <div class="drag-question-row">
+      <div class="drag-question">
+        <% if(savedQuestion.length > 0){ %>
+          <p class="text-right"><button type="button" class="btn btn-info reset-drag-drop">Reset</button></p>
+          <% } %>
+        <% 
+          let updatedParagraph = practice.question;
+          const replacements = savedQuestion;
+          if(savedQuestion.length > 0){
+            let replacementIndex = 0;
+            while (updatedParagraph.includes("{{response}}")) {
+              const spanValue = ` <span class="para-gap task-list" id="answer-1" data-index="1"><span class="index-number">1</span><span class="task save-option">${replacements[replacementIndex % replacements.length]
+              }</span></span>`;
+              updatedParagraph = updatedParagraph.replace(
+                /{{response}}/,spanValue
+              );
+              replacementIndex++;
+            }
+          }else{
+            updatedParagraph = practice.question.replaceAll('{{response}}','<span class="para-gap task-list" id="answer-1"><span class="index-number">1</span></span>'); 
+          }
+        %>
+        <h4 class="drag-content"><%-updatedParagraph%></h4>
+        <!-- <h4>Lorem <span class="para-gap task-list answer-wrong" id="answer-1"><span class="index-number">1</span></span> is simply dummy text of the <span class="para-gap task-list answer-right" id="answer-2"><span class="index-number">2</span></span> printing and typesetting <span class="para-gap task-list answer-right" id="answer-3"><span class="index-number">3</span></span>.</h4> -->
+      </div>
+
+      <div class="doing-column">
+        <div class="task-list doing" id="doing" style="<%=(savedQuestion.length>0) ? 'display:none':''%>">
+          <%
+          let CorrectOptions = practice.options;
+          for(option of shuffle_options){
+          %>
+          <div class="task"><%=option.option_text%></div>
+          <% } %>
+        </div> 
+      </div>
+    </div>
+    <div class="answer-submitted">
+      <span>Answer Submitted</span>
+    </div>
+    <div class="text-center">
+      <% if(userRole == '3'){ %> 
+        <button type="button" class="theme-btn2 correct-btn submit_question">Submit</button>
+      <% } else { %> 
+      <button type="submit" class="answercheckbtn theme-btn2 ">Check Answer</button>
+        <% } %>
+    </div>
+  </form>
+  <div class="answer-explanation" style="display:none;">
+    <h4>Correct Answer</h4>
+    <ul>
+      <%
+       let i = 0; 
+       for(options of CorrectOptions){
+        if(options.option_correct){
+      %> 
+        <li>
+          <span class="answer-number"><%=++i%></span>
+          <span class="answer-text"><%=options.option_text%></span>
+        </li>
+      <% } } %>
+    </ul>
+  </div>
+</div>

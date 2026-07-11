@@ -1,0 +1,71 @@
+<!-- category modal -->
+<div class="modal fade common-modal" data-backdrop="static" id="addCalendarCategory" tabindex="-1" role="dialog" aria-labelledby="addCalendarCategoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="addCalendarCategoryLabel">Category Form</h3>
+        </div>
+        <form class="modal-form-area common-form"  id="categories-form" action="/categories/store" method="post">
+          <div class="modal-body settings_content">
+            <div class="pt-1">
+                <input type="hidden" name="category_id" value="" class="category-id">
+                <div class="form-group">
+                    <label class="mb-1">Name</label>
+                    <input type="text" name="name" id="name" class="name" autocomplete="off" placeholder="Enter Category Name">
+                </div>
+                <div class="form-group">
+                    <label class="mb-1">Color</label>
+                    <div class="drop-down">
+                        <input type="hidden" class="color categories-color" id="color" name="color" value="purple">
+                        <div class="selected"><a href="javascript: void(0)" class="color-selected"><span class="color-block background-purple">Purple</span></a></div>
+                        <div class="drop-options">
+                            <ul>
+                                <li class="color-list"><a href="javascript: void(0)"><span class="color-block background-purple">Purple</span></a></li>
+                                <li class="color-list"><a href="javascript: void(0)"><span class="color-block background-orange">Orange</span></a></li>
+                                <li class="color-list"><a href="javascript: void(0)"><span class="color-block background-blue">Blue</span></a></li>
+                                <li class="color-list"><a href="javascript: void(0)"><span class="color-block background-black">Black</span></a></li>
+                                <li class="color-list"><a href="javascript: void(0)"><span class="color-block background-red">Red</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group cselect-arrow">
+                            <label class="mb-1">Email Reminders</label>
+                            <select class="email-reminder" name="email_reminder">
+                                <option>No Reminder</option>
+                                <option value="1">1 hour before</option>
+                                <option value="2">2 hour before</option>
+                                <option value="3">3 hour before</option>
+                                <option value="24">1 day before</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group cselect-arrow">
+                            <label class="mb-1">SMS Reminders</label>
+                            <select class="sms-reminder" name="sms_reminder">
+                                <option>No Reminder</option>
+                                <option value="1">1 hour before</option>
+                                <option value="2">2 hour before</option>
+                                <option value="3">3 hour before</option>
+                                <option value="24">1 day before</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea">
+            </div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+              <button type="submit" class="btn theme-btn categories-save">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>

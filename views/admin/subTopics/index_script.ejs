@@ -1,0 +1,120 @@
+<%- include('./../../partials/_load_subTopics'); %>
+
+<script type="text/javascript">
+  /**
+   * subTopic index page script.
+   * @script start
+   */
+  $(document).ready(function () {
+    dataTable();
+
+    $("#mainTopic").select2({
+      placeholder: "Select Main Topic",
+      allowClear: false,
+    });
+
+    $("#subTopic").select2({
+      placeholder: "Select Sub Topic",
+      allowClear: false,
+    });
+
+    $("#subTopic-status").select2({
+      placeholder: "Select Status",
+      allowClear: false,
+    });
+
+    $(".filter").click(function () {
+      let main_topic = $("#mainTopic").val();
+      let sub_topic = $("#subTopic").val();
+      let status = $("#subTopic-status").val();
+      dataTable(main_topic, sub_topic, status);
+    });
+
+    $(".reset").click(function () {
+      $("#mainTopic").val(null).trigger("change");
+      $("#subTopic").val(null).trigger("change");
+      $("#subTopic-status").val(null).trigger("change");
+      dataTable();
+    });
+  });
+
+  $("#mainTopic").change(function () {
+    let topicId = $(this).val();
+    loadSubTopic(topicId);
+  });
+
+  function dataTable(main_topic = "", sub_topic = "", status = "") {
+    $("#subtopicTable").dataTable().fnDestroy();
+
+    var subtopicTable = $("#subtopicTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [[1, "asc"]],
+      ajax: {
+        url: "/sub-topics/dataTable",
+        type: "POST",
+        data: {
+          sub_topic: sub_topic,
+          main_topic: main_topic,
+          status: status,
+        },
+      },
+      columns: [
+        {
+          data: "topic_id",
+          render: function (data, type, row) {
+            return row?.topic_details.name;
+          },
+        },
+        { data: "name", name: "name" },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return ` <label class="checkbox-inline switch-btn">
+                      <input type="checkbox" name="status" class="record-status" data-toggle="toggle" data-on="Active"
+                        data-off="Deactive" data-onstyle="info" data-offstyle="danger" data-url="/sub-topics/update-status"
+                        data-uid="${row._id}" id="toggle-trigger" ${
+              row.status ? "checked" : ""
+            }>
+                        <span class="slider-toggle"></span>  
+                    </label>`;
+          },
+        },
+        {
+          data: "",
+          render: function (data, type, row) {
+            return `<div class="d-flex align-items-center">
+                      <a class="" href="/sub-topics/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                        title="Edit"><img src="/images/edit.svg" alt="icon"></a>
+  
+                      <a href="javascript:void(0)" class="ml-2"
+                        onclick="confirmBeforeDeletion('/sub-topics/destroy/${row._id}')"><img src="/images/trash.svg"
+                          alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+                    </div>`;
+          },
+        },
+      ],
+      columnDefs: [
+        {
+          targets: [3] /* column index */,
+          orderable: false /* true or false */,
+        },
+      ],
+    });
+    subtopicTable.ajax.reload(function () {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip("dispose");
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+  /**
+   * subTopic index page script.
+   * @script end
+   */
+</script>

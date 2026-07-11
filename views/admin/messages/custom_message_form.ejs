@@ -1,0 +1,156 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css"
+    integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw=="
+    crossorigin="anonymous" />
+<div class="right_col" role="main">
+  <h2 class="title-text mb-4">New Email</h2>
+  <div class="form_panel card-block mb-30 d-inline-block w-100">
+    <div class="new-email-addblock">
+      <div class="back_btn">
+        <a href="javascript:void(0)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+                <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            Back to Students
+        </a>
+      </div>
+      <div class="x_content">
+        <form method="post" action="" class="common-form">
+          <div class="row">
+            <div class="col-md-12 col-lg-6">
+              <div class="form-group">
+                <label class="col-form-label" for="emailfrom">From</label>
+                <div class="input-group">
+                  <select class="form-control" name="title" id="emailfrom" tabindex="-1" single>
+                    <option>HIPL &lt;premier@hipl.com&gt;</option>
+                    <option>ritika jangid &lt;maheshyadav.hipl@gmail.com&gt;</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
+              <div class="form-group">
+                <label class="col-form-label" for="emailto">To <small class="font-size: 8px;display: inline-block;">Multiple recipients are automatically BCC'ed.</small></label>
+                <div class="input-group">
+                  <select class="form-control select2" name="title" id="emailto" tabindex="-1" multiple>
+                    <option>Debitis quibusdam &lt;bemox24279@rencr.com&gt;</option>
+                    <option>Pandey, Amit &lt;amitpandey.his@gmail.com&gt;</option>
+                    <option>Rakesh Jonwal &lt;rakeshjonwal.his@gmail.com&gt;</option>
+                    <option>ritika jangid &lt;maheshyadav.hipl@gmail.com&gt;</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
+              <div class="form-group">
+                <label class="col-form-label" for="extra_recipeints">Extra Recipients <small class="font-size: 8px;display: inline-block;">Use a semicolon or press the Enter key to add recipients who are not in OnlineTutor</small></label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="" id="extra_recipeints">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
+              <div class="form-group">
+                <label class="col-form-label" for="email_subjects">Subject</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="" id="email_subjects">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-12">
+              <div class="form-group">
+                <label class="col-form-label" for="email_subjects">Message</label>
+                <textarea name="address" rows="5" class="form-control" placeholder=""></textarea>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-12">
+              <div class="form-group drop-file">
+                <label class="col-form-label label-align" for="attach_files">Attach Files</label>
+                <div class="input-group">
+                  <input type="file" name="attach_files" id="attach_files" class="form-control dropify h-auto"
+                    data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-12 settings_content">
+              <div class="form-group">
+                <ul class="settinglist mt-0">
+                  <li class="w-100">
+                    <div class="form-check">
+                      <input type="checkbox" name="" id="cc-mail" class="form-check-input">
+                      <label class="form-check-label" for="cc-mail">CC me on this email</label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-12 settings_content">
+                <div class="form-group mb-2">
+                  <label class="col-form-label">Send Email</label>
+                </div>
+                <ul class="settinglist flex-column align-items-start tabcard">
+                  <li>
+                    <div class="form-check radio_group">
+                      <input class="form-check-input" type="radio" name="send-emailoption" id="immediately-email">
+                      <label class="radiolabel" for="immediately-email">Immediately<br><small>Send this email as soon as possible</small></label>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="form-check radio_group">
+                      <input class="form-check-input" type="radio" name="send-emailoption" id="email-endmonth">
+                      <label class="radiolabel" for="email-endmonth">End of month<br><small>Choose a date and time to send this email</small></label>
+                      <div class="open_group row flex-row mt-3">
+                        <div class="col-md-6 col-lg-4">
+                          <label class="form-check-label m-0" for="email-monthdate">Date</label>
+                          <div class="inputgroup iconfield">
+                            <input class="form-control emailDate w-100" type="text" id="email-monthdate">
+                            <span><img src="/images/calendar.svg" alt="icon"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mt-3 mt-md-0">
+                          <label class="form-check-label m-0" for="email-monthtime">Time</label>
+                          <div class="inputgroup iconfield">
+                            <input class="form-control email-timepicker w-100" type="text" id="email-monthtime" placeholder="13:00" />
+                            <span class="input-icon"><img src="../images/timer.svg" alt="clock-icon"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+            </div>
+            <div class="col-md-12 col-lg-12 text-right pt-4">
+              <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+              <button type="button" class="btn form-button cancel-btn theme-btn">Preview</button>
+              <button type="submit" class="btn form-button save-btn theme-btn">Send</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#emailfrom").select2({
+      //placeholder: "Select Status",
+      allowClear: false,
+    });
+    $("#emailto").select2({
+      //placeholder: "Select Status",
+      allowClear: false,
+    });
+    $('.dropify').dropify();
+  });
+  $(function() {
+    $('.emailDate').daterangepicker({
+      singleDatePicker: true,
+      showDropdowns: true,
+      minYear: 1901,
+      maxYear: parseInt(moment().format('YYYY'),10)
+    });
+    $('.email-timepicker').datetimepicker({
+      format: 'hh:mm a',    
+    });
+  });
+</script>

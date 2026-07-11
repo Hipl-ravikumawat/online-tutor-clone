@@ -1,0 +1,16 @@
+<div class="col-md-12 col-lg-6">
+    <div class="lesson_card tagparent" data-link="/tutor-training-assessments/<%=data.trainingContentSlug%>/lessons/<%=data.lessonSlug%>/assessment/<%=data.assessmentId%>" data-title="<%=data.title%>" data-lesson-id="<%=data.lessonId%>"data-completed="" data-id="<%=data.assessmentId%>"> 
+        <div class="floder-icon icon-wrapper file-icon"> 
+            <img src="/images/folder-icon.svg" alt="icon"> 
+        </div>
+        <div class="lesson_descp"> 
+            <div class="tags"><span class="<%=(data.status ==='N/A' ? 'not-attempt': data.status)%>"><%=data.status%></span></div>
+            <h3 class="title-text text-space-normal"><%=data.lessonName%></h3>
+            <p>Slides : <strong class="totalSlides"><%=data.slideCount%></strong></p>
+            <p>Practices : <strong class="totalPractices"><%=data.practiceCount%></strong></p>
+        </div>
+        <!-- <div class="floder-icon spring-icon-wrap mr-0"> 
+            22%
+        </div> -->
+    </div>
+</div>

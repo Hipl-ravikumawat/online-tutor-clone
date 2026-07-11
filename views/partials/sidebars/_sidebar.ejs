@@ -1,0 +1,278 @@
+<div class="col-md-3 left_col menu_fixed">
+    <div class="left_col scroll-view">
+      <div class="navbar nav_title" style="border: 0;">
+        <a class="site_title"><img src="/images/logo.svg"> <span><%=process.env.APP_NAME%></span></a>
+      </div>
+      <div class="clearfix"></div>
+      <!-- menu profile quick info -->
+      <!-- <div class="profile clearfix <%= typeof sidebarType !== 'undefined' ? (sidebarType !== '' ? 'd-none' : '') : '' %> ">
+        <div class="profile_pic">
+          <img src="<%=loggedUserInfo.profile_image !='' && fs.existsSync('assets/ProfileImage/'+loggedUserInfo.profile_image) ? '/ProfileImage/'+loggedUserInfo.profile_image:'/images/noImage.jpg'%>" alt="profile_image" class="img-circle profile_img">
+        </div>
+        <div class="profile_info">
+          <h2>
+            <%=loggedUserInfo.first_name !='' ? loggedUserInfo.first_name+' '+loggedUserInfo.last_name : '' %></h2>
+          <span>
+            <% if(loggedUserInfo.role ==1){ %>
+              Admin
+            <% }else if(loggedUserInfo.role == 2) { %>
+              Tutor
+            <% }
+            else if(loggedUserInfo.role == 3) { %>
+              Student
+            <% }
+            else if(loggedUserInfo.role == 4) { %>
+              Content Manager
+            <% } %>
+          </span>
+        </div>
+      </div> -->
+
+      <!-- sidebar menu -->
+      <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+          <ul class="nav side-menu">
+            <li>
+              <a href="/dashboard">
+                <span class="icon"><img src="/images/dashboard.svg"></span> <span class="link-title">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a>
+                <span class="icon"><img src="/images/tutor.svg"></span> <span class="link-title">Calendar</span> 
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                 <li><a href="/calendar">Calendar</a></li>
+                <% if(loggedUserInfo.role == 1) { %>
+                  <li><a href="/calendar/availability">Availability</a></li>
+                  <li><a href="/calendar/cancelled-events">Cancelled Events</a></li>
+                <% } %>
+              </ul>
+            </li>
+            <%if(loggedUserInfo.role ==1) { %>
+            <li>
+              <a><span class="icon"><img src="/images/tutor.svg"></span> <span class="link-title">Tutors</span> <span
+                  class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/tutors">List</a></li>
+                <li><a href="/tutors/create">Add</a></li>
+              </ul>
+            </li>
+            <% } if(loggedUserInfo.role == 3) { %>
+            <li>
+              <a><span class="icon"><img src="/images/tutor.svg"></span> <span class="link-title"> Attendance & Notes </span> <span
+                  class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/attendance-notes"> Attendance & Notes </a></li>
+              </ul>
+            </li>
+            <% } if(loggedUserInfo.role != 3 && loggedUserInfo.role != 4) { %>
+            <li>
+              <a><span class="icon"><img src="/images/student.svg"></span> <span class="link-title">Students</span> <span
+                  class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/students">List</a></li>
+                <% if(loggedUserInfo.role ==1) { %>
+                <li><a href="/students/create">Add</a></li>
+                <li><a href="/group-tags">Group Tags</a></li>
+                <% } %>
+              </ul>
+            </li>
+            <% } if(loggedUserInfo.role == 1) { %>
+            <li>
+              <a><span class="icon"><img src="/images/school.svg"></span> <span class="link-title">Schools</span> <span
+                  class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/schools">List</a></li>
+                <li><a href="/schools/create">Add</a></li>
+              </ul>
+            </li>
+
+            <li>
+              <a>
+                <span class="icon">
+                  <img src="/images/classes.svg"></span>
+                   <span class="link-title">Grades</span> 
+                   <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <li><a href="/grades">List</a></li>
+                <li><a href="/grades/create">Add</a></li>
+              </ul>
+            </li>
+
+            <li>
+              <a><span class="icon"><img src="/images/categories.svg"></span> <span class="link-title">Topics</span>
+                <span class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/topics">Main Topics</a></li>
+                <li><a href="/sub-topics">Sub Topics</a></li>
+              </ul>
+            </li>
+            <% }%>
+
+            <li>
+              <a>
+                <span class="icon">
+                  <img src="/images/rewards.svg"></span>
+                   <span class="link-title">Rewards</span> 
+                   <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <%if(loggedUserInfo.role == 1) { %>
+                <li><a href="/rewards/vouchers">Vouchers</a></li>
+                <li><a href="/rewards/point-system">Point System</a></li>
+                <% } %>
+
+                <li><a href="/rewards/points-history">Points History</a></li>
+
+                <%if(loggedUserInfo.role == 3) { %>
+                <li><a href="/rewards/request-voucher-form">Request A voucher</a></li>
+                <% } %>
+
+                <%if(loggedUserInfo.role !== 2) { %>
+                <li><a href="/rewards/redemption-requests">Redemption Requests</a></li>
+                <% } %>
+
+              </ul>
+            </li>
+
+            <% if(loggedUserInfo.role == 1 || loggedUserInfo.role == 3) { %>
+            <li>
+              <a href="<%= loggedUserInfo.role == 3 
+                          ? `/families-invoices/family/${loggedUserInfo._id}#Account` 
+                          : '/families-invoices' %>">
+                <span class="icon">
+                  <img src="/images/invoice.svg" />
+                </span>
+                <span class="link-title">Families & Invoices</span> 
+              </a>
+            </li>
+            <% } %>
+
+            <% if(loggedUserInfo.role == 1 || loggedUserInfo.role == 2) { %>
+            <li>
+              <a href="<%= loggedUserInfo.role == 2 
+                          ? `/staff-invoices/staff/${loggedUserInfo._id}#Account` 
+                          : '/staff-invoices' %>">
+                <span class="icon">
+                  <img src="/images/invoice.svg" />
+                </span>
+                <span class="link-title">Staff Invoices</span> 
+              </a>
+            </li>
+            <% } %>
+            
+            <li>
+              <a><span class="icon"><img src="/images/courses.svg"></span> <span class="link-title">Learning
+                  Content</span> <span class="fa fa-chevron-down"></span></a>
+              <ul class="nav child_menu">
+                <li><a href="/learning-content">Content List</a></li>
+                <% if(loggedUserInfo.role ==1 ) { %>
+                <li><a href="/learning-content/create">Add Content</a></li>
+                <% } %>
+              </ul>
+            </li>
+
+            <% /* %>
+            <li>
+              <a href="javascript:void(0);">
+                <span class="icon"><img src="/images/assessment.svg"></span> <span class="link-title">Classes</span>
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <li><a href="/programs">List</a></li>
+
+                <% if(loggedUserInfo.role ==1){ %>
+                <li><a href="/programs/create">Assign</a></li>
+                <% } %>
+              </ul>
+            </li>
+            <% */ %>
+
+            <% if(loggedUserInfo.role != 4) { %>
+            <li>
+              <a href="javascript:void(0);">
+                <span class="icon"><img src="/images/categories.svg"></span> <span class="link-title">Homework & Assessments</span>
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <li><a href="/assessments">List</a></li>
+                <% if(loggedUserInfo.role !=3) { %>
+                <li><a href="/assessments/create">Assign</a></li>
+                <li><a href="/attempted-assessments/report">Report</a></li>
+                <% } %>
+              </ul>
+            </li>
+            <% } %>
+
+            <% if(loggedUserInfo.role == 1) { %>
+            <li>
+              <a href="javascript:void(0);">
+                <span class="icon"><img src="/images/tutor_training_icon.svg"></span> <span class="link-title">Staff Courses</span>
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <li><a href="/tutor-training">Course List</a></li>
+                <li><a href="/tutor-training/create">Add Course</a></li>
+              </ul>
+            </li>
+            <% } %>
+
+            <% if(loggedUserInfo.role != 3 && loggedUserInfo.role != 4) { %>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="icon"><img src="/images/training-assessment.svg"></span> <span class="link-title">Staff Assessments</span>
+                  <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu">
+                  <li><a href="/tutor-training-assessments">List</a></li>
+                  <% if(loggedUserInfo.role == 1 ) { %>
+                  <li><a href="/tutor-training-assessments/create">Assign</a></li>
+                  <% } %>
+                </ul>
+              </li>
+            <% } %>
+
+            <% if(loggedUserInfo.role == 3) { %>
+            <li>
+              <a href="/student/message-history">
+                <span class="icon">
+                  <img src="/images/email-white.svg" /> 
+                </span>
+                <span class="link-title">Message History</span>
+              </a>
+            </li>
+            <% } %>
+
+            <% if(loggedUserInfo.role != 3 && loggedUserInfo.role != 4) { %>
+            <li>
+              <a href="javascript:void(0);">
+                <span class="icon"><img src="/images/policy_icon.svg"></span> <span class="link-title">Policy</span>
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <li><a href="/policies">Policies</a></li>
+                <% if(loggedUserInfo.role == 1) { %>
+                <li><a href="/policies/create">Add</a></li>
+                <% } %>
+              </ul>
+            </li>
+            <% } %>
+
+          </ul>
+        </div>
+      </div>
+        <% if(typeof sidebarType !== 'undefined' && sidebarType == 'learningContent'){ %>
+          <%- include('_sidebar_learning_content'); %>
+        <% }else if(typeof sidebarType !== 'undefined' && sidebarType == 'assessmentReport'){ %>
+          <%- include('_sidebar_assessment_report'); %>
+        <% }else if(typeof sidebarType !== 'undefined' && sidebarType == 'trainingContent'){ %>
+          <%- include('_sidebar_tutor_training_content'); %>
+        <% }else if(typeof sidebarType !== 'undefined' && sidebarType == 'trainingAssessmentReport'){ %>
+          <%- include('_sidebar_tutor_assessment_report'); %>
+        <% } %>
+    <!-- sidebar menu -->
+    </div>
+</div>

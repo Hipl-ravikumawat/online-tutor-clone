@@ -1,0 +1,55 @@
+<% if(assessmentReportSideBarDetails && assessmentReportSideBarDetails.length != 0) { %>
+   <!-- student assessment report sidebar -->
+  <div class="courses-sidebar">
+    <div class="assess-back">
+        <a href="javascript:void(0)" onclick="window.history.back();" class="assess-back-btn"><img class="mr-2" src="/images/arrow-left.svg" alt="img">Back</a>
+        <span class="assessment-time"></span>
+    </div>
+
+    <div class="assess-main-block">
+        <div class="accordion" id="assessAccordion">
+            <% if(assessmentReportSideBarDetails.practices.length > 0) { %>
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <button class="btn btn-link btn-block text-left slider-menu" type="button" data-type="practices" data-toggle="collapse" data-target="#practiceCollapse" aria-expanded="true" aria-controls="practiceCollapse">
+                        <img class="mr-2" src="/images/practice.svg" alt="img"> Practices  <span class="assessments_count"><%=assessmentReportSideBarDetails.practices.length%></span> <span class="ac-icon"><img src="/images/arrowdown.svg" alt="arrow img"></span>
+                    </button>
+                </div>
+                <div id="practiceCollapse" class="collapse show" aria-labelledby="headingOne" data-parent="#assessAccordion">
+                    <div class="card-body">
+                        <ul class="slide-action">
+                            <%  let practiceIndex=1; for(let practice of assessmentReportSideBarDetails.practices){ %> 
+                              <li class="sort-slides1 <%=practiceIndex == 1?'active':''%>" 
+                                data-learningcontentid="<%=practice.learning_content_id%>" 
+                                data-learningcontentslug="<%=practice.learning_content_slug%>" data-lessonid="<%=practice.lesson_id%>" data-lessonslug="<%=practice.lesson_slug%>" data-uniqueid="<%=practice.id%>" data-type="<%=practice.question_type%>" data-position="<%=practiceIndex%>" ><a href="javascript:void(0)" class="practice-anchor <%=practiceIndex == 1?'active':''%>" data-practice="<%=practiceIndex%>"><%=practice.title%><span class="question-action"><img src="/images/<%=practice.isCorrect ? 'q-check.svg' : 'q-wrong.svg'%>" alt="img"></span></a></li>
+                            <% practiceIndex++; } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <% } if(assessmentReportSideBarDetails.challenges.length > 0) { %>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <button class="btn btn-link btn-block text-left slider-menu" type="button" data-type="challenges" data-toggle="collapse" data-target="#challengesCollapse" aria-expanded="false" aria-controls="challengesCollapse">
+                        <img class="mr-2" src="/images/challenges.svg" alt="img"> Challenges <span class="assessments_count"><%=assessmentReportSideBarDetails.challenges.length%></span> <span class="ac-icon"><img src="/images/arrowdown.svg" alt="arrow img"></span>
+                    </button>
+                </div>
+                <div id="challengesCollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#assessAccordion">
+                    <div class="card-body">
+                        <ul class="slide-action">
+                          <% let challengeIndex=1;  for(let challenge of assessmentReportSideBarDetails.challenges){ %> 
+                            <li class="sort-slides1 <%=challengeIndex == 1?'active':''%>" 
+                                data-learningcontentid="<%=challenge.learning_content_id%>" 
+                                data-learningcontentslug="<%=challenge.learning_content_slug%>" 
+                                data-lessonid="<%=challenge.lesson_id%>" data-lessonslug="<%=challenge.lesson_slug%>" data-uniqueid="<%=challenge.id%>" data-position="<%=challengeIndex%>" ><a href="javascript:void(0)" class="challenge-anchor <%=challengeIndex == 1?'active':''%>" data-challenge="<%=challengeIndex%>"><%=challenge.title%><span class="question-action"></span></a></li>
+                          <% challengeIndex++; } %> 
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+  </div>
+   <!-- student assessment report sidebar -->
+<% } %>

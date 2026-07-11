@@ -1,0 +1,155 @@
+<div class="right_col" role="main">
+  <!-- point system settings starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Point System</h2>
+      </div>
+      <div class="x_content">
+        <form id="storePointSettings" action="/rewards/update-point-system-values" method="post"
+          class="form-horizontal form-label-left">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="attendingClassOnTime">Attending Class On Time<span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="attendingClassOnTime" class="form-control" id="attendingClassOnTime"
+                    value="<%=pointSystem?.attendingClassOnTime%>" min="1" placeholder="Attending Class On Time">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="askingQuestions">On Asking Questions<span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="askingQuestions" class="form-control" id="askingQuestions"
+                    value="<%=pointSystem?.askingQuestions%>" min="1" placeholder="On Asking Questions">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="homeworkSubmission">On Homework Submission<span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="homeworkSubmission" class="form-control" id="homeworkSubmission"
+                    value="<%=pointSystem?.homeworkSubmission%>" min="1" placeholder="On Homework Submission">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="participatingClassActivities">Participating In Class
+                  Activities<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="participatingClassActivities" class="form-control"
+                    id="participatingClassActivities" value="<%=pointSystem?.participatingClassActivities%>" min="1"
+                    placeholder="Participating In Class Activities">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="bonusPoints">Bonus Points<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="bonusPoints" class="form-control" id="bonusPoints"
+                    value="<%=pointSystem?.bonusPoints%>" min="1" placeholder="Bonus Points">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="assignmentGapDuration">Assignment Gap Duration
+                  (Week)<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="assignmentGapDuration" class="form-control" id="assignmentGapDuration"
+                    value="<%=pointSystem?.assignmentGapDuration%>" min="1" placeholder="Assignment Gap Duration">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="redemptionGapDuration">Redemption Gap Duration
+                  (Weeks)<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="redemptionGapDuration" class="form-control" id="redemptionGapDuration"
+                    value="<%=pointSystem?.redemptionGapDuration%>" min="1" placeholder="Redemption Gap Duration">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="pointAssignmentModificationPeriod">Points Assignment
+                  Modification Period (Days)<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                  <input type="number" name="pointAssignmentModificationPeriod" class="form-control"
+                    id="pointAssignmentModificationPeriod" value="<%=pointSystem?.pointAssignmentModificationPeriod%>"
+                    min="1" placeholder="Points Assignment Modification Period">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="storePointSettingsBtn" class="btn theme-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- point system settings ends -->
+</div>
+
+<script type="text/javascript">
+  $("#storePointSettings").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var formData = $('#storePointSettings').serialize();
+    var url = $('#storePointSettings').attr('action');
+    $("#storePointSettingsBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location.reload();
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        if (response.responseJSON.errors) {
+          $.each(response.responseJSON.errors, function (field_name, error) {
+            $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+          });
+        }
+
+        if (response.responseJSON.message) {
+          alert(error.msg);
+        }
+      },
+      complete: function () {
+        $("#storePointSettingsBtn").prop('disabled', false);
+      },
+    });
+  });
+</script>

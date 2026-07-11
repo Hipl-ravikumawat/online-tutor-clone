@@ -1,0 +1,285 @@
+<div class="right_col" role="main">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-3">
+          <div class="stcard-box">
+              <span class="shade1"><%=countStatistics?.totalAssessment%></span>
+              <h3 class="title-text mb-0">Total Assigned</h3>
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+          <div class="stcard-box">
+              <span class="shade2"><%=countStatistics?.completedAssessment%></span>
+              <h3 class="title-text mb-0">Completed</h3>
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+          <div class="stcard-box">
+              <span class="shade3"><%=countStatistics?.notCompleted%></span>
+              <h3 class="title-text mb-0">Not Completed</h3>
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+          <div class="stcard-box">
+            <span class="shade4"><%=countStatistics?.overallScore%>%</span>
+            <h3 class="title-text mb-0">Average Score</h3>
+          </div>
+      </div>
+    </div>
+    <!-- single training assessment report page content starts -->
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel detailed-report-area">
+          <div class="back_btn">
+            <a href="javascript:void(0)" onclick="window.history.back();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+                    <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </a>
+          </div>
+          <div class="x_title">
+            <h3 class="title-text mb-0"><%=assessmentDetail?.name%></h3>
+            <div class="clearfix"></div>
+          </div>
+            <div class="card-block mb-30">
+              <h3 class="title-text">Filters</h3>
+              <ul class="filter-row">
+                <li class="filter-col">
+                  <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Tutor">
+                    <option value="">Select Tutor</option>
+                    <% for(let tutor of tutors){ %>
+                        <option value="<%=tutor.id%>"><%=tutor.first_name+" "+tutor.last_name%></option>
+                    <% } %>
+                  </select>
+                </li>
+                <li class="filter-col">
+                  <select class="form-control select2" id="status" tabindex="-1" data-placeholder="Select Status">
+                    <option value="">Select status</option>
+                      <option value="N/A">N/A</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Completed">Completed</option>
+                  </select>
+                </li>
+                <li class="filter-col percent-filter" style="display: none;">
+                  <select class="form-control select2" id="percentage" tabindex="-1" data-placeholder="Select percentage">
+                    <option value="">Select percentage</option>
+                      <option value="0-50">0-50 %</option>
+                      <option value="51-80">51-80 %</option>
+                      <option value="81-100">81-100 %</option>
+                  </select>
+                </li>
+                <li class="filter-col">
+                  <button class="btn theme-btn filter">Filter</button>
+                  <button class="btn theme-btn reset">Reset</button>
+                </li>
+              </ul>
+            </div>
+            <div class="x_content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card-box table-responsive">
+                            <table id="trainingAssessmentReport" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                            width="100%">
+                                <thead>
+                                    <tr>
+                                    <th>Tutor Name</th>
+                                    <th>Status/Percentage</th>
+                                    <th>Completed At</th>
+                                    <th>Add Comment</th>
+                                    <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- single training assessment report page content end -->
+  </div>
+<script type="text/javascript">
+    const assessmentId = '<%=assessmentDetail.id%>';
+    $(document).ready(function () {
+        initFilters();
+        initDataTable();
+
+        $(".filter").click(function () {
+            filterAssessments();
+        });
+
+        $(".reset").click(function () {
+            resetFilters();
+            filterAssessments();
+        });
+
+        $("#status").change(function () {
+            togglePercentageFilter();
+        });
+
+        $(".dt-select2").select2({
+            placeholder: "Select Lesson",
+        });
+    });
+
+    $(document).on('change', '.dt-select2', function() {
+        updateDetailedReportUrl(this);
+    });
+
+    function initFilters() {
+        $(".select2").select2();
+    }
+
+    function initDataTable() {
+        dataTable();
+    }
+
+    function filterAssessments() {
+        const tutorId = $("#student").val() || "";
+        const status = $("#status").val() || "";
+        const percentage = $("#percentage").val() || "";
+        $('#trainingAssessmentReport').DataTable().destroy();
+            dataTable(tutorId, status, percentage);
+    }
+
+    function resetFilters() {
+        $("#student").val(null).trigger("change");
+        $("#status").val(null).trigger("change");
+        $("#percentage").val(null).trigger("change");
+    }
+
+    function togglePercentageFilter() {
+        const status = $("#status").val();
+        $(".percent-filter").hide();
+        if (status === "Completed") {
+            $(".percent-filter").show();
+        }
+    }
+
+    function updateDetailedReportUrl(selectElement) {
+        const studentId = $(selectElement).select2().find(":selected").attr('data-student-id');
+        const lessonId = $(selectElement).val();
+
+        // Construct the detailed report URL using template literals for clarity
+        const baseUrl = $(location).attr("origin");
+        const detailedReportUrl = `${baseUrl}/tutor-training-assessments/detailed-report/${assessmentId}/tutor/${studentId}/lesson/${lessonId}`;
+
+        // Update the window location using the constructed URL
+        window.location.href = detailedReportUrl;
+    }
+
+    function getLessonsForTutorComment(assessmentId, tutorId) {
+        let responseAjax = $.ajax({
+            type: "POST",
+            url: '/tutor-training-assessments/lessons-for-admin-comment',
+            dataType: 'json',
+            async:false,
+            data: {
+                assessment_id: assessmentId,
+                tutor_id:tutorId,
+            },
+            success: function (response) {
+            },
+        });
+        const arrayUniqueByKey = [...new Map(responseAjax.responseJSON.map(item =>
+        [item['lesson_id'], item])).values()];
+        return arrayUniqueByKey;
+    }
+
+    function dataTable(tutorId = "", status = "", percentage = "") {
+        $('#trainingAssessmentReport').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "language": {
+            "searchPlaceholder": "Search",
+            "processing": '<div><div></div><div></div><div></div><div></div></div>'
+            },
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "order": [[0, 'asc']],
+            "ajax": {
+            "url": "/tutor-training-assessments/detailed-report/dataTable",
+            "type": "POST",
+            "data": {
+                "assessment_id": assessmentId,
+                "tutor_id": tutorId,
+                "status": status,
+                "percentage": percentage
+            }
+            },
+            "drawCallback": function (settings) {
+            const loggedUserRole = '<%=loggedUserInfo.role%>';
+            $('.dt-select2').select2({
+                placeholder: "Select Lesson",
+            });
+            if (loggedUserRole !== 2) {
+                $('#assessmentReport').DataTable().column(3).visible(false);
+            }
+            },
+            "columns": [
+            {
+                "data": "name",
+                "render": function (data, type, row) {
+                return row.tutor_id.first_name + ' ' + row.tutor_id.last_name;
+                }
+            },
+            {
+                "data": "final_score",
+                "render": function (data, type, row) {
+                    let status = '';
+                    if(row.status =='Completed'){
+                        status = row.final_score +'%';
+                    }else {
+                        status = row.status;
+                    }
+                    let html =`<div class="d-flex"> <span style="margin-right:20px;">${status}</span></div>`;
+                    return html;
+                }
+            },
+            {
+                "data": "status",
+                "render": function (data, type, row) {
+                    if(row.status =='Completed'){
+                        let completionDate = moment(row.updated_at).format('D MMMM YYYY, h:mm A');
+                        return completionDate;
+                    }else{
+                        return 'N/A';
+                    }
+                }
+            },
+            {
+                "data": "content",
+                "render": function (data, type, row) {
+                    let assessment_id = row.assessment_id._id;
+                    let tutor_id = row.tutor_id._id;
+                    let lessonList =  getLessonsForTutorComment(assessment_id,tutor_id);
+                    let html = '<select class="form-control dt-select2" tabindex="-1" single><option value="">Select Lesson</option>';
+                    for (lesson of lessonList) {
+                        html += `<option value="${lesson.lesson_id}" data-assessment-id="${lesson.assessment_id}" data-student-id="${lesson.tutor_id}">${lesson.title}</option>`;
+                    }
+                    html += `</select>`;
+                        return html;
+                    }
+            },
+            {
+                "data": "action",
+                "render": function (data, type, row) {
+                    let html = '';
+                    if(row.status =='Completed'){
+                        html +=`<div class="d-flex"><a href="/tutor-training-assessments/detailed-report/${row.assessment_id._id}/tutor/${row.tutor_id._id}/" class="badge badge-info view-report" data-id="65ebf9fb4ae3559dc9b137a9">View Result</a> </div>`;
+                    }
+                    return html;
+                }
+            }
+            ],
+            "columnDefs": [{
+            'targets': [3,4], /* column index */
+            'orderable': false, /* true or false */
+            }]
+        });
+    }
+</script>

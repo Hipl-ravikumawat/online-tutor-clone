@@ -1,0 +1,66 @@
+      
+       <div class="card student-notes mt-4">
+          <div class="note-top d-flex justify-content-between align-items-center pb-3">
+            <h4>Attachments</h4>
+            <% if(loggedUserInfo.role == 2){ %>
+            <a href="javascript:void(0)" class="bus-outline-btn cursor-pointer" data-toggle="modal" data-target="#tutorAttachments">+ Add</a>
+            <% } %>
+          </div>
+          <div class="stu-attachment">
+            <% 
+            let userAttachments = user.attachments.reverse();
+            for(let attachment of userAttachments) { %>
+                <div class="stu-attachmentbox">
+                  <div class="stu-top">
+                    <h6><%=attachment.name%></h6>
+                    <% if(loggedUserInfo.role == 2){ %>
+                    <div class="dropdown">
+                      <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="5" height="20" viewBox="0 0 5 20" fill="none">
+                          <path d="M0 10C0 11.2723 1.03538 12.3077 2.30769 12.3077C3.58 12.3077 4.61538 11.2723 4.61538 10C4.61538 8.72769 3.58 7.69231 2.30769 7.69231C1.03538 7.69231 0 8.72769 0 10ZM0 17.6923C0 18.9646 1.03538 20 2.30769 20C3.58 20 4.61538 18.9646 4.61538 17.6923C4.61538 16.42 3.58 15.3846 2.30769 15.3846C1.03538 15.3846 0 16.42 0 17.6923ZM0 2.30769C0 3.58 1.03538 4.61538 2.30769 4.61538C3.58 4.61538 4.61538 3.58 4.61538 2.30769C4.61538 1.03538 3.58 0 2.30769 0C1.03538 0 0 1.03538 0 2.30769Z" fill="black"/>
+                        </svg>
+                      </button>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item edit-attachment" data-type="edit" href="javascript:void(0)" data-user-id="<%=user._id%>" data-id="<%=attachment._id%>">Edit</a>
+                        <a class="dropdown-item delete-attachment" href="javascript:void(0)" data-user-id="<%=user._id%>" data-id="<%=attachment._id%>">Delete</a>
+                      </div>
+                    </div>
+                    <% } %>
+
+                  </div>
+                  
+                  <div class="stuattachfile">
+                    <% 
+                    let images = ['png','jpeg','jpg'];
+                    let files = ["pdf", "docx", "xlsx","csv"];
+                    let audio = ["mp4", "mp3", "m4a"];
+                    let icon = "/images/file.svg";
+                    if(images.includes(attachment.extension)){
+                      icon = "/images/image.svg";
+                    }else if(audio.includes(attachment.extension)){
+                      icon = "/images/audio-video.svg";
+                    }
+                    %>
+                    <span><img src="<%=icon%>" alt="file"> <%=attachment.extension%></span>
+                    <span><%=attachment.size%></span>
+                  </div>
+                  <div class="stuattachDescription">
+                    <p class="mb-0"><%=attachment.note%></p>
+                  </div>
+                  <div class="stuattach-bbtn">
+                    <a href="/UserAttachments/<%=attachment.name%>" download >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M13.3 11.9004H0.7C0.514348 11.9004 0.336301 11.9741 0.205025 12.1054C0.0737498 12.2367 0 12.4147 0 12.6004C0 12.786 0.0737498 12.9641 0.205025 13.0954C0.336301 13.2266 0.514348 13.3004 0.7 13.3004H13.3C13.4857 13.3004 13.6637 13.2266 13.795 13.0954C13.9263 12.9641 14 12.786 14 12.6004C14 12.4147 13.9263 12.2367 13.795 12.1054C13.6637 11.9741 13.4857 11.9004 13.3 11.9004Z" fill="#F47817"/>
+                      <path d="M6.99974 0C6.81409 0 6.63604 0.0737498 6.50476 0.205025C6.37349 0.336301 6.29974 0.514348 6.29974 0.7V8.113L3.99674 5.803C3.86493 5.67119 3.68615 5.59714 3.49974 5.59714C3.31333 5.59714 3.13455 5.67119 3.00274 5.803C2.87093 5.93481 2.79688 6.11359 2.79688 6.3C2.79687 6.48641 2.87093 6.66519 3.00274 6.797L6.50274 10.297C6.56781 10.3626 6.64523 10.4147 6.73054 10.4502C6.81584 10.4858 6.90733 10.5041 6.99974 10.5041C7.09215 10.5041 7.18364 10.4858 7.26894 10.4502C7.35424 10.4147 7.43167 10.3626 7.49674 10.297L10.9967 6.797C11.062 6.73173 11.1138 6.65425 11.1491 6.56897C11.1844 6.4837 11.2026 6.3923 11.2026 6.3C11.2026 6.2077 11.1844 6.1163 11.1491 6.03103C11.1138 5.94575 11.062 5.86827 10.9967 5.803C10.9315 5.73773 10.854 5.68596 10.7687 5.65064C10.6834 5.61532 10.592 5.59714 10.4997 5.59714C10.4074 5.59714 10.316 5.61532 10.2308 5.65064C10.1455 5.68596 10.068 5.73773 10.0027 5.803L7.69974 8.113V0.7C7.69974 0.514348 7.62599 0.336301 7.49471 0.205025C7.36344 0.0737498 7.18539 0 6.99974 0Z" fill="#F47817"/>
+                      </svg>Download
+                    </a>
+                    <a href="/UserAttachments/<%=attachment.name%>" target="_blank" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="11" viewBox="0 0 16 11" fill="none">
+                      <path d="M15.8983 4.7877C15.7554 4.59217 12.3497 0 7.99993 0C3.6502 0 0.244313 4.59217 0.101532 4.78751C-0.0338438 4.97302 -0.0338438 5.22461 0.101532 5.41011C0.244313 5.60564 3.6502 10.1978 7.99993 10.1978C12.3497 10.1978 15.7554 5.60561 15.8983 5.41027C16.0339 5.2248 16.0339 4.97301 15.8983 4.7877ZM7.99993 9.14287C4.79589 9.14287 2.02085 6.09496 1.19938 5.09855C2.01979 4.10126 4.78901 1.05494 7.99993 1.05494C11.2038 1.05494 13.9787 4.10232 14.8005 5.09927C13.9801 6.09652 11.2108 9.14287 7.99993 9.14287Z" fill="#F47817"/>
+                      <path d="M7.99981 1.93359C6.25475 1.93359 4.83496 3.35338 4.83496 5.09845C4.83496 6.84351 6.25475 8.2633 7.99981 8.2633C9.74488 8.2633 11.1647 6.84351 11.1647 5.09845C11.1647 3.35338 9.74488 1.93359 7.99981 1.93359ZM7.99981 7.20833C6.83637 7.20833 5.88993 6.26186 5.88993 5.09845C5.88993 3.93504 6.8364 2.98857 7.99981 2.98857C9.16322 2.98857 10.1097 3.93504 10.1097 5.09845C10.1097 6.26186 9.16325 7.20833 7.99981 7.20833Z" fill="#F47817"/>
+                      </svg>View
+                    </a>
+                  </div>
+                </div>
+            <% } %>
+          </div>
+        </div>

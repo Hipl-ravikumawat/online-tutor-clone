@@ -1,0 +1,55 @@
+<% if(assessmentReportSideBarDetails && assessmentReportSideBarDetails.length != 0) { %>
+   <!-- tutor training assessment report sidebar -->
+  <div class="courses-sidebar">
+    <div class="assess-back">
+        <a href="javascript:void(0)" onclick="window.history.back();" class="assess-back-btn"><img class="mr-2" src="/images/arrow-left.svg" alt="img">Back</a>
+        <span class="assessment-time"></span>
+    </div>
+
+    <div class="assess-main-block">
+        <div class="accordion" id="assessAccordion">
+            <% if(assessmentReportSideBarDetails.slides.length > 0) { %>
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <button class="btn btn-link btn-block text-left slider-menu" type="button" data-type="slides" data-toggle="collapse" data-target="#slidesCollapse" aria-expanded="false" aria-controls="slidesCollapse">
+                            <img class="mr-2" src="/images/lessons.svg" alt="img"> Information  Slides <span class="assessments_count"><%=assessmentReportSideBarDetails.slides.length%></span> <span class="ac-icon"><img src="/images/arrowdown.svg" alt="arrow img"></span>
+                        </button>
+                    </div>
+                    <div id="slidesCollapse" class="collapse show" aria-labelledby="headingOne" data-parent="#assessAccordion">
+                        <div class="card-body">
+                            <ul class="slide-action">
+                              <% let slideIndex=1;  for(let slide of assessmentReportSideBarDetails.slides){ %> 
+                                <li class="sort-slides1 <%=slideIndex == 1?'active':''%>" 
+                                    data-learningcontentid="<%=slide.learning_content_id%>" 
+                                    data-learningcontentslug="<%=slide.learning_content_slug%>" 
+                                    data-lessonid="<%=slide.lesson_id%>" data-lessonslug="<%=slide.lesson_slug%>" data-uniqueid="<%=slide.id%>" data-position="<%=slideIndex%>" ><a href="javascript:void(0)" class="slide-anchor <%=slideIndex == 1?'active':''%>" data-slide="<%=slideIndex%>"><%=slide.title%><span class="question-action"><img src="/images/q-check.svg%>" alt="img"></span></a></li>
+                              <% slideIndex++; } %> 
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <% } if(assessmentReportSideBarDetails.practices.length > 0) { %>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <button class="btn btn-link btn-block text-left slider-menu" type="button" data-type="practices" data-toggle="collapse" data-target="#practiceCollapse" aria-expanded="true" aria-controls="practiceCollapse">
+                        <img class="mr-2" src="/images/practice.svg" alt="img"> Practices  <span class="assessments_count"><%=assessmentReportSideBarDetails.practices.length%></span> <span class="ac-icon"><img src="/images/arrowdown.svg" alt="arrow img"></span>
+                    </button>
+                </div>
+                <div id="practiceCollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#assessAccordion">
+                    <div class="card-body">
+                        <ul class="slide-action">
+                            <%  let practiceIndex=1; for(let practice of assessmentReportSideBarDetails.practices){ %> 
+                              <li class="sort-slides1 <%=practiceIndex == 1?'active':''%>" 
+                                data-learningcontentid="<%=practice.learning_content_id%>" 
+                                data-learningcontentslug="<%=practice.learning_content_slug%>" data-lessonid="<%=practice.lesson_id%>" data-lessonslug="<%=practice.lesson_slug%>" data-uniqueid="<%=practice.id%>" data-type="<%=practice.question_type%>" data-position="<%=practiceIndex%>" ><a href="javascript:void(0)" class="practice-anchor <%=practiceIndex == 1?'active':''%>" data-practice="<%=practiceIndex%>"><%=practice.title%><span class="question-action"><img src="/images/<%=practice.isCorrect ? 'q-check.svg' : 'q-wrong.svg'%>" alt="img"></span></a></li>
+                            <% practiceIndex++; } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+  </div>
+   <!-- tutor training assessment report sidebar -->
+<% } %>

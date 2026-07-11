@@ -1,0 +1,123 @@
+<div class="right_col" role="main">
+  <div class="bussniess_setting">
+    <div class="settings_content">
+      <div class="bussniess_setting">
+        <h2 class="titleheading">Families & Invoices</h2>
+        <div class="card tabcard mb-3">
+          <div class="card-body p-3">
+            <!-- Tab Navigation -->
+            <div class="setting_tab families-tab">
+              <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="pills-general-tab" data-toggle="pill" href="#familyAccounts" role="tab"
+                    aria-controls="familyAccounts" aria-selected="true">Family Accounts</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="pills-invoices-tab" data-toggle="pill" href="#invoices" role="tab"
+                    aria-controls="invoices" aria-selected="false">Invoices</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="pills-transactions-tab" data-toggle="pill" href="#transactions"
+                    role="tab" aria-controls="pills-transactions" aria-selected="false">Transactions</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Family Accounts Tab -->
+            <%- include('./familyAccounts/index.ejs') %>
+            
+            <!-- Invoices Tab -->
+            <%- include('./invoices/index.ejs') %>
+
+            <!-- Transactions Tab -->
+            <%- include('./transaction/index.ejs') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include('./familyAccounts/index_script.ejs') %>
+<%- include('./transaction/index_script.ejs') %>
+<script>
+  // Function to show the correct tab based on URL hash
+  function showActiveTab(hash = "#familyAccounts") {
+      const normalizedHash = hash.toLowerCase();
+      const tabMap = {
+          "#familyAccounts": {
+              el: $('[href="#familyAccounts"]'),
+              handler: () => loadDatatableFamilyAccounts()
+          },
+          "#invoices": {
+              el: $('[href="#invoices"]'),
+              handler: () => loadInvoicesDatatable()
+          },
+          "#transactions": {
+              el: $('[href="#transactions"]'),
+              handler: () => transactionTable()
+          }
+      };
+
+      const tabEntry = tabMap[normalizedHash] || tabMap["#familyAccounts"];
+
+      if (tabEntry?.el) {
+          tabEntry.el.tab('show');
+
+          // ✅ Trigger associated logic explicitly
+          setTimeout(() => {
+              tabEntry.handler?.();
+          }, 10); // allow Bootstrap's tab transition to complete
+      }
+  }
+
+  $(document).ready(function() {
+    // 1. On page load: Show tab based on current URL hash
+    const currentHash = window.location.hash || "#familyAccounts";
+    showActiveTab(currentHash);
+
+    // 2. When a tab is clicked: Update URL and load data
+    $('a[data-toggle="pill"]').on('shown.bs.tab', async function(e) {
+      // Get which tab was clicked
+      const targetHref = $(e.target).attr('href').toLowerCase();
+      
+      // Determine the new hash and load appropriate data
+      let newHash = '';
+      switch (targetHref) {
+        case '#familyaccounts':
+          newHash = 'FamilyAccounts';
+          await loadDatatableFamilyAccounts();
+          break;
+          
+        case '#invoices':
+          newHash = 'Invoices';
+          await loadInvoicesDatatable();
+          break;
+          
+        case '#transactions':
+          newHash = 'Transactions';
+          await transactionTable();
+          break;
+      }
+      
+      // Update browser URL without page reload
+      if (history.pushState) {
+        history.pushState(null, null, '#' + newHash);
+      } else {
+        window.location.hash = '#' + newHash;
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+

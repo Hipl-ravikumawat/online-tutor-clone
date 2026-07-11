@@ -1,0 +1,282 @@
+<div class="tab-pane fade availability-block" id="tutor-leaves" role="tabpanel" aria-labelledby="tutor-leaves-tab">
+    <div class="row row-gap-30 mx-0">
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <div class="setting_title justify-content-between page-tabtitle p-0">
+                        <h3 class="m-0">Leave Requests</h3>
+                        <% if(loggedUserInfo.role==2){ %>
+                            <button class="btn theme-btn add-leave-request" type="button">Add</button>
+                            <% } %>
+                    </div>
+
+                    <div class="settings">
+                      <% if(loggedUserInfo.role==2){ %>
+                        <p class="not_truncate">Apply For the leave here.</p>
+                        <% } %>
+                        
+                        <% let allDays=new Set(); for(let tutorLeaveRequest of fetchTutorLeaveRequests){ let
+                            text='Waiting For Approval' ; if(tutorLeaveRequest.isApproved=='2' ){ text='Approved' ;
+                            }else if(tutorLeaveRequest.isApproved=='3' ){ text='Not Approved' ; }
+                        %>
+                            <div class="availability-box">
+                                <div class="avail-left">
+                                    <div class="avail_se_timedate">
+                                        <div>
+                                            <label class="main_label">Start Date</label>
+                                            <p class="avail-date">
+                                            <%= moment(tutorLeaveRequest.start_date).format('YYYY-MM-DD') %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="main_label">End Date</label>
+                                            <p class="avail-date">
+                                                <%=moment(tutorLeaveRequest.end_date).format('YYYY-MM-DD')%>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="avail-content">
+                                        <a href="javascript:void(0)" class="avail-morebtn mb-1 d-inline-block">
+                                            <img src="/images/eye-open.svg" alt="View Icon" /> View Note
+                                        </a>
+                                        <div class="view-morecontent">
+                                            <span class="mb-0">
+                                                <%=tutorLeaveRequest.note%>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="avail-right">
+                             
+                                            <ul
+                                                class="multi-btn d-flex justify-content-end align-items-center assign-btn-area">
+                                                <% if(tutorLeaveRequest.isApproved=='1' && loggedUserInfo.role==1){ %>
+                                                    <li>
+                                                        <% if(loggedUserInfo.role===1) { %>
+                                                            <button class="green-btns leave-request-status"
+                                                                data-value="2" data-id="<%=tutorLeaveRequest._id%>"
+                                                                data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                                title="Approved"><img src="/images/check.svg"
+                                                                    alt="check icon" class="mr-2">Approved</button>
+
+                                                            <button class="red-btns leave-request-status" data-value="3"
+                                                                data-id="<%=tutorLeaveRequest._id%>"
+                                                                data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                                title="Not Approved"><img src="/images/close-white.svg"
+                                                                    alt="close icon" class="mr-2">Not Approved</button>
+                                                        <% } %>
+                                                    </li>
+                                                <% } %>
+
+                                                            <% if(loggedUserInfo.role===2 && tutorLeaveRequest.isApproved ==='1' ) { %>
+                                                                <li><button class="icon-btn edit-leave-request"
+                                                                        data-id="<%=tutorLeaveRequest._id%>"
+                                                                        data-toggle="tooltip" rel="tooltip"
+                                                                        data-placement="top" title="Edit"><img
+                                                                            src="/images/edit.svg" alt=""></button></li>
+                                                                <li><button class="icon-btn"
+                                                                        onclick="confirmBeforeDeletion('/tutor-leave-requests/destroy/<%=tutorLeaveRequest._id%>')"
+                                                                        data-toggle="tooltip" rel="tooltip"
+                                                                        data-placement="top" title="Delete"><img
+                                                                            src="/images/trash-icon.svg"
+                                                                            alt=""></button>
+                                                                </li>
+                                                            <% } %>
+                                                                    <li>
+                                                                        <% if(tutorLeaveRequest.isApproved=='2' ) { %>
+                                                                        <img src="/images/approve-check.svg" alt=""
+                                                                            data-toggle="tooltip" rel="tooltip"
+                                                                            data-placement="top" title="Approved">
+                                                                        <% } if(tutorLeaveRequest.isApproved=='3' ) { %>
+                                                                            <img src="/images/approve-cancel.svg" alt=""
+                                                                                data-toggle="tooltip" rel="tooltip"
+                                                                                data-placement="top"
+                                                                                title="Not Approved">
+                                                                        <% } if(loggedUserInfo.role===2 && tutorLeaveRequest.isApproved=='1' ) { %>
+                                                                                <img src="/images/approve-pending.svg"
+                                                                                    alt="" data-toggle="tooltip"
+                                                                                    rel="tooltip" data-placement="top"
+                                                                                    title="Waiting For Approval">
+                                                                        <% } %>
+                                                                    </li>
+                                            </ul>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../modals/leave_request_form.ejs'); %>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".avail-content .avail-morebtn").on("click", function () {
+                $(this).next(".view-morecontent").slideToggle(300);
+                $(this).toggleClass("more-active");
+
+                var buttonHtml = $(this).html();
+
+                if (buttonHtml.includes("View Note")) {
+                    $(this).html('<img src="/images/eye-close.svg" alt="Hide Icon" /> Hide Note');
+                } else {
+                    $(this).html('<img src="/images/eye-open.svg" alt="View Icon" /> View Note');
+                }
+            });
+
+            $('.submit-leave-request').click(function () {
+                $(document).find("span.text-danger").remove();
+                $('.errors').remove();
+    
+
+                var formData = $('.leave-request-form').serialize();
+                setCurrentTab();
+                $.ajax({
+                    url: '/tutor-leave-requests/store',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    },
+                    error: function (response) {
+                        let errorMessages = '';
+                        $(document).find('.text-danger').remove();
+                        if (response.responseJSON.errors) {
+                            $.each(response.responseJSON.errors, function (index, error) {
+                                if (error.param != '') {
+                                    $(document).find(`[name=${error.param}]`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                                } else {
+                                    $(document).find(`#tutorLeaveRequestLabel`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                                }
+                            });
+                        }
+
+                        if (response.responseJSON.message) {
+                            $(document).find(`#tutorLeaveRequestLabel`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+                        }
+                    },
+                    complete: function () {
+                        // $("#tutorLeaveRequest .submit-leave-request").prop('disabled', false);
+                    }
+                });
+            });
+
+            initializeDatepickers();
+
+            $('.add-leave-request').click(function () {
+                resetForm();
+                $('#tutorLeaveRequest').modal('show');
+            });
+
+            $('.edit-leave-request').click(function () {
+                resetForm();
+                let leaveRequestId = $(this).data('id');
+                loadLeaveRequestData(leaveRequestId);
+                $('#tutorLeaveRequest').modal('show');
+            });
+
+            $(".leave-request-status").click(function () {
+                let leaveRequestStatus = $(this).data('value');
+                let id = $(this).data('id');
+                changeLeaveRequestStatus(leaveRequestStatus, id);
+            });
+        });
+
+        function initializeDatepickers() {
+            var tomorrow = moment().add(1, 'days');
+
+            var startPicker = $('#tutLeaveSdate').daterangepicker({
+                singleDatePicker: true,
+                minDate: tomorrow,
+                autoUpdateInput: false,
+                locale: { format: 'YYYY-MM-DD' }
+            });
+
+            var endPicker = $('#tutLeaveEdate').daterangepicker({
+                singleDatePicker: true,
+                minDate: tomorrow,
+                autoUpdateInput: false,
+                locale: { format: 'YYYY-MM-DD' }
+            });
+
+            $('#tutLeaveSdate').on('apply.daterangepicker', function (ev, picker) {
+                var startDate = picker.startDate;
+
+                $(this).val(startDate.format('YYYY-MM-DD'));
+
+                var endDRP = $('#tutLeaveEdate').data('daterangepicker');
+                endDRP.minDate = startDate;
+
+                if (endDRP.startDate && endDRP.startDate.isBefore(startDate, 'day')) {
+                    $('#tutLeaveEdate').val('');
+                }
+            });
+
+            $('#tutLeaveEdate').on('apply.daterangepicker', function (ev, picker) {
+                var endDate = picker.startDate;
+
+                $(this).val(endDate.format('YYYY-MM-DD'));
+
+                var startDRP = $('#tutLeaveSdate').data('daterangepicker');
+                startDRP.maxDate = endDate;
+            });
+        }
+
+        function resetForm() {
+            $('.errors').remove();
+            $(document).find("span.text-danger").remove();
+            $('#leave_request_id').val('');
+            $('#tutLeaveSdate').val('');
+            $('#tutLeaveEdate').val('');
+            $("#tutLeaveNote").val('');
+        }
+
+        function loadLeaveRequestData(leaveRequestId) {
+            $.ajax({
+                type: "POST",
+                data: { id: leaveRequestId },
+                url: '/tutor-leave-requests/edit',
+                success: function (response) {
+                    if (response) {
+                        $('#leave_request_id').val(response._id); // Set start date
+                        $('#tutLeaveSdate').val(moment(response.start_date).format('YYYY-MM-DD'));
+                        $('#tutLeaveEdate').val(moment(response.end_date).format('YYYY-MM-DD'));
+                        $('#tutLeaveNote').val(response.note);                        
+                    } else {
+                        console.error("Failed to load leave request data");
+                    }
+                },
+                error: function () {
+                    console.error("Error loading leave request data");
+                }
+            });
+        }
+
+        function changeLeaveRequestStatus(status, id) {
+            $.ajax({
+                method: "POST",
+                url: '/tutor-leave-requests/leave-approval',
+                data: {
+                    leave_request_status: status,
+                    leave_request_id: id
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        console.error("Failed to update status", response);
+                    }
+                },
+                error: function () {
+                    console.error("Error updating leave request status");
+                }
+            });
+        }
+    </script>

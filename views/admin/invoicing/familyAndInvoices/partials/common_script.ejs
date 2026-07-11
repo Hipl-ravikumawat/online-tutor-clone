@@ -1,0 +1,337 @@
+<script>
+    /**
+ * Initialize reusable column visibility controls for DataTables
+ * @param {Object} options
+ * @param {object} options.table - DataTable instance
+ * @param {string} options.storageKey - localStorage key for saving settings
+ * @param {Array} options.defaultCols - array of default visible column "names"
+ * @param {string} options.checkboxSelector - selector for column checkboxes
+ * @param {string} options.showAllSelector - selector for 'Show All' checkbox
+ * @param {string} options.showDefaultSelector - selector for 'Show Default' checkbox
+ */
+function initColumnVisibilityControls({
+    table,
+    storageKey,
+    defaultCols,
+    checkboxSelector = '#colvis-dropdown .column-checkbox',
+    showAllSelector = '#colvis-dropdown .show-all',
+    showDefaultSelector = '#colvis-dropdown .show-default',
+    sortDropdownSelector = '#sort-dropdown'
+}) {
+    function getCurrentVisibleCols() {
+        return $(checkboxSelector).map(function () {
+            const idx = $(this).data('column-index');
+            return table.column(idx).visible() ? $(this).data('column') : null;
+        }).get();
+    }
+
+    // function updateSortDropdown(visibleCols) {
+    //     // Loop through each sort button and toggle visibility
+    //     $(`${sortDropdownSelector} .sort-trigger`).each(function () {
+    //         const $btn = $(this);
+    //         const colName = $btn.data('column-name'); // match with data-column-name in HTML
+
+    //         if (!colName) {
+    //             return; // Always show buttons without column-name (like "Clear Sort")
+    //         }
+    //         if(colName == 'family'){
+    //             $btn.show();
+    //         }else{
+    //             $btn.toggle(visibleCols.includes(colName));
+    //         }
+    //     });
+    // }
+
+    function updateSortDropdown(visibleCols) {
+        // Check if we're in the correct tab
+        const $familyAccountsTab = $('#familyAccounts');
+        if (!$familyAccountsTab.hasClass('active') && !$familyAccountsTab.hasClass('show')) {
+            return;
+        }
+        
+        // Make sure the tab is properly visible
+        // $familyAccountsTab.css('display', 'block');
+        
+        // Rest of your existing code...
+        $(`${sortDropdownSelector} .sort-trigger`).each(function () {
+            const $btn = $(this);
+            const colName = $btn.data('column-name');
+
+            if (!colName) {
+                $btn.show();
+                return;
+            }
+
+            if(colName == 'family'){
+                $btn.show();
+            } else {
+                $btn.toggle(visibleCols.includes(colName));
+            }
+        });
+        
+    }
+
+    function applyColumnVisibility(visibleCols) {
+        $(checkboxSelector).each(function () {
+            const colIdx = parseInt($(this).attr('data-column-index'), 10);
+            const colName = $(this).attr('data-column');
+            // Always keep the first column (checkboxes) visible
+            if (colIdx === 0) {  
+                table.column(colIdx).visible(true);   // Force visible
+                $(this).prop('checked', true);        // Force checked
+                return; // Skip normal toggle logic
+            }
+            const isVisible = visibleCols.includes(colName);
+            table.column(colIdx).visible(isVisible);
+            $(this).prop('checked', isVisible);
+        });
+
+        // Show All toggle state
+        $(showAllSelector).prop('checked', $(checkboxSelector).length === $(checkboxSelector + ':checked').length);
+        // Show Default toggle state
+        const isDefault = JSON.stringify([...visibleCols].sort()) === JSON.stringify([...defaultCols].sort());
+        $(showDefaultSelector).prop('checked', isDefault);
+
+        // Sync sort dropdown
+        updateSortDropdown(visibleCols);
+    }
+
+    function loadSettings() {
+        try {
+            const saved = localStorage.getItem(storageKey);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return [...defaultCols];
+    }
+
+    // Init
+    applyColumnVisibility(loadSettings());
+
+    // Event: checkbox toggle
+    $(checkboxSelector).on('change', function () {
+        let visibleCols = getCurrentVisibleCols();
+        const colType = $(this).attr('data-column');
+
+        if (colType === 'all') {
+            visibleCols = $(checkboxSelector).map(function () { return $(this).attr('data-column'); }).get();
+        } else if (colType === 'default') {
+            visibleCols = [...defaultCols];
+        } else {
+            if ($(this).is(':checked')) {
+                if (!visibleCols.includes(colType)) visibleCols.push(colType);
+            } else {
+                visibleCols = visibleCols.filter(c => c !== colType);
+            }
+        }
+
+        applyColumnVisibility(visibleCols);
+        localStorage.setItem(storageKey, JSON.stringify(visibleCols));
+    });
+}
+
+
+function getColumnIndexByName($table, colName) {
+    let idx = -1;
+    $table.settings().init().columns.forEach((col, i) => {
+        if (col.data === colName) idx = i;
+    });
+    return idx;
+}
+
+function saveSearchFilters(formId, searchStorageKey) {
+    let filters = {};
+
+    $(`#${formId} .search-input`).each(function () {
+        const name = $(this).attr('name') || $(this).attr('id');
+        
+        if ($(this).is(':checkbox')) {
+            filters[name] = $(this).is(':checked') ? 1 : 0;
+            if(name == 'filter_invoice_date'){
+                if($(this).is(':checked')){
+                    $(`#${formId}`).find('#date_range_block').val();
+                    let drp = $(`#${formId} #date_range_block`).data('daterangepicker');
+                    filters['date_range'] = { start_date: drp.startDate.format('YYYY-MM-DD') || '', end_date: drp.endDate.format('YYYY-MM-DD') || ''};
+                }else{
+                    filters['date_range'] = { start_date: null,end_date: null };
+                }
+            }
+        } 
+        else if ($(this).is('select')) {
+            filters[name] = $(this).val();
+        } 
+        else {
+            filters[name] = $(this).val()?.trim() || '';
+        }
+    });
+
+    localStorage.setItem(searchStorageKey, JSON.stringify(filters));
+}
+
+// Load form filters from localStorage
+function loadSearchFilters(formId, searchStorageKey) {
+    const saved = localStorage.getItem(searchStorageKey);
+
+    if (!saved) {
+        // No saved filters -> clear date range & disable if checkbox not checked
+        const drp = $(`#${formId} #date_range_block`).data('daterangepicker');
+        if (drp) {
+            const start = moment().startOf('month');
+            const end   = moment().endOf('month');
+            // Default: clear value & disable unless you want month as default
+            drp.setStartDate(start);
+            drp.setEndDate(end);
+            $(`#${formId} #date_range_block`).val('');   // empty by default
+            $(`#${formId} #date_range_block`).prop('disabled', true);
+        }
+        return;
+    }
+
+    try {
+        const filters = JSON.parse(saved);
+        $(`#${formId} .search-input`).each(function () {
+            const $this = $(this);
+            const name = $this.attr('name') || $this.attr('id');
+            if (filters[name] !== undefined) {
+                if ($this.is(':checkbox')) {
+                    if($this.hasClass('show-checkbox')){
+                        $this.prop('checked', filters[name] == 1);
+                    }else {
+                        $this.prop('checked', filters[name] == 1);
+                    }
+                    if(name == 'filter_invoice_date'){
+                        let date_range = filters['date_range'];
+                        let start,end;
+                        if(date_range.start_date && date_range.end_date){
+                            start = moment(date_range.start_date, "YYYY-MM-DD");
+                            end   = moment(date_range.end_date, "YYYY-MM-DD");                            
+                        }else{
+                            start = moment().startOf('month');
+                            end   = moment().endOf('month'); 
+                        }
+                        if(filters[name] == 1){
+                            let drp = $(`#${formId} #date_range_block`).data('daterangepicker');
+                            drp.setStartDate(start);
+                            drp.setEndDate(end);
+
+                            // Update visible input field
+                            $(`#${formId} #date_range_block`).val(
+                                start.format('DD-MM-YYYY') + ' - ' + end.format('DD-MM-YYYY')
+                            );
+
+                            $(`#${formId} #date_range_block`).prop('disabled', false); // Enable input (in case it was disabled)
+                        }else{
+                            let drp = $(`#${formId} #date_range_block`).data('daterangepicker');
+                            drp.setStartDate(start);
+                            drp.setEndDate(end);
+
+                            $(`#${formId} #date_range_block`).prop('disabled', true);
+                        }
+                    }
+                }
+                else if ($this.is('select')) {
+                    $this.val(filters[name]).trigger('change');
+                }
+                else {
+                    $this.val(filters[name]);
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Error loading saved filters", e);
+    }
+}
+
+// Count active filters
+function updateSearchCount(formId) {
+    let count = 0;
+    $(`#${formId} .search-input`).each(function () {
+        if ($(this).is(':checkbox')) {
+            if($(this).hasClass('show-checkbox')){
+                if(!$(this).is(':checked')) count++;
+            }else if($(this).is(':checked')) {
+                count++;
+            }
+        }
+        else if ($(this).is('select')) {
+            if ($(this).val() && $(this).val() !== '' && $(this).val() !== 'all') count++;
+        }else {
+            if ($(this).val()?.trim() !== '') count++;
+        }
+    });
+    if(count == 0){
+        $(`#${formId}`).parents('.search_box ').find('.sounts').hide();
+    }else{
+        $(`#${formId}`).parents('.search_box ').find('.sounts').show();
+    }
+    $(`#${formId}`).parents('.search_box ').find('.sounts').text(count);
+}
+
+
+function applySavedSort($table, dropdownId, sortStorageKey) {
+    const saved = localStorage.getItem(sortStorageKey);
+    if (saved) {
+        try {
+            const { columnName, direction } = JSON.parse(saved);
+            const colIndex = getColumnIndexByName($table, columnName);
+            if (colIndex >= 0) {
+                $table.order([colIndex, direction]).draw();
+                $(`#${dropdownId}`).data('sort-info', { column: colIndex, direction });
+
+                // UI indicator
+                $(`#${dropdownId} .sort-trigger`).removeClass('sort-asc sort-desc');
+                $(`#${dropdownId} .sort-trigger[data-column-name="${columnName}"]`).addClass(`sort-${direction}`);
+                return;
+            }
+        } catch (e) {
+            console.error("Sort parse error", e);
+        }
+    }
+
+    // Default sort if nothing stored
+    const defaultColIndex = getColumnIndexByName($table, 'family');
+    $table.order([defaultColIndex, 'asc']).draw();
+    $(`#${dropdownId}`).data('sort-info', { column: defaultColIndex, direction: 'asc' });
+    $(`#${dropdownId} .sort-trigger[data-column-name="family"]`).addClass('sort-asc');
+}
+
+// Handle sort button click
+function triggerSortClick($table, $btn, dropdownId, sortStorageKey){
+    const colName = $btn.data('column-name');
+    if (!colName) {
+        // Clear sort
+        $(`#${dropdownId}`).removeData('sort-info');
+        localStorage.removeItem(sortStorageKey);
+        $table.order([]).draw();
+        $('#sort-dropdown .sort-trigger').removeClass('sort-asc sort-desc');
+        return;
+    }
+
+    const colIndex = getColumnIndexByName($table,colName);
+    
+    if (colIndex < 0) return; // No matching column
+
+    // Toggle direction
+    let direction = 'asc';
+    const currentSort = $(`#${dropdownId}`).data('sort-info');
+    if (currentSort && currentSort.column === colIndex) {
+        direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    }
+
+    // Save
+    $(`#${dropdownId}`).data('sort-info', { column: colIndex, direction });
+    localStorage.setItem(sortStorageKey, JSON.stringify({ columnName: colName, direction }));
+
+    // Update UI
+    $(`#${dropdownId} .sort-trigger`).removeClass('sort-asc sort-desc');
+    $btn.addClass(`sort-${direction}`);
+
+    // Apply sort
+    $table.order([colIndex, direction]).draw();
+}
+
+</script>

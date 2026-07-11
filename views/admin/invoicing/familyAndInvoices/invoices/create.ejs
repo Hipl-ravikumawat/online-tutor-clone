@@ -1,0 +1,247 @@
+<div class="right_col" role="main">
+    <div class="settings_content">
+        <a class="back-link" href="/families-invoices#Invoices"><span class="fa fa-chevron-left mr-2"></span>Back to
+            invoices</a>
+        <h2 class="title-text my-4">New Invoice</h2>
+        <div class="card">
+            <div class="card-body form-wizard">
+                <form class="form-design" action="/families-invoices/invoices/store" id="new-invoice-form" method="post">
+
+                    <!-- Add this hidden field at the top of the form -->
+                    <input type="hidden" name="redirect_to" value="<%= studentId ? '/families-invoices/family/' + studentId + '#invoices' : '/families-invoices#Invoices' %>">
+                    
+                    <h2 class="title-text mb-4" id="">Who do you want to create an invoice for?</h2>
+                    <div class="form-group mb-2 select2-default-height">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label" for="families">Families</label>
+                            <% if(groupTags.length > 0){ %>
+                                <div class="dropdown label_dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        Group Tags 
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <rect width="20" height="20" rx="5" fill="white"/>
+                                            <path d="M14 8L10.7071 11.6745C10.3182 12.1085 9.68182 12.1085 9.29293 11.6745L6 8" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" id="tags-dropdown">
+                                        <button type="button" class="dropdown-item" data-type="all-families">All Families</button>
+                                        <% groupTags.map((tag) => { 
+                                            let taggedFamilies =  tag.student_ids.map((entry) => {
+                                                return entry._id;
+                                            });   
+                                        %>
+                                            <hr style="margin: 0;" />
+                                            <button type="button" class="dropdown-item" data-type="family-tag" data-families="<%= taggedFamilies %>"><%= tag.name %> (<%= tag.student_ids.length %>)</button>
+                                        <% }); %>
+                                        <button type="button" class="dropdown-item" data-type="clear">Clear Selection</button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                        <%- include('../partials/form-fields/families-dropdown', {
+                            dropdownName: "families[]",
+                            dropdownId: "families",
+                            dropdownType: "multiple",
+                            families: families,
+                            selected: studentId,
+                            showLabel: false,
+                            label: null,
+                            editRecord: null,
+                        }) %>
+                    </div>
+
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="skip_families" name="skip_family_zero_invoice" value="1" />
+                        <label class="form-check-label" for="skip_families">Skip families with <%= currency.symbol %>0.00 invoices.</label>
+                    </div>
+
+                    <%- include('./partials/_form') %>
+                    
+                    <div class="d-flex flex-wrap justify-content-end bottom_btns">
+                        <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-sm-2 min-w-200">Cancel</button>
+                        <button type="submit" id="submit-btn" class="btn theme-btn min-w-200 mt-2 mt-sm-0">Create Invoice</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/form_script'); %>
+<%- include('./partials/modals'); %>
+
+<script>
+   $(function () {
+    $('#tags-dropdown button.dropdown-item').on('click', function () {
+        let $this = $(this);
+        let type = $this.attr('data-type');
+
+        $('#tags-dropdown button.dropdown-item').removeClass('active');
+
+        if (type == "all-families") {
+            const allValues = $('#families option').map(function () {
+                return $(this).val();
+            }).get();
+            $('#families').val(allValues).trigger('change');
+            $this.addClass('active');
+
+        } else if (type == "family-tag") {
+            let familyIds = $this.attr('data-families');
+            if (familyIds != "") {
+                const specificIds = familyIds.split(",");
+                $('#families').val(specificIds).trigger('change');
+            }
+            $this.addClass('active');
+
+        } else if (type == "clear") {
+            $('#families').val(null).trigger('change');
+            $this.addClass('active');
+        }
+    });
+});
+
+</script>
+
+<script>
+     function handleFormErrors(response) {
+        if (response.responseJSON?.errors) {
+            $.each(response.responseJSON.errors, function (i, error) {
+                let param = error.param;
+                let $field = $(`[name="${param}"], [name="${param}[]"]`);
+
+                if ($field.length) {
+                    if ($field.hasClass("select2")) {
+                        $field.siblings(".select2-container")
+                            .after(`<span class="text-danger">${error.msg}</span>`);
+                    } else {
+                        $field.after(`<span class="text-danger">${error.msg}</span>`);
+                    }
+                } else {
+                    console.warn(`No field found for param: ${param}`);
+                }
+            });
+        } else {
+            alert("Something went wrong. Please try again.");
+        }
+    }
+
+    // Function to create invoice
+    function createInvoice(storeUrl, formData, voidOld = false) {
+        const dataObj = {};
+        $('.loader').show();
+
+        formData.forEach(item => {
+            let name = item.name;
+
+            // Normalize families[] → families
+            if (name.endsWith("[]")) {
+                name = name.replace("[]", "");
+            }
+
+            if (dataObj[name]) {
+                if (!Array.isArray(dataObj[name])) {
+                    dataObj[name] = [dataObj[name]];
+                }
+                dataObj[name].push(item.value);
+            } else {
+                // 👇 Force arrays for multi-select fields
+                if (name === "families") {
+                    dataObj[name] = [item.value];
+                } else {
+                    dataObj[name] = item.value;
+                }
+            }
+        });
+
+        dataObj.voidOld = voidOld;
+        
+        $.ajax({
+            type: "POST",
+            url: storeUrl,
+            contentType: "application/json",
+            data: JSON.stringify(dataObj),
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = response.redirectUrl || '/families-invoices#Invoices';
+                }
+            },
+            error: function (response) {
+                handleFormErrors(response);
+            },
+            complete: function (response) {
+                $('.loader').hide();
+            }
+        });
+    }
+
+
+  $(document).ready(function () {
+    $('#invoice_date').val(`<%= moment().format('YYYY-MM-DD') %>`);
+    // $('#start_date').val(`<%= moment().add(1, 'month').startOf('month').format('YYYY-MM-DD') %>`);
+    // $('#end_date').val(`<%= moment().add(1, 'month').endOf('month').format('YYYY-MM-DD') %>`);
+    $('#previousBalance').prop('checked',true);
+    $('#no_due_date').prop('checked',true);
+
+    $('#new-invoice-form').submit(function (e) {
+        e.preventDefault();
+        $(document).find("span.text-danger").remove();
+        
+        const form = $(this);
+        const storeUrl = form.attr('action');
+        let formData = $(this).serializeArray(); // use array form so we can push extra fields
+
+        // Get daterangepicker instance
+        // let drp = $('#date_range_block').data('daterangepicker');
+        // if (drp) {
+        //     formData.push({ name: "start_date", value: drp.startDate.format("YYYY-MM-DD") });
+        //     formData.push({ name: "end_date", value: drp.endDate.format("YYYY-MM-DD") });
+        // }
+        $('#submit-btn').attr('disabled',true);
+        $.ajax({
+            type: "POST",
+            url: "/families-invoices/invoices/check-existing", // endpoint for checkExistingInvoices
+            data: $.param(formData),
+            success: function (response) {
+                if (response.exists) {
+                    // Show modal
+                    $("#existingInvoicesModal span.selected-date-range").text($('#date_range_block').val());
+                    $("#existingInvoicesModal").modal("show");
+
+                    // Handle Yes
+                    $("#existingInvoicesModal .confirm-void").off("click").on("click", function () {
+                        $("#existingInvoicesModal").modal("hide");
+                        createInvoice(storeUrl, formData, true); // pass flag to void old invoices
+                    });
+
+                    // Handle No
+                    $("#existingInvoicesModal .no-btn").off("click").on("click", function () {
+                        $("#existingInvoicesModal").modal("hide");
+                        createInvoice(storeUrl, formData, false);
+                    });
+
+                    // Handle cancel
+                    $("#existingInvoicesModal .cancel-btn").off("click").on("click", function () {
+                       $('#submit-btn').removeAttr('disabled');
+                    });
+                } else {
+                    // No existing invoices → just create
+                    createInvoice(storeUrl, formData, false);
+                }
+            },
+            error: function (response) {
+                $('#submit-btn').removeAttr('disabled');
+                handleFormErrors(response);
+            }
+        });
+    });
+
+
+  });
+  $(document).ready(function () {
+    // Cancel button
+    $('.cancel-event').on('click', function () {
+        window.location.href = '/families-invoices#Invoices';
+    });
+});
+
+</script>

@@ -1,0 +1,112 @@
+<script type="text/javascript">
+  /**
+   * topic index script.
+   * @script start
+   */
+
+  $(document).ready(function () {
+    dataTable();
+    $("#topic-name").select2({
+      placeholder: "Select Topic",
+      allowClear: false,
+    });
+
+    $("#status").select2({
+      placeholder: "Select Status",
+      allowClear: false,
+    });
+
+    $(".filter").click(function () {
+      let topic_name = $("#topic-name").val();
+      let status = $("#status").val();
+      dataTable(topic_name, status);
+    });
+
+    $(".reset").click(function () {
+      $("#status").val(null).trigger("change");
+      $("#topic-name").val(null).trigger("change");
+      dataTable();
+    });
+  });
+
+  function dataTable(topic_name = "", status = "") {
+    $("#topicTable").dataTable().fnDestroy();
+
+    var topicTable = $("#topicTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [],
+      ajax: {
+        url: "/topics/dataTable",
+        type: "POST",
+        data: {
+          id: topic_name,
+          status: status,
+        },
+      },
+      columns: [
+        {
+          data: "topic_image",
+          render: function (data, type, row) {
+            if (row.topic_image) {
+              return `<a href="/TopicImage/${row.topic_image}"
+                    data-lightbox="image_${row._id}"> <img src="/TopicImage/${row.topic_image}"
+                      alt="${row.name}" class="img-thumbnail"/></a>`;
+            } else {
+              return `<a href="/images/noImage.png" data-lightbox="image_"> <img src="/images/noImage.jpg"
+                        alt="default" class="img-thumbnail" /></a>`;
+            }
+          },
+        },
+        { data: "name", name: "name" },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return ` <label class="checkbox-inline switch-btn">
+                      <input type="checkbox" name="status" class="record-status" data-toggle="toggle" data-on="Active"
+                        data-off="Deactive" data-onstyle="info" data-offstyle="danger" data-url="/topics/update-status"
+                        data-uid="${row._id}" id="toggle-trigger" ${
+              row.status ? "checked" : ""
+            }>
+                        <span class="slider-toggle"></span>  
+                    </label>`;
+          },
+        },
+        {
+          data: "",
+          render: function (data, type, row) {
+            return `<div class="d-flex align-items-center">
+                      <a class="" href="/topics/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                        title="Edit"><img src="/images/edit.svg" alt="icon"></a>
+
+                      <a href="javascript:void(0)" class="ml-2"
+                        onclick="confirmBeforeDeletion('/topics/destroy/${row._id}')"><img src="/images/trash.svg"
+                          alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+                    </div>`;
+          },
+        },
+      ],
+      columnDefs: [
+        {
+          targets: [0, 3] /* column index */,
+          orderable: false /* true or false */,
+        },
+      ],
+    });
+    topicTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+  /**
+   * topic index script.
+   * @script end
+   */
+</script>

@@ -1,0 +1,134 @@
+<script>
+    /**
+   * tutorTrainingContent index page script.
+   * @script start
+   */
+$(document).ready(function () {
+  dataTable();
+  $(".select2").select2({
+    allowClear: false,
+  });
+
+  $("#my-select").select2({
+    dropdownParent: ".div",
+  });
+
+  $("#topics").change(function () {
+    let topicId = $(this).val();
+    loadSubTopic(topicId);
+  });
+
+  //this function will be executed on click of X (clear button)
+  $('input[type=search]').on('search', function () {
+    dataTable();
+  });
+  $("#search").on('keyup', function(){
+    let text = $(this).val().trim();
+    if(text){
+      dataTable('','','','',text)
+    }
+    else {
+      // Reset the list if the search string is empty
+      dataTable(); // Call dataTable without any filter arguments
+    }
+  })
+
+  $(".reset").click(function () {
+    $("#grades").val(null).trigger("change");
+    $("#topics").val(null).trigger("change");
+    $("#subTopic").val(null).trigger("change");
+    $("#status").val(null).trigger("change");
+    $("#search").val("");
+    $("#subTopic").select2({ placeholder: "Select Sub Topic" });
+    dataTable();
+  });
+
+  $(".filter").click(function () {
+    let grade = $("#grades").val();
+    let topic = $("#topics").val();
+    let subTopic = $("#subTopic").val();
+    let status = $("#status").val();
+    dataTable(grade, topic, subTopic, status);
+  });
+
+  $(".paging").click(function () {
+    let grade = $("#grades").val();
+    let topic = $("#topics").val();
+    let subTopic = $("#subTopic").val();
+    let status = $("#status").val();
+    let search = $("#search").val();
+    let type = $(this).data("type");
+    let currentpage = $(".current a").html();
+    let totalPage = $("#totalRecords").text();
+    let offset = $("#offset").val();
+    let showEntries = 10;
+    if (type == "next") {
+      page_no = currentpage == totalPage ? totalPage : parseInt(currentpage) + 1;
+      CurrentOffset = parseInt(showEntries) + parseInt(offset);
+      $("#offset").val(CurrentOffset);
+      $("#CurrentPageNumber").html(page_no);
+    }
+    if (type == "prev") {
+      CurrentOffset = parseInt(offset) - parseInt(showEntries);
+      $("#offset").val(CurrentOffset);
+      page_no = currentpage == 1 ? "1" : parseInt(currentpage) - 1;
+      $("#CurrentPageNumber").html(page_no);
+    }
+    dataTable(
+      grade,
+      topic,
+      subTopic,
+      status,
+      search,
+      (currentPage = page_no),
+      showEntries,
+      CurrentOffset
+    );
+  });
+});
+
+let CurrentOffset = 0;
+function dataTable(grade = "",topic = "",subTopic = "",status = "",search = "",currentPage = 1,showEntries = 10,offset = CurrentOffset) {
+  $(".course-list").empty();
+  $.ajax({
+    type: "POST",
+    url: "/tutor-training/listing",
+    data: {
+      showEntries: showEntries,
+      currentPage: currentPage,
+      grade: grade,
+      topic: topic,
+      subTopic: subTopic,
+      status: status,
+      offset: offset,
+      search: search,
+    },
+    success: function (response) {
+      const res = JSON.parse(response);
+      $(".total-count").html("Total Courses : " + res.recordsTotal);
+      $("#CurrentPageNumber").html(res.currentPage);
+      $("#totalRecords").html(
+        res.totalNoOfPages == 0 ? 1 : res.totalNoOfPages
+      );
+      $(".current a").html(res.currentPage);
+      if (res.courses.length < 1) {
+        $(".course-list").html("<h2 class ='text-center'>No Data Found.</h2>");
+      } else {
+        $(".course-list").html(res.courses);
+      }
+      $(".previous-btn").css("pointer-events", "all");
+      $(".next-btn").css("pointer-events", "all");
+      if (res.currentPage == 1) {
+        $(".previous-btn").css("pointer-events", "none");
+      }
+      if (res.currentPage == res.totalNoOfPages) {
+        $(".next-btn").css("pointer-events", "none");
+      }
+    },
+  });
+}
+/**
+   * tutorTrainingContent index page script.
+   * @script end
+   */
+</script>

@@ -1,0 +1,59 @@
+<div class="tab-pane fade" id="tutor-students" role="tabpanel" aria-labelledby="tutor-students-tab">
+  <div class="row row-gap-30 mx-0">
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <!-- <div class="blank-family-cont">
+            <div class="bfamily-img text-center py-4">
+              <img src="/images/blank-students.svg" alt="Students">
+            </div>
+            <h3>There aren't any students assigned to this tutor yet</h3>
+          </div> -->
+          <div class="all-tut-studentlist common-datatable">
+            <div class="table-responsive">
+              <table id="tutorStudentTable" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Default Price</th>
+                      <th>Default Lesson Length</th>
+                      <th>Default Lesson Category</th>
+                      <th>Make-Up Credits</th>
+                      <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(let student of assignedStudents){ %> 
+                    <tr>
+                      <td><a href="#" class="student-info"><%=student.first_name +" "+ student.last_name%> </a></td>
+                      <td>₹ 30.00/lesson</td>
+                      <td>30 Minutes</td>
+                      <td>Lesson</td>
+                      <td>Total: 0 <br>Booked: 0 <br>Available: 0</td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="20" viewBox="0 0 5 20" fill="none">
+                              <path d="M0 10C0 11.2723 1.03538 12.3077 2.30769 12.3077C3.58 12.3077 4.61538 11.2723 4.61538 10C4.61538 8.72769 3.58 7.69231 2.30769 7.69231C1.03538 7.69231 0 8.72769 0 10ZM0 17.6923C0 18.9646 1.03538 20 2.30769 20C3.58 20 4.61538 18.9646 4.61538 17.6923C4.61538 16.42 3.58 15.3846 2.30769 15.3846C1.03538 15.3846 0 16.42 0 17.6923ZM0 2.30769C0 3.58 1.03538 4.61538 2.30769 4.61538C3.58 4.61538 4.61538 3.58 4.61538 2.30769C4.61538 1.03538 3.58 0 2.30769 0C1.03538 0 0 1.03538 0 2.30769Z" fill="black"/>
+                            </svg>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">Edit Student</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }%>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#tutorStudentTable').DataTable();
+</script>

@@ -1,0 +1,747 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css"/>
+
+<div class="right_col" role="main">
+  <h2 class="main_title mb-4">
+    Welcome back, <%= loggedUserInfo?.first_name+' '+loggedUserInfo?.last_name %>
+  </h2>
+
+  <% if(loggedUserInfo.role === 1) { %>
+  <div class="admin-cards main_dash_cards mb-5">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/tutor-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Active Tutors</h3>
+          <p><%=staticesData?.tutors !== undefined ? staticesData?.tutors : 0
+          %></p>
+        </div>
+      </div>
+      <img src="/images/tutor-orange.svg" alt="" class="dash-back-icon">
+      <a href="./tutors" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/student-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Active Students</h3>
+          <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
+            %></p>
+        </div>
+      </div>
+      <img src="/images/student-orange.svg" alt="" class="dash-back-icon">
+      <a href="./students" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/courses-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Active Learning Contents</h3>
+          <p><%=staticesData?.learningContents !== undefined ?
+            staticesData?.learningContents : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+      <a href="./learning-content" class="see-more-btn">See details</a>
+    </div>
+
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/assessment-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Classes</h3>
+          <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+            %></p>
+        </div>
+      </div>
+      <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+      <a href="./programs" class="see-more-btn">See details</a>
+    </div>
+    <% */%> 
+
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/categories-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Homework</h3>
+          <p><%=staticesData?.assessments !== undefined ?
+            staticesData?.assessments : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/categories-orange.svg" alt="" class="dash-back-icon">
+      <a href="./assessments" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/training-assessment-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Staff Assessments</h3>
+          <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
+        </div>
+      </div>
+      <img src="/images/training-assessment-orange.svg" alt="" class="dash-back-icon">
+      <a href="./tutor-training-assessments" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/invoice-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Payments received this month</h3>
+          <p><%= staticesData?.totalPayments || 0 %></p>
+        </div>
+      </div>
+      <img src="/images/invoice-orange.svg" alt="" class="dash-back-icon">
+      <a href="./families-invoices" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/revenue-orange.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Projected revenue this month</h3>
+          <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
+        </div>
+      </div>
+      <img src="/images/revenue-orange.svg" alt="" class="dash-back-icon">
+      <a href="./families-invoices" class="see-more-btn">See details</a>
+    </div>
+
+    <div class="dashboard-box pending-leave-box position-relative">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span>
+            <img src="/images/pending-leave-requests.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Pending Leave Requests</h3>
+          <p><%= staticesData?.pendingLeaveRequests || 0 %></p>
+        </div>
+      </div>
+      <img src="/images/pending-leave-requests.svg" alt="" class="dash-back-icon">
+      <a href="javascript:void(0)" class="see-more-btn pending-leave-toggle" data-toggle="modal" data-target="#pendingLeaves">
+        See details
+      </a>
+    </div>
+
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span><img src="/images/cancellation-event-requests.svg" alt=""></span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Cancellation Event Requests</h3>
+          <p><%= staticesData?.pendingCancellationRequests || 0 %></p>
+        </div>
+      </div>
+      <img src="/images/cancellation-event-requests.svg" alt="" class="dash-back-icon">
+      <a href="./calendar/cancelled-events" class="see-more-btn">See details</a>
+    </div>
+    
+  </div>
+  <% } %> <% if(loggedUserInfo.role === 2) { %>
+  <div class="tutor-cards main_dash_cards mb-5">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-DarkSlateBlue">
+            <img src="/images/student-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Students</h3>
+          <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
+            %></p>
+        </div>
+      </div>
+      <img src="/images/student-orange.svg" alt="" class="dash-back-icon">
+      <a href="./students" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-RoyalBlue">
+            <img src="/images/courses-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Learning Contents</h3>
+          <p><%=staticesData?.learningContents !== undefined ?
+            staticesData?.learningContents : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+      <a href="./learning-content" class="see-more-btn">See details</a>
+    </div>
+      
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-LightOrange">
+            <img src="/images/assessment-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Classes</h3>
+          <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+            %></p>
+        </div>
+      </div>
+      <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+      <a href="./programs" class="see-more-btn">See details</a>
+    </div>
+    <% */ %>
+    
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-DarkSlateGray">
+            <img src="/images/policy_icon_orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Unread Policies</h3>
+          <p><%=staticesData?.unreadPolicies !== undefined ?
+            staticesData?.unreadPolicies : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/policy_icon_orange.svg" alt="" class="dash-back-icon">
+      <a href="./policies" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-SaddleBrown">
+            <img src="/images/training-assessment-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Staff Assessments</h3>
+          <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
+        </div>
+      </div>
+      <img src="/images/training-assessment-orange.svg" alt="" class="dash-back-icon">
+      <a href="./tutor-training-assessments" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-CadetBlue">
+            <img src="/images/invoice-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Payments received this month</h3>
+          <p><%= staticesData?.totalPayments || 0 %></p>
+        </div>
+      </div>
+      <img src="/images/invoice-orange.svg" alt="" class="dash-back-icon">
+      <a href="./families-invoices#Transactions" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-CadetBlue">
+            <img src="/images/revenue-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Projected revenue this month</h3>
+          <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
+        </div>
+      </div>
+      <img src="/images/revenue-orange.svg" alt="" class="dash-back-icon">
+      <a href="./families-invoices" class="see-more-btn">See details</a>
+    </div>
+  </div>
+  <% } %> <% if(loggedUserInfo.role === 3) { %>
+  <div class="student-cards main_dash_cards">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-DarkSlateBlue">
+            <img src="/images/courses-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Learning Contents</h3>
+          <p><%=staticesData?.learningContents !== undefined ?
+            staticesData?.learningContents : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+      <a href="./learning-content" class="see-more-btn">See details</a>
+    </div>
+
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-RoyalBlue">
+            <img src="/images/assessment-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Classes</h3>
+          <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+            %></p>
+        </div>
+      </div>
+      <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+      <a href="./programs" class="see-more-btn">See details</a>
+    </div>
+    <% */ %>
+
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-LightOrange">
+            <img src="/images/categories-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Assessments</h3>
+          <p><%=staticesData?.assessments !== undefined ?
+            staticesData?.assessments : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/categories-orange.svg" alt="" class="dash-back-icon">
+      <a href="./assessments" class="see-more-btn">See details</a>
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <div class="dash_inner_icon">
+          <span class="bg-shoftGreen">
+            <img src="/images/rewards-point-orange.svg" alt="">
+          </span>
+        </div>
+        <div class="dash_inner_content">
+          <h3 class="title-text mb-0">Total Reward Points</h3>
+          <p><%=staticesData?.pointsBalance !== undefined ?
+            staticesData?.pointsBalance : 0 %></p>
+        </div>
+      </div>
+      <img src="/images/rewards-point-orange.svg" alt="" class="dash-back-icon">
+      <a href="./rewards/points-history" class="see-more-btn">See details</a>
+    </div>
+  </div>
+  <% if(stdAssessmentArray.length > 0) { %>
+  <div class="card-block mt-4 mb-5">
+    <div class="tutors_area">
+      <h2 class="title-text mb-3">Alert</h2>
+      <div class="alert-list">
+        <ul>
+          <% for(remainingAssessment of stdAssessmentArray){ %>
+          <li>
+            <div class="alert-details">
+              <p><strong>takeout. Hurry up! </strong>Complete Your Task to get more Rewards points.</p>
+              <p><strong>Last Date : </strong><%=remainingAssessment.assessmentDate%></p>
+            </div>
+            <a href="./assessments" class="theme-btn add-voucher-btn">Complete Assessment</a>
+          </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <% } %>
+
+  <% if (loggedUserInfo.role !== 2) { %>
+  <div class="week-agenda"></div>
+  <% } %>
+
+  <% if (loggedUserInfo.role === 2) { %>
+  <div class="bussniess_setting">
+    <div class="card">
+      <div class="card-body scheduled_event_box date_dropdown">
+        <div class="date_dropdown_block">
+          <h2 class="title-text">
+            <div class="contents" id="tutor-display-date"></div>
+            <div class="position-relative">
+              <span class="owed_date_family" style="cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
+                  <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <input type="text" id="tutor-date-input" class="hidden_input_area" />
+            </div>
+            Agenda
+          </h2>
+          <div class="sche_event_right">
+            <div class="sche_event_right_inner">
+              <button class="sche_arrow prev-day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                  <path d="M15.2925 5.70498C14.9025 5.31498 14.2725 5.31498 13.8825 5.70498L8.2925 11.295C7.9025 11.685 7.9025 12.315 8.2925 12.705L13.8825 18.295C14.2725 18.685 14.9025 18.685 15.2925 18.295C15.6825 17.905 15.6825 17.275 15.2925 16.885L10.4125 11.995L15.2925 7.11498C15.6825 6.72498 15.6725 6.08498 15.2925 5.70498Z" fill="#cd4236"></path> 
+                </svg>
+              </button>
+              <span class="sche_day">Today</span>
+              <button class="sche_arrow next-day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                  <path d="M8.71251 5.71075C8.32251 6.10075 8.32251 6.73075 8.71251 7.12075L13.5925 12.0008L8.71251 16.8808C8.32251 17.2708 8.32251 17.9008 8.71251 18.2908C9.10251 18.6808 9.73251 18.6808 10.1225 18.2908L15.7125 12.7008C16.1025 12.3108 16.1025 11.6808 15.7125 11.2908L10.1225 5.70075C9.74251 5.32075 9.10251 5.32075 8.71251 5.71075Z" fill="#cd4236"></path> 
+                </svg>
+              </button>
+            </div>
+ 
+            <!-- <div class="both-btnli">
+              <div class="dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Sort" class="mr-2">Options</button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <button type="button" class="dropdown-item">Complete Attendance</button>
+                  <button type="button" class="dropdown-item">Hide all details</button>
+                  <button type="button" class="dropdown-item">Show Family Balances</button>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="scheduled_event_card">
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  
+</div>
+
+<%- include('../attendanceAndNotes/modals/session-notes', { fetchedEvent: {},templates: templates }) %>
+
+<!-- delete an event modal -->
+<div class="modal fade common-modal modal-label-style" data-backdrop="static" id="cancelEventReason" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="cancelModalLabel">Cancel An Event</h3>
+      </div>
+      <form id="cancel-an-event" class="modal-form-area" method="post" >
+        <div class="modal-body">
+          <div class="common-form settings_content">
+            <input type="hidden" name="eventId" id="eventId" required>
+            <div class="form-group position-relative">
+              <label for="Note to Tutor">Note to Tutor</label>
+                <div class="form-floating">
+                  <textarea class="form-control" placeholder="Leave a comment here" id="cancel-note-for-tutor"></textarea>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea"></div>
+          <div class="btn-rightarea d-flex flex-wrap">
+            <button type="submit" class="bus-outline-btn mb-2 mr-2">Submit</button>
+            <button type="button" class="bus-outline-btn mb-2 mr-2" data-dismiss="modal">Cancel</button>
+            <div class="delete-event-btn"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade common-modal" id="pendingLeaves" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-none">
+      <div class="modal-header">
+        <h5 class="modal-title title_style">Tutor Pending Leave</h5>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="pending-leave-dropdown">
+          <% if (staticesData?.pendingLeaveTutors?.length > 0) { %>
+            <ul>
+              <% staticesData.pendingLeaveTutors.forEach(function(item) { %>
+                <li>
+                  <a href="/tutor-preferences/<%= item.tutor_id?._id %>#tutor-leaves" class="pending-leave-item">
+                      <%= item.tutor_id?.first_name %>
+                      <%= item.tutor_id?.last_name %>
+                      <br>
+                      <small class="text-muted">
+                       <%= moment(item.start_date).format('DD MMM YYYY') %>
+                        -
+                        <%= moment(item.end_date).format('DD MMM YYYY') %>
+                      </small>
+                  </a>
+                </li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <p class="mb-0 not_pending_leave_text">
+              No pending leave requests
+            </p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/vendors/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js"></script>
+
+<script type="text/javascript">
+  const userId= '<%=loggedUserInfo.id%>';
+  const mediaFolder = 'EventAttachments';
+</script>
+
+<%- include('../attendanceAndNotes/session-notes-js') %>
+
+<script type="text/javascript">
+ let loggedUserInfo = <%- JSON.stringify(loggedUserInfo) %>;
+ 
+
+  function fetchWeekAgenda() {
+    $.ajax({
+      type: 'GET',
+      url: '/dashboard/week-agenda',
+      success: function (response) {
+        // console.log(response, 'success');
+        $('.week-agenda').html(response.contentHtml);
+      },
+      error: function (response) {
+        Swal.fire({
+          title: 'Oops...',
+          text: response.responseJSON.message,
+        });
+      },
+      complete: function () {
+      }
+    });
+  }
+
+  $(document).ready(function () {
+    <% if (loggedUserInfo.role !== 2) { %>
+      fetchWeekAgenda();
+      <% } %>
+
+      <% if (loggedUserInfo.role === 2) { %>
+        // Get today's date in YYYY-MM-DD format
+        let savedDate = localStorage.getItem('tutor_events_selected_date');
+
+        let initialDate = (
+          savedDate && savedDate !== ""
+        )
+          ? savedDate
+          : moment().format('YYYY-MM-DD');
+
+        fetchTutorEvents(initialDate);
+      <% } %>
+  });
+  
+
+  $(document).on('click', '.cancel-events', function () {
+    let eventId = $(this).data('event-id');
+    $("#eventId").val(eventId); $("#cancelEventReason").modal('show'); //
+    cancelEventConfirmation(eventId, 'dashboard');
+  }); $("#cancel-an-event").submit(function (e) {
+    e.preventDefault();
+    let eventId = $("#eventId").val(); let cancelNoteForTutor = $("#cancel-note-for-tutor").val(); $('.error').remove();
+    if (cancelNoteForTutor.trim() === '') {
+      $("#cancel-note-for-tutor").after('<span class="error" style="color:red;">This field is required</span > ');
+      return false;
+    }
+    $.ajax({
+      type: "POST",
+      url: '/calendar/cancel-this-event',
+      data: {
+        eventId: eventId,
+        status: 'Requested_To_Cancel',
+        cancelNoteForTutor: cancelNoteForTutor,
+        loggedUserInfo: loggedUserInfo,
+      },
+      success: function (response) {
+        Swal.fire({
+          title: "Requested To Cancel!",
+          text: response.message,
+          icon: "success"
+        });
+        $("#cancel-note-for-tutor").val("");
+        $("#cancelEventReason").modal('hide');
+
+        // Reload the page after a brief delay
+        if (response.redirectUrl === 'page-reload') {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      },
+      error: function (response) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops..,",
+          text: response.message,
+        });
+      },
+      complete: function () {
+      }
+    })
+  })
+
+  
+
+
+
+  // Jquery for bottom new section
+  let defaultStart = moment();
+  $('#hidden-date-input').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    startDate: defaultStart,
+    // autoUpdateInput: false,
+    locale: {
+      format: 'DD-MM-YYYY'
+    }
+  }, function (start, end, label) {
+    let formattedDate = start.format('YYYY-MM-DD');
+    localStorage.setItem("family_account_filter_date", formattedDate);
+    $('#hidden-date-input').val(start.format('DD-MM-YYYY'));
+    $('#display-date').text(start.format('DD-MM-YYYY'));
+  });
+  $('#hidden-date-input').val(defaultStart.format('DD-MM-YYYY'));
+  $('#display-date').text(defaultStart.format('DD-MM-YYYY'));
+  localStorage.setItem("family_account_filter_date", defaultStart.format('YYYY-MM-DD'));
+
+  // Tutor datepicker
+  let savedDate = localStorage.getItem('tutor_events_selected_date');
+
+  let tutorDefault = (
+    savedDate && savedDate !== ""
+  )
+    ? moment(savedDate, 'YYYY-MM-DD')
+    : moment();
+    
+  $('#tutor-date-input').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    startDate: tutorDefault,
+    // autoUpdateInput: false,
+    locale: {
+      format: 'DD-MM-YYYY'
+    }
+  }, function (start, end, label) {
+    let formattedDate = start.format('YYYY-MM-DD');
+    $('#tutor-date-input').val(start.format('DD-MM-YYYY'));
+    $('#tutor-display-date').text(start.format('DD-MM-YYYY'));
+
+    localStorage.setItem('tutor_events_selected_date',formattedDate);
+
+    fetchTutorEvents(formattedDate);
+  });
+
+  $('#tutor-date-input').val(tutorDefault.format('DD-MM-YYYY'));
+  $('#tutor-display-date').text(tutorDefault.format('DD-MM-YYYY'));
+
+
+  function fetchTutorEvents(date) {
+    $.ajax({
+      type: 'GET',
+      url: '/dashboard/tutor-events?date=' + date,
+      success: function (response) {
+        $('.scheduled_event_card').html(response.contentHtml);
+      },
+      error: function (response) {
+        Swal.fire({
+          title: 'Oops...',
+          text: response.responseJSON.message,
+        });
+      }
+    });
+  }
+
+  // 
+  $('.dropdown-header').click(function () {
+    $('.dropdown-list').slideToggle(150);
+  });
+
+  $('.dropdown-item-block').click(function () {
+    $('.dropdown-item-block').removeClass('selected');
+    $('.dropdown-item-block .check').remove();
+    $(this).addClass('selected');
+    $(this).append('<span class="check">✔</span>');
+    let text = $(this).clone().children().remove().end().text().trim();
+    $('.dropdown-header .drop_value').text(text);
+    $('.dropdown-list').slideUp(150);
+  });
+
+  $(document).click(function (e) {
+    if (!$(e.target).closest('.custom-dropdown').length) {
+      $('.dropdown-list').slideUp(150);
+    }
+  });
+
+
+// Date navigation - Previous day
+$('.prev-day').on('click', function() {
+    const currentDate = $('#tutor-date-input').val(); // Format: DD-MM-YYYY
+    const currentMoment = moment(currentDate, 'DD-MM-YYYY');
+    const newDate = currentMoment.subtract(1, 'day');
+    
+    const formattedDate = newDate.format('DD-MM-YYYY');
+    const apiDate = newDate.format('YYYY-MM-DD');
+    
+    // Update the date input and display
+    $('#tutor-date-input').val(formattedDate);
+    $('#tutor-display-date').text(formattedDate);
+    
+    // Fetch events for the new date
+    fetchTutorEvents(apiDate);
+});
+
+// Date navigation - Next day
+$('.next-day').on('click', function() {
+    const currentDate = $('#tutor-date-input').val(); // Format: DD-MM-YYYY
+    const currentMoment = moment(currentDate, 'DD-MM-YYYY');
+    const newDate = currentMoment.add(1, 'day');
+    
+    const formattedDate = newDate.format('DD-MM-YYYY');
+    const apiDate = newDate.format('YYYY-MM-DD');
+    
+    // Update the date input and display
+    $('#tutor-date-input').val(formattedDate);
+    $('#tutor-display-date').text(formattedDate);
+    
+    // Fetch events for the new date
+    fetchTutorEvents(apiDate);
+});
+
+// Optional: Click on "Today" text to go back to current date
+$('.sche_day').on('click', function() {
+    const today = moment();
+    const formattedDate = today.format('DD-MM-YYYY');
+    const apiDate = today.format('YYYY-MM-DD');
+    
+    $('#tutor-date-input').val(formattedDate);
+    $('#tutor-display-date').text(formattedDate);
+    
+    fetchTutorEvents(apiDate);
+});
+
+// $(document).on('click', '.pending-leave-toggle', function (e) {
+//   e.preventDefault();
+
+//   $('.pending-leave-dropdown').slideToggle(200);
+// });
+
+</script>

@@ -1,0 +1,356 @@
+<div class="right_col" role="main">
+  <!-- student page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Edit Student</h2>
+      </div>
+      <div class="x_content">
+        <form id="updateStudent" action="/students/update" method="post" class="form-horizontal form-label-left"
+          enctype="multipart/form-data">
+          <input type="hidden" name="student_id" value="<%=data.id %>">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="title">Title</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="title" id="title" tabindex="-1" single>
+                        <option value="">Select Title</option>
+                        <option value="Mr" <%=data.title=='Mr' ? 'selected' : '' %>>Mr</option>
+                        <option value="Ms" <%=data.title=='Ms' ? 'selected' : '' %>>Ms</option>
+                        <option value="Mrs" <%=data.title=='Mrs' ? 'selected' : '' %>>Mrs</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="first_name">Account No.<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <input type="text" class="form-control" placeholder="Registration No..."
+                         value="<%=data.account_number %>" disabled readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="first_name">First Name<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.."
+                        id="first_name" value="<%=data.first_name %>" maxlength="50">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="last_name" class="form-control" placeholder="Enter Last Name.."
+                        value="<%=data.last_name %>" id="last_name" maxlength="50">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="phone">Contact No.
+                     
+                    </label>
+                    <div class="phone-group">
+                      <input type="hidden" name="dial_code" id="dial_code" value="<%=data.dial_code%>">
+                      <input type="hidden" name="iso_code" id="iso_code" value="<%=data.iso_code%>">
+                      <input type="number" name="phone" value="" class="form-control" id="phone">
+                      <p id="error-msg" class="hide"></p>
+                    </div>
+                     <div class="common-checkbox mt-2 d-inline-block position-relative panel_checkbox_label">
+                      <input type="checkbox" class="form-check-input" id="send_sms" name="send_sms" value="1">
+                      <label class="form-check-label" for="send_sms">SMS Capable</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="email">Email Address
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                      <input type="email" name="email" class="form-control" value="<%= data.email || '' %>" readonly
+                        placeholder="<%= data.email ? '' : 'Enter Email...' %>" id="email">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="ndis_number">NDIS 
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                      <input type="text" autocomplete="no-email" name="ndis_number" class="form-control" placeholder="Enter NDIS No.." id="ndis_number" value="<%=data.ndis_number %>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="password">Password <span style="font-size: 8px;display: inline-block;">Leave blank If you don`t want to update password</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span>
+                      <input type="password" name="password" class="form-control" placeholder="Update Password.."
+                        id="password" value="">
+                      <span toggle="#password"
+                        class="fa fa-fw fa-eye-slash field-icon form-control-feedback right toggle-password"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="gender">
+                        <option value="1" <%=data.gender=='1' ? 'selected' : '' %>>Male</option>
+                        <option value="0" <%=data.gender=='0' ? 'selected' : '' %>>Female</option>
+                        
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="gender">Time Zone<span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="time_zone" id="time_zone">
+                        <% for(let timeZone of timeZones) { %> 
+                          <option value="<%=timeZone.tzid%>" <%=data.time_zone==timeZone.tzid ? 'selected' : '' %>><%=timeZone.name%></option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="birth_day">Birthday</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <input type="date" name="birth_day" class="form-control " max="<%=moment().format('YYYY-MM-D');%>" id="birth_day" value="<%=birth_day %>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="grade_id">Grade<span
+                        class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/level.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="grade_id" id="grade_id">
+                        <option value="">Select Grade</option>
+                        <% for(Grade of grade){ %>
+                          <option value="<%=Grade.id%>" <%=data.grade_id==Grade.id ? 'selected' : '' %>><%=Grade.name%>
+                          </option>
+                          <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="school">School<span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="school_id" id="school_id">
+                        <option value="">Select School</option>
+                        <% for(school of school_data) { %>
+                          <option value="<%=school.id%>" <%=data.school_id==school.id ? 'selected' : '' %>>
+                            <%=school.name%>
+                          </option>
+                          <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="group_tag_id">Group Tag</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="group_tag_id" id="group_tag_id">
+                        <option value="">Select Group Tag</option>
+                        <% for(groupTag of groupTags) { %>
+                          <option value="<%=groupTag._id%>" <%=data.group_tag_id && data.group_tag_id.toString() == groupTag._id.toString() ? 'selected' : '' %>>
+                            <%=groupTag.name%>
+                          </option>
+                          <% } %>
+                      </select>
+                    </div>
+                    <a href="/group-tags" target="_blank" rel="noopener noreferrer" class="btn btn-link btn-sm mt-1 text_link_orange">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18 19H6C5.45 19 5 18.55 5 18V6C5 5.45 5.45 5 6 5H11C11.55 5 12 4.55 12 4C12 3.45 11.55 3 11 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V13C21 12.45 20.55 12 20 12C19.45 12 19 12.45 19 13V18C19 18.55 18.55 19 18 19ZM14 4C14 4.55 14.45 5 15 5H17.59L8.46 14.13C8.07 14.52 8.07 15.15 8.46 15.54C8.85 15.93 9.48 15.93 9.87 15.54L19 6.41V9C19 9.55 19.45 10 20 10C20.55 10 21 9.55 21 9V4C21 3.45 20.55 3 20 3H15C14.45 3 14 3.45 14 4Z"></path> </svg>
+                      Go to Group Tags</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="referrer">Referrer</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/referrer.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="referrer" class="form-control " placeholder="Referrer.."
+                        id="referrer" value="<%=data.referrer %>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="status" id="status">
+                        <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
+                        <option value="2" <%=data.status=='2' ? 'selected' : '' %>>Trial</option>
+                        <option value="3" <%=data.status=='3' ? 'selected' : '' %>>Waiting</option>
+                        <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="start_date">Start Date
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <input type="date" name="start_date" value="<%=moment(data.start_date).format('YYYY-MM-D');%>" class="form-control" id="start_date">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="end_date">End Date
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <input type="date" name="end_date" value="<%=moment(data.end_date).format('YYYY-MM-D');%>" class="form-control " id="end_date">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="notes">Notes </label>
+                    <textarea name="note" rows="5" class="form-control" placeholder="Enter Notes.."
+                      id="notes"><%=data.note %></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group drop-file">
+                <label class="col-form-label label-align" for="profile_image">Profile Image</label>
+                <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto" <% if
+                  (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
+                data-default-file="/ProfileImage/<%=data.profile_image%>" <% }%>
+                    data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
+                    <% if (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
+                      value=" <%=data.profile_image %>" <% } else { %> value="" <% } %> >
+              </div>
+              <input type="hidden" name="is_remove" id="is_image_removed" value="0">
+              <input type="hidden" name="redirectUrl" value="<%= redirectUrl %>">
+            </div>
+          </div>
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="updateStudentBtn" class="btn theme-btn form-button">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- student page content end -->
+</div>
+
+<%- include('./form_script'); %>
+
+<script type="text/javascript">
+  $("#updateStudent").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var form = $('#updateStudent');
+    var formData = new FormData(form[0]);
+    formData.append('profile_image', this.new_attachments)
+    var url = $('#updateStudent').attr('action');
+    $("#updateStudentBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#updateStudentBtn").prop('disabled', false);
+      },
+    })
+  });
+
+  $("#start_date").change(function(){
+    let startDate = $(this).val();
+    $("#end_date").val('');
+    $("#end_date").attr('min', startDate);
+  });
+  $("#end_date").change(function(){
+    let startDate = $(this).val();
+    $("#start_date").attr('max', startDate);
+  })
+</script>
+
+<script>
+$(document).ready(function () {
+
+    function refreshGroupTags() {
+        const $dropdown = $('#group_tag_id');
+        const currentValue = $dropdown.val();
+
+        $.get(window.location.href + '?_=' + Date.now(), function (html) {
+
+            const newOptions = $('<div>').html(html).find('#group_tag_id').html();
+
+            if (newOptions) {
+                $dropdown.html(newOptions);
+
+                if (currentValue && $dropdown.find(`option[value="${currentValue}"]`).length) {
+                    $dropdown.val(currentValue);
+                }
+
+                $dropdown.trigger('change');
+            }
+        });
+    }
+
+    // refresh when user comes back from another tab/page
+    $(window).on('focus', function () {
+        refreshGroupTags();
+    });
+
+});
+
+$(document).on('focus', '#email', function () {
+  $(this).prop('readonly', false);
+});
+</script>

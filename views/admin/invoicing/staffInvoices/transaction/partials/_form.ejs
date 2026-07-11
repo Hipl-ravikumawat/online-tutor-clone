@@ -1,0 +1,237 @@
+<!-- Payment and Refund form -->
+<% if (!transaction) { %>
+<div id="payment-refund-form" style="display:inline-block;width: 100%;">
+<% } else if (transaction && ['Payment', 'Refund'].includes(transaction.type)) { %>
+<div id="payment-refund-form">
+<% }else{ %>
+<div id="payment-refund-form" style="display:none;">
+<% } %>
+    <div class="row">       
+        
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="form-label" for="payment_tutor_id">Staff<span class="required">*</span></label>
+                <select class="form-control select2" name="payment_tutor_id" id="payment_tutor_id">
+                    <option value="">Select</option>
+                    <% staffs.forEach(staff => { %>
+                        <option value="<%= staff._id || staff.id %>" <%= ((tutorId == staff._id || tutorId == staff.id) || (transaction && transaction?.tutor_id == staff._id)) ? 'selected' : '' %>>
+                        <%= (staff.first_name) + " " + (staff.last_name) %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="form-label" for="payment_refund_date">Date<span class="required">*</span></label>
+                <input 
+                type="text" 
+                class="form-control pl-40" 
+                id="payment_refund_date" 
+                name="payment_refund_date" 
+                value="<%= transaction ? moment(transaction.date, 'DD-MM-YYYY').format('DD-MM-YYYY') : '' %>">
+                <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+            <label class="form-label" for="payment_method">Payment Method</label>
+            <select name="payment_method" id="payment_method" class="form-control">
+                <option value="">Select</option>
+                <% paymentMethods.forEach(method=> { %>
+                <option value="<%= method._id || method.id %>" <%= (transaction && transaction?.payment_method == method._id) ? 'selected' : '' %>>
+                   <%= (method.method || method.name).charAt(0).toUpperCase() + (method.method || method.name).slice(1) %>
+                </option>
+                <% }); %>
+            </select>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="form-group position-relative mb-0">
+                <label for="amount" class="form-label">Amount<span class="required">*</span></label>
+                <input type="number" class="form-control pl-4" id="payment_refund_amount" name="payment_refund_amount" min="0" value="<%= transaction ? transaction.amount : '' %>" />
+                <span class="input-icon top-high">
+                    <i class="<%= currency.icon %>"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Invoices -->
+        <% if (!transaction) { %>
+            <%- include('selected-invoices'); %>
+        <% } %>
+        
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="note" class="form-label">Description</label>
+                <textarea class="form-control" name="note" rows="3" value="<%= transaction ? transaction.note : '' %>"><%= transaction ? transaction.note : '' %></textarea>
+            </div>
+        </div>
+        
+        <% if(!transaction){ %>
+            <div class="col-md-12">
+                <div id="send-receipt-wrapper">
+                    <div class="form-group form-check mt-2 mb-3">
+                        <input class="form-check-input mt-1" type="checkbox" id="sendReceipt" name="send_receipt" value="1" />
+                        <label class="form-check-label" for="sendReceipt">Send Email Receipt</label>
+                    </div>
+        
+                    <div id="emailDetails" style="display: none;" class="mb-4">
+                        <div class="mb-4" id="emailRecipientSelect" style="display: none;">
+                            <label class="form-label">Recipient</label>
+                            <select class="form-control" id="emailRecipient" name="email_recipient">
+                                <option value="">Select</option>
+                            </select>
+                            <% if(transaction){ %>
+                                <input type="hidden" name="contact_user_id" id="contact_user_id" value="<%= transaction.email_recipient_id || '' %>" />
+                            <% } %>
+                        </div>
+                        <div class="form-group form-check mb-2">
+                            <input class="form-check-input mt-1" type="checkbox" id="ccEmail" name="cc_me_email" />
+                            <label class="form-check-label" for="ccEmail">CC me in this email</label>
+                        </div>
+                        <div class="cc_mail_info">
+                            <p>The payment template will be used for this receipt email. <a href="/business-settings" class="open_template" target="_blank">Open Templates <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18 19H6C5.45 19 5 18.55 5 18V6C5 5.45 5.45 5 6 5H11C11.55 5 12 4.55 12 4C12 3.45 11.55 3 11 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V13C21 12.45 20.55 12 20 12C19.45 12 19 12.45 19 13V18C19 18.55 18.55 19 18 19ZM14 4C14 4.55 14.45 5 15 5H17.59L8.46 14.13C8.07 14.52 8.07 15.15 8.46 15.54C8.85 15.93 9.48 15.93 9.87 15.54L19 6.41V9C19 9.55 19.45 10 20 10C20.55 10 21 9.55 21 9V4C21 3.45 20.55 3 20 3H15C14.45 3 14 3.45 14 4Z"></path> </svg></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- <% if(!transaction){ %>
+            <div class="col-md-6">
+                <div id="send-sms-wrapper">
+                    <div class="form-group form-check mt-2 mb-3">
+                        <input class="form-check-input mt-1" type="checkbox" id="sendSMSReceipt" name="send_sms"
+                            value="1" />
+                        <label class="form-check-label" for="sendSMSReceipt">Send SMS Receipt</label>
+                    </div>
+        
+                    <div id="smsDetails" style="display: none;" class="mb-4">
+                        <div class="mb-4">
+                            <label class="form-label">Recipient</label>
+                            <select class="form-control" id="smsRecipient" name="sms_recipient">
+                                <option value="">Select</option>
+                            </select>
+                            <% if(transaction){ %>
+                                <input type="hidden" name="sms_recipient_id" id="sms_recipient_id"
+                                    value="<%= transaction.sms_recipient_id || '' %>" />
+                                <% } %>
+                        </div>
+                        <p class="small text-muted">The payment SMS template will be used for this receipt.
+                            <a href="/business-settings" class="open_template">Open Templates</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <% } %> -->
+
+    </div>
+</div>
+
+<!-- Charges and Discount form -->
+<% if (transaction && ['Charge', 'Discount'].includes(transaction.type)) { %>
+<div id="charges-discount-form" style="display:block;">
+<% } else { %>
+<div id="charges-discount-form" style="display:none;">
+<% } %>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="charge_tutor_id">Staff<span class="required">*</span></label>
+            <select class="form-control select2" name="charge_tutor_id" id="charge_tutor_id">
+                <option value="">Select</option>
+                <% staffs.forEach(staff => { %>
+                    <option value="<%= staff._id || staff.id %>" <%= ((tutorId == staff._id || tutorId == staff.id) || (transaction && transaction?.tutor_id == staff._id)) ? 'selected' : '' %>>
+                    <%= (staff.first_name) + " " + (staff.last_name) %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+    </div>
+
+    <!-- <div class="mb-3">
+        <label class="form-label">Charge Type<span class="required">*</span></label><br>
+        
+        <div class="radio_group form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="charge_type" id="oncePerFamily" value="family"
+            <%= (!transaction || transaction?.charge_type == "family") ? 'checked' : '' %> />
+            <label class="radiolabel" for="oncePerFamily">Once per family</label>
+        </div>
+
+        <div class="radio_group form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="charge_type" id="oncePerStudent" value="student"
+            <%= (transaction?.charge_type == "student") ? 'checked' : '' %> />
+            <label class="radiolabel" for="oncePerStudent">Once per student</label>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="form-group mb-0">
+                <label for="charges_discount_date" class="form-label">Date<span class="required">*</span></label>
+                <input 
+                type="text" 
+                class="form-control pl-40 full_date_click" 
+                id="charges_discount_date" 
+                name="charges_discount_date" 
+                value="<%= transaction ? moment(transaction.date, 'DD-MM-YYYY').format('DD-MM-YYYY') : '' %>" />
+                <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="form-group position-relative mb-0">
+                <label label for="amount" class="form-label">Amount<span class="required">*</span></label>
+                <input type="number" class="form-control pl-4" id="charges_discount_amount"
+                    name="charges_discount_amount" min="0" value="<%= (transaction && transaction?.amount) ? transaction.amount : '' %>" />
+                <span class="input-icon top-high"><i class="<%= currency.icon %>"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group form-check mt-2 mb-2">
+        <input class="form-check-input" type="checkbox" value="1" id="recurring" name="recurring" <%= (transaction && transaction?.recurring) ? 'checked' : '' %> />
+        <label class="form-check-label" for="recurring">This is a recurring charge</label>
+    </div>
+
+    <!-- recurring options -->
+    <%- include('recurring-options',{ recurringFrequency: recurringFrequency, repeatDays: repeatDays, transaction }); %>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <% const selectedTaxes = transaction?.charge_taxes?.map(t => t._id?.toString?.()) || []; %>
+            <div class="mb-3">
+                <label class="form-label">Applicable Taxes</label><br>
+                <div id="taxContainer">
+                    <% 
+                    if(taxes.length > 0){                    
+                        taxes.forEach((tax, index)=> { 
+                            const isChecked = selectedTaxes.includes(tax._id.toString());   
+                        %>
+                        <div class="form-group form-check">
+                            <input class="form-check-input" type="checkbox" id="tax<%= index %>" name="charge_taxes[]"
+                            value="<%= tax._id %>" <%= isChecked ? 'checked' : '' %> />
+                            <label class="form-check-label" for="tax<%= index %>">
+                            <%= tax.tax_name %> (<%= tax.tax_rate %>%)
+                            </label>
+                        </div>
+                        <% }); %>
+                    <% }else{ %>
+                        <p class="text-muted mb-0">
+                            No tax added.
+                        </p>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <!-- charge categories -->
+                <%- include('charge-category-dropdown',{ chargeCategories: chargeCategories, transaction }); %>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="note" class="form-label">Description <span class="text-muted small">(Optional)</span></label>
+        <textarea class="form-control" name="charges_discount_description" rows="3" placeholder="Enter text" value="<%= transaction?.note || '' %>"><%= transaction?.note || '' %></textarea>
+    </div>
+</div>

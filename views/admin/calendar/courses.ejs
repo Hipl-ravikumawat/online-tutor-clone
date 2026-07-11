@@ -1,0 +1,112 @@
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text mb-0">Event List</h2>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive">
+                <table id="courseTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                width="100%">
+                <thead>
+                  <tr>
+                    <th>Lesson Name</th>
+                    <th>Completed Score</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody> 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    dataTable();
+  })
+  function dataTable(){
+    const url = window.location.href;
+    let parts = url.split('/');
+    let eventId = parts[parts.length - 2];
+    const courseTable = $('#courseTable').DataTable({
+      paging: true,
+      pageLength: 10,
+      language: { 
+          searchPlaceholder: "Search",
+          processing: '<div><div></div><div></div><div></div><div></div></div>'
+      },  
+      processing: true,
+      serverSide: true,
+      columnDefs: [
+        { 'orderable': false, 'targets': [2] } // Disable sorting for the 'action' column (index 2)
+      ],
+      order: [],
+      'ajax':
+      {
+        'url': '/calendar/courses-dataTable',
+        'type': 'POST',
+        'data': {
+          eventId:eventId,
+        },
+      },
+      "drawCallback": function (settings) {},
+      'columns': [
+        {
+          data: "content",
+          "render": function (data, type, row) {
+              return row.lesson_id.title;
+          }
+        },
+        {
+          data: "score",
+          "render": function (data, type, row) {
+              return `${row.slide_score}%`;
+          }
+        },
+        {
+          data: "action",
+          "render": function (data, type, row) {
+            // console.log(row.status,"row.status")
+              let html = '';
+
+            if (row.status == "N/A") {
+                html += `
+                <a href="/learning-content/${row.learning_content_id.slug}/lessons/${row.lesson_id.slug}/event/${row.lesson_id._id}/${eventId}" 
+                  class="view-report" data-toggle="tooltip" title="Start Lesson">
+                  
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19">
+                    <path d="M3.82909 0.896886C2.20629 -0.033976 0.890625 0.728597 0.890625 2.59878V16.3999C0.890625 18.272 2.20629 19.0335 3.82909 18.1036L15.892 11.1856C17.5153 10.2544 17.5153 8.74572 15.892 7.81475L3.82909 0.896886Z" fill="#4a4674"></path>
+                  </svg>
+                </a>`;
+            }
+
+            html += `
+            <a href="/calendar/${eventId}/lesson/${row.lesson_id._id}/course-details" 
+              class="view-report" data-toggle="tooltip" title="Course Details">
+              <img src="/images/eye.svg" alt="icon">
+            </a>`;
+
+            return html;
+          }
+        }
+      ]
+    })
+    // console.log(courseTable,"courseTable")
+    courseTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+</script>

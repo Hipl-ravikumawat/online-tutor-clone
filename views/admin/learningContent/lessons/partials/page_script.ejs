@@ -1,0 +1,503 @@
+<!-- dropIfy-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+
+<script type="text/javascript">
+    /**
+     * @page script starts.
+     */ 
+    function drag_and_drop(doingIndex = 1) {
+
+            let lastIndex = $(".para-gap").data('index');
+            let length = $(".para-gap").length;
+            let j = 1;
+            $(".para-gap").each(function () {
+                $(this).find('.index-number').text(j);
+                j++;
+            });
+
+            let container = new Array();
+
+            for (let i = 1; i <= length; i++) {
+                let containt = document.getElementById("answer-" + lastIndex);
+                container.push(containt);
+                lastIndex++;
+            }
+
+            let containt = document.getElementById("doing-" + doingIndex);
+            container.push(containt);
+
+            drake = dragula(container, { revertOnSpill: true });
+
+            drake.on('over', function (el, container, source) {
+                if (container !== source && container.matches('.para-gap')) {
+                    // moved from source to dropzone
+                    if (container.children.length === 2) {
+                        container.classList.add('invalid');
+                    }
+                }
+            });
+
+            drake.on('drop', function (el, target, source, sibling) {
+                if (target.matches('.para-gap') && target.children.length > 2) {
+                    drake.cancel();
+                }
+            });
+      }
+
+
+    $(".timepicker").datetimepicker({
+        format: "mm:ss",
+        stepping: 1,
+        icons: {
+            up: "fa fa-chevron-up",
+            down: "fa fa-chevron-down"
+        }
+    });
+
+    tinymce.init({
+        selector: '.editor',
+        height: 300,
+        resize: true,
+        menubar: true,
+        statusbar: true,
+        image_title: true,
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        file_picker_callback: (cb, value, meta) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                /*    
+                Note: Now we need to register the blob in TinyMCEs image blob
+                registry. In the next release this part hopefully won't be
+                necessary, as we are looking to handle it internally.
+                */
+                const id = 'blobid' + (new Date()).getTime();
+                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                const base64 = reader.result.split(',')[1];
+                const blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+                /* call the callback and populate the Title field with the file name */
+                cb(blobInfo.blobUri(), { title: file.name });
+            });
+            reader.readAsDataURL(file);
+            });
+            input.click();
+        },
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+        plugins: [
+        'textpattern advlist autolink lists link image charmap print preview anchor textcolor searchreplace visualblocks code fullscreen insertdatetime media table contextmenu paste code help wordcount image code'
+        ],
+        mobile: {
+        theme: 'mobile'
+        },
+        toolbar: 'insert | customtooltip | customkeyword | table | undo redo  | code|  formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help|styleselect | fontsizeselect | underline ',
+        setup: function (editor) {
+            const editorElement = editor.getElement();
+            let currentElement = editorElement.name;
+            editor.on("init", function () {
+            });
+            editor.on("keyup", function () {
+                $(".keywords").removeClass('d-none');
+                let descriptionId = jQuery(this)[0].id;
+                tinymce.triggerSave();
+            });
+            editor.on("change", function (e) {
+                let descriptionId = jQuery(this)[0].id;
+                tinymce.triggerSave();
+            });
+                                                                                                                                                            
+            if(currentElement =='description'){
+                editor.addButton('customtooltip', {
+                    icon: 'info',
+                    tooltip: "Add Tooltip",
+                    onclick: insertDescription
+                });
+            }
+            if(currentElement ==='question_explanation'){
+                editor.addButton('customkeyword', {
+                    image: '/images/add-tag.png',
+                    icon: 'custom', // Set a custom icon (optional)
+                    tooltip: 'Add Keyword', // Tooltip text
+                    onclick: function () {
+                        var selectedText = editor.selection.getContent({ format: 'text' });
+                        if(selectedText){
+                            $('#keywords').tagsinput('add', selectedText);
+                        } 
+                    }
+                });
+            }
+
+            function insertDescription() {
+                //$("#exampleModal").modal('show');
+                const selection = editor.selection;
+                const content = selection.getNode();
+                const textContent = selection.getContent({ format: 'text' });
+
+                // console.log(textContent,'textContent');
+
+                const title = content.getAttribute("title");
+                const tooltipData = (title =='' || title ==null) ? '' : title ;
+                editor.windowManager.open({
+                    title: 'Add Description',
+                    html: `<div style="text-align: center;margin: 3px;"><textarea id="tooltip_description" name="tooltip_description" rows="8" cols="60" style="border: 1px solid gray;">${tooltipData}</textarea></div>`,
+                    width: 450,
+                    height: 150,
+                    buttons: [
+                        {
+                        text: 'ok',
+                        subtype: 'primary',
+                        onclick: function( e ) {
+                            const currentText = selection.getContent({format: 'text'});
+                            let value =  $("#tooltip_description").val();
+                            let insertContentTag = '';
+                            if(value){
+                            insertContentTag = `<span class="tootip" data-toggle="tooltip" rel="tooltip" data-placement="top" title="${value}" data-original-title="${value}" style="background: #003de9;color: #fff;padding: 2px 6px;border-radius: 12px;"> ${currentText} </span>`;
+                            }else{
+                            insertContentTag = currentText;
+                            }
+                            editor.insertContent(insertContentTag); 
+                            (this).parent().parent().close();                   
+                        }
+                        },
+                        {
+                        text: 'Clear',
+                        onclick: function() {
+                            $("#tooltip_description").val('')
+                        }
+                        },
+                    ]
+                });
+            }
+        },
+    });
+
+    $('#removeKeywords').click(function(){
+        $('#keywords').tagsinput('removeAll');
+    });
+
+    $('#myModal').on('shown.bs.modal', function () {
+        $(document).off('focusin.modal');
+    });
+
+    $(".edit-slide, .addPractice, .edit-practice").click(function () {
+        $("body").addClass("modal-open");
+        $('#keywords').tagsinput('removeAll');
+    });
+
+    $(".close").click(function () {
+        $("body").removeClass("modal-open");
+    });
+
+    $('.close').click(function () {
+        $('#slideModal').hide();
+        $('#practiceModal').hide();
+        $('#slideModal').modal('hide');
+        $('#practiceModal').modal('hide');
+        $('#challengeModal').modal('hide');
+    });
+
+    // DropIfy video
+    $('#video').dropify({
+        tpl: {
+            message: '<div class="dropify-message"><img src="/images/upload-video.svg"><p class="text-dblue mt-4 mb-3">Drag & Drop here or <span class="text-orange fn-w600">Browse File</span></p><p class="text-dblue mt-4 mb-3">The max file size is 35MB</p><h6 class="mb-0 fn-12 text-dblue">Supported formats : (MP4,MP3,M4A)</h6></div>',
+        },
+    });
+
+    // DropIfy select-attachments
+    $('.select-attachments').dropify({
+        tpl: {
+            message: '<div class="dropify-message"><a class="d-inline-block mt-2 mb-3 theme-btn" href="javasript:void(0);">+ Attachments</a><p class="text-dblue">Drag & Drop here size should be</p><p class="text-dblue mt-4 mb-3"> The max file size is 15MB</p><h6 class="mb-0 fn-12 text-dblue">Supported formats : (PDF,PNG)</h6></div>',
+        },
+    });
+ 
+    // DropIfy select-attachment
+    $('.single-img').dropify({
+        tpl: {
+            message: '<div class="dropify-message"><img src="/images/frame.svg" alt="img" width="40"> <p class="text-dblue">Drag & Drop here</p><h6 class="mb-0 mt-1 fn-12 text-dblue">Supported formats : (JPEG, PNG, SVG, etc.)</h6></div>',
+        },
+    });
+
+    $('.single-audio').dropify({
+        tpl: {
+            message: '<div class="dropify-message"><img src="/images/upload-video.svg"> <p class="text-dblue mt-4 mb-3">Drag & Drop here or <span class="text-orange fn-w600">Browse File</span></p><p class="text-dblue mt-4 mb-3">The max file size is 15MB</p><h6 class="mb-0 fn-12 text-dblue">Supported formats : (MP3,M4A)</h6></div>',
+        },
+    });
+    
+    //optionDropIfy
+    function optionDropIfy() {
+        $('.practice-question-img').dropify({
+            tpl: {
+                message: '<div class="dropify-message"><img src="/images/frame.svg" alt="img" width="40"> <p class="text-dblue">Drag & Drop here</p><h6 class="mb-0 mt-1 fn-12 text-dblue">Supported formats : (JPEG, PNG, SVG, etc.)</h6></div>',
+            },
+        });
+    }
+
+    optionDropIfy();
+
+    $(window).on('load', function () {
+        $("#challengeModal").modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: false
+        });
+        $("#slideModal").modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: false
+        });
+        $("#practiceModal").modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: false
+        });
+    });
+
+    window.onload = function () {
+        interact(".drop-objects").draggable({
+            // enable inertial throwing
+            inertia: true,
+            // keep the element within the area of it's parent
+            autoScroll: true,
+            // call this function on every drag move event
+            onmove: dragMoveListener,
+            // call this function on every dragend event
+        });
+
+        function dragMoveListener(event) {
+            var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+            // translate the element
+            target.style.webkitTransform = target.style.transform =
+                "translate(" + x + "px, " + y + "px)";
+
+            // update the posiion attributes
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+        }
+
+        // this is used later in the resizing and gesture demos
+        window.dragMoveListener = dragMoveListener;
+    };
+
+    var helpers = {
+        addZeros: function (n) {
+            return (n < 10) ? '0' + n : '' + n;
+        }
+    };
+
+     $(document).on('click', '.slide-anchor, .practice-anchor, .challenge-anchor', function (event) {
+        if(!$(this).hasClass("active")){
+            $('.slide-anchor, .practice-anchor, .challenge-anchor').removeClass('active');
+            $('.slide-action li').removeClass('active');
+            $(this).parents().addClass('active');
+            $(this).addClass("active");
+            currentTab = $(this).parent().data('position');          
+            setPageCount();
+
+            if(activeContentType === 'challenges'){
+                resetChallenge();
+            }
+            activeContentId = $(this).parent().data('uniqueid');
+            renderSliderContent(lessonId, activeContentType, activeContentId);
+            if(activeContentType === 'challenges'){
+                setTimeout(function () {
+                    startChallenge();
+                }, 500);
+            }
+        }  
+    });
+
+    function renderSliderContent(lessonId, activeContentType, activeContentId) {
+        window.scrollTo(0, 0);
+        $('.no-data-found').addClass('d-none');
+        $('.unassign-nav').removeClass('d-none');
+        $('.unassign-content').removeClass('preview-animation');
+        $('.unassign-content').html('');
+        // console.log(lessonId, activeContentType, 'AJAX CALL', activeContentId);
+        let savedPracticeQuestion =localStorage.getItem("assessmentDetails");
+        if(activeContentId !== undefined){
+            $.ajax({
+            type: "POST",
+            url: '/learning-content/' + learningContentSlug + '/lessons/content-slider',
+            data: {
+                lesson_slug:lessonSlug,
+                lesson_id: lessonId,
+                type: activeContentType,
+                content_id: activeContentId,
+                task_id: taskId,
+                task_type: taskType,               
+                saved_practice_question:savedPracticeQuestion,
+            },
+            success: function (response) {
+                if(response.isSubmitted == true){
+                    Swal.fire({
+                        text: 'You have already submitted this assignment.',
+                        icon: 'info',
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        window.location.href = "/assessments"
+                    })
+                    setTimeout(() => {
+                        window.location.href = "/assessments"
+                    }, 2000);
+                }
+                
+                $('.unassign-content').addClass('preview-animation');
+                $('.unassign-content').html(response.activeContentHtml);
+
+                if ($(".para-gap").length > 0) {
+                    let i = 1;
+                    $(".para-gap").each(function () {
+                        jQuery(this).attr("id", "answer-" + i);
+                        jQuery(this).attr("data-index", i);
+                        i++;
+                    });  
+                }    
+                setTimeout(() => {
+                    let doingIndex = $(".para-gap").data('index');
+                    $("#doing").attr('id', "doing-" + doingIndex);
+                        drag_and_drop(doingIndex);
+                }, 500);            
+            },
+            error: function (response) {
+                Swal.fire({
+                    title: 'Oops...',
+                    text: response.responseJSON.message,
+                });
+            },
+            complete: function (result) {
+                tinymce.init({
+                    selector: '.editorExplanation',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor textcolor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table contextmenu paste code help wordcount,image code'
+                    ],
+
+                    mobile: {
+                        theme: 'mobile'
+                    },
+                    toolbar: 'insert | undo redo  | code|  formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help|styleselect | fontsizeselect | underline ',
+                    file_picker_types: 'file, image',
+
+                    setup: function(editor) {
+                    editor.on('Change Keyup', function () {
+                        editor.save();
+                    //tinyMCE.triggerSave() <-- also tried
+                    });
+                    }
+                });
+                   // DropIfy submit-attachment
+                $('.submit-attachment').dropify({
+                    tpl: {
+                        message: '<div class="dropify-message"><span class="file-icon" /> <p class="text-dblue">Drag & Drop here size should be</p><p class="text-dblue mt-4 mb-3"> The max file size is 5MB</p><a class="d-inline-block mt-2 mb-3 theme-btn" href="javasript:void(0);">+ Attachments</a><h6 class="mb-0 fn-12 text-dblue">Supported formats : (PDF,PNG,JPG)</h6></div>',
+                    },
+                });
+
+                $('.tootip').css('cssText', '');
+                $('[data-toggle="tooltip"]').tooltip('dispose'); 
+                $('[data-toggle="tooltip"]').tooltip();
+                let countPage = $('.total.pages').text();
+            }
+            });
+        }else{
+            $('.unassign-nav').addClass('d-none');
+            $('.no-data-found').removeClass('d-none');
+        }
+    }
+
+    function resetPreview(element, src = '', content = '', extension) {
+        let wrapper = element.closest('.dropify-wrapper');
+        let preview = wrapper.find('.dropify-preview');
+        let filename = wrapper.find('.dropify-filename-inner');
+        let fileExtension = wrapper.find('.dropify-extension');
+        let render = wrapper.find('.dropify-render').html('');
+        wrapper.removeClass('has-error').addClass('has-preview');
+        if (src !== "" || extension == 'png') {
+            src = window.location.origin + src;
+            render.append($('<img class="previewfile"/>').attr('src', src).css('max-height', element.data('height') || ''));
+            preview.fadeIn();
+        } else {
+            render.append($('<i class="dropify-font-file"></i><span class="dropify-extension">' + extension + '</span>'));
+            preview.find('.dropify-filename-inner').html(content)
+            preview.fadeIn();
+        }
+    }
+   
+    $(document).on('submit', '#DragAndDropForm', function (event) {
+        event.preventDefault();
+        const options = []; 
+        let lesson_id = $('.lesson_id').val();
+        let practice_id = $('.practice_id').val();
+        let url = $('#DragAndDropForm').attr('action');
+        $('.para-gap').removeClass('answer-right');
+        $('.para-gap').removeClass('answer-right');
+        $('.drag-question-row').removeClass('answer-checked-right');
+        $('.drag-question-row').removeClass('answer-checked-wrong');
+        $('.answer-explanation').hide();
+        $('.para-gap').each(function () {
+            let text = $(this).find('.task').html();
+            if (text) {
+                options.push(text);
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: {
+                lesson_id: lesson_id,
+                practice_id: practice_id,
+                answer: options,
+            },
+            success: function (response) {
+                $('.slick-active').find('.assigment_id').val(response.homework_id);
+                
+                if (JSON.stringify(options) == JSON.stringify(response.correctAnswer)) {
+                    $('.slick-active').find('.para-gap').addClass('answer-right');
+                    $('.drag-question-row').has(".drag-question .task").toggleClass("answer-checked-right");
+                } else {
+                    $('.drag-question-row').has(".drag-question .task").toggleClass("answer-checked-wrong");
+                    let i = 0;
+                    for (option of options) {
+                        if (option == response.correctAnswer[i]) {
+                            $('.slick-active').find('.para-gap').eq(i).addClass('answer-right');
+                        } else {
+                            $('.slick-active').find('.para-gap').eq(i).addClass('answer-wrong');
+                        }
+                        i++;
+                    }
+                }
+                $('.slick-active').find('.answer-explanation').show();
+
+            },
+            error: function (response) {
+
+            },
+            complete: function () {
+            }
+        })
+    });
+ 
+    /**
+     * @page script end.
+     */
+    $(document).ready(function(){
+        $(".courses-sidebar .card-header:first").addClass("arrow-active");
+        $(".courses-sidebar .card-header").click(function(){
+            $(".courses-sidebar .card-header").removeClass("arrow-active");
+            $(this).addClass("arrow-active");
+        });
+    });
+</script>

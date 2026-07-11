@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap</title>
+  <meta charset="utf-8">
+  <!-- jQuery is required -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<!-- For Bootstrap 5 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css" integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js" integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js" integrity="sha512-lVkQNgKabKsM1DA/qbhJRFQU8TuwkLF2vSN3iU/c7+iayKs08Y8GXqfFxxTZr1IcpMovXnf2N/ZZoMgmZep1YQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" integrity="sha512-ZbehZMIlGA8CTIOtdE+M81uj3mrcgyrh6ZFeG33A4FHECakGrOsTPlPQ8ijjLkxgImrdmSVUHn1j+ApjodYZow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+<div class="container mt-3">
+    <div class="summernote"><p> jquery </p></div>
+
+</div>
+    <script>
+        $('.summernote').summernote({
+  hint: {
+    mentions: ['jayden', 'sam', 'alvin', 'david'],
+    match: /\B@(\w*)$/,
+    search: function (keyword, callback) {
+      callback($.grep(this.mentions, function (item) {
+        return item.indexOf(keyword) == 0;
+      }));
+    },
+    content: function (item) {
+      return '@' + item;
+    }    
+  }
+}); 
+
+$(document).ready(function(){
+    $(document).on('click','.note-icon-link',function(){
+       $(".note-modal-title").html('Enter TExt');
+       $(".note-form-label").html('Display Text');
+       $(".note-form-label").html('Right Text');
+       $(".note-link-btn").val('Update');
+    })
+})
+</script>
+
+<style>
+    .note-editable a{    background-color: red !important;
+    padding: 5px;
+    border-radius: 20px;}
+    .sn-checkbox-open-in-new-window, .sn-checkbox-use-protocol{display: none;}
+</style>
+</body>
+</html>

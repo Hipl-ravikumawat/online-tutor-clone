@@ -1,0 +1,123 @@
+
+<div class="modal fade common-modal change-family-modal" data-backdrop="static" id="changeFamily" tabindex="-1" role="dialog" aria-labelledby="changeFamilyLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="changeFamilyLabel">Change Families</h3>
+      </div>
+      <form method="post" action="/student-preferences/store" class="modal-form-area common-form family-contact-form" id="family-contact-form">
+        <div class="modal-body">
+          <div class="form-area">
+            <ul class="settinglist nav nav-tabs">
+              <li class="nav-item w-auto">
+                <div class="form-check radio_group nav-link active" id="Exifamily-tab" data-toggle="tab" data-target="#Exifamily" role="tab" aria-selected="true">
+                  <input class="form-check-input" type="radio" name="changefamilyname" id="existingfamily">
+                  <label class="radiolabel" for="existingfamily">Existing Family</label>
+                </div>
+              </li>
+              <li class="nav-item w-auto">
+                <div class="form-check radio_group nav-link" id="Newfami-tab" data-toggle="tab" data-target="#NewfamiTab" role="tab" aria-selected="false">
+                  <input class="form-check-input" type="radio" name="changefamilyname" id="newfamily">
+                  <label class="radiolabel" for="newfamily">New Family <small class="d-block">Creates a new account in Families & Invoices</small></label>
+                </div>
+              </li>
+            </ul>
+            <div class="tab-content pt-4">
+              <div class="tab-pane fade show active" id="Exifamily" role="tabpanel">
+                <div class="form-group">
+                  <label>Select Family</label>
+                    <select>
+                      <option>Select Family Name</option>
+                      <option>Select Family Name</option>
+                      <option>Select Family Name</option>
+                      <option>Select Family Name</option>
+                    </select>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="NewfamiTab" role="tabpanel">
+                <div class="common-form">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label>Title <small>Optional</small></label>
+                        <input type="text" name="title">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" class="first-name">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" class="last-name">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Mobile Number <small>Optional</small></label>
+                        <input type="text" name="mobile_number">
+                        <div class="common-checkbox mt-1">
+                          <input type="checkbox" name="mobile_number_sms_capable" id="mobileNumberCapModal">
+                          <label for="mobileNumberCapModal">SMS Capable</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Home Number <small>Optional</small></label>
+                        <input type="text" name="home_number">
+                        <div class="common-checkbox mt-1">
+                          <input type="checkbox" name="home_number_sms_capable" id="homeNumberCapModal">
+                          <label for="homeNumberCapModal">SMS Capable</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Work Number <small>Optional</small></label>
+                        <input type="text" name="work_number">
+                        <div class="common-checkbox mt-1">
+                          <input type="checkbox" name="work_number_sms_capable" id="workNumberCapModal">
+                          <label for="workNumberCapModal">SMS Capable</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Email Address <small>Optional</small></label>
+                        <input type="email" name="email">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label>Address <small>Optional</small></label>
+                        <textarea name="address"></textarea>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label>Private Note <small>Optional</small></label>
+                        <textarea name="private_note"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea">
+          </div>
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+            <button type="submit" class="btn theme-btn">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

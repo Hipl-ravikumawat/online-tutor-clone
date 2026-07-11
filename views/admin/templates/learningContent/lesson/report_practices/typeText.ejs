@@ -1,0 +1,101 @@
+<div class="item">
+  <div class="row">    
+      <div class="col-sm-12">
+        <!-- <div class="que-block text-center"> -->
+        <div class="que-block">  
+          <h3 class="title-text" style="font-size: 30px;">
+            <span class="text-center"><%-practice.question%></span>
+          </h3>
+          <% if(practice.question_audio && practice.question_audio !=''){ %> 
+            <div class="audio drop-objects">
+              <p>Click on the play button to play a sound:</p>
+
+	      <% if(audioExtension === '.mp3') { %>
+                   <audio controls class="audio-stop">
+                    <source src="/LearningContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mpeg">
+                   </audio>
+              <% } %>
+              <% if(audioExtension === '.m4a') { %>
+                  <audio controls class="audio-stop">
+                   <source src="/LearningContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/ogg">
+                   <source src="/LearningContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mp4">
+                  </audio>
+	      <% } %>
+            </div>
+          <% } %>
+          <form method="post" action="javascript:void();" id="textForm" enctype='multipart/form-data'>
+          <div class="row justify-content-center">
+              <div class="col-12 col-sm-4 mb-3">
+                <div class="quest-imagelarge"> 
+                  <% if(practice.question_image !='') { %>
+                 <img src="/LearningContent/<%=practice.content_directory+'/'+practice.question_image%>" alt="img">
+                 <% } %>
+               </div>
+              </div>
+
+              <% if(attachmentName != '') { %>
+              <div class="col-12">
+                <div class="col-md-4">
+                  <div class="form-group submit-attachment-student">
+                    <input type="file" name="submit_attachment" id="submit_attachment"
+                      class="form-control submit-attachment" data-allowed-file-extensions="jpg jpeg png pdf"
+                      data-max-file-size-preview="2M" data-default-file="<%=attachmentName%>">
+                  </div>
+                  <div class="col-md-12 text-center">
+                    <a href="<%=attachmentName%>" target="_blank">
+                      <button type="button" class="btn btn-warning text-white" style="padding: 3px 20px;">Preview </button>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                <% }else{ %>
+                <div class="col-md-12">
+               <% } %>  
+                  <div class="form-group mb-0">
+                    <textarea class="form-control editorExplanation" name="question_explanation"
+                      placeholder="Enter Explanation" disabled><%-savedQuestion%></textarea>
+                  </div> 
+                </div>
+              </div>
+              
+              <div class="col-sm-12 mt-4">
+                <div class="answer-submitted">
+                  <span>Answer Submitted</span>
+                </div>
+                <div class="quest-bottom">
+                  <div class="row">
+                    <div class="col-sm-12 text-center">
+  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="explanation assessments-explanation">
+                  <% if(practice.question_explanation !=''){ %> 
+                      <h4 class="text-dgreen">Explanation</h4>
+                      <p><%-practice.question_explanation%></p>
+                  <% } %>
+                  <% if(tutorComment !=''){ %> 
+                    <h4 class="text-dgreen">Tutor's Comment</h4>
+                    <p><%=tutorComment%></p>
+                    <% } %>
+                    <div class="keywords explanation pl-0 w-100 border-0 m-0">
+                      <h4 class="text-dgreen keywordheading">Keywords</h4>
+                        <%  if(practice.options !== null){  %>
+                          <ul class="keyword-listing">
+                            <% for (option of practice.options) { %>
+                              <li> <%=option.option_text%>  <span class="question-action"><img src="/images/<%=option.option_correct ? 'q-check.svg' : 'q-wrong.svg'%>" alt="img"></span></li>
+                            <% } %>
+                          </ul>
+                      <% } %>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>              
+      </div>
+  </div>
+</div>
+

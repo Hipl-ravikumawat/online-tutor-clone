@@ -1,0 +1,109 @@
+<div class="modal fade common-modal" data-backdrop="static" id="point-summary" tabindex="-1" role="dialog"
+  aria-labelledby="pointSummaryLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form id="assign-points-form">
+        <div class="modal-header">
+          <h3 class="modal-title">Rewards History</h3>
+          <button type="button" data-dismiss="modal" class="m-0 modal_close_icon">X</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="attendees[]" id="attendees" value="">
+          <input type="hidden" name="eventId" id="eventId" value="">
+          <div class="rewards-history-data">
+            <ul>
+              <li><label><b>Student Name :</b></label><span id="studentName">Marvin McKinney</span></li>
+              <li><label><b>Tutor Name :</b></label><span id="tutorName">Wade Warren</span></li>
+              <li><label><b>Date :</b></label><span id="transactionDate">18-07-2024</span></li>
+            </ul>
+          </div>
+          <div class="x_content table-text-center mt-2">
+            <table id="rewardsHistory" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+              width="100%">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Value</th>
+                  <th>Earned</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Attending Class On Time</td>
+                  <td><span class="studants-points" id="onAttendingClassOnTime">
+                      0 Points
+                    </span></td>
+                  <td class="select-points">
+                    <div class="studants-points-check">
+                      <input type="checkbox" name="attendingClassOnTime" id="attendingClassOnTime">
+                      <label for="attendingClassOnTime"></label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Asking Questions</td>
+                  <td><span class="studants-points" id="onAskingQuestions">
+                      0 Points
+                    </span></td>
+                  <td class="select-points">
+                    <div class="studants-points-check">
+                      <input type="checkbox" name="askingQuestions" id="askingQuestions">
+                      <label for="askingQuestions"></label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Home Work Submission</td>
+                  <td><span class="studants-points" id="onHomeworkSubmission">
+                      0 Points
+                    </span></td>
+                  <td class="select-points">
+                    <div class="studants-points-check">
+                      <input type="checkbox" name="homeworkSubmission" id="homeworkSubmission">
+                      <label for="homeworkSubmission"></label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Participating In Class Activities</td>
+                  <td><span class="studants-points" id="onParticipatingClassActivities">
+                      0 Points
+                    </span></td>
+                  <td class="select-points">
+                    <div class="studants-points-check">
+                      <input type="checkbox" name="participatingClassActivities" id="participatingClassActivities">
+                      <label for="participatingClassActivities"></label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Bonus Points</td>
+                  <td><span class="studants-points" id="stdBonusPoints">
+                      0 Points
+                    </span></td>
+                  <td class="select-points">
+                    <div class="studants-points-check">
+                      <input type="checkbox" name="bonusPoints" id="bonusPoints">
+                      <label for="bonusPoints"></label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Maximum Points Per Week</td>
+                  <td><span class="students-points-total">40 Points</span></td>
+                  <td class="select-total-points" id="totalReceivedPoints">00 Points</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="btn-rightarea mt-4 text-center">
+            <button type="submit" class="btn theme-btn w-50 py-3" id="assignPointBtn">Update</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

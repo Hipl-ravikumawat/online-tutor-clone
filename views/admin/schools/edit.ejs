@@ -1,0 +1,113 @@
+<div class="right_col" role="main">
+  <!-- edit school page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Edit School</h2>
+      </div>
+      <div class="x_content">
+        <form id="updateSchool" action="/schools/update" method="post" class="form-horizontal form-label-left">
+          <input type="hidden" name="school_id" value="<%=data.id %>">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="name">School Name<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                  <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name"
+                    value="<%=data.name %>" maxlength="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="phone">Contact No.
+                </label>
+                <div class="phone-group">
+                  <input type="hidden" name="dial_code" id="dial_code" value="<%=data.dial_code%>">
+                  <input type="hidden" name="iso_code" id="iso_code" value="<%=data.iso_code%>">
+                  <input type="number" name="phone" value="" class="form-control" id="phone">
+                  <span id="error-msg" class="hide"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="email">Email Address
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                  <input type="email" name="email" class="form-control" placeholder="Enter Email.." id="email"
+                    value="<%=data.email %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                </label>
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control" name="status" id="status" tabindex="-1" single>
+                    <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
+                    <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label class="col-form-labellabel-align" for="address">School Address
+                </label>
+                <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
+                  id="address"><%=data.address %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="updateSchoolBtn" class="btn theme-btn form-button">Update</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- edit school page title end -->
+</div>
+</div>
+<script>
+    var defaultNumber = "<%=data.phone%>"; 
+</script>
+<%- include('./form_script.ejs'); %>
+<script type="text/javascript">
+  $("#updateSchool").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var formData = $('#updateSchool').serialize();
+    var url = $('#updateSchool').attr('action');
+    $("#updateSchoolBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span><br>');
+        })
+      },
+      complete: function () {
+        $("#updateSchoolBtn").prop('disabled', false);
+      },
+    })
+  });
+</script>

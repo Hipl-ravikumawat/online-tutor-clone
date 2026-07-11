@@ -1,0 +1,40 @@
+<div class="right_col" role="main">
+  <div class="card-block">
+    <div id="calendar22"></div>
+  </div>
+</div>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.14/index.global.min.js'></script>
+<script>
+      document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar22');
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    timeZone: 'UTC',
+    initialView: 'resourceTimelineDay',
+    initialDate: '2024-07-04', // Set the specific date you want to focus on
+    aspectRatio: 1,
+    headerToolbar: {
+      center: 'title',
+      right: 'resourceTimelineDay'
+    },
+    editable: true,
+    resourceAreaHeaderContent: 'Tutors',
+    resources: [
+          // Define your custom resources here
+          { id: 'a', title: 'Tutor A' },
+          { id: 'b', title: 'Tutor B' },
+          { id: 'c', title: 'Tutor C' },
+          { id: 'd', title: 'Tutor D' }
+        ],
+        events: [
+          // Define your custom events here
+          { id: '1', resourceId: 'a', title: 'Meeting A', start: '2024-07-03T10:00:00', end: '2024-07-03T12:00:00' },
+          { id: '2', resourceId: 'b', title: 'Meeting B', start: '2024-07-03T13:00:00', end: '2024-07-03T15:00:00' },
+          { id: '3', resourceId: 'c', title: 'Meeting C', start: '2024-07-03T14:00:00', end: '2024-07-03T16:00:00' }
+        ],
+        slotDuration: '00:05:00', // Set time slots to 5 minutes
+  });
+
+  calendar.render();
+});
+</script>

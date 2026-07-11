@@ -1,0 +1,47 @@
+
+<div class="drag-question-block">
+  <form id="DragAndDropForm">
+
+    <div class="drag-question-row <%=isCorrectAnswer ? 'answer-checked-right' : 'answer-checked-wrong'%>">
+      <div class="drag-question">
+        <% 
+          let updatedParagraph = practice.question;
+          let CorrectOptions = practice.options;
+          const replacements = savedQuestion;
+          if(savedQuestion.length > 0){
+            let replacementIndex = 0;
+            while (updatedParagraph.includes("{{response}}")) {
+              const spanValue = `<span class="para-gap task-list" id="answer-1" data-index="1">
+                <span class="index-number ${replacements[replacementIndex % replacements.length] == CorrectOptions[replacementIndex].option_text ? 'opt-correct' :'opt-incorrect'}">${replacementIndex + 1} </span>
+                <span class="task save-option">${replacements[replacementIndex % replacements.length]
+              }</span></span>`;
+              updatedParagraph = updatedParagraph.replace(
+                /{{response}}/,spanValue
+              );
+              replacementIndex++;
+            }
+          }else{
+            updatedParagraph = practice.question.replaceAll('{{response}}','<span class="para-gap task-list" id="answer-1"><span class="index-number">1</span></span>'); 
+          }
+        %>
+        <h4 class="drag-content"><%-updatedParagraph%></h4>
+        <!-- <h4>Lorem <span class="para-gap task-list answer-right" id="answer-1"><span class="index-number">1</span><span class="task save-option">Choice A</span></span> is simply dummy text of the <span class="para-gap task-list answer-wrong" id="answer-2"><span class="index-number">2</span><span class="task save-option">Choice C</span></span> printing and typesetting <span class="para-gap task-list answer-wrong" id="answer-3"><span class="index-number">3</span><span class="task save-option">Choice B</span></span>.</h4> -->
+      </div>
+    </div>
+  </form>
+  <div class="answer-explanation" >
+    <h4>Correct Answer</h4>
+    <ul>
+      <%
+       let i = 0; 
+       for(options of CorrectOptions){
+        if(options.option_correct){
+      %> 
+        <li>
+          <span class="answer-number"><%=++i%></span>
+          <span class="answer-text"><%=options.option_text%></span>
+        </li>
+      <% } } %>
+    </ul>
+  </div>
+</div>

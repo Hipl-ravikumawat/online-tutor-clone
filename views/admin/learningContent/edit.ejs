@@ -1,0 +1,149 @@
+<div class="right_col" role="main">
+    <!-- edit learningContent page content starts -->
+    <div class="form-wizard">
+        <form id="updateContent" action="/learning-content/update" class="form-design" method="post" enctype="multipart/form-data"
+            autocomplete="off">
+            <fieldset class="wizard-fieldset show">
+                <div class="d-flex align-items-center justify-content-between mb-30">
+                    <h2 class="title-text mb-0">Basic Information</h2>
+                    <a class="back-link" href="/learning-content"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
+                </div>
+                <div class="row">
+                    <input type="hidden" name="content_id" value="<%=LearningContent.id%>">
+                    <input type="hidden" name="content_directory" value="<%=LearningContent.content_directory%>">
+
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="title">Title<span class="required">*</span>
+                            </label>
+                            <input type="text" name="title" class="form-control wizard-required" value="<%=LearningContent.title%>" placeholder="Enter Title"
+                            id="title" maxlength="200">
+                            <div class="wizard-form-error"></div>
+                        </div>
+                    </div>
+        
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="grade">Grade<span class="required">*</span>
+                            </label>
+                            <select class="form-control select2 wizard-required" name="grade_id" id="grades" tabindex="-1" single>
+                            <option value="">Select Grade</option>
+                            <% for(grade of grades) { %>
+                                <option value="<%=grade.id%>" <%=LearningContent.grade_id._id==grade.id ? 'selected' : '' %>>
+                                <%=grade.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                            <div class="wizard-form-error"></div>
+                        </div>
+                    </div>
+        
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="topic">Topic<span class="required">*</span>
+                            </label>
+                            <select class="form-control select2 wizard-required" name="topic_id" id="topic_id" tabindex="-1" single>
+                            <option value="">Select Topic</option>
+                            <% for(topic of topics) { %>
+                                <option value="<%=topic.id%>" <%=LearningContent.topic_id._id==topic.id ? 'selected' : '' %>>
+                                <%=topic.name%>
+                                </option>
+                            <% } %>
+                            </select>
+                            <div class="wizard-form-error"></div>
+                        </div>
+                    </div>
+        
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="topic">Sub Topic
+                            </label>
+                            <select class="form-control select2" name="sub_topic_id" id="subTopic" tabindex="-1" single>
+                                <option value="">Select SubTopic</option>
+                                <% for(subtopic of subTopics) { %>
+                                    <option value="<%=subtopic.id%>" <%=LearningContent.sub_topic_id != null  && LearningContent.sub_topic_id._id ==subtopic.id ? 'selected' : '' %>>
+                                    <%=subtopic.name%>
+                                    </option>
+                                    <% } %>
+                            </select>
+                            <div class="wizard-form-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="form-label" for="shortDescription">Short Description<span class="required">*</span>
+                            </label>
+                            <textarea name="short_description" rows="5" class="form-control wizard-required"
+                            placeholder="Enter short description.." id="short_description"><%=LearningContent.short_description%></textarea>
+                            <div class="wizard-form-error"></div>
+                        </div>
+                    </div>
+        
+                    <div class="col-sm-12">
+                        <div class="drop-file">
+                            <label class="form-label">Upload Thumbnail</label>
+                            <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
+                            data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" <% if
+                            (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
+                          data-default-file="/LearningContent/<%=LearningContent.content_directory+"/"+LearningContent.thumbnail%>" <% }%>
+                              data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
+                              <% if (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
+                                value=" <%=LearningContent.thumbnail %>" <% } else { %> value="" <% } %> >
+                                <input type="hidden" name="is_remove" id="is_image_removed" value="0">
+                            <div class="wizard-form-error"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="form-group mb-0 mt-4 clearfix">
+                    <button type="submit" class="form-wizard-submit theme-btn float-right" id="updateContentBtn">Update</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <!-- edit learningContent page content end -->
+</div>
+
+<%- include('./form_script'); %>
+
+<script type="text/javascript">
+    $("#updateContent").submit(function (e) {
+    e.preventDefault();
+    $('.wizard-form-error').html('');
+    $('.wizard-form-error').hide();
+    $('#updateContentBtn').attr("disabled", true);
+    var form = $('#updateContent');
+    var formData = new FormData(form[0]);
+    formData.append('thumbnail', this.new_attachments)
+    var url = $('#updateContent').attr('action');  
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      beforeSend: function () {
+        $('.loader').show();
+      },
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').siblings(".wizard-form-error").slideDown();
+          $(document).find('[id=' + error.param + ']').siblings(".wizard-form-error").html(error.msg);
+        })
+      },
+      complete: function () {
+        $('.loader').hide();
+        $('#updateContentBtn').attr("disabled", false);
+      }
+    })
+  });
+</script>

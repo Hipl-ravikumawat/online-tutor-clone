@@ -1,0 +1,505 @@
+<!-- tutor training practice modal starts -->
+<div class="custum-modal modal-design" id="practiceModal">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title title-text">Practice Form</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <form method="post" action="/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/practices/store"
+        id="storePracticeForm" enctype="multipart/form-data" autocomplete="off">
+        <div class="modal-body">
+          <input type="hidden" name="practice_id" id="update_practice_data" value="">
+          <input type="hidden" name="lesson_id" id="lesson_id" value="<%=lesson.id%>">
+          <input type="hidden" name="content_directory" id="content_directory"value="<%=learningContent.content_directory%>">
+          <div class="practice-card">
+            <ul class="nav nav-pills nav-ul" id="pills-tab" role="tablist">
+              <li class="nav-item">   
+                <label class="nav-link nav-tab active" for="single-sel-tab" id="pills-single-sel-tab" data-toggle="pill"
+                  href="#pills-single-sel" role="tab" aria-controls="pills-single-sel" aria-selected="true"><img
+                    src="/images/single-sel.svg" alt="img">Single Select</label>
+              </li>
+              <li class="nav-item">
+                <label class="nav-link nav-tab" for="multi-sel-tab" id="pills-multi-sel-tab" data-toggle="pill"
+                  href="#pills-multi-sel" role="tab" aria-controls="pills-multi-sel" aria-selected="false"><img
+                    src="/images/multi-sel.svg" alt="img"> Multiple Selects</label>
+              </li>
+              <li class="nav-item">
+                <label class="nav-link nav-tab" for="type-text-tab" id="pills-type-text-tab" data-toggle="pill"
+                  href="#pills-type-text" role="tab" aria-controls="pills-type-text" aria-selected="false"><img
+                    src="/images/type-text.svg" alt="img"> Type Text</label>
+              </li>
+              <li class="nav-item">
+                <label class="nav-link nav-tab" for="drag-drop-tab" id="pills-drag-drop-tab" data-toggle="pill"
+                  href="#pills-drag-drop" role="tab" aria-controls="pills-drag-drop" aria-selected="false"><img
+                    src="/images/drag-drop.svg" alt="img"> Drag & Drop</label>
+              </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-single-sel" role="tabpanel"
+                aria-labelledby="pills-single-sel-tab">
+                <fieldset>
+                  <input type="hidden" name="question_type" value="single_select" class="question_type">
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3" >
+                      <div class="form-group h-250">
+                        <input type="file" name="question_image" id="questionImage"
+                          class="form-control single-img h-auto" data-allowed-file-extensions="jpg jpeg png svg"
+                          data-max-file-size-preview="2M" data-max-file-size="2M">
+                          <input type="hidden" name="is_remove" class="is_image_removed" value="0">
+                      </div>
+                      <div class="form-group h-250">
+                        <input type="file" name="question_audio" id="questionAudio"
+                          class="form-control single-audio h-auto" data-allowed-file-extensions="mp3 m4a"
+                          data-max-file-size-preview="15M" data-max-file-size="15M">
+                          <input type="hidden" name="is_audio_removed" class="is_audio_removed" value="0">
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-9">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label">Title<span class="text-red">*</span></label>
+                            <input type="text" class="form-control" name="question_title" id="question_title"
+                              placeholder="Enter Title">
+                            <span class="title-error" style="display:none;color: red;font-weight: 400;">Practice Title can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label ">Question<span class="text-red">*</span></label>
+                            <textarea class="form-control editor" name="question" id="question-1"
+                              placeholder="Question"></textarea>
+                            <span class="question-error" style="color: red;font-weight: 400;display:none;">Practice Question can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                          <div class="form-group">
+                            <label class="form-label">Duration<span class="text-red">*</span></label>
+                            <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
+                              placeholder="Enter Duration">
+                            <span class="duration-error" style="color: red;font-weight: 400;display:none;">Practice duration can not be empty!</span>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                          <div class="form-group mb-0">
+                            <label class="form-label d-block">Option Display Preference<span
+                                class="text-red">*</span></label>
+                            <div class="btn-group display-check-btn">
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayText"
+                                  value="text" checked>
+                                <label class="check-label" for="singletext">Text</label>
+                              </div>
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayText"
+                                  value="image">
+                                <label class="check-label" for="singleimage">Image</label>
+                              </div>
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayText"
+                                  value="both">
+                                <label class="check-label" for="selectboth">Both</label>
+                              </div>
+                            </div>
+                            <div id="option_display_preference"></div>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <ul class="nav nav-pills d-inline-flex smalltab" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                            role="tab" aria-controls="pills-home" aria-selected="true">Add Options</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-explanation-tab" data-toggle="pill" href="#pills-explanation"
+                            role="tab" aria-controls="pills-explanation" aria-selected="false">Explanation</a>
+                        </li>
+                      </ul>
+
+                      <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active QuestionType" id="pills-home" role="tabpanel"
+                          aria-labelledby="pills-home-tab">
+                          <div class="addoptionsbar singletext mb-3" id="singletext">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                              <h3 class="title-text">Add Options</h3>
+                              <a class="add-text-option" href="javascript:void(0);" data-toggle="tooltip" rel="tooltip"
+                                data-placement="left" title="Add Option"><img src="/images/addcircle.svg" alt="img"></a>
+                            </div>
+
+                            <div class="chp-add-section add-text-optionblock" id="text_1">
+                              <div class="chp-heading lightgray">
+                                <div class="chp-title">
+                                  <img class="mr-1" src="/images/basic.svg" alt="img">
+                                  <span id="optiontext_1">01 Option</span>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-12 col-md-4 col-lg-3 image" style="display:none;">
+                                    <div class="form-group mb-2 mb-md-0 option-img-upload">
+                                      <input type="file" name="options[0][option_image]" id="option_image"
+                                        class="form-control practice-question-img h-auto"
+                                        data-allowed-file-extensions="jpg jpeg png svg" data-max-file-size-preview="2M" data-max-file-size="2M" >
+                                        <input type="hidden" name="options[0][is_remove_option]" class="is_image_removed_option" value="0">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 col-md-8 col-lg-9">
+                                    <div class="form-group title">
+                                      <input class="form-control option_text" type="text" name="options[0][option_text]"
+                                        id="option_text" placeholder="Option Text" required>
+                                    </div>
+                                    <div class="switch-yes-no">
+                                      <span class="label-text">Correct Answer ?</span>
+                                      <label class="switch-left-right option_toggle">
+                                        <input class="switch-input option_checkbox" name="options[0][option_correct]"
+                                          type="checkbox" checked>
+                                        <span class="switch-label" data-on="Yes" data-off="No"></span>
+                                        <span class="switch-handle"></span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="chp-add-section add-text-optionblock" id="text_2">
+                              <div class="chp-heading lightgray">
+                                <div class="chp-title">
+                                  <img class="mr-1" src="/images/basic.svg" alt="img">
+                                  <span id="optiontext_2">01 Option</span>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-12 col-md-4 col-lg-3 image" style="display:none;">
+                                    <div class="form-group mb-2 mb-md-0 option-img-upload">
+                                      <input type="file" name="options[1][option_image]" id="option_image"
+                                        class="form-control practice-question-img h-auto"
+                                        data-allowed-file-extensions="jpg jpeg png svg" data-max-file-size-preview="2M" data-max-file-size="2M" >
+                                        <input type="hidden" name="options[1][is_remove_option]" class="is_image_removed_option" value="0">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 col-md-8 col-lg-9">
+                                    <div class="form-group title">
+                                      <input class="form-control option_text" type="text" name="options[1][option_text]"
+                                        id="option_text" placeholder="Option Text" required>
+                                    </div>
+                                    <div class="switch-yes-no">
+                                      <span class="label-text">Correct Answer ?</span>
+                                      <label class="switch-left-right option_toggle">
+                                        <input class="switch-input option_checkbox" name="options[1][option_correct]"
+                                          type="checkbox">
+                                        <span class="switch-label" data-on="Yes" data-off="No"></span>
+                                        <span class="switch-handle"></span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-explanation" role="tabpanel"
+                          aria-labelledby="pills-explanation-tab">
+                          <div class="form-group mb-0">
+                            <textarea class="form-control editor" name="question_explanation"
+                              placeholder="Enter Explanation" id="editorOne"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="tab-pane fade" id="pills-multi-sel" role="tabpanel" aria-labelledby="pills-multi-sel-tab">
+                <fieldset disabled>
+                  <input type="hidden" name="question_type" value="multi_select" class="question_type" >
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3" >
+                      <div class="form-group h-250">
+                        <input type="file" name="question_image" id="questionImage"
+                          class="form-control single-img h-auto" data-allowed-file-extensions="jpg jpeg png svg"
+                          data-max-file-size-preview="2M" data-max-file-size="2M">
+                          <input type="hidden" name="is_remove" class="is_image_removed" value="0">
+                      </div>
+                      <div class="form-group h-250">
+                        <input type="file" name="question_audio" id="questionAudio"
+                          class="form-control single-audio h-auto" data-allowed-file-extensions="mp3 m4a"
+                          data-max-file-size-preview="15M" data-max-file-size="15M">
+                          <input type="hidden" name="is_audio_removed" class="is_audio_removed" value="0">
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-9">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label">Title<span class="text-red">*</span></label>
+                            <input type="text" class="form-control" name="question_title" id="question_title"
+                              placeholder="Enter Title">
+                            <span class="title-error" style="display:none;color: red;font-weight: 400;">Practice Title can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label ">Question<span class="text-red">*</span></label>
+                            <textarea class="form-control editor" name="question" id="question-2"
+                              placeholder="Question"></textarea>
+                            <span class="question-error" style="color: red;font-weight: 400;display:none;">Practice Question can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                          <div class="form-group">
+                            <label class="form-label">Duration<span class="text-red">*</span></label>
+                            <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
+                              placeholder="Enter Duration">
+                            <span class="duration-error" style="color: red;font-weight: 400;display:none;">Practice duration can not be empty!</span>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+                          <div class="form-group mb-0">
+                            <label class="form-label d-block">Option Display Preference<span
+                                class="text-red">*</span></label>
+                            <div class="btn-group display-check-btn">
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayText"
+                                  value="text">
+                                <label class="check-label" for="multipletext">Text</label>
+                              </div>
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayImage"
+                                  value="image">
+                                <label class="check-label" for="multipleimage">Image</label>
+                              </div>
+                              <div class="option-check-btn">
+                                <input type="radio" class="btn-check" name="option_display_preference" id="displayBoth"
+                                  value="both">
+                                <label class="check-label" for="selectboth">Both</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <ul class="nav nav-pills smalltab" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="pills-multiple-home-tab" data-toggle="pill"
+                            href="#pills-multiple-home" role="tab" aria-controls="pills-multiple-home"
+                            aria-selected="true">Add Options</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-explanation-tab" data-toggle="pill"
+                            href="#pills-explanation-multiple" role="tab" aria-controls="pills-explanation-multiple"
+                            aria-selected="false">Explanation</a>
+                        </li>
+                      </ul>
+
+                      <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active QuestionType" id="pills-multiple-home" role="tabpanel"
+                          aria-labelledby="pills-multiple-home-tab">
+                          <div class="addoptionsbar singletext" id="singletext">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                              <h3 class="title-text">Add Options</h3>
+                              <a class="add-text-option" href="javascript:void(0);" data-toggle="tooltip" rel="tooltip"
+                                data-placement="left" title="Add Option"><img src="/images/addcircle.svg" alt="img"></a>
+                            </div>
+
+                            <div class="chp-add-section add-text-optionblock" id="text_1">
+                              <div class="chp-heading lightgray">
+                                <div class="chp-title">
+                                  <img class="mr-1" src="/images/basic.svg" alt="img">
+                                  <span id="optiontext_1">01 Option</span>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-12 col-md-4 col-lg-3 image" style="display:none;">
+                                    <div class="form-group mb-2 mb-md-0 option-img-upload">
+                                      <input type="file" name="options[0][option_image]" id="option_image"
+                                        class="form-control practice-question-img h-auto"
+                                        data-allowed-file-extensions="jpg jpeg png svg" data-max-file-size-preview="2M" data-max-file-size="2M">
+                                        <input type="hidden" name="options[0][is_remove_option]" class="is_image_removed_option" value="0">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 col-md-8 col-lg-9">
+                                    <div class="form-group title">
+                                      <input class="form-control option_text" type="text" name="options[0][option_text]"
+                                        id="option_text" placeholder="Option Text" required>
+                                    </div>
+                                    <div class="switch-yes-no">
+                                      <span class="label-text">Correct Answer ?</span>
+                                      <label class="switch-left-right option_toggle">
+                                        <input class="switch-input option_checkbox" name="options[0][option_correct]"
+                                          type="checkbox" checked>
+                                        <span class="switch-label" data-on="Yes" data-off="No"></span>
+                                        <span class="switch-handle"></span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="chp-add-section add-text-optionblock" id="text_2">
+                              <div class="chp-heading lightgray">
+                                <div class="chp-title">
+                                  <img class="mr-1" src="/images/basic.svg" alt="img">
+                                  <span id="optiontext_2">02 Option</span>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-12 col-md-4 col-lg-3 image" style="display:none;">
+                                    <div class="form-group mb-2 mb-md-0 option-img-upload">
+                                      <input type="file" name="options[1][option_image]" id="option_image"
+                                        class="form-control practice-question-img h-auto"
+                                        data-allowed-file-extensions="jpg jpeg png svg" data-max-file-size-preview="2M" data-max-file-size="2M">
+                                        <input type="hidden" name="options[1][is_remove_option]" class="is_image_removed_option" value="0">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 col-md-8 col-lg-9">
+                                    <div class="form-group title">
+                                      <input class="form-control option_text" type="text" name="options[1][option_text]"
+                                        id="option_text" placeholder="Option Text" required>
+                                    </div>
+                                    <div class="switch-yes-no">
+                                      <span class="label-text">Correct Answer ?</span>
+                                      <label class="switch-left-right option_toggle">
+                                        <input class="switch-input option_checkbox" name="options[1][option_correct]"
+                                          type="checkbox">
+                                        <span class="switch-label" data-on="Yes" data-off="No"></span>
+                                        <span class="switch-handle"></span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-explanation-multiple" role="tabpanel"
+                          aria-labelledby="pills-explanation-tab">
+                          <div class="form-group mb-0">
+                            <textarea class="form-control editor" id="editorTwo" name="question_explanation"
+                              placeholder="Enter Explanation"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="tab-pane fade" id="pills-type-text" role="tabpanel" aria-labelledby="pills-type-text-tab">
+                <fieldset disabled>
+                  <input type="hidden" name="question_type" value="text" class="question_type">
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3" >
+                      <div class="form-group h-250">
+                        <input type="file" name="question_image" id="questionImage"
+                          class="form-control single-img h-auto" data-allowed-file-extensions="jpg jpeg png svg"
+                          data-max-file-size-preview="2M" data-max-file-size="2M">
+                          <input type="hidden" name="is_remove" class="is_image_removed" value="0">
+                      </div>
+                      <div class="form-group h-250">
+                        <input type="file" name="question_audio" id="questionAudio"
+                          class="form-control single-audio h-auto" data-allowed-file-extensions="mp3 m4a"
+                          data-max-file-size-preview="15M" data-max-file-size="15M">
+                          <input type="hidden" name="is_audio_removed" class="is_audio_removed" value="0">
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-9">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label">Title<span class="text-red">*</span></label>
+                            <input type="text" class="form-control" name="question_title" id="question_title"
+                              placeholder="Enter Title">
+                              <span class="title-error" style="color: red; font-weight: 400;display:none;">Practice Title can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label class="form-label ">Question<span class="text-red">*</span></label>
+                            <textarea class="form-control editor" name="question" id="question-3"
+                              placeholder="Question"></textarea>
+                            <span class="question-error" style="color: red; font-weight: 400;display:none;">Practice Question can not be empty!</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                          <div class="form-group">
+                            <label class="form-label">Duration<span class="text-red">*</span></label>
+                            <input type="text" class="form-control timepicker"  id="question_duration" placeholder="Enter Duration"
+                              name="question_duration">
+                            <span class="duration-error" style="color: red; font-weight: 400;display:none;">Practice duration can not be empty!</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 keywords d-none">
+                      <div class="form-group overflow-hidden">
+                            <label for="keywords">Keywords</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="keywords" id="keywords" data-role="tagsinput" value=""/>
+                                <div class="input-group-append">
+                                    <button id="removeKeywords" class="btn btn-outline-secondary" type="button">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label class="form-label">Explanation<span class="text-red">*</span></label>
+                        <textarea class="form-control editor" id="editorThree" name="question_explanation"
+                        placeholder="Enter Explanation"></textarea>
+                        <span class="explanation-error" style="color: red; font-weight: 400;display:none;">Practice explanation can not be empty!</span>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="tab-pane fade" id="pills-drag-drop" role="tabpanel" aria-labelledby="pills-drag-drop-tab">
+                <fieldset disabled>
+                  <input type="hidden" name="question_type" value="drag_and_drop" class="question_type">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="form-label">Title<span class="text-red">*</span></label>
+                          <input type="text" class="form-control" name="question_title" id="question_title"
+                          placeholder="Enter Title">
+                          <span class="title-error" style="color: red; font-weight: 400;display:none;">Practice Title can not be empty!</span>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="form-label">Duration<span class="text-red">*</span></label>
+                          <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
+                            placeholder="Enter Duration">
+                            <span class="duration-error" style="color: red; font-weight: 400;display:none;">Practice duration can not be empty!</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="learnosity-question-editor" data-type="scrollablepassage" data-border="true" data-height="150px"></div>
+                    <span class="drag-option-error" style="color: red;font-weight: 500;display: none;">Possible response are not equal to the response*</span>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="theme-btn2" id="storePracticeBtn">Save</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<!-- tutor training practice modal end -->

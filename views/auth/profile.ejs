@@ -1,0 +1,307 @@
+<div class="right_col" role="main">
+  <!-- profile page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">User Profile</h2>
+      </div>
+      <div class="x_content">
+        <form id="updateProfile" action="/updateProfile" method="post"
+          class="form-horizontal form-label-left tutor_form" enctype="multipart/form-data" autocomplete="off">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="row">
+                <input type="hidden" name="user_id" value="<%=loggedUserInfo._id.toString() %>">
+                <input type="hidden" name="role" value="<%=loggedUserInfo.role%>">
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
+                    </label>
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control" name="title" id="title" tabindex="-1" single>
+                        <option value="Mr" <%=loggedUserInfo.title=='Mr' ? 'selected' : '' %>>Mr</option>
+                        <option value="Ms" <%=loggedUserInfo.title=='Ms' ? 'selected' : '' %>>Ms</option>
+                        <option value="Mrs" <%=loggedUserInfo.title=='Mrs' ? 'selected' : '' %>>Mrs</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="first_name">First Name<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.."
+                        id="first_name" value="<%=loggedUserInfo.first_name%>">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="last_name" class="form-control" placeholder="Enter Last Name.."
+                        id="last_name" value="<%=loggedUserInfo.last_name%>">
+                    </div>
+                  </div>
+                </div>
+
+              <% if(loggedUserInfo.role === 3) { %>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="username">Username</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <input type="text" class="form-control" value="<%=loggedUserInfo.username || 'Not generated'%>" disabled readonly>
+                    </div>
+                    <small class="text-muted">Username is auto-generated and cannot be changed</small>
+                  </div>
+                </div>
+              <% } %>
+
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <input type="hidden" name="dial_code" id="dial_code">
+                    <input type="hidden" name="iso_code" id="iso_code">
+                    <label class="col-form-label label-align" for="phone">Contact No.
+                      <% if(loggedUserInfo.role !== 3) { %><span class="required">*</span><% } %>
+                    </label>
+                    <div class="form-group">
+                     <input 
+                        type="text" 
+                        name="phone" 
+                        class="form-control" 
+                        id="phone"
+                        value="<%= /^\d+$/.test(loggedUserInfo.phone) ? loggedUserInfo.phone : '' %>"
+                        placeholder="Enter phone number (e.g. 9876543210)" readonly
+                      >
+                      <p id="error-msg" class="hide"></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="gender">Time Zone <%=loggedUserInfo.time_zone%><span class="required">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <select class="form-control select2" name="time_zone" id="time_zone">
+                        <% for(let timeZone of timeZones) { %> 
+                          <option value="<%=timeZone.tzid%>" <%=loggedUserInfo.time_zone %> <%=loggedUserInfo.time_zone == timeZone.tzid ? 'selected' : '' %> ><%=timeZone.name%></option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="email">Email
+                      <% if(loggedUserInfo.role !== 3) { %><span class="required">*</span><% } %>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                      <input type="text" name="email" class="form-control" id="email"
+                        value="<%=loggedUserInfo.email ? loggedUserInfo.email : ''%>" readonly
+                        placeholder="Enter Email.."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="password">Password<span
+                        class="required">* </span><span style="font-size: 8px;display: inline-block;">Leave blank If you don`t want to update password</span>
+                    </label>
+                    
+                    <div class="input-group">
+                      <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span>
+                      <input type="password" name="password" class="form-control" placeholder="Enter Password.."
+                        id="password" value="">
+
+                      <span toggle="#password"
+                        class="fa fa-fw fa-eye-slash field-icon form-control-feedback right toggle-password"></span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group drop-file">
+                <label class="col-form-label label-align" for="profile_image">Profile Image</label>
+                <div class="input-group">
+                  <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto" <%
+                    if(loggedUserInfo.profile_image !='' && fs.existsSync("assets/ProfileImage/"+loggedUserInfo.profile_image)) { %>
+                  data-default-file="/ProfileImage/<%=loggedUserInfo.profile_image%>" <% }%>
+                      data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
+                      <% if (loggedUserInfo.profile_image !='' && fs.existsSync("assets/ProfileImage/"+loggedUserInfo.profile_image)) { %>
+                        value=" <%=loggedUserInfo.profile_image %>" <% } else { %> value="" <% } %> >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="updateProfileBtn" class="btn form-button theme-btn">Update</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  <!-- profile page title end -->
+</div>
+
+<!-- dropIfy-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+
+<!-- intlTelInput -->
+<script src="/vendors/intlTelInput/js/intlTelInput.js"></script>
+<script src="/vendors/intlTelInput/js/utils.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+
+    $('.dropify').dropify();
+    
+    $('.dropify-clear').on('click', function () {
+      $('#is_image_removed').val('1');
+      $('.dropify').attr('required', true);
+    });
+
+    $("#title").select2({
+      allowClear: false,
+    });
+  });
+
+  $("#updateProfile").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var form = $('#updateProfile');
+    var formData = new FormData(form[0]);
+    formData.append('profile_image', this.new_attachments)
+    var url = $('#updateProfile').attr('action');
+    $("#updateProfileBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#updateProfileBtn").prop('disabled', false);
+      },
+    })
+  });
+
+
+  /**
+  *  phone number validate start intlTelInput
+  */
+  var input = document.querySelector("#phone"),
+    errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"],
+    result = document.querySelector("#error-msg");
+
+  window.addEventListener("load", function () {
+    errorMsg = document.querySelector("#error-msg");
+
+    function getIp(callback) {
+      fetch('https://ipinfo.io', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+        .then((resp) => resp.json())
+        .catch(() => {
+          return {
+            country: '',
+          };
+        })
+        .then((resp) => callback(resp.country));
+    }
+    
+    var iso_code = $("#iso_code").val();
+    iso_code = iso_code ? iso_code : 'in';
+    var iti = window.intlTelInput(input, {
+      initialCountry: iso_code,
+      separateDialCode: true,
+      formatOnDisplay: false
+    });
+
+
+    <% if(loggedUserInfo.role !== 3) { %>
+    input.addEventListener('keyup', function () {
+      reset();
+      $("#updateProfileBtn").prop('disabled', false);
+      if (input.value.trim()) {
+        if (iti.isValidNumber()) {
+          $("#updateProfileBtn").prop('disabled', false);
+          $(input).addClass('is-valid');
+        } else {
+          $("#updateProfileBtn").prop('disabled', true);
+          $(input).addClass('is-invalid');
+          var errorCode = iti.getValidationError();
+          errorMsg.innerHTML = errorCode > 4 ? 'Invalid number' : errorMap[errorCode];
+          $(errorMsg).show();
+        }
+      }
+    });
+    <% } %>
+    input.addEventListener('change', reset);
+    input.addEventListener('keyup', reset);
+
+    var reset = function () {
+      $(input).removeClass('is-invalid');
+      errorMsg.innerHTML = "";
+      $(errorMsg).hide();
+    };
+    input.addEventListener('keyup', function (e) {
+      e.preventDefault();
+      var num = iti.getNumber(),
+        valid = iti.isValidNumber();
+      //result.textContent = "Number: " + num + ", valid: " + valid;
+    }, false);
+
+    input.addEventListener("focus", function () {
+      result.textContent = "";
+    }, false);
+
+    $(input).on("focusout", function (e, countryData) {
+      var intlNumber = iti.getNumber();
+      var countryData = iti.getSelectedCountryData();
+      var dialCode = countryData.dialCode;
+      var iso2 = countryData.iso2;
+      $('#dial_code').val(dialCode); // update country code
+      $('#iso_code').val(iso2); // update iso code
+    });
+  });
+
+  $(document).on('focus', '#email', function () {
+    $(this).prop('readonly', false);
+  });
+
+  $(document).on('focus', '#phone', function () {
+  $(this).prop('readonly', false);
+});
+</script>

@@ -1,0 +1,92 @@
+  <div class="row w-100" id="row">    
+      <div class="col-sm-12">
+        <!-- <div class="que-block text-center"> -->
+        <div class="que-block">
+          <h3 class="title-text">
+            <span class="text-center">
+              <%-practice.question%>
+            </span>
+          </h3>
+          <% if(practice.question_audio && practice.question_audio !=''){ %> 
+            <div class="audio drop-objects">
+              <p>Click on the play button to play a sound:</p>
+              
+	      <% if(audioExtension === '.mp3'){ %> 
+            	    <audio controls class="audio-stop">
+                     <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mpeg">
+                    </audio>
+              <% } %>
+
+              <% if(audioExtension === '.m4a'){ %> 
+                    <audio controls class="audio-stop">
+                      <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/ogg">
+                      <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mp4">
+                    </audio>
+              <% } %>
+  
+            </div>
+          <% } %>
+          <form method="post" action="javascript:void();">
+            
+            <div class="row justify-content-center">
+              <div class="col-sm-12">
+                <% if(practice.question_image !='') { %>
+                <div class="quest-imagelarge single_ImgType"> 
+                  <img src="/TutorTrainingContent/<%=practice.content_directory+'/'+practice.question_image%>" alt="img">
+                </div>
+                <% } %>
+                <ul class="quest-list image-question mw-100  <%=(practice.question_type == 'multi_select') ? 'multi-select':'' %> ">
+                  <% 
+                    let j = 0; 
+                    for (option of practice.options) {
+                    j++;
+                  %>
+                  <li>
+                    <%if(practice.question_type == 'single_select'){ %>
+                      <input type="radio" id="question<%=j%>" class="custom-option <%=isCorrectAnswer == true && savedQuestion.includes(option.id) || option.option_correct ? 'correct' : 'incorrect' %>" value="<%=option.id%>" name="question" <%=(savedQuestion.includes(option.id) ?  'checked': '')%> disabled>
+                      <label class="label-option" for="question<%=j%>">
+                          <img src="/TutorTrainingContent/<%=practice.content_directory%>/<%=option.option_image%>" alt="img">
+                      </label>
+                    <% } else { %>
+                      <input type="checkbox" id="question<%=j%>" class="custom-option <%=isCorrectAnswer == true && savedQuestion.includes(option.id) || option.option_correct ? 'correct' : 'incorrect' %>" value="<%=option.id%>" name="question[]" <%=(savedQuestion.includes(option.id) ?  'checked': '')%> disabled>
+                          <label class="label-option" for="question<%=j%>">
+                          <img src="/TutorTrainingContent/<%=practice.content_directory%>/<%=option.option_image%>" alt="img">
+                      </label>
+                    <% } %>
+                    <span class="label-text"><%=option.option_text%></span>
+                  </li>
+                  <% } %>
+                </ul>
+                <div class="quest-bottom bottom-corrIn-answers text-center">
+                  <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <% if(isCorrectAnswer == true) { %>
+                        <div class="mx-auto single-text answer-msg correct-answer-msg" style="display:flex;">
+                          <img src="/images/correct-answer-icon.svg" alt="icon">
+                          <span>Congratulations <small>Correct Answer</small></span>
+                        </div>
+                        <% } else{ %>
+                        <div class="mx-auto single-text answer-msg incorrect-answer-msg" style="display:flex;">
+                          <img src="/images/incorrect-answer-icon.svg" alt="icon">
+                          <span>Wrong <small>Incorrect Answer</small></span>
+                        </div>
+                        <% } %> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-12">
+                <% if(practice.question_explanation !=''){ %> 
+                  <div class="explanation assessments-explanation">
+                    <h4 class="text-dgreen">Explanation</h4>
+                    <p><%-practice.question_explanation%></p>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </form>
+        </div>              
+      </div>
+  </div>
+

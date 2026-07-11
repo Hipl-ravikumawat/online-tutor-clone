@@ -1,0 +1,165 @@
+<%
+let duration ='';
+if(challenge != null){
+  duration=challenge.duration; 
+  let slices=duration.split(':');
+  duration=parseInt((slices[0]*60)) + parseInt(slices[1]); 
+}
+%>
+
+<div class="card-block" id="fullscreen-element">
+  <div class="challenges-screen">
+    <div class="challenges-answer-part">
+      <div class="py-3 text-center playtask">
+        <a class="play-btn" id="challenge-play-btn" href="javascript:void(0);"
+          ><i class="fa fa-play mr-1"></i
+        ></a>
+        <p class="challenge-started" id="timer" style="display: none">3</p>
+      </div>
+      <img src="/images/bg-img.png" alt="img" class="w-100" />
+      <div class="challenges-answer-partbackground">
+        <div class="curtainBody">
+          <div id="leftCurtain" class="curtainContainer">
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+          </div>
+          <div id="rightCurtain" class="curtainContainer">
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+            <div class="unCurtain"></div>
+          </div>
+          <div class="overlay"></div>
+        </div>
+      </div>
+
+      <div class="upper-content">
+        <div class="output">
+          <div class="winner-banner" style="display: none">
+            <img
+              src="/images/winner.gif"
+              alt="img"
+              style="height: 148px; width: 320px; margin-top: 26px"
+            />
+            <span id="challenge-winner-text ttttt"
+              >You Have Completed The Challenge!!</span>
+          </div>
+
+          <div class="challenge-preview-data">
+            <div class="d-flex">
+              <div class="question-list d-flex align-items-center">
+                <div class="challenge-questions">
+                  <span id="current-table-index">1</span> X
+                  <span id="table-no"> <%=(challenge !=null) ? challenge.multiplication_no:''%> </span>
+                </div>
+              </div>
+
+              <div class="previous-operandd">=</div>
+              <div
+                class="current-operandd"
+                id="typed-answer"
+                data-preview-answer=""
+              >
+                ?
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="counter-section">
+          <input type="hidden" class="time-duration" value="<%=duration%>" />
+          <div class="teacher-block">
+            <img
+              class="img-animation <%=duration%>"
+              src="/images/Teacher-Animation.gif"
+              alt="img"
+            />
+            <div class="ques-attempt">
+              <div class="quest-number teacher-number">
+                <!-- <div class="line_up"></div> -->
+              </div>
+              <div class="quest-count teacher-count">0</div>
+            </div>
+          </div>
+          <div class="counter-block" style="display: none">
+            <div id="countdown-timer"></div>
+          </div>
+          <div class="student-block">
+            <img
+              class="img-animation"
+              src="/images/Student-Animation.gif"
+              alt="img"
+            />
+            <div class="ques-attempt">
+              <div class="quest-count user-count">0</div>
+              <div class="quest-number user-number">
+                <!-- <div class="line_up"></div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenges-calc-part">
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <div class="calculator1 pe-none">
+            <input
+              type="text"
+              id="inputBox"
+              class="inputBoxValue"
+              placeholder=""
+              value=""
+              autofocus
+              required
+              autocomplete="off"
+            />
+            <div>
+              <button class="button">7</button>
+              <button class="button">8</button>
+              <button class="button">9</button>
+              <button class="button operator">AC</button>
+            </div>
+            <div>
+              <button class="button">4</button>
+              <button class="button">5</button>
+              <button class="button">6</button>
+              <button class="button operator">DEL</button>
+            </div>
+            <div>
+              <button class="button">1</button>
+              <button class="button">2</button>
+              <button class="button">3</button>
+            </div>
+
+            <div>
+              <button class="button">00</button>
+              <button class="button">0</button>
+              <button class="button">.</button>
+            </div>
+
+            <a class="done d-none next-btn">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<script>
+// Family Invoice Popup
+
+let invoiceStep1 = document.querySelector('#automaticInvoicing #invoice-step-1')
+let invoiceStep2 = document.querySelector('#automaticInvoicing #invoice-step-2')
+let invoiceStep1NextBtn = document.querySelector('#automaticInvoicing #invoice-step-1 .next-btn')
+let invoiceStep2NextBtn = document.querySelector('#automaticInvoicing #invoice-step-2 .next-btn')
+let invoiceStep2PrevBtn = document.querySelector('#automaticInvoicing #invoice-step-2 .prev-btn')
+
+invoiceStep1NextBtn.onclick = () => {
+  invoiceStep1.classList.add('d-none')
+  invoiceStep1.classList.remove('d-block')
+  invoiceStep2.classList.remove('d-none')
+  invoiceStep2.classList.add('d-block')
+} 
+invoiceStep2PrevBtn.onclick = () =>{
+  invoiceStep1.classList.add('d-block')
+  invoiceStep1.classList.remove('d-none')
+  invoiceStep2.classList.remove('d-block')
+  invoiceStep2.classList.add('d-none')
+} 
+</script>

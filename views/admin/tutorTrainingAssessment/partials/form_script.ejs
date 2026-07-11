@@ -1,0 +1,419 @@
+<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".select2").select2({ allowClear: false });
+    $("#sc_topic").change(function () {
+      let topicId = $(this).val();
+      $('#sc_sub_topic').empty();
+      if (topicId !== "") {
+        getSubTopics(topicId);
+      }
+    });
+  });
+
+  // $(".filter-content").change(function () {
+  //   getTrainingContents();
+  // });
+
+  /**
+   *  getSubTopics.
+   **/
+  function getSubTopics(topicId) {
+    $("#sc_sub_topic").empty();
+    $.ajax({
+      type: "POST",
+      url: "/sub-topics/render-subtopics",
+      data: { id: topicId },
+      success: function (response) {
+
+        if (response.length > 0) {
+          var newOption = new Option("Select Sub Topic", "", false, false);
+          $("#sc_sub_topic").append(newOption).trigger("change");
+          for (res of response) {
+            newOption = new Option(res.name, res._id, false, false);
+            $("#sc_sub_topic").append(newOption).trigger("change");
+          }
+        } else {
+          $("#sc_sub_topic").html("No subtopics found.").trigger("change");
+        }
+        getTrainingContents();
+      },
+    });
+  }
+
+  /**
+   * getTrainingContents.
+   * */
+  function getTrainingContents() {
+    let topic = $("#sc_topic").val();
+    let subTopic = $("#sc_sub_topic").val();
+    if (topic != "") {
+      $("#training_content").empty();
+      $.ajax({
+        type: "POST",
+        url: "/tutor-training-assessments/render-training-contents",
+        data: {
+          topic_id: topic,
+          sub_topic_id: subTopic,
+        },
+        success: function (response) {
+          if (response.length > 0) {
+            $("#training_content").empty();
+            $("#training_content").select2({
+              placeholder: "Select Training Content",
+            });
+            var newOption = new Option(
+              "Select Training Content",
+              "",
+              false,
+              false
+            );
+            $("#training_content").append(newOption);
+            for (res of response) {
+              newOption = new Option(res.title, res._id, false, false);
+              $("#training_content").append(newOption);
+            }
+            $("#training_content").trigger('change');
+          } else {
+            $("#training_content")
+              .html("No training contents are found.")
+              .trigger("change");
+          }
+        },
+      });
+    }
+  }
+
+  /**
+   * get lessons according to the selected leaning content.
+   * */
+  $("#training_content").change(function () {
+    let selectedLearningContent = $(this).val();
+    $("#lessons").empty();
+    let learningContentId = $("#training_content").val();
+    if (selectedLearningContent !== null) {
+      $.ajax({
+        type: "POST",
+        url: "/tutor-training-assessments/render-training-contents/lessons",
+        data: {
+          content_id: selectedLearningContent,
+        },
+        success: function (response) {
+          if (response.lesson_ids.length > 0) {
+            $("#lessons").empty();
+            for (lesson of response.lesson_ids) {
+              var option = $("<option></option>");
+              option.val(lesson._id);
+              option.text(lesson.title);
+              option.attr("data-contentId", learningContentId);
+              option.attr("data-lessonId", lesson._id);
+              option.attr("data-lesson", lesson.title);
+              $("#lessons").append(option).trigger("change");
+            }
+          } else {
+            $("#lessons").html("No lessons found.").trigger("change");
+          }
+        },
+      });
+    } else {
+    }
+  });
+
+  /**
+   * add content for program..
+   * */
+  $("#add_content").click(function () {
+    // Training fields
+    let selectedProgramContent = $("#lessons").val();
+
+    let assessmentTitle = $("#content_name").val();
+    let assessmentTutors = $("#tutor_ids").val();
+
+    const originalIdValues = $('.original_lesson_id').map(function() { return $(this).val(); }).get();
+
+    // filter fields
+    let fcTopic = $("#sc_topic").val();
+    let fcTrainingContent = $("#training_content").val();
+    let fcLessonsLength = $("#lessons").find("option:selected").length;
+    let fcLessons = $("#lessons").val();
+    let validationFlag = false;
+    let elements = [];
+    if (assessmentTitle === "") {
+      validationFlag = true;
+      elements.push("content_name");
+    }
+    if (assessmentTutors.length == 0) {
+      validationFlag = true;
+      elements.push("tutor_ids");
+    }
+    if (fcTopic === "") {
+      validationFlag = true;
+      elements.push("sc_topic");
+    }
+    if (fcTrainingContent === "") {
+      validationFlag = true;
+      elements.push("training_content");
+    }
+    if (fcLessonsLength < 1) {
+      validationFlag = true;
+      elements.push("lessons");
+    }
+    $(".error").remove();
+    if (validationFlag) {
+      for (let element of elements) {
+        $("#" + element)
+          .parent()
+          .closest(".form-group")
+          .append(
+            `<span class="error" style="color:red;">This field required.</span>`
+          );
+        $("#" + element).focus();
+      }
+      return false;
+    }
+
+    if (!selectedProgramContent || selectedProgramContent.length === 0) return; // nothing selected → skip
+
+    // make sure selectedProgramContent is always an array
+    if (!Array.isArray(selectedProgramContent)) selectedProgramContent = [selectedProgramContent];
+
+    let fcTopicName = $("#sc_topic option:selected").text();
+    let fcSubTopicName = $("#sc_sub_topic option:selected").text();
+    let fcTrainingContentName = $("#training_content option:selected").text();
+
+    if (assessmentTitle !== "" && fcTopicName !== "Select Topic" &&
+      fcTrainingContentName !== "Select Training Content") {
+      
+        Swal.fire({
+          title: "Staff Course",
+          text: "Do you want to add these Course?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: `Add`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // find duplicates in newly selected contents
+            let duplicateContents = selectedProgramContent.filter(id => originalIdValues.includes(id));
+            console.log('selectedProgramContent',selectedProgramContent);
+            console.log('originalIdValues',originalIdValues);
+            console.log('duplicateContents',duplicateContents);
+            if (duplicateContents.length > 0) {
+              Swal.fire({
+                title: "Course Already Exists",
+                text: "Some selected course already exists. Do you want to overwrite it?",
+                icon: "warning",
+                showDenyButton: true,
+                confirmButtonText: "Overwrite",
+                denyButtonText: `Ignore`,
+              }).then((dupResult) => {
+                if (dupResult.isConfirmed) {
+                  
+                  // Overwrite: remove old li for each duplicate id, then add new content
+                  duplicateContents.forEach(dupId => {
+                    $(document).find('#select-assessment input[type=hidden][name="selected_contents[]"]').each(function () {
+                      const val = $(this).val(); // e.g., "trainingContentId--lessonId--type"
+                      const parts = val.split('--');
+                      let contentType = parts[2];
+                      if(contentType == "version"){
+                        console.log('if',parts,dupId);
+                        if(parts.length === 3 && $(this).closest('li').find('.original_lesson_id').val() === dupId){
+                          console.log('Removing version:', val);
+                          $(this).closest('li').remove();
+                        }
+                      }else{
+                        console.log('else',parts,dupId);
+                        if (parts.length === 3 && parts[1] === dupId) {
+                          console.log('Removing:', val);
+                          $(this).closest('li').remove();
+                        }
+                      }
+                    });
+                  });
+                  console.log('selectedProgramContent',selectedProgramContent);
+                  addContents(selectedProgramContent);
+                } else if (dupResult.isDenied) {
+                  alert('hello');
+                  // Ignore: add only contents that aren't duplicates
+                  let newContents = selectedProgramContent.filter(id => !originalIdValues.includes(id));
+                  addContents(newContents);
+
+                  $('#sc_topic').val('').trigger('change');
+                  $('#sc_sub_topic').val('').trigger('change');
+                  $('#training_content').val('').trigger('change');
+                  $('#lessons').val('').trigger('change');
+                }
+              });
+            } else {
+              // no duplicates → add directly
+              addContents(selectedProgramContent);
+            }
+          }
+        });
+      }
+
+    
+
+    // content field
+    function addContents(contentIds) {
+      let selectedContentLength = parseInt(
+        $(".selectedcontent > li").length
+      );
+      if (selectedContentLength > 0) {
+        contentIndex = selectedContentLength + 1;
+      } else {
+        contentIndex = 1;
+      }
+      let subTopicBreadcrumb = "";
+      if (fcSubTopicName && fcSubTopicName !== "Select Sub Topic") {
+        subTopicBreadcrumb =
+          '<li class="breadcrumb-item">' + fcSubTopicName + "</li>";
+      }
+
+      for (let contentValue of contentIds) {        
+        let trainingContentId = $("#lessons option[value=" + contentValue + "]").attr("data-contentId");
+        let lessonId = $("#lessons option[value=" + contentValue + "]").attr("data-lessonId");
+        let lessonName = $("#lessons option[value=" + contentValue + "]").attr("data-lesson");
+        let selectedContent = $("#lessons option[value=" + contentValue + "]").text();
+        let programType = $("#lessons option[value=" + contentValue + "]").attr("data-type");
+
+        let breadcrumbSubTopic = "";
+        if (lessonName) {
+          breadcrumbSubTopic = `<li class="breadcrumb-item 3 lesson-items" data-id="${lessonId}">${lessonName}</li>`;
+        }
+        
+        $("#select-assessment").append(
+            `<li class="sort-content" data-content-position="${contentIndex}" ><div class="iconleft"><img src="/images/lesson.svg" alt="img"></div><div class="content-detail-block"><ol class="breadcrumb"><li class="breadcrumb-item 1">${fcTopicName}</li>${subTopicBreadcrumb}<li class="breadcrumb-item 2">${fcTrainingContentName}</li>${breadcrumbSubTopic}</ol></div><div class="action-right"><a class="remove_content" href="javascript:void(0);">&times;</a></div><input type="hidden" name="original_lesson_id" class="original_lesson_id" value="${lessonId}" /> <input type="hidden" name=selected_contents[] value="${trainingContentId}--${lessonId}--original"></li>`
+          );
+          
+        // to avoid duplicate lesson
+        /* let checkLessonsExist = $(".lesson-items")
+          .map(function () {
+            return $(this).data("id");
+          })
+          .get();
+        if (checkLessonsExist.indexOf(lessonId) === -1) {
+          $("#select-assessment").append(
+            `<li class="sort-content" data-content-position="${contentIndex}" ><div class="iconleft"><img src="/images/lesson.svg" alt="img"></div><div class="content-detail-block"><ol class="breadcrumb"><li class="breadcrumb-item 1">${fcTopicName}</li>${subTopicBreadcrumb}<li class="breadcrumb-item 2">${fcTrainingContentName}</li>${breadcrumbSubTopic}</ol></div><div class="action-right"><a class="remove_content" href="javascript:void(0);">&times;</a></div><input type="hidden" name=selected_contents[] value="${trainingContentId}--${lessonId}--original"></li>`
+          );
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "This Lesson is already added.",
+          });
+        } */
+
+      }
+      if ($('.selectedcontent > li').length >= 1) {
+          $('#storeTrainingContentBtn').show();
+          $('#updateTrainingContentBtn').show();
+      }
+
+      $('#lessons').empty();
+      $("#lessons").select2({ placeholder: "Select Lessons"});
+      $("#training_content").trigger('change');
+    }
+
+  });
+
+  /**
+   * remove a content from assessment content.
+   * */
+  $('.selectedcontent').on('click', '.remove_content', function () {
+    Swal.fire({
+      title: "Training Lesson",
+      html: "<p>Are you sure you want to remove this lesson?</p>",
+      icon: "warning",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+          $(this).closest("li").fadeOut("slow", function () {
+            $(this).remove();
+            setTimeout(function() {
+              if ($('.content-sortable > li').length == 0){
+                $('#storeTrainingContentBtn').hide();
+                $('#updateTrainingContentBtn').hide();
+              }
+            }, 800);
+          });
+      }
+    });
+  });
+
+  /**
+   * store assessment in to db.
+   */
+  $("#storeTrainingContent").submit(function (e) {
+    e.preventDefault();
+    var formData = $("#storeTrainingContent").serialize();
+    var url = $("#storeTrainingContent").attr("action");
+    $("#storeProgramBtn").prop("disabled", true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        console.log(response,'response');
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }else if(response.success == false){
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            html: response.message ,
+          });
+        }
+      },
+      error: function (response) {
+        let errorMessages = "";
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          if (error.param === "name") {
+            $(document)
+              .find("[id=content_name]")
+              .after(
+                '<span class="help-block text-danger">' + error.msg + "</span>"
+              );
+          } else if (error.param === "selected_contents") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Please add content for this assessment",
+            });
+          } else {
+            $(document)
+              .find("[id=" + error.param + "]")
+              .after(
+                '<span class="help-block text-danger">' + error.msg + "</span>"
+              );
+          }
+        });
+      },
+      complete: function () {
+        $("#storeProgramBtn").prop("disabled", false);
+      },
+    });
+  });
+
+  /**
+   * sortable content
+   */
+  $(".content-sortable").sortable({
+    swapThreshold: 1,
+    group: "list",
+    animation: 200,
+    onChange: function (update, evt) {
+      var j = 1;
+      $(".sort-content").each(function () {
+        $(this).attr("data-content-position", j);
+        j++;
+      });
+    },
+    onSort: function (evt, ui) {},
+  });
+</script>

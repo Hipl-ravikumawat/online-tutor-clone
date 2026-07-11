@@ -1,0 +1,400 @@
+<div class="right_col" role="main">
+  <div class="back-page">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="javascript:void(0)">Rewards</a>
+      </li>
+      <li class="breadcrumb-item active">Points History</li>
+    </ol>
+  </div>
+
+  <div class="bussniess_setting">
+    <div class="card-block mb-30">
+      <h2 class="title-text">Filter Points History</h2>
+      <ul class="filter-row">
+        <% if(loggedUserRole !==2){ %>
+          <li class="filter-col">
+            <select class="form-control select2" id="tutor" tabindex="-1" data-placeholder="Select Tutor">
+              <option value="">Select Tutor</option>
+              <% for(tutor of tutors) { %>
+                <option value="<%=tutor.id%>">
+                  <%=tutor.first_name+' '+tutor.last_name %>
+              </option>
+                <% } %>
+            </select>
+          </li>
+          <% } %>
+
+          <% if(loggedUserRole !== 3){ %>
+          <li class="filter-col">
+            <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Student">
+              <option value="">Select Student</option>
+              <% for(student of students) { %>
+                <option value="<%=student.id%>">
+                  <%=student.first_name+' '+student.last_name %>
+                </option>
+                <% } %>
+            </select>
+          </li>
+          <% } %>
+
+          <li class="filter-col">
+            <input type="date" name="transaction_date" value="Invalid date" max="<%=moment().format(' YYYY-MM-DD')%>"
+                    class="form-control" id="transaction_date">
+          </li>
+          <li class="filter-col">
+            <button class="btn theme-btn filter">Filter</button>
+            <button class="btn theme-btn reset">Reset</button>
+          </li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="x_title mb-0">
+            <h2 class="title-text">Points History</h2>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card-box table-responsive allselect-table">
+                  <table id="pointHistoryTable" class="table table-striped table-bordered dt-responsive nowrap"
+                    cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th>Sr No.</th>
+                        <th>Tutor</th>
+                        <th>Student</th>
+                        <th>Given Points</th>
+                        <th>Week</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/points_summary'); %>
+
+  <script type="text/javascript">
+    var pointAssignmentModificationPeriod = parseInt('<%=pointSystem?.pointAssignmentModificationPeriod%>');
+    var ptAttendingClassOnTime = parseInt('<%=pointSystem?.attendingClassOnTime%>');
+    var ptAskingQuestions = parseInt('<%=pointSystem?.askingQuestions%>');
+    var ptHomeworkSubmission = parseInt('<%=pointSystem?.homeworkSubmission%>');
+    var ptParticipatingClassActivities = parseInt('<%=pointSystem?.participatingClassActivities%>');
+    var ptBonusPoints = parseInt('<%=pointSystem?.bonusPoints%>');
+    var loggedUserRole = parseInt('<%=loggedUserRole%>');
+
+    $(document).ready(function () {
+      $(".select2").select2();
+      dataTable();
+
+      const checkboxes = $('.studants-points-check input[type="checkbox"]');
+      const totalPointsCell = $('.select-total-points');
+
+      function updateTotalPoints() {
+        let total = 0;
+
+        checkboxes.each(function () {
+          if ($(this).prop('checked')) {
+            const pointsText = $(this).closest('tr').find('.studants-points').text().trim();
+
+            // Extract the numeric value from the text (e.g., "10 Points" -> 10)
+            const points = parseInt(pointsText.replace(/\D/g, ''), 10); // Remove non-digit characters
+
+            // Ensure points is a valid number before adding it to total
+            if (!isNaN(points)) {
+              total += points;
+            }
+          }
+        });
+
+        totalPointsCell.text(total + ' Points');
+      }
+
+      checkboxes.on('change', updateTotalPoints);
+
+      updateTotalPoints();
+
+      $(".reset").click(function () {
+        $("#tutor").val(null).trigger("change");
+        $("#student").val(null).trigger("change");
+        $("#transaction_date").val(moment().format('DD MMM YYYY')).trigger('change');
+        dataTable();
+      });
+
+      $(".filter").click(function () {
+        let tutor = $("#tutor").val();
+        let student = $("#student").val();
+        let transaction_date = $("#transaction_date").val();
+        dataTable(tutor, student, transaction_date);
+      });
+
+      $(document).on('click', '.view-points, .edit-points', function (e) {
+        const recordId = $(this).data('record-id');
+        $('#attendee, #eventId').val('');
+        $("#assign-points-form").trigger("reset");
+
+        const hasView = $(this).hasClass('view-points');
+        const hasEdit = $(this).hasClass('edit-points');
+
+        $.ajax({
+          type: "GET",
+          url: "/rewards/fetch-assigned-points/" + recordId,
+          success: function (response) {
+            if (response.success === true) {
+              const record = response?.record;
+              const pointsAssigned = record?.pointsAssigned;
+              $('#attendees').val(record?.studentId?._id);
+              $('#eventId').val(response.eventId);
+              $('.students-points-total').text(`${response.performanceMetricsSum} Points`)
+              $('#studentName').text(` ${record.studentId.first_name} ${record.studentId.last_name}`);
+              $('#tutorName').text(` ${record.tutorId.first_name} ${record.tutorId.last_name}`);
+              $('#transactionDate').text(` ${moment(record.transactionDate).format('DD MMM YYYY')}`);
+              $('#onAttendingClassOnTime').text(`${ptAttendingClassOnTime} Points`);
+              $('#onAskingQuestions').text(`${ptAskingQuestions} Points`);
+              $('#onHomeworkSubmission').text(`${ptHomeworkSubmission} Points`);
+              $('#onParticipatingClassActivities').text(`${ptParticipatingClassActivities} Points`);
+              $('#stdBonusPoints').text(`${ptBonusPoints} Points`);
+              $('#totalReceivedPoints').text(`${record?.totalPoints} Points`);
+              markCheckboxes(pointsAssigned);
+              if (hasView) {
+                $("#assignPointBtn").addClass('d-none');
+                $('span').css('pointer-events', 'none');
+                $('input[type="checkbox"]').prop('disabled', true);
+                $('input[type="text"], input[type="number"], textarea').prop('readonly', true);
+              }
+
+              if (hasEdit) {
+                $("#assignPointBtn").removeClass('d-none');
+                $('span').css('pointer-events', 'auto');
+                $('input[type="checkbox"]').prop('disabled', false);
+                $('input[type="text"], input[type="number"], textarea').prop('readonly', false);
+              }
+              $('#point-summary').modal('show');
+
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            let errorMessage;
+            if (jqXHR.status === 404) {
+              errorMessage = "Record not found.";
+            } else if (jqXHR.status === 500) {
+              errorMessage = "Internal server error. Please try again later.";
+            } else {
+              errorMessage = "An unexpected error occurred: " + textStatus;
+            }
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: errorMessage,
+            });
+          },
+          complete: function () {
+          },
+        });
+      });
+
+      $('#point-summary').on('hidden.bs.modal', function () {
+        location.reload();
+      });
+    });
+
+    function markCheckboxes(pointsAssigned) {
+      if (pointsAssigned.attendingClassOnTime.marks > 0) {
+        $('#attendingClassOnTime').prop('checked', true);
+      }
+
+      if (pointsAssigned.askingQuestions.marks > 0) {
+        $('#askingQuestions').prop('checked', true);
+      }
+
+      if (pointsAssigned.homeworkSubmission.marks > 0) {
+        $('#homeworkSubmission').prop('checked', true);
+      }
+
+      if (pointsAssigned.participatingClassActivities.marks > 0) {
+        $('#participatingClassActivities').prop('checked', true);
+      }
+
+      if (pointsAssigned.bonusPoints.marks > 0) {
+        $('#bonusPoints').prop('checked', true);
+      }
+    }
+
+    function dataTable(tutor = "", student = "", transaction_date = "") {
+      $("#pointHistoryTable").dataTable().fnDestroy();
+      var pointHistoryTable = $("#pointHistoryTable").DataTable({
+        paging: true,
+        pageLength: 10,
+        language: {
+          searchPlaceholder: "Search",
+          processing: "<div><div></div><div></div><div></div><div></div></div>",
+        },
+        processing: true,
+        serverSide: true,
+        order: [],
+        dom: "Bfltip",
+        buttons: [
+        ],
+        ajax: {
+          url: "/rewards/points-history-dataTable",
+          type: "POST",
+          data: {
+            tutor: tutor,
+            student: student,
+            transaction_date: transaction_date,
+          },
+        },
+        columns: [
+          {
+            data: null,
+            render: function (data, type, row, meta) {
+              return meta.row + 1;
+            },
+          },
+          {
+            data: "tutorId",
+            render: function (data, type, row) {
+              return row.tutorId.first_name + ' ' + row.tutorId.last_name;
+            },
+          },
+          {
+            data: "studentId",
+            render: function (data, type, row) {
+              return row.studentId.first_name + ' ' + row.studentId.last_name;
+            },
+          },
+          {
+            data: "totalPoints",
+            render: function (data, type, row) {
+              return row.totalPoints;
+            },
+          },
+          {
+            data: "weekStart",
+            render: function (data, type, row) {
+              let weekStart = moment(row.weekStart).format('DD MMM YYYY');
+              let weekEnd = moment(row.weekEnd).format('DD MMM YYYY');
+              return `${weekStart} - ${weekEnd} `;
+            },
+          },
+          {
+            data: "created_at",
+            render: function (data, type, row) {
+              let createdAt = moment(row.created_at).format('DD MMM YYYY');
+              return createdAt;
+            },
+          },
+          {
+            data: "",
+            render: function (data, type, row) {
+              let weekStartDate = moment(row.weekStart).set({ hour: 23, minute: 59, second: 59, millisecond: 0 });;
+              let weekEndDate = moment(row.weekEnd).set({ hour: 23, minute: 59, second: 59, millisecond: 0 });;
+              let currentDate = moment();
+              let daysAfterWeekEnd = weekEndDate.clone().add(pointAssignmentModificationPeriod, 'days');
+              let showEditButton = currentDate.isBetween(weekStartDate, daysAfterWeekEnd, null, '[]');
+              let html = `<div class="d-flex align-items-center">`;
+              if (loggedUserRole == 2 && showEditButton) {
+                html += `<a class="ml-2 edit-points" href="javascript:void(0)" data-record-id="${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit Points"><img src="/images/edit.svg" alt="icon"></a>`;
+              }
+              html += `<a class="ml-2 view-points" href="javascript:void(0)" data-record-id="${row._id}" ><img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Points"></a>`;
+              html += `</div>`;
+              return html;
+            },
+          },
+        ],
+        select: {
+          style: "multi",
+          selector: ".select-checkbox"
+        },
+        columnDefs: [
+          {
+            targets: 0,
+            data: "select",
+            searchable: false,
+            orderable: false,
+            width: "3%"
+          },
+          {
+            targets: [0, 4, 5, 6] /* column index */,
+            orderable: false /* true or false */,
+          }
+
+        ],
+      });
+
+      // Hiding columns based on user role
+      if (loggedUserRole === 2) {
+        pointHistoryTable.column(1).visible(false);
+      } else if (loggedUserRole === 3) {
+        pointHistoryTable.column(2).visible(false);
+      }
+
+      // Select all checkbox
+      $("#select_all").on("click", function (e) {
+        if ($(this).is(":checked")) {
+          pointHistoryTable.rows().select();
+          $('.select-checkbox').prop('checked', true);
+        } else {
+          pointHistoryTable.rows().deselect();
+          $('.select-checkbox').prop('checked', false);
+        }
+      });
+
+      // Reinitialize tooltips after reload
+      pointHistoryTable.ajax.reload(function () {
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    }
+
+    $('#assign-points-form').submit(function (e) {
+      e.preventDefault();
+      var formData = $('#assign-points-form').serialize();
+      let url = `/rewards/store-assigned-points`;
+      $('#assignPointBtn').prop('disabled', true);
+      $.ajax({
+        type: "post",
+        url: url,
+        dataType: "json",
+        data: formData,
+        success: function (response) {
+          if (response.success === true) {
+            window.location.reload();
+          }
+        },
+        error: function (response) {
+          $(document).find('.text-danger').remove();
+          if (response.responseJSON.errors) {
+            $.each(response.responseJSON.errors, function (index, error) {
+              if (error.param != '') {
+                $(document).find(`#${error.param}`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+              } else {
+                $(document).find(`#rewardsHistory`).before(`<span class="help-block text-danger">${error.msg}</span>`);
+              }
+            });
+          }
+
+          if (response.responseJSON.message) {
+            $(document).find(`#rewardsHistory`).before(`<span class="help-block text-danger">${error.msg}</span>`);
+          }
+        },
+        complete: function (response) {
+          $('#assignPointBtn').prop('disabled', false);
+        }
+      });
+    });
+  </script>

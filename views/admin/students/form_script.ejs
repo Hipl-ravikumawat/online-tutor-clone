@@ -1,0 +1,142 @@
+
+<!-- dropIfy-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+
+<!-- intlTelInput -->
+<script type="text/javascript" src="/vendors/intlTelInput/js/intlTelInput.js"></script>
+<script type="text/javascript" src="/vendors/intlTelInput/js/utils.js"></script>
+
+<script type="text/javascript">
+  /**
+   * student form script.
+   * @script start
+   */
+  
+  $(document).ready(function () {
+    $(".select2").select2({
+      allowClear: false,
+    });
+
+    $('.dropify').dropify();
+
+    $('.dropify-clear').on('click', function () {
+      $('#is_image_removed').val('1');
+      $('.dropify').attr('required', true);
+    });
+  });
+
+  var input = document.querySelector("#phone"),
+    errorMap = [
+      "Invalid number",
+      "Invalid country code",
+      "Too short",
+      "Too long",
+      "Invalid number",
+    ],
+    result = document.querySelector("#error-msg");
+
+  window.addEventListener("load", function () {
+    errorMsg = document.querySelector("#error-msg");
+    function getIp(callback) {
+      fetch("https://ipinfo.io", {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+        .then((resp) => resp.json())
+        .catch(() => {
+          return {
+            country: "",
+          };
+        })
+        .then((resp) => callback(resp.country));
+    }
+
+    let iso_code = $("#iso_code").val();
+    let current_iso_code = iso_code ? iso_code : "Au";
+    var iti = window.intlTelInput(input, {
+      initialCountry: current_iso_code,
+      separateDialCode: true,
+    });
+    var defaultNumber = "<%=data.phone%>"; 
+    $('#phone').val(defaultNumber); 
+    // Trigger the plugin's "change" event to update the selected number
+
+    if (iso_code !== "" && iso_code !== undefined && iso_code !== null) {
+      input.addEventListener("keyup", function () {
+        reset();
+        $("#updateStudentBtn").prop("disabled", false);
+        if (input.value.trim()) {
+          if (iti.isValidNumber()) {
+            $("#updateStudentBtn").prop("disabled", false);
+            $(input).addClass("is-valid");
+          } else {
+            $("#updateStudentBtn").prop("disabled", true);
+            $(input).addClass("is-invalid");
+            var errorCode = iti.getValidationError();
+            errorMsg.innerHTML = errorCode > 4 ? 'Invalid number' : errorMap[errorCode];
+            $(errorMsg).show();
+          }
+        }
+      });
+    } else {
+      input.addEventListener("keyup", function () {
+        reset();
+        $("#storeStudentBtn").prop("disabled", false);
+        if (input.value.trim()) {
+          if (iti.isValidNumber()) {
+            $("#storeStudentBtn").prop("disabled", false);
+            $(input).addClass("is-valid");
+          } else {
+            $("#storeStudentBtn").prop("disabled", true);
+            $(input).addClass("is-invalid");
+            var errorCode = iti.getValidationError();
+            errorMsg.innerHTML = errorMap[errorCode];
+            $(errorMsg).show();
+          }
+        }
+      });
+    }
+
+    input.addEventListener("change", reset);
+    input.addEventListener("keyup", reset);
+
+    var reset = function () {
+      $(input).removeClass("is-invalid");
+      errorMsg.innerHTML = "";
+      $(errorMsg).hide();
+    };
+
+    input.addEventListener(
+      "keyup",
+      function (e) {
+        e.preventDefault();
+        var num = iti.getNumber(),
+          valid = iti.isValidNumber();
+      },
+      false
+    );
+
+    input.addEventListener(
+      "focus",
+      function () {
+        result.textContent = "";
+      },
+      false
+    );
+
+    $(input).on("focusout", function (e, countryData) {
+      var intlNumber = iti.getNumber();
+      var countryData = iti.getSelectedCountryData();
+      var dialCode = countryData.dialCode;
+      var iso2 = countryData.iso2;
+      $("#dial_code").val(dialCode); 
+      $("#iso_code").val(iso2);
+    });
+  });
+
+  /**
+   * student form script.
+   * @script end
+   */
+</script>

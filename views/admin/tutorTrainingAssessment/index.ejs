@@ -1,0 +1,349 @@
+<div class="right_col" role="main">
+  <!-- page content starts -->
+  <div class="row">
+    <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="stcard-box">
+        <span class="shade5">
+          <%=trainingAssessmentObject.total%>
+        </span>
+        <h3 class="title-text mb-0">Total</h3>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="stcard-box">
+        <span class="shade1">
+          <%=trainingAssessmentObject.completed%>
+        </span>
+        <h3 class="title-text mb-0">Completed</h3>
+      </div>
+    </div>
+    <% if(userRole != 3) { %>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade2">
+          <%=trainingAssessmentObject.pending%>
+        </span>
+        <h3 class="title-text mb-0">Pending</h3>
+      </div>
+    </div>
+    <% } %>
+    <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="stcard-box">
+        <span class="shade3">
+          <%=trainingAssessmentObject.not_completed%>
+        </span>
+        <h3 class="title-text mb-0">Not Completed</h3>
+      </div>
+    </div>
+  </div>
+  <div class="card-block mb-30">
+        <h2 class="title-text">Filter Staff Assessments</h2>
+        <ul class="filter-row">
+          <li class="filter-col">
+            <select class="form-control select2" id="trainingAssessment" tabindex="-1" data-placeholder="Select Staff Assessment" single>
+              <option value="">Select Staff Course</option>
+              <% for(trainingAssessment of trainingAssessments) { %>
+                <option value="<%=trainingAssessment.id%>"><%=trainingAssessment.name%></option>
+              <% } %>
+            </select>
+          </li>
+          <% if(userRole == 1) { %>
+            <li class="filter-col">
+              <select class="form-control select2" id="tutor" tabindex="-1" data-placeholder="Select Tutor">
+                <option value="">Select Tutor</option>
+                <% for(tutor of tutors) { %>
+                  <option value="<%=tutor.id%>">
+                    <%=tutor.first_name+' '+tutor.last_name %>
+                  </option>
+                  <% } %>
+              </select>
+            </li>
+          <% } %>
+          <li class="filter-col">
+            <select class="form-control select2" id="trainingContent" tabindex="-1" data-placeholder="Select Staff Course" multiple>
+                <% for(content of tutorTrainingContent) { %>
+                  <option value="<%=content.id%>"><%=content.title %></option>
+                <% } %>
+            </select>
+          </li>
+          <li class="filter-col">
+            <select class="form-control select2" id="status" tabindex="-1" data-placeholder="Select status" single>
+                  <option value="">Select Status</option>
+                  <option value="N/A">N/A</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Completed">Completed</option>
+            </select>
+          </li>
+          <li class="filter-col">
+            <button class="btn theme-btn filter">Filter</button>
+            <button class="btn theme-btn reset">Reset</button>
+          </li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text mb-0">Staff Assessments List</h2>
+          <ul class="right-btns">
+          <% if(userRole == 1) { %> 
+            <li> <a href="/tutor-training-assessments/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip"
+                data-placement="top" title="Assign Staff Assessment">+ Assign</a>
+            </li>
+          <% } %>             
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive">
+                <table id="trainingAssessmentTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                width="100%">
+                <thead>
+                  <tr>
+                    <!-- <th>#</th> -->
+                    <th>Staff Assessment</th>
+                    <th>Staff Courses</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody> 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- page content end -->
+</div>
+<%- include('./partials/lessons_model'); %>
+<%- include('./partials/model_assessment_lessons_content'); %>
+
+<script>
+  let userRole = '<%=userRole%>';
+  let userId = '<%=userId%>';
+  $(document).ready(function(){
+    $(".select2").select2({
+      allowClear: false,
+    });
+    dataTable();
+  });
+
+  $(".filter").click(function () {
+    let trainingAssessmentId = $("#trainingAssessment").val();
+    let selectedTutorId = $('#tutor').val();
+    let trainingContentId = $("#trainingContent").val();
+    let status = $("#status").val();
+    dataTable(trainingAssessmentId, selectedTutorId, trainingContentId, status);
+  });
+
+  $(".reset").click(function () {
+    $("#trainingAssessment").val(null).trigger("change");
+    $("#tutor").val(null).trigger("change");
+    $("#trainingContent").val(null).trigger("change");
+    $("#status").val(null).trigger("change");
+    dataTable();
+  });
+
+  function dataTable(trainingAssessmentId = "", selectedTutorId="", trainingContentId="", status="") {
+    $("#trainingAssessmentTable").dataTable().fnDestroy();
+    var tutorAssessmentTable = $('#trainingAssessmentTable').DataTable({
+      "paging": true,
+    "pageLength": 10,
+    "language": { 
+        "searchPlaceholder": "Search",
+        "processing": '<div><div></div><div></div><div></div><div></div></div>'
+    },  
+    "processing": true,
+    "serverSide": true,
+    "columnDefs": [
+      {
+        "targets": [2], 
+        "visible": (userRole == 1)
+      },
+      {
+        "targets": [1,2,3], 
+        "orderable": false,
+      },
+    ],
+    "order": [],
+      'ajax':{
+        'url': '/tutor-training-assessments/dataTable',
+        'type': 'POST',
+        'data': {
+          training_assessment_id: trainingAssessmentId,
+          selectedTutorId: selectedTutorId,
+          training_content_id:trainingContentId,
+          status:status,
+        },
+      },
+      'columns': [
+        { 
+          data: "name", 
+          'name': 'name', 
+        },
+        { 
+          data: "content",
+          "render": function (data, type, row) {
+            const uniqueTitles = [...new Set(data.map(obj => obj.training_content_id?.title))];
+            let concatenatedContent = '';
+            if(uniqueTitles.length > 0 ){
+              concatenatedContent = uniqueTitles.map(value => `<span class="badge badge-info">${value}</span>`).join(' ');
+            }
+            return `<div class="subcat-info">${concatenatedContent}</div>`;
+          }
+        },
+        {
+          "data": "status",
+          "render": function (data, type, row) {
+            return (userRole ==1) ? data : ""; 
+          }
+        },
+        { 
+          data: "action",
+          "render": function (data, type, row) {
+            let tutorAssessment = row.tutor_assessment_ids;
+            let html = `<div class="d-flex">`;
+              if(userRole == 1){
+                let tutorStatusArray = tutorAssessment.map(item => item.status);
+                let canDelete = tutorStatusArray.every(value => value === "N/A");
+                html += `
+                <a href="/tutor-training-assessments/detailed-report/${row.slug}" class="mr-1">
+                  <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Details">
+                </a>`;
+
+                if(row.status == "N/A"){
+                  html +=`<a href="/tutor-training-assessments/edit/${row.slug}"><img src="/images/edit.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit"></a>`;
+                } 
+                
+                if(canDelete){
+                  html += `<a href="javascript:void(0)" class="ml-2 delete-assessment-${row._id}" onclick="confirmBeforeDeletion('/tutor-training-assessments/destroy/${row._id}')">
+                    <img src="/images/trash.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete">
+                  </a>`;
+                }
+              }else{
+                // Filter objects with tutor_id "642142d0f3159f613ce66dcc"
+                let tutorStatusArray = tutorAssessment.filter(item => item.tutor_id === userId).map(item => item.status);
+                  html += `<a href="${(tutorStatusArray[0] == 'Completed') ? `tutor-training-assessments/detailed-report/${row._id}/tutor/${userId}/`:'javascript:void(0)'}" class="badge badge-info ${(tutorStatusArray[0] == 'Completed') ? '':'not-attempt'} width-auto" data-id="${row._id}">${tutorStatusArray[0]}</a>`;
+              }
+            html += `</div>`;
+            return html;
+          }
+        },
+      ],
+    });
+    tutorAssessmentTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+
+  $(document).on("click", '.not-attempt', function () {
+    let assessmentId = $(this).data("id");
+    lessonContentModal(assessmentId);
+  });
+
+  $(document).on("click", '.back-btn', function () {
+    let assessmentId = $(this).data("id");
+    lessonContentModal(assessmentId);
+  });
+  $(document).on("click", '.lesson_card', function () {
+    let lessonId = $(this).data("lesson-id");
+    let assessmentId = $(this).data("id");
+    let url = $(this).data("link");
+    let totalSlides = $(this).find('.totalSlides').text();
+    let totalPractices = $(this).find('.totalPractices').text();
+      $.ajax({
+        type: "POST",
+        url: '/tutor-training-assessments/attached-lesson-tasks',
+        dataType: 'json',
+        data: {
+          lessonId: lessonId,
+          assessmentId: assessmentId,
+          url: url,
+        },
+        success: function (response) {
+          if (response.success) {
+              let slidesData = response.data.slides;
+              let practicesData = response.data.practices;
+            
+              updateButton('.slide-btn', slidesData.status);
+              updateButton('.practice-btn', practicesData.status !== 'Start' ? 'Completed' : 'Start');
+              updateText('.totalSlides', `${slidesData.correct}/${totalSlides}`);
+              updateText('.slides-percentage', `${slidesData.percentage}%`);
+              updateText('.practice-percentage', `${practicesData.percentage}%`);
+              updateText('.totalPractices1', `${practicesData.isAttempted ? totalPractices : 0}/${totalPractices}`);
+              
+              updateButtonStatus('.lesson-link[data-type~="slides"] button', slidesData.status);
+              updateButtonStatus('.lesson-link[data-type~="practices"] button', practicesData.status);
+            
+              showSlidesButton('.slides-section', slidesData.status ,url);
+              showPracticesButton('.practice-section', practicesData.status,url);
+              commentForPendingQuestion('.practice-section',practicesData.status,  practicesData.countTextQuestion);
+          }
+        }
+      })
+      $('.close').trigger('click');
+      $('#Modal2').modal('show');
+  });
+  function lessonContentModal(assessmentId){
+    $('#lesson-modal').modal('show');
+    $.ajax({
+      type:'POST',
+      url:'/tutor-training-assessments/render-assigned-lesson',
+      dataType:'html',
+      data:{
+        tutor_assessment_id:assessmentId,
+        
+      },
+      success:function(response){
+        $(".lesson-content").html(response);
+      },
+    })
+  }
+  function updateButton(selector, text) {
+      $(selector).text(text);
+  }
+
+  function updateText(selector, text) {
+      $(selector).text(text);
+  }
+
+  function updateButtonStatus(selector, status) {
+      $(selector).addClass(status);
+  }
+
+  function showSlidesButton(selector, status,url) {
+      $('.slides-status').remove();
+      if (status === 'Completed') {
+          // $(selector).append(`<div class="btn-custum"><button type="button" class="btn btn-outline-success slides-status Completed mr-2"><span class="slide-btn">Completed</span></button><a class="lesson-link" href="${url}/slides" title="Challenges" data-type="slides"><button type="button" class="btn btn-outline-primary"><span class="slide-btn">View</span></button></a></div>`);
+          
+          $(selector).append(`<a class="" href="${url}/slides" title="Challenges" data-type="slides"><button type="button" class="btn btn-outline-success slides-status Completed mr-2"><span class="slide-btn">Completed</span></button></a>`);
+      }else{
+        // $(".btn-custum").remove();
+        $(selector).append(`<a class="lesson-link" href="${url}/slides" title="view" data-type="slides"><button type="button" class="btn btn-outline-success slides-status ${status}"><img src="/images/play.svg" alt="play"/><span class="slide-btn">${status}</span></button></a>`);
+      }
+  }
+
+  function showPracticesButton(selector, status,url) {
+      $('.practices-status').remove();
+      if (status !== 'Start') {
+        $(selector).append(`<a class="" href="${url}/practices?type=1" title="Challenges" data-type="practices"><button type="button" class="btn btn-outline-success practices-status"><span class="slide-btn">Completed</span></button></a>`);
+      }else{
+        $(selector).append(`<a class="lesson-link" href="${url}/practices" title="Challenges" data-type="practices"><button type="button" class="btn btn-outline-success practices-status ${status}"><img src="/images/play.svg" alt="play"/><span class="slide-btn">${status}</span></button></a>`);
+      }
+  }
+
+  function commentForPendingQuestion(selector, status, countTextQuestion) {
+    $('.w-comment').remove();  
+    if(countTextQuestion > 0 && status != 'Start'){
+      $(selector).append(`<p class="text-dblue my-3 w-comment" style="font-size: 12px;font-weight: 500;margin-top: 8px !important;margin-bottom: 0 !important;line-height: 15px;"><code style="font-size: 12px;color: #f45624;font-family: 'Poppins', sans-serif;">Note:</code> <strong>${countTextQuestion} Answers</strong> waiting for Admin comment</p>`);
+    }
+  }
+</script>

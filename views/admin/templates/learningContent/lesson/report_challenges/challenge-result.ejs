@@ -1,0 +1,43 @@
+<style>
+  .multiple-tab.card-block .unassign-content{
+    justify-content: center;
+    -webkit-justify-content: center;
+  }
+</style>
+<div class="assessments_challenge_result" id="fullscreen-element">
+  <div class="challenges-screen">
+    <div class="challenge-summry-box">
+      <div class="challenge-summry-box-inner">
+        <img src="/images/success.png" alt="success" />
+        <h3>You have completed the challenge, <b><%=challenge.title%></b></h3>
+        <ul class="challenge-summry">
+          <li class="challenge-summry-list bg-light-gray">
+            <span>Attempted</span> <%=challenge.totalAttempted%>
+          </li>
+          <li class="challenge-summry-list bg-light-green">
+            <span>Correct</span> <%=challenge.totalCorrect%>
+          </li>
+          <li class="challenge-summry-list bg-light-denger">
+            <span>Incorrect</span><% let totalIncorrect =
+            challenge.totalAttempted - challenge.totalCorrect %>
+            <%=totalIncorrect%>
+          </li>
+        </ul>
+          <% 
+          let percentage = (challenge.totalAttempted > 0 && challenge.totalCorrect > 0) ? 
+              (parseFloat(challenge.totalCorrect / challenge.totalAttempted) * 100) : 
+              0;
+          if(Number.isInteger(percentage) === false){
+            percentage = percentage.toFixed(2);
+          }
+        %>
+        <p>You have got <b><%=percentage%> %</b> result in this challenge.</p>
+        <div class="challenge-cointotal">
+          <div class="challenge-coinbox bg-light-yellow">
+            <img src="/images/nocoin.png" alt="nocoin" /><%=percentage%> %
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

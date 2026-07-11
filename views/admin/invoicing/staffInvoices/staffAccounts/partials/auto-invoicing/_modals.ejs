@@ -1,0 +1,260 @@
+<!-- Enable Auto-Invoicing Popup -->
+<div class="modal fade invoices-modal automatic_invoice" data-backdrop="static" id="automaticInvoicing" tabindex="-1" role="dialog" aria-labelledby="automaticInvoicingLabel">
+    <div class="modal-dialog modal-lg modal-dialog-centered normal_form_block" style="--max-width: 620px" role="document">
+        <div class="modal-content border-0">
+            <form class="form-wizard max-h-scroll-modal custom_scroll_design" id="automatic-invoicing-add-form" action="/staff-invoices/automatic-invoicing/store" novalidate>
+                <div class="modal-header pt-0 px-0 border-0">
+                    <h3 class="modal-title title_style m-0" id="automaticInvoicingLabel">Automatic Invoicing</h3>
+                    <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </button>
+                </div>
+                <input type="hidden" name="tutorId" value="" class="invoicing_tutor_ids">
+                <div class="" id="invoice-step-1">
+                    <ul class="steps">
+                        <li class="active"><span>1</span> Invoice Details</li>
+                        <li><span>2</span> Invoice Options</li>
+                    </ul>
+                    <div class="modal-body form_normal settings_content px-0">
+                        <div class="form-design">
+                            <div class="form-design-group form-group position-relative overflow-hidden mb-0">
+                                <label class="form-label">Billing Cycle Start Date</label>
+                                <div class="form-event-felid">                                    
+                                <%
+                                    let today = new Date();
+                                    let year = today.getFullYear();
+                                    let month = today.getMonth() + 1; // next month (0-based)
+
+                                    if (month > 11) {
+                                        month = 0;
+                                        year++;
+                                    }
+
+                                    // always 01 as the day
+                                    let formatted = year + "-" + String(month + 1).padStart(2, '0') + "-" + "01";
+
+                                    // new logic for min (tomorrow)
+                                    let tomorrow = new Date();
+                                    tomorrow.setDate(today.getDate() + 1);
+                                    let minDate = tomorrow.toISOString().split("T")[0];
+                                %>
+                                    <input type="date" name="invoiceDetails[billingCycleStartDate]" id="end_date" placeholder="End Date" class="form-control pl-40 full_date_click" value="<%= formatted %>" min="<%= minDate %>"  />
+                                    <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+                                </div>
+                            </div>
+                            <div class="form-design-group">
+                                <label class="form-label">Invoice For</label>
+                                <div class="form-event-felid d-flex flex-sm-row flex-column align-items-center">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="invoiceDetails[invoiceFor]" id="upcomingLesson" value="upcoming_lessons" checked>
+                                        <label class="radiolabel w-100 m-0" for="upcomingLesson">Upcoming Lessons (Prepaid)</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="invoiceDetails[invoiceFor]" id="PreviousLessons" value="previous_lessons">
+                                        <label class="radiolabel w-100 m-0" for="PreviousLessons">Previous Lessons (Postpaid)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-design-group">
+                                <label class="form-label">Invoice Creation Date</label>
+                                <div class="form-event-felid d-flex flex-sm-row flex-column align-items-center">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input invoice-creation-date" type="radio" name="invoiceDetails[invoiceCreationDate][option]" id="daycycle" value="first_day_of_billing_cycle" checked>
+                                        <label class="radiolabel w-100 m-0" for="daycycle">First Day Of Billing Cycle</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input invoice-creation-date full_date_click" type="radio" name="invoiceDetails[invoiceCreationDate][option]" id="chooseAdate" value="choose_date">
+                                        <label class="radiolabel w-100 m-0" for="chooseAdate">Choose A Date</label>
+                                    </div>
+                                </div>
+                                <div class="form-design-group form-group position-relative overflow-hidden mb-0 full_date_click d-none">
+                                    <label class="form-label">Choose a Date</label>
+                                    <div class="form-event-felid">
+                                        <input type="date" name="invoiceDetails[invoiceCreationDate][customDate]" id="end_date" placeholder="End Date" class="form-control pl-40 full_date_click">
+                                        <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-design-group">
+                                <label class="form-label">Due Date Setup</label>
+                                <div class="form-event-felid d-flex flex-sm-row flex-column align-items-center ">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input due-date-setup" type="radio" name="invoiceDetails[dueDateSetup][option]" id="duedate" value="no_due_date" checked> 
+                                        <label class="radiolabel w-100 m-0" for="duedate">No Due Date</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input due-date-setup" type="radio" name="invoiceDetails[dueDateSetup][option]" id="dueChooseAdate" value="choose_date">
+                                        <label class="radiolabel w-100 m-0" for="dueChooseAdate">Choose A Date</label>
+                                    </div>
+                                </div>
+                                <div class="form-design-group form-group position-relative overflow-hidden mb-0 choose-due-date-setup d-none">
+                                    <label class="form-label">Choose a Date</label>
+                                    <div class="form-event-felid">
+                                        <input type="date" name="invoiceDetails[dueDateSetup][customDate]" id="end_date" placeholder="End Date" class="form-control pl-40 full_date_click">
+                                        <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="separator-border"></div>
+                            <h3 class="modal-title title_style m-0 d-flex">
+                                <svg width="22" height="22" class="mr-2" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4"><path d="M3.28125 4.72949H15.9679C17.4896 4.72949 18.7179 5.95783 18.7179 7.47949V10.5228" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.17792 1.83301L3.28125 4.72965L6.17792 7.62635" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M18.7179 17.2699H6.03125C4.50958 17.2699 3.28125 16.0416 3.28125 14.5199V11.4766" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.8223 20.1664L18.7189 17.2697L15.8223 14.373" stroke="#4A4674" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Auto-Invoicing Schedule
+                            </h3>
+                            <div class="form-design-group">
+                                <label class="form-label">Frequency</label>
+                                <div class="form-event-felid d-flex flex-sm-row flex-column align-items-center">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input auto-invoice-scheduled" type="radio" name="invoiceDetails[autoInvoicingSchedule][frequency]" id="Weekly" value="weekly">
+                                        <label class="radiolabel w-100 m-0" for="Weekly">Weekly</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input auto-invoice-scheduled" type="radio" name="invoiceDetails[autoInvoicingSchedule][frequency]" id="monthly" value="monthly" checked>
+                                        <label class="radiolabel w-100 m-0" for="monthly">Monthly</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input auto-invoice-scheduled" type="radio" name="invoiceDetails[autoInvoicingSchedule][frequency]" id="Yearly" value="yearly">
+                                        <label class="radiolabel w-100 m-0" for="Yearly">Yearly</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-design-group form-group m-0">
+                                <label class="form-label">Duration</label>
+                                <div class="input-wrapper">
+                                    <input class="form-control" name="invoiceDetails[autoInvoicingSchedule][repeatsEvery]" type="text" value="1" autocomplete="off" style="padding-right: 80px;">
+                                    <span class="duration-label">Month(s)</span>
+                                </div>
+                                <!-- <span class="label-after duration-value">(In Minutes)</span> -->
+                            </div>
+                            <div class="form-design-group repeat-data">
+                                <label class="form-label">Repeat</label>
+                                <div class="form-event-felid d-flex flex-sm-row flex-column align-items-center">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="invoiceDetails[autoInvoicingSchedule][repeatOption]" id="monthlyOnDay" value="monthly_on_day" checked>
+                                        <label class="radiolabel w-100 m-0" for="monthlyOnDay">Monthly On Day 01</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="invoiceDetails[autoInvoicingSchedule][repeatOption]" id="MonthlyFirst" value="monthly_on_first_weekday">
+                                        <label class="radiolabel w-100 m-0" for="MonthlyFirst">Monthly On First Tuesday</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex align-items-start align-items-sm-center justify-content-between flex-sm-row flex-column px-0 pb-0">
+                        <button type="button" data-dismiss="modal" class="btn cancel-btn theme-btn">Cancel</button>
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn theme-btn cancel-btn ml-0 mr-2 prev-btn" disabled>Previous</button>
+                            <button type="button" class="btn theme-btn m-0 next-btn">Next</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-none" id="invoice-step-2">
+                    <ul class="steps">
+                        <li class="complete"><span>1</span> Invoice Details</li>
+                        <li class="active"><span>2</span> Invoice Options</li>
+                    </ul>
+                    <div class="modal-body form_normal settings_content px-0">
+                        <div class="form-design">
+                            <div class="form-design-group">
+                                <label class="form-label">Display Style</label>
+                                <div class="row">
+                                    <div class="col-7 col-md-7">
+                                        <div class="form-event-felid d-flex flex-column">
+                                           <% invoiceTypes.map((type,index) => { %>
+                                                <div class="radio_group form-check form-check-inline w-100 m-0">
+                                                <input class="form-check-input" type="radio" name="preferences[displayStyle]" id="display_size-<%=index%>" value="<%=type.val%>" checked="<%=type.default%>">
+                                                <label class="radiolabel w-100 m-0 d-flex flex-column" for="display_size-<%=index%>"><%=type.label%> <span><%=type.description%></span></label>
+                                            </div>
+                                            <% }) %>
+                                        </div>
+                                    </div>
+                                    <div class="col-5 col-md-5 align-self-center">
+                                        <div class="text-center"><img src="/images/invoiceIcons/format-condensed.svg" id="display_type_img" class="img img-fluid" /></div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="separator-border"></div>
+                            <h3 class="modal-title title_style m-0">Preferences</h3>
+                            <div class="form-design-group">
+                                <label class="form-label">If a family has a ₹00.00</label>
+                                <div class="form-event-felid d-flex flex-column">
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="preferences[zeroBalanceHandling]" id="family_invoice" value="skip_invoice" checked>
+                                        <label class="radiolabel w-100 m-0" for="family_invoice">Skip Creating The Invoice</label>
+                                    </div>
+                                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                                        <input class="form-check-input" type="radio" name="preferences[zeroBalanceHandling]" id="invoice_anyways" value="create_anyways">
+                                        <label class="radiolabel w-100 m-0" for="invoice_anyways">Create The Invoice Anyways</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-design-group form-group m-0">
+                                <label class="form-label">Balance Forward</label>
+                                <div class="form-check">
+                                    <input type="checkbox" name="preferences[balanceForward]" value="1" class="form-check-input" id="previous_balance_payments" checked>
+                                    <label class="form-check-label" for="previous_balance_payments">Include Previous Balance & Payments On The Invoice</label>
+                                </div>
+                            </div>
+                            <div class="form-design-group form-group m-0">
+                                <label class="form-label">Auto-Email</label>
+                                <div class="form-check">
+                                    <input type="checkbox" name="preferences[autoEmail]" value="1" class="form-check-input" id="automatically_send_invoice">
+                                    <label class="form-check-label" for="automatically_send_invoice">Automatically Send Invoices On Invoice Date</label>
+                                </div>
+                            </div>
+                            <div class="form-design-group form-group m-0">
+                                <label class="form-label">Footer <span class="fw-normal">(Optional)</span></label>
+                                <textarea name="preferences[footerNote]" rows="5" cols="12" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="expansion-panel">
+                            <div class="expansion-panel-head">
+                                <div class="ex_panel_left">
+                                    <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.25 21H10.25C10.25 22.1 9.35 23 8.25 23C7.15 23 6.25 22.1 6.25 21ZM4.25 19C4.25 19.55 4.7 20 5.25 20H11.25C11.8 20 12.25 19.55 12.25 19C12.25 18.45 11.8 18 11.25 18H5.25C4.7 18 4.25 18.45 4.25 19ZM15.75 10.5C15.75 14.32 13.09 16.36 11.98 17H4.52C3.41 16.36 0.75 14.32 0.75 10.5C0.75 6.36 4.11 3 8.25 3C12.39 3 15.75 6.36 15.75 10.5ZM20.62 8.37L19.25 9L20.62 9.63L21.25 11L21.88 9.63L23.25 9L21.88 8.37L21.25 7L20.62 8.37ZM18.25 7L19.19 4.94L21.25 4L19.19 3.06L18.25 1L17.31 3.06L15.25 4L17.31 4.94L18.25 7Z" fill="#F45624"></path></svg></span>
+                                    <p>You can customize more invoice settings from Business Settings <br>
+                                        <a href="/business-settings" target="_blank" rel="noopener noreferrer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18 19H6C5.45 19 5 18.55 5 18V6C5 5.45 5.45 5 6 5H11C11.55 5 12 4.55 12 4C12 3.45 11.55 3 11 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V13C21 12.45 20.55 12 20 12C19.45 12 19 12.45 19 13V18C19 18.55 18.55 19 18 19ZM14 4C14 4.55 14.45 5 15 5H17.59L8.46 14.13C8.07 14.52 8.07 15.15 8.46 15.54C8.85 15.93 9.48 15.93 9.87 15.54L19 6.41V9C19 9.55 19.45 10 20 10C20.55 10 21 9.55 21 9V4C21 3.45 20.55 3 20 3H15C14.45 3 14 3.45 14 4Z" fill="#F45624"></path> </svg> Business Settings</a></p>
+                                </div>
+                                <div class="ex_panel_right">
+                                    <buton type="button" class="expansion_close"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18.3002 5.70973C17.9102 5.31973 17.2802 5.31973 16.8902 5.70973L12.0002 10.5897L7.11022 5.69973C6.72022 5.30973 6.09021 5.30973 5.70021 5.69973C5.31021 6.08973 5.31021 6.71973 5.70021 7.10973L10.5902 11.9997L5.70021 16.8897C5.31021 17.2797 5.31021 17.9097 5.70021 18.2997C6.09021 18.6897 6.72022 18.6897 7.11022 18.2997L12.0002 13.4097L16.8902 18.2997C17.2802 18.6897 17.9102 18.6897 18.3002 18.2997C18.6902 17.9097 18.6902 17.2797 18.3002 16.8897L13.4102 11.9997L18.3002 7.10973C18.6802 6.72973 18.6802 6.08973 18.3002 5.70973Z" fill="#000000"></path> </svg></buton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex align-items-start align-items-sm-center justify-content-between flex-sm-row flex-column px-0 pb-0">
+                        <button type="button" data-dismiss="modal" class="btn cancel-btn theme-btn">Cancel</button>
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn theme-btn cancel-btn ml-0 mr-2 prev-btn">Previous</button>
+                            <button type="submit" class="btn theme-btn m-0 next-btn">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Disable Auto-Invoicing Popup -->
+<div class="modal fade invoices-modal" data-backdrop="static" id="disableAutoInvoicing" tabindex="-1" role="dialog" aria-labelledby="disableAutoInvoicingLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered normal_form_block" style="--max-width: 530px" role="document">
+        <form class="form-wizard" id="disable-auto-invoicing-form" action="/staff-invoices/automatic-invoicing/disable">
+            <input type="hidden" name="tutorIds" value="" class="invoicing_tutor_ids">
+            <div class="modal-content form-wizard border-0">
+                <div class="modal-header pt-0 px-0">
+                    <h3 class="modal-title title_style m-0" id="disableInvoiceLabel">Disable Auto-Invoicing</h3>
+                    <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </button>
+                </div>
+                <div class="modal-body form_normal settings_content px-0">
+                    <h4 class="body-title">Are you sure you want to disable auto-invoicing?</h4>
+                    <p class="main-color mb-0">Auto-invoices will no longer be created for the selected family. You will need to create and send them manually</p>
+                </div>
+                <div class="modal-footer d-flex align-items-center flex-sm-row flex-column px-0 pb-0 border-0 pt-2">
+                    <button type="button" data-dismiss="modal" class="btn cancel-btn theme-btn w-100">Cancel</button>
+                    <button type="submit" class="btn theme-btn m-0 w-100">Disable Auto-Invoicing</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 

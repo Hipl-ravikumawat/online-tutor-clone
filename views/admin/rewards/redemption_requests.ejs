@@ -1,0 +1,365 @@
+<div class="right_col" role="main">
+  <div class="back-page">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="javascript:void(0)">Rewards</a>
+      </li>
+      <li class="breadcrumb-item active">Redemption Requests</li>
+    </ol>
+  </div>
+
+  <div class="bussniess_setting">
+    <div class="card-block mb-30">
+      <h2 class="title-text">Filter Requests</h2>
+      <ul class="filter-row">
+        <li class="filter-col">
+          <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Student">
+            <option value="">Select Student</option>
+            <% for(student of students) { %>
+              <option value="<%=student.id%>">
+                <%=student.first_name+' '+student.last_name %>
+                </option>
+                <% } %>
+            </select>
+          </li>
+          <li class="filter-col">
+            <select class="form-control select2" id="voucher" tabindex="-1" data-placeholder="Select Voucher">
+              <option value="">Select Voucher</option>
+              <% for(voucher of vouchers) { %>
+                <option value="<%=voucher.id%>">
+                  <%= `${voucher.title} - ${appSymbol}${voucher.equivalent_amount} ${appCurrency} = ${voucher.required_points} Points` %>
+                  </option>
+                  <% } %>
+              </select>
+          </li>
+          <li class="filter-col">
+              <select class="form-control select2" id="status" tabindex="-1" data-placeholder="Select Status">
+                <option value="">Select Select</option>
+                <% for(status of redemptionStatus) { %>
+                  <option value="<%=status%>">
+                  <%= `${status}` %>
+                  </option>
+                  <% } %>
+              </select>
+          </li>
+          <li class="filter-col">
+            <input type="date" name="requested_date" value="Invalid date" max="<%=moment().format(' YYYY-MM-DD')%>"
+                  class="form-control" id="requested_date">
+        </li>
+        <li class="filter-col">
+          <button class="btn theme-btn filter">Filter</button>
+          <button class="btn theme-btn reset">Reset</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2 class="title-text">Redemption Request List</h2>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card-box table-responsive allselect-table">
+                  <table id="voucherHistoryTable" class="table table-striped table-bordered dt-responsive nowrap"
+                    cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th>Sr No.</th>
+                        <th>Student</th>
+                        <th>Voucher</th>
+                        <th>Available Points</th>
+                        <th>Status</th>
+                        <th>Requested Date</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/voucher_request_comment'); %>
+
+  <script type="text/javascript">
+    var loggedUserRole = parseInt('<%=loggedUserRole%>');
+    var appSymbol = '<%=appSymbol%>';
+    var appCurrency = '<%=appCurrency%>';
+
+    $(document).ready(function () {
+      $(".select2").select2();
+      dataTable();
+
+      $(".reset").click(function () {
+        $("#student").val(null).trigger("change");
+        $("#voucher").val(null).trigger("change");
+        $("#status").val(null).trigger("change");
+        $("#requested_date").val(moment().format('DD MMM YYYY')).trigger('change');
+        dataTable();
+      });
+
+      $(".filter").click(function () {
+        let student = $("#student").val();
+        let voucher = $("#voucher").val();
+        let status = $("#status").val();
+        let requested_date = $("#requested_date").val();
+        dataTable(student, voucher, status, requested_date);
+      });
+
+    });
+
+    $(document).on('click', '.approve, .decline, .view-comment', function (e) {
+      $("#request-decline-form").trigger("reset");
+      $("#declined-pop").find('input, textarea').prop('disabled', false).val('');
+      $("#declined-pop").find('.text-danger').remove();
+      
+      const hasApproved = $(this).hasClass('approve');
+      const hasDecline = $(this).hasClass('decline');
+      const hasViewComment = $(this).hasClass('view-comment');
+      const recordId = $(this).data('record-id');
+
+      if (hasApproved || hasDecline) {
+        $('#voucher-request-id').val(recordId);
+        if (hasApproved) {
+          $("#voucher-status").val('Approved');
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to approve this request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, approve it!',
+            cancelButtonText: 'Cancel',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $('#request-decline-form').submit();
+            }
+          });
+        }
+
+        if (hasDecline) {
+          $(document).find('.text-danger').remove();
+          $("#voucher-status").val('Rejected');
+          $("#btn-store-decline-reason").removeClass('d-none');
+          $('input[type="checkbox"]').prop('disabled', false);
+          $('input[type="text"], input[type="number"], textarea').prop('readonly', false);
+          $('#declined-pop').modal('show');
+        }
+      }
+      if (hasViewComment) {
+        $.ajax({
+          type: "GET",
+          url: "/rewards/fetch-voucher-rejection-detail/" + recordId,
+          success: function (response) {
+            if (response.success === true) {
+              const record = response?.record;
+              $('#reason').val(record.reason);
+              $("#btn-store-decline-reason").addClass('d-none');
+              $('input[type="text"], textarea').prop('disabled', true).prop('readonly', true);
+              $('#declined-pop').modal('show');
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            let errorMessage;
+            if (jqXHR.status === 404) {
+              errorMessage = "Record not found.";
+            } else if (jqXHR.status === 500) {
+              errorMessage = "Internal server error. Please try again later.";
+            } else {
+              errorMessage = "An unexpected error occurred: " + textStatus;
+            }
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: errorMessage,
+            });
+          },
+          complete: function () {
+          }
+        });
+      }
+    });
+
+    $('#request-decline-form').submit(function (e) {
+      e.preventDefault();
+      var formData = $('#request-decline-form').serialize();
+      let url = `/rewards/update-voucher-request-status`;
+      $('#btn-store-decline-reason').prop('disabled', true);
+      $.ajax({
+        type: "post",
+        url: url,
+        dataType: "json",
+        data: formData,
+        success: function (response) {
+          if (response.success === true) {
+            window.location.reload();
+          }
+        },
+        error: function (response) {
+          $(document).find('.text-danger').remove();
+          if (response.responseJSON.errors) {
+            $.each(response.responseJSON.errors, function (index, error) {
+              if (error.param != '') {
+                $(document).find(`#${error.param}`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+              }
+            });
+          }
+
+          if (response.responseJSON.message) {
+            $(document).find('#decline-dialog-box').before(`<span class="help-block text-danger">${response.responseJSON.message}</span>`);
+          }
+
+        },
+        complete: function (response) {
+          $('#btn-store-decline-reason').prop('disabled', false);
+        }
+      });
+    });
+
+    function dataTable(student = "", voucher = "", status = "", requested_date = "") {
+      $("#voucherHistoryTable").dataTable().fnDestroy();
+      var voucherHistoryTable = $("#voucherHistoryTable").DataTable({
+        paging: true,
+        pageLength: 10,
+        language: {
+          searchPlaceholder: "Search",
+          processing: "<div><div></div><div></div><div></div><div></div></div>",
+        },
+        processing: true,
+        serverSide: true,
+        order: [],
+        dom: "Bfltip",
+        buttons: [
+        ],
+        ajax: {
+          url: "/rewards/redemption-requests-dataTable",
+          type: "POST",
+          data: {
+            student: student,
+            voucher: voucher,
+            status: status,
+            requested_date: requested_date,
+          },
+        },
+        columns: [
+          {
+            data: null,
+            render: function (data, type, row, meta) {
+              return meta.row + 1;
+            },
+          },
+          {
+            data: "studentId",
+            render: function (data, type, row) {
+              return row.studentId.first_name + ' ' + row.studentId.last_name;
+            },
+          },
+          {
+            data: "voucherId",
+            render: function (data, type, row) {
+              let voucherTitle = 'Pioneer Voucher';
+              if(row.voucherId && row.voucherId.title != null){
+                voucherTitle = row.voucherId.title;
+              }
+              
+              return `${voucherTitle} - ${appSymbol}${row?.voucherEquivalentAmount} ${appCurrency} = ${row?.voucherRequiredPoints} Points`;
+            },
+          },
+          {
+            data: "balanceBeforeDeduction",
+            render: function (data, type, row) {
+              if (row.status === 'Pending') {
+                return row?.studentId?.points_wallet_id?.balance;
+              } else {
+                return row?.balanceBeforeDeduction;
+              }
+            },
+          },
+          {
+            data: "status",
+            render: function (data, type, row) {
+              return `<span class="result-status ${row.status.toLowerCase()}">${row.status}</span>`;
+            },
+          },
+          {
+            data: "created_at",
+            render: function (data, type, row) {
+              let createdAt = moment(row.created_at).format('DD MMM YYYY');
+              return createdAt;
+            },
+          },
+          {
+            data: "",
+            render: function (data, type, row) {
+              let html = `<div class="d-flex align-items-center">`;
+              if (loggedUserRole == 1 && row.status === 'Pending') {
+                html += `<a class="approve" href="javascript:void(0)" data-toggle="tooltip" rel="tooltip"
+                              data-placement="top" title="" data-original-title="Approve" data-record-id="${row._id}">
+                              <img src="/images/approved.svg" alt="icon">
+                            </a> 
+                             <a class="decline ml-2" href="javascript:void(0)" data-record-id="${row._id}">
+                              <img src="/images/declined.svg" alt="icon" data-toggle="tooltip" rel="tooltip"
+                                data-placement="top" title="" data-original-title="Decline">
+                            </a>`;
+              }
+
+              if (row.status === 'Rejected') {
+                html += `<a class="ml-2 view-comment" href="javascript:void(0)" data-record-id="${row._id}" ><img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Reason"></a>`;
+              }
+              html += `</div>`;
+              return html;
+
+            },
+          },
+        ],
+        select: {
+          style: "multi",
+          selector: ".select-checkbox"
+        },
+        columnDefs: [
+          {
+            targets: 0,
+            data: "select",
+            searchable: false,
+            orderable: false,
+            width: "3%"
+          },
+          {
+            targets: [0, 2, 4, 6] /* column index */,
+            orderable: false /* true or false */,
+          }
+
+        ],
+      });
+
+      if (loggedUserRole === 3) {
+        voucherHistoryTable.column(1).visible(false);
+        voucherHistoryTable.column(6).visible(false);
+      }
+
+      $("#select_all").on("click", function (e) {
+        if ($(this).is(":checked")) {
+          voucherHistoryTable.rows().select();
+          $('.select-checkbox').prop('checked', true);
+        } else {
+          voucherHistoryTable.rows().deselect();
+          $('.select-checkbox').prop('checked', false);
+        }
+      });
+
+      voucherHistoryTable.ajax.reload(function () {
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    }
+  </script>

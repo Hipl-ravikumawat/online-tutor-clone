@@ -1,0 +1,309 @@
+<style>
+  /* Pagination Styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .pagination .page-link {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #007bff;
+    transition: background-color 0.3s ease;
+  }
+  .pagination .page-link:hover {
+    background-color: #f1f1f1;
+  }
+  .pagination .active {
+    background-color: #f68f45;
+    color: white;
+    border-color: #f68f45;
+    pointer-events: none;
+  }
+  .pagination .page-link:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="card-block">
+        <div class="detailed-report-area">
+          <div class="back_btn mb-4">
+            <a href="javascript:void(0)" onclick="window.history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+                    <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Back
+            </a>
+          </div>
+        </div>
+        <div class="add_lesson_form d-flex justify-content-between align-items-center">
+          <h2 class="title-text mb-0" id="event-title">View Session's Lesson</h2>
+        </div>
+        <div class="lesson_name py-4">
+          <h3 class="title-text mb-0"><span id="lesson-title"></span><span class="total-count">Total Sessions : <span id="total-slide-count"></span></h3>
+          
+        </div>
+        <div class="slide_details">
+          <ul class="slide_detail_list">
+          </ul>
+        </div>
+          <ul class="pagination mb-0 justify-content-end">
+            <input type="hidden" name="offset" id="offset" value="0">
+            <li><span class="showing-item">Showing <span id="CurrentPageNumber">1</span> of <span
+                        id="totalRecords">2</span>
+            </li>
+            <li class="page-item previous-btn">
+                <a class="page-link paging" data-type="prev"><i class="fa fa-angle-left"></i></a>
+            </li>
+            <li class="page-item current"><a class="page-link">1</a></li>
+            <li class="page-item next-btn">
+                <a class="page-link paging" data-type="next"><i class="fa fa-angle-right"></i></a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script type="text/javascript">
+
+let currentOffset = 0;
+let currentPage = 1;
+const showEntries = 5;
+
+$(document).ready(function () {
+
+  $(".paging").click(handlePagingClick);
+
+  fetchDataTable();
+});
+
+
+function fetchDataTable(
+  page = 1,
+  limit = showEntries,
+  offset = currentOffset
+) {
+
+  $(".slide_detail_list").html(`
+    <li class="text-center py-5">
+      Loading...
+    </li>
+  `);
+
+  // Get studentId from URL
+    const pathParts = window.location.pathname
+  .split('/')
+  .filter(Boolean);
+
+const studentId = pathParts[1];
+  $.ajax({
+    type: "POST",
+    url: "/students/student-events",
+    data: {
+      studentId,
+      start: offset,
+      length: limit
+    },
+
+    success: function (response) {
+        const res = typeof response === "string"
+            ? JSON.parse(response)
+            : response;
+        let html = "";
+        if (
+            !res.data ||
+            !Array.isArray(res.data) ||
+            res.data.length === 0
+        ) {
+            html = `
+            <li class="text-center py-5">
+                No Sessions Found
+            </li>
+            `;
+        } else {
+            res.data.forEach(function(event, index) {
+              const collapseId = `collapse_${offset + index}`;
+
+              const startDate = event.start_date
+                  ? moment(event.start_date).format("DD MMM YYYY")
+                  : "N/A";
+              const startTime = event.start_time
+                  ? moment(event.start_time).format("hh:mm A")
+                  : "N/A";
+              const endTime = event.end_time
+                  ? moment(event.end_time).format("hh:mm A")
+                  : "N/A";
+
+              let lessonsHtml = "";
+              
+              if (event.lessons && event.lessons.length > 0) {
+                event.lessons.forEach(function(lesson) {
+                 lessonsHtml += `
+                    <div class="lesson-item d-flex justify-content-between align-items-center">
+                      
+                      <a href="/calendar/${event.event_id}/lesson/${lesson.lesson_id}/course-details">
+                        <strong>${lesson.lesson_name || "N/A"}</strong>
+                        <span class="badge badge-info ml-2">
+                          ${!lesson.status || lesson.status === "N/A" ? "Not Started" : lesson.status}
+                        </span>
+                      </a>
+
+                      <div>
+                        <!-- View Button -->
+                        <a href="/calendar/${event.event_id}/lesson/${lesson.lesson_id}/course-details">
+                          <img src="/images/eye.svg" alt="icon">
+                        </a>
+                      </div>
+
+                    </div>
+                  `;
+                });
+              } else {
+                lessonsHtml = `
+                <div class="text-muted text-center">
+                    No Lessons
+                </div>
+                `;
+              }
+
+              html += `
+                  <li class="slide_list mb-3 mt-0 p-0 border-0">
+                    <div class="card view_session_card">
+                      <div class="card-body">
+                        <div class="view_session_header ${index === 0 ? "" : "collapsed"}" data-toggle="collapse" data-target="#${collapseId}">
+                          <div class="view_session_header_left">
+                            <h5 class="mb-0">Session ${offset + index + 1}</h5>
+                            <p class="mb-0">
+                              <span>Tutor:</span>
+                              ${event.tutor ? event.tutor.tutor_name : "N/A"}
+                            </p>
+                          </div>
+                          <div class="view_session_header_right">
+                            <p class="mb-0 session_start_date position-relative">${startDate}</p>
+                            <p class="mb-0">${startTime} - ${endTime}</p>
+                            <button class="session_toggle_btn">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
+                                  <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1" stroke="#fff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg>  
+                            </button>
+                          </div>
+                        </div>
+                        <div class="lessons-wrapper view_session_body collapse ${index === 0 ? "show" : ""}" id="${collapseId}">
+                          <div class="view_session_body_inner">
+                            ${lessonsHtml}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+              `;
+            });
+        }
+
+        console.log(html, "FINAL HTML");
+        $(".slide_detail_list").html(html);
+        const totalPages = Math.ceil(
+            (res.recordsTotal || 0) / limit
+        );
+        $("#totalRecords").html(
+            totalPages > 0 ? totalPages : 1
+        );
+        $("#CurrentPageNumber").html(page);
+        $(".current a").html(page);
+        $("#total-slide-count").html(
+            res.recordsTotal || 0
+        );
+        togglePaginationButtons(page, totalPages);
+        },
+
+      error: function (xhr) {
+        console.error(xhr);
+        $(".slide_detail_list").html(`
+          <li class="text-center text-danger">
+            Failed to load sessions
+          </li>
+        `);
+      }
+  });
+}
+
+
+function handlePagingClick() {
+
+  const totalPage = parseInt($("#totalRecords").text());
+
+  const type = $(this).data("type");
+
+  if (type === "next") {
+
+    if (currentPage >= totalPage) {
+      return;
+    }
+
+    currentPage++;
+
+    currentOffset += showEntries;
+
+  }
+
+  else if (type === "prev") {
+
+    if (currentPage <= 1) {
+      return;
+    }
+
+    currentPage--;
+
+    currentOffset -= showEntries;
+
+    if (currentOffset < 0) {
+      currentOffset = 0;
+    }
+  }
+
+  $("#offset").val(currentOffset);
+
+  $("#CurrentPageNumber").html(currentPage);
+
+  fetchDataTable(
+    currentPage,
+    showEntries,
+    currentOffset
+  );
+}
+
+
+function togglePaginationButtons(currentPage, totalPage) {
+
+  if (currentPage <= 1) {
+
+    $(".previous-btn").addClass("disabled");
+
+  } else {
+
+    $(".previous-btn").removeClass("disabled");
+  }
+
+  if (currentPage >= totalPage) {
+
+    $(".next-btn").addClass("disabled");
+
+  } else {
+
+    $(".next-btn").removeClass("disabled");
+  }
+}
+
+</script>

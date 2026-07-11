@@ -1,0 +1,22 @@
+<div class="form-group">
+    <% if (label) { %> 
+        <label class="form-label" for="<%= id %>">
+            <%= label %>
+            <% if (required) { %>
+                <span class="required">*</span>
+            <% } %>
+        </label>
+    <% } %> 
+    <select class="form-control <%= className || '' %>" id="<%= id %>" name="<%= name %>" <%=required ? 'required' : '' %>
+        <%= attrs || '' %> > <% if (placeholder) { %>
+            <option value="">
+                <%= placeholder %>
+            </option>
+        <% } %>
+        <% options.forEach(option=> { %> 
+        <option value="<%= option.value %>"
+            <%=(option.value==selected) ? 'selected' : '' %>> <%= option.label %>
+        </option>
+        <% }) %>
+    </select>
+</div>

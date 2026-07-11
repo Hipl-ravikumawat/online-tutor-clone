@@ -1,0 +1,105 @@
+<div class="right_col" role="main">
+    <div class="full_result_area mb-30">
+        <h2 class="title-text mb-0 pr-3"></h2>
+    </div>
+    <div class="final-score-assessment card-block">
+        <div class="back_btn">
+            <a href="javascript:void(0)" onclick="window.history.back();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none"
+                    class="mr-2">
+                    <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53"
+                        stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Back
+            </a>
+        </div>
+        <div class="score-panel-box text-center">
+            <div class="sut-tut-name">
+                <h2 class="title-text">
+                    <%=studentName%>
+                </h2>
+                <p class="mb-4" id="std-assessment-completion-date"></p>
+            </div>
+            <div>
+                <div class="pie"
+                    data-pie='{ "percent": <%=finalResult.percentage%>, "colorSlice": "rgba(244, 120, 23, 1)", "colorCircle": "rgba(255, 241, 232, 1)", "fontWeight": "600", "fill": "rgba(255, 241, 232, 1)" }'>
+                </div>
+            </div>
+            <h3 class="title-text">Final Score Of Assessment</h3>
+            <div class="both-scrore-pbox">
+                <div class="both-score-inner">
+                    <p class="questio-Plist"><span class="attemp-question">
+                            <%=finalResult.correctPracticeQuestion%>
+                        </span>/<span class="Total-question">
+                            <%=finalResult.totalPracticeQuestion%>
+                        </span></p>
+                    <p>Practices Final Score</p>
+                </div>
+                <div class="both-score-inner">
+                    <p class="questio-Plist"><span class="attemp-question">
+                            <%=finalResult.correctChallengeQuestion%>
+                        </span>/<span class="Total-question">
+                            <%=finalResult.totalChallengeQuestion%>
+                        </span></p>
+                    <p>Challenges Final Score</p>
+                </div>
+            </div>
+            <div class="score-panel-box-bottom">
+                <p>Results break-down and analysis are available here.</p>
+                <a href="/attempted-assessments/detailed-report/<%=assessmentId%>/student/<%=studentId%>/attempted-assessment-summary"
+                    class="btn theme-btn">View Assessment Summary</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/tomik23/circular-progress-bar@latest/docs/circularProgressBar.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        const assessmentCompletionDate = "<%=assessmentCompletionDate%>";
+        $('#std-assessment-completion-date').text(moment(assessmentCompletionDate).format('D MMMM YYYY, h:mm A'));
+        $(document).on('click', '.lesson-inner', function () {
+            $(this).parent(".lesson-header").next(".lesson-body").slideToggle(350);
+            $(this).toggleClass("question-active");
+        });
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        // update circle when range change
+        const pie = document.querySelectorAll(".pie");
+        const range = document.querySelector('[type="range"]');
+
+        // start the animation when the element is in the page view
+        const elements = [].slice.call(document.querySelectorAll(".pie"));
+        const circle = new CircularProgressBar("pie");
+
+        // circle.initial();
+
+        if ("IntersectionObserver" in window) {
+            const config = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.75
+            };
+
+            const ovserver = new IntersectionObserver((entries, observer) => {
+                entries.map((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.75) {
+                        circle.initial(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, config);
+
+            elements.map((item) => {
+                ovserver.observe(item);
+            });
+        } else {
+            elements.map((element) => {
+                circle.initial(element);
+            });
+        }
+    });
+
+</script>

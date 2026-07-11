@@ -1,0 +1,22 @@
+
+<script type="text/javascript">  
+    function formatColorOption(state) {
+        if (!state.id) return state.text;
+
+        // Find the original option element
+        const option = state.element;
+        const bgColor = option.getAttribute('style');
+
+        return `<span style="${bgColor}; padding: 2px 8px; border-radius: 4px;">${state.text}</span>`;
+    }
+
+    $(document).ready(function () {
+        $(".select2").select2({ allowClear: false });
+
+        $('#color').select2({
+            templateResult: formatColorOption,
+            templateSelection: formatColorOption,
+            escapeMarkup: function (m) { return m; } // Allow HTML rendering
+        });
+  });
+</script>

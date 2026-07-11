@@ -1,0 +1,80 @@
+<!-- tutor-training learning content single grid content -->
+<li>
+    <% if(rowData.courseImage !== '') { %>
+    <div class="course-thumb"><img src="<%=rowData.courseImage%>" /></div>
+    <% } %>
+    <div class="course-description">
+      <div class="top-dis">
+        <h3 class="title-text"><%=rowData.content.title%></h3>
+        <p><%=rowData.content.short_description.substring(0, 275)%></p>
+      </div>
+      <div class="course-detail">
+        <div class="detail-col">
+          <p class="p-light">Topic</p>
+          <p class="p-dark">
+            <%= (rowData.content.topic_id) ? rowData.content.topic_id.name : '' %>
+          </p>
+        </div>
+        <div class="detail-col">
+          <p class="p-light">SubTopic</p>
+          <p class="p-dark"><%=rowData.subTopicName%></p>
+        </div>
+        <div class="detail-col">
+          <p class="p-light">Lessons</p>
+          <p class="p-dark"><%=rowData.content.lesson_ids.length%></p>
+        </div>
+        <div class="detail-col">
+          <p class="p-light">Slides</p>
+          <p class="p-dark"><%=rowData.totalSlides%></p>
+        </div>
+        <div class="detail-col">
+          <p class="p-light">Practices</p>
+          <p class="p-dark"><%=rowData.totalPractices%></p>
+        </div>
+        <div class="detail-col">
+          <p class="p-light">Duration</p>
+          <p class="p-dark"><%=rowData.totalDuration%></p>
+        </div>
+  
+        <% if(rowData.user_role ==1){ %>
+        <div class="detail-col">
+          <p class="p-light">Status</p>
+          <p class="p-dark">
+            <a class="<%=rowData.statusClass%>" href="javascript:void(0);">
+              <%=rowData.contentStatus%>
+            </a>
+            <input style="width: 55px;height: 20px;cursor: pointer;"
+            type="checkbox" name="status" class="record-status"
+            data-url="/tutor-training/update-status" data-uid="<%=rowData.content._id%>"
+            <%=rowData.content.status ? 'checked' : '' %>>
+          </p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button
+        type="button"
+        class="btn"
+        data-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img src="/images/menu-dot.svg" alt="Menu" />
+      </button>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a href="/tutor-training/<%=rowData.content.slug%>/lessons/">View Lessons</a>
+        <!-- for role 4 -->
+        <% if(rowData.user_role ==1 || rowData.user_role ==4){ %>
+        <a href="/tutor-training/edit/<%=rowData.content.slug%>">Edit Content</a>
+  
+        <a
+          class="text-danger"
+          href="javascript:void(0);"
+          onclick="confirmBeforeDeletion('/tutor-training/destroy/<%=rowData.content._id%>')"
+          >Delete Content</a
+        >
+      <% } %>
+      </div>
+    </div>
+  </li>
+<!-- tutor-training learning content single grid content -->

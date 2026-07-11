@@ -1,0 +1,32 @@
+<script type="text/javascript">
+ /**
+  * load subtopics according to selected topic
+  * 
+  * */ 
+function loadSubTopic(topicId) {
+  $("#subTopic").empty();
+  if(topicId != ''){
+      $.ajax({
+      type: "POST",
+      url: "/sub-topics/render-subtopics",
+      data: {
+        id: topicId,
+      },
+      success: function (response) {
+        $("#subTopic").empty();
+        if (response.length > 0) {
+          var newOption = new Option("Select Sub Topic", "", false, false);
+          $("#subTopic").append(newOption).trigger("change");
+          for (res of response) {
+            newOption = new Option(res.name, res._id, false, false);
+            $("#subTopic").append(newOption).trigger("change");
+          }
+        } else {
+          $("#subTopic").html("No results found.").trigger("change");
+        }
+      },
+    });
+  }
+
+}
+</script>

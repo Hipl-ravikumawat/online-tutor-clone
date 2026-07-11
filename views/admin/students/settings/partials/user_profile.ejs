@@ -1,0 +1,131 @@
+<div class="card userprofile position-relative">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12">
+        <% if(userRole !==2){ %>
+          <a 
+            href="/students/edit/<%= currentStudent.id %>?redirect=<%= encodeURIComponent(redirectUrl) %>"
+          
+            class="preprofile-edit" 
+            data-toggle="tooltip"
+            data-placement="top" 
+            title="Edit Profile"
+          >
+            <img src="/images/edit.svg" alt="">
+          </a>
+        <% } %>
+
+        <div class="userimage"><img
+            src="<%=currentStudent.profile_image !='' ? '/ProfileImage/'+currentStudent.profile_image:'/images/userprofile_img.png' %>"
+            alt="">
+        </div>
+        <h4 class="username">
+            <%=currentStudent.title +' '+ currentStudent.first_name +' '+currentStudent.last_name%>
+        </h4>
+        <div class="student-status">
+          <span class="
+            <%= 
+              currentStudent.status == 0 ? 'sdeactive' :
+              currentStudent.status == 1 ? 'sactive' :
+              currentStudent.status == 2 ? 'strial' :
+              currentStudent.status == 3 ? 'swaiting' : 'sunknown'
+            %>
+          ">
+            <%= 
+              currentStudent.status == 0 ? 'Deactive' :
+              currentStudent.status == 1 ? 'Active' :
+              currentStudent.status == 2 ? 'Trial' :
+              currentStudent.status == 3 ? 'Waiting' : 'Unknown'
+            %>
+          </span>
+          <span class="sadult"> Student</span>
+        </div>
+    </div>
+    <div class="col-12">
+      <div class="content">
+          <p>
+            <span><img src="/images/globe.svg" alt="Message" /></span>
+            <%=currentStudent.time_zone%>
+          </p>
+
+          <p>
+            <span><img src="/images/student.svg" alt="Username" class="img-invert" /></span>
+            <strong>Username:</strong> 
+            <%= currentStudent.username || 'Not generated' %>
+          </p>
+
+
+          <p>
+            <span><img src="/images/msg-icon.svg" alt="Email" /></span>
+            <% if(currentStudent.email && currentStudent.email.trim() !== '') { %>
+              <%=currentStudent.email%>
+            <% } else { %>
+              <span>N/A</span>
+            <% } %>
+          </p>
+          <p><span><img src="/images/mobile-icon.svg" alt="Phone" /></span>
+            <% if(currentStudent.phone && currentStudent.phone.trim() !== '') { %>
+              <%= "+"+ currentStudent.dial_code +" "+ currentStudent.phone %>
+              <% if(currentStudent.send_sms){ %>
+                <span class="badge" style="background-color:#afe9f8;color:#2e568e;">SMS Enabled</span>
+              <% } %>
+            <% } else { %>
+              <span class="text-muted">N/A</span>
+            <% } %>
+          </p>
+
+          <% if(currentStudent.address != ''){ %>
+            <p><span><img src=" /images/home-icon.svg" alt="Address" /></span>
+            <%=currentStudent.address !='' ? currentStudent.address: 'N/A' %>
+            </p>
+          <% } %>
+
+          <p>
+            <span><img src="/images/gender.svg" alt="Gender" class="img-invert" /></span>
+            <%=currentStudent.gender==1 ? 'Male' : 'Female' %>
+          </p>
+
+          <p>
+            <span><img src="/images/birthday-icon.svg" alt="Birthday" /></span>
+            <%= currentStudent.birth_day 
+                  ? moment(currentStudent.birth_day).format('D MMMM YYYY') 
+                  : 'N/A' %>
+          </p>
+
+          <p>
+            <span><img src="/images/school.svg" alt="School" class="img-invert" /></span>
+            <%= currentStudent.school_id?.name || 'N/A' %>
+          </p>
+          <p>
+            <span><img src="/images/level.svg" alt="Grade" class="img-invert" /></span>
+            <%= currentStudent.grade_id ? currentStudent.grade_id.name : 'N/A' %>
+          </p>
+
+          <p>
+            <span>
+              <img src="/images/rewards-point-balck.svg" alt="Reward Points" />
+            </span>
+            <strong>Total Reward Points:</strong>
+            <%= currentStudent.awarded_reward_points || 0 %>
+          </p>
+                  
+          <% if(currentStudent.referrer != ''){ %>
+          <p>
+            <span><img src="/images/referrer.svg" alt="Grade" class="img-invert" /></span>
+            <%=currentStudent.referrer%>
+          </p>
+          <% } %>
+
+          <!-- <% if (currentStudent.groupTags && currentStudent.groupTagsLength > 0) { %>
+            <p>
+              <span title="Group Tags" alt="Group Tags">
+                <i class="fa fa-tag" style="font-size: 16px;transform: translateY(3px);"></i>
+              </span>
+              <%- currentStudent.groupTags || '' %>
+            </p>
+          <% } %> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

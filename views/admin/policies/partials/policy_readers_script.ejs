@@ -1,0 +1,101 @@
+<script type="text/javascript">
+  /**
+   * single policy readers script.
+   * @script start
+   */
+  $(document).ready(function () {
+      dataTable();
+    $("#tutors").select2({
+      allowClear: false,
+    }); 
+
+    $("#reading-status").select2({
+      allowClear: false,
+    }); 
+
+    $(".filter").click(function () {
+      let tutorId = $("#tutors").val();
+      let status = $("#reading-status").val();
+      dataTable(tutorId, status);
+    });
+
+    $(".reset").click(function () {
+      $("#reading-status").val(null).trigger("change");
+      $("#tutors").val(null).trigger("change");
+
+      dataTable();
+    });
+  });
+
+  function dataTable(tutorId = "", status = "") {
+    $("#policyReadersTable").dataTable().fnDestroy();
+    var policyReadersTable = $("#policyReadersTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [],
+      ajax: {
+        url: "/policies/policy-readers/dataTable",
+        type: "POST",
+        data: {
+          policyId: policyId,
+          tutorId: tutorId,
+          status: status,
+        },
+      }, 
+      "drawCallback":
+          function (settings) {
+            //  Here the response
+            var response=settings.json; 
+            userRole=response.userRole;
+          }, 
+      columns: [
+      {
+          data: "first_name",
+          render: function (data, type, row) {
+            return row.first_name + " " + row.last_name;
+          },
+      },
+
+      { data: "last_name", render: function (data, type, row) {
+            const tutorId = row._id.toString();
+            let status = 'Unread';
+            if(policyAttachedTutorIds != undefined){
+                const isRead = policyAttachedTutorIds.some(userId => userId === tutorId);
+              if(isRead){
+                status =  `Read`;
+              }    
+            } 
+            return `<div class="subcat-info"><span class="badge badge-${status === 'Read' ? 'success': 'danger'}">${status}</span></div>`;  
+          },
+      },
+      { data: "read_at", render: function (data, type, row) {
+            const tutorId = row._id.toString();
+            let completionDate = '';
+            if(readAtObject[tutorId] !=undefined){
+              completionDate = moment(readAtObject[tutorId]).format('D MMMM YYYY ');
+              // completionDate = moment.utc(readAtObject[tutorId]).utcOffset('+05:30').format('D MMMM YYYY HH:mm:ss');
+
+            }
+            return completionDate;  
+          },
+      },
+      ],
+      columnDefs: [
+        {
+          targets: [0,1,2] /* column index */,
+          orderable: false /* true or false */,
+        },
+      ],
+    });
+  }
+  /**
+   * single policy readers script.
+   * @script end
+   */
+</script>

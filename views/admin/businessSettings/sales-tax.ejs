@@ -1,0 +1,34 @@
+<div class="tab-pane fade" id="pills-sales-tax" role="tabpanel" aria-labelledby="pills-sales-tax-tab">
+    <div class="row row-gap-30 mx-0">
+        <div class="col-12 px-0">
+            <div class="card tabcard">
+                <div class="card-body">
+                    <h3 class="setting_title">Sales Tax </h3>
+                    <p>Track sales tax charged to students (and paid on expenses). If you charge sales tax in your region, add the tax rates that you'll charge here.</p>
+                    <div class="settings">
+                        <div class="row mx-0 row-gap-20">
+                            <% businessSetting?.sales_taxes?.forEach(tax => { %>
+                                <div class="col-12 px-0">
+                                    <h6 class="setting_name emailtemplate">
+                                        <!-- <%= tax.tax_name  || '' %>  -->
+                                        <%= tax.tax_name ? tax.tax_name.charAt(0).toUpperCase() + tax.tax_name.slice(1) : '' %>
+                                        <%= tax.tax_rate +"%" || '' %>
+                                        <div class="actions">
+                                            <span class="edit edit-sales-tax" onclick="openSalesTaxEditModal('<%= tax._id %>', '<%= tax.tax_name %>', '<%= tax.tax_rate %>')"><img src="/images/edit.svg" alt="icon"></span>
+                                            <span class="delete" data-toggle="modal" onclick="deleteSalesTax('/business-settings/destroy-sales-tax/<%=tax._id%>')" data-id="<%=tax.id%>" onclick=""><img src="/images/trash.svg" alt="icon"></span>
+                                        </div>
+                                    </h6>
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <hr>
+                        <div class="col-12 px-0 mt-4">
+                            <button type="button" data-toggle="modal" data-target="#salesTax" class="btn form-button theme-btn">Add New Sales Tax</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

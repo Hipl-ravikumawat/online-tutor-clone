@@ -1,0 +1,620 @@
+<% 
+    let time;
+    if (loggedUserInfo.time_zone) {
+        time = moment.tz(fetchedEvent.start_time, loggedUserInfo.time_zone).format('hh:mm A') + ' - ' + moment.tz(fetchedEvent.end_time, loggedUserInfo.time_zone).format('hh:mm A');
+    } else {
+        time = moment(fetchedEvent.start_time).format('hh:mm A') + ' - ' + moment(fetchedEvent.end_time).format('hh:mm A');
+    }
+%>
+<% const showLessonPrice = loggedUserInfo?.role !== 2; %>
+<div class="attendance_details setting_attendance_details h-100" >
+    <form class="common-form h-100 d-flex flex-column" method="post" action="/attendance-notes/mark-attendance" id="take-attendance-form" enctype="multipart/form-data">
+        <input type="hidden" name="event_id" value="<%=fetchedEvent.id%>">
+        <h3 class="record_user_name mt-0"><span id="selected-attendees"></span> Attendees</h3>
+        <div class="d-flex date_and_time">
+            <span class="d-flex align-items-center mr-3"><img src="/images/calendar.svg" alt="" class="mr-1"><%=moment(fetchedEvent.start_date).format('YYYY-MM-DD')%></span>
+            <span class="d-flex align-items-center"><img src="/images/timer-pause.svg" alt="" class="mr-1"><%= time %></span>
+        </div>
+        <div class="settings h-100 d-flex flex-column">
+            <% 
+            let counter = 0;
+            for(let student of attachStudents) {
+                counter++;
+                const targetId = student._id.toString();
+                let priceValue = 0;
+                if(fetchedEvent.student_pricing_option == 'std_price_default'){
+                    priceValue = assignedTutorResult.find(p => p.student_id === targetId)?.price ?? 30;
+                }else if(fetchedEvent.student_pricing_option == 'std_price_specify'){
+                    priceValue = fetchedEvent.per_std_lesson_price;
+                }
+                const studentAttendance = markedAttendance ? markedAttendance.find(a => a.student_id.toString() === targetId) : [];
+
+                let emails = (student.allEmails || []).filter(e => e && e.email);
+
+    
+                if (!student.familyContacts || student.familyContacts.length === 0) {
+                    emails = emails.filter(e => e.email === student.student_email);
+                }
+
+            %>
+            <fieldset>
+                <div class="card shadow-none h-100 flex-fill attendance_card active">
+                    <div class="card-header p-0 border-0 bg-transparent">
+                        <h4 class="record_user_name"><%=student.first_name +" "+  student.last_name %></h4>
+                        <h5 class="record_title">Record Attendance</h5>
+                    </div>
+                    <div class="card-body px-0 h-100 flex-fill">
+                        <h6 class="setting_name">Attendance Status</h6>
+                        <input type="hidden" class="student_attend_id" value="<%=student._id%>">
+
+                        <input 
+                            type="hidden" 
+                            class="lesson_price_hidden" 
+                            value="<%=studentAttendance?.lesson_price || priceValue%>"
+                        >
+
+                        <%
+                            const hourlyRateHidden = (loggedUserInfo.payroll && loggedUserInfo.payroll[0] && loggedUserInfo.payroll[0].pay_rate_hourly_rate) || 0;
+                            const durationMinutesHidden = parseFloat(fetchedEvent.duration) || 0;
+                            const calculatedAmountHidden = (hourlyRateHidden * durationMinutesHidden) / 60;
+                        %>
+                        <input 
+                            type="hidden" 
+                            class="tutor_price_hidden" 
+                            value="<%= typeof studentAttendance?.tutor_price !== 'undefined' ? studentAttendance.tutor_price : calculatedAmountHidden.toFixed(2) %>"
+                        >
+                        <div class="row attendance_status">
+                            <div class="col-xl-6 col-lg-12 col-md-6 col-12 ">
+                                <select class="selectlink form-control select2 w-100 attendance_status"  name="attendance_status" data-id="<%=targetId%>">
+                                    <option value="">Select Status</option>
+                                    <option value="unrecorded">Unrecorded</option>
+                                    <option value="present" <%=studentAttendance?.status === "present" ? "selected" : "" %>>Present</option>
+                                    <option value="absent" <%=studentAttendance?.status === "absent" ? "selected" : "" %>>Absent</option>
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <% if (showLessonPrice) { %>
+                        <div class="common-form unrecorded_group d-none">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+                                    <div class="form-group position-relative">
+                                        <label class="mb-1" for="">Lesson Price</label>
+                                        <input class="form-control time-picker dt-scheduling-conflict pl-40 lesson_price" name="lesson_price" type="text" placeholder="" autocomplete="off" value="<%=studentAttendance?.lesson_price || priceValue%>">
+                                    <span class="input-icon"><i class="<%= currency.icon %>"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                        <% if (showLessonPrice) { %>
+                        <div class="common-form present_group <%=studentAttendance?.status == "present" ? "" : "d-none"%>">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+                                    <div class="form-group position-relative">
+                                        <label class="mb-1" for="">Lesson Price</label>
+                                        <input class="form-control time-picker dt-scheduling-conflict pl-40 lesson_price" name="lesson_price" type="text" placeholder="" autocomplete="off" value="<%=studentAttendance?.lesson_price || priceValue%>">
+                                        <span class="input-icon"><i class="<%= currency.icon %>"></i></span>
+                                    </div>
+                                    <!-- <div class="form-group form-check">
+                                        <input type="checkbox" name="is_lesson_price_paid_at_lesson" class="form-check-input std-paid-at is_lesson_price_paid_at_lesson" id="student_late_field_<%=counter%>" <%=studentAttendance?.is_lesson_price_paid_at_lesson === true ? "checked" : "" %>>
+                                        <label class="form-check-label cursor-pointer mb-0 d-inline-block student_late_field" for="student_late_field_<%=counter%>">Student paid at Lesson</label>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- <div class="row payment_data <%=studentAttendance?.is_lesson_price_paid_at_lesson === true ? '' : 'd-none' %>">
+                                <div class="col-xl-6 col-lg-12 col-md-6 col-12 paid-lesson">
+                                    <div class="form-group position-relative">
+                                        <label class="mb-1" for="">Paid At Lesson</label>
+                                        <input class="form-control time-picker dt-scheduling-conflict pl-40 lesson_price_paid_at_lesson" name="lesson_price_paid_at_lesson" type="text" placeholder="" autocomplete="off" value="<%=studentAttendance?.lesson_price_paid_at_lesson%>" min="1" >
+                                        <span class="input-icon"><i class="<%= currency.icon %>"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+                                    <div class="form-group payment_method">
+                                        <label class="mb-1" for="">Payment Method (Optional)</label>
+                                        <select class="selectlink form-control select2 w-100 " name="payment_method" >
+                                            <% 
+                                            for(let payment of payments) { %>
+                                            <option value="<%=payment._id%>" <%=studentAttendance?.payment_method === payment._id ? "selected" : "" %>><%=payment.method%></option>
+                                           <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="">Payment Note (Optional)</label>
+                                        <textarea class="payment_note" name="payment_note"><%=studentAttendance?.payment_note%></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+                                    <div class="form-group ">
+                                        <label class="mb-1" for="">Email Receipt</label>
+                                        <select class="selectlink form-control select2 w-100 email_receipt" name="email_receipt">
+                                            <option value="" selected>No Email Receipt</option>
+                                            <% emails.map((contactEmail) => { %>
+                                                <option value="<%= contactEmail.email %>" <%=studentAttendance?.email_receipt == contactEmail.email ? "selected" : "" %>><%= contactEmail.name %></option>
+                                            <% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" name="is_cc_email_receipt" class="form-check-input is_cc_email_receipt" id="emails-<%=counter%>" <%=studentAttendance?.is_cc_email_receipt ? "checked" : "" %>>
+                                        <label class="form-check-label cursor-pointer mb-0 d-inline-block" for="emails-<%=counter%>">CC me in this email.</label>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                        <% } %>
+                        <div class="common-form absent_group <%=studentAttendance?.status == "absent" ? "" : "d-none"%>">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group mb-2 pt-1">
+                                        <label class="setting_name mb-0">Attendance Billing</label>
+                                        <ul class="settinglist mt-1">
+                                            <li>
+                                                <div class="form-check radio_group">
+                                                    <input class="form-check-input" type="radio" name="std_absent_billing_option"  
+                                                        value="notice_given" 
+                                                        id="notice_given-<%=counter%>" 
+                                                        <%= studentAttendance?.std_absent_billing_option === 'notice_given' ? "checked" : "" %>>
+                                                    <label class="radiolabel d-inline-block mb-0" for="notice_given-<%=counter%>">
+                                                        Notice Given (Not Billable)
+                                                    </label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="form-check radio_group">
+                                                    <input class="form-check-input" type="radio" name="std_absent_billing_option"   
+                                                        value="absence_billable" 
+                                                        id="absence_bill-<%=counter%>" 
+                                                        <%= studentAttendance?.std_absent_billing_option === 'absence_billable' ? "checked" : "" %>>
+                                                    <label class="radiolabel d-inline-block mb-0 radiolabel_toggle" for="absence_bill-<%=counter%>">
+                                                        Absence is Billable
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <% if (showLessonPrice) { %>
+                                        <div class="row absence_price <%= studentAttendance?.std_absent_billing_option === 'absence_billable' ? "" : "d-none" %>">
+                                            <div class="col-xl-6 col-lg-12 col-md-6 col-12 mt-2">
+                                                <div class="form-group position-relative">
+                                                    <label class="setting_name mb-1">Lesson Price</label>
+                                                    <input type="text" name="lesson_price" class="form-control pl-40 lesson-price" value="<%= studentAttendance?.lesson_price || priceValue%>">
+                                                    <span class="label-before-wlabel input-icon"><img src="/images/rupee.svg" alt="rupees-icon"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <% if(loggedUserInfo.role === 2) { %>
+                        <%
+                            const hourlyRate = (loggedUserInfo.payroll && loggedUserInfo.payroll[0] && loggedUserInfo.payroll[0].pay_rate_hourly_rate) || 0;
+                            const durationMinutes = parseFloat(fetchedEvent.duration) || 0;
+                            const calculatedAmount = (hourlyRate * durationMinutes) / 60;                            
+                        %>
+                        <div class="row mt-3">
+                            <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+                                <div class="form-group position-relative">
+                                    <label class="setting_name mb-1" for="">Hourly Charges</label>
+                                    <input 
+                                    class="form-control pl-40 tutor_price" 
+                                    name="tutor_price" 
+                                    type="text" 
+                                    placeholder="0.00" 
+                                    autocomplete="off" 
+                                    value="<%= typeof studentAttendance?.tutor_price !== 'undefined' ? studentAttendance.tutor_price : calculatedAmount.toFixed(2) %>" 
+                                    >
+
+                                    <small class="text-muted">
+                                    (Hourly Rate: <i class="<%= currency.icon %>"></i><%= hourlyRate %>)
+                                    </small>
+                                    <span class="input-icon"><i class="<%= currency.icon %>"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                </div>
+        </div>
+            </fieldset>
+            <% } %>
+            
+            <div class="row align-items-center mt-3 card_footer">
+                <div class="col-auto">
+                    <ul class="attendance-steps">
+                        <li class="stepBtn prev disabled"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0352 13.2309L5.68849 8.90028C5.17516 8.38885 5.17516 7.55196 5.68849 7.04053L10.0352 2.70996" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+                        <li class="step-count"><span>1</span> of <span>1</span></li>
+                        <li class="stepBtn next"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.96484 13.2309L10.3115 8.90028C10.8248 8.38885 10.8248 7.55196 10.3115 7.04053L5.96484 2.70996" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+                    </ul>
+                </div>
+                <div class="col d-flex align-items-center justify-content-end">
+                    <button type="button" class="btn btn-success mr-2 start-lesson-btn theme-btn start-theme-btn" style="display: none;" onclick="startLesson()">Start Lesson</button>
+                    <button type="button" class="btn form-button cancel-btn theme-btn mr-2 d-none">Cancel</button>
+                    <button type="submit" class="btn form-button save-btn theme-btn">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const loggedInUserId = <%= loggedUserInfo?.role %>;
+</script>
+
+<script>
+    $(document).ready(function() {
+        $(".select2").select2();
+
+        var $cards = $(".attendance_card");
+        var $prevBtn = $(".stepBtn.prev");
+        var $nextBtn = $(".stepBtn.next");
+        var $currentSpan = $(".attendance-steps li.step-count span:first-child");
+        var $totalSpan = $(".attendance-steps li.step-count span:last-child");
+        var currentIndex = 0;
+
+        $totalSpan.text($cards.length);
+
+        toggleSaveBtn();
+
+        function hasAnyAttendanceMarked() {
+            let hasAttendance = false;
+            $('.attendance_status').each(function() {
+                const val = $(this).val();
+                if (val === 'present' || val === 'absent') {
+                    hasAttendance = true;
+                    return false;
+                }
+            });
+            return hasAttendance;
+        }
+
+        // Function to update Start Lesson button visibility
+        function updateStartLessonButton() {
+            if (loggedInUserId == 2 && hasAnyAttendanceMarked()) {
+                $('.start-lesson-btn').show();
+            } else {
+                $('.start-lesson-btn').hide();
+            }
+        }
+
+        function updateView() {
+            $cards.removeClass("active");
+            $($cards).parent().prop("disabled", true);
+            $($cards[currentIndex]).parent().prop("disabled", false);
+            $($cards[currentIndex]).addClass("active");
+            $currentSpan.text(currentIndex + 1);
+            $prevBtn.toggleClass("disabled", currentIndex === 0);
+            $nextBtn.toggleClass("disabled", currentIndex === $cards.length - 1);
+            toggleSaveBtn();
+        }
+
+        function nextStep() {
+            if (currentIndex < $cards.length - 1) {
+                currentIndex++;
+                updateView();
+            }
+        }
+
+        function prevStep() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateView();
+            }
+        }
+
+        // ----------------------
+        // Attendance Card Logic
+        // ----------------------
+        function initAttendanceCards() {
+            $cards.each(function() {
+                var $card = $(this);
+
+                // $card.find('.attendance_status select').on('change', function() {
+                //     const status = $(this).val();
+                //     toggleSaveBtn();
+                //     $card.find('.unrecorded_group, .present_group, .absent_group').addClass('d-none');
+                //     if (status === "present") {
+                //         $card.find('.present_group').removeClass('d-none');
+                //         handleSelectedStudents();
+                //     }
+                //     else if (status === "absent"){
+                //          $card.find('.absent_group').removeClass('d-none')
+                //          handleSelectedStudents();
+                //     };
+                //      toggleInputDisabledStates($card);
+                // });
+
+                $card.find('.attendance_status select').on('change', function() {
+                    const status = $(this).val();
+                    toggleSaveBtn();
+                    $card.find('.unrecorded_group, .present_group, .absent_group').addClass('d-none');
+                    if (status === "present") {
+                        $card.find('.present_group').removeClass('d-none');
+                        handleSelectedStudents();
+                    }
+                    else if (status === "absent"){
+                        $card.find('.absent_group').removeClass('d-none')
+                        handleSelectedStudents();
+                    };
+                    toggleInputDisabledStates($card);
+                });
+
+                $card.find('input[name^="is_lesson_price_paid_at_lesson"]').on('change', function() {
+                    $card.find('.payment_data').toggleClass('d-none', !$(this).is(':checked'));
+                });
+
+                // Sync visible lesson_price → hidden input
+                $card.find('input.lesson_price').on('input change', function() {
+                    $card.find('.lesson_price_hidden').val($(this).val());
+                });
+
+                $card.find('input.tutor_price').on('input change', function() {
+                    $card.find('.tutor_price_hidden').val($(this).val());
+                });
+
+                $card.find('input[type="radio"]').on('change', function() {
+                    const name = $(this).attr('name');
+                    const isBillable = $card.find(`input[name="${name}"][value="absence_billable"]`).is(':checked');
+                    $card.find('.absence_price').toggleClass('d-none', !isBillable);
+                });
+            });
+        }
+
+        // ----------------------
+        // Validation: Paid At Lesson (inline)
+        // ----------------------
+        // function validatePaidAtLesson($card) {
+        //     let $paidInput = $(".attendance_card.active").find('.paid-lesson input');
+        //     let isChecked = $(".attendance_card.active").find('.std-paid-at').is(':checked');
+        //     let $attendanceStatus = $(".attendance_card.active").find('.attendance_status ').val();
+            
+        //     if (($attendanceStatus == '' || $attendanceStatus == 'unrecorded') && !isChecked) {
+        //         return true;
+        //     } 
+        //     let $error = $paidInput.siblings('.error-message');
+        //     if($error.length) $error.remove();
+
+        //     if ($paidInput.length && !$paidInput.closest('.paid-lesson').hasClass('d-none')) {
+        //         let value = parseFloat($paidInput.val());
+        //         if (isNaN(value) || value <= 0) {
+        //             $paidInput.after('<small class="error-message text-danger">Paid At Lesson must be greater than 0.</small>');
+        //             return false;
+        //         }
+        //     }
+        //     return true;
+        // }
+
+        // ----------------------
+        // AJAX Save Function
+        // ----------------------
+        function saveCurrentCard(callback) {
+            var $currentCard = $($cards[currentIndex]);
+            var form = $("#take-attendance-form")[0];
+            var formData = new FormData();
+
+            formData.append('event_id', $(form).find('input[name="event_id"]').val());
+
+            let studentAttendId = $currentCard.find('.student_attend_id').val();
+            formData.append('student_id', studentAttendId);
+
+            $currentCard.find('input[name], select[name], textarea[name]').each(function() {
+                if (!$(this).closest('.d-none').length && !$(this).prop('disabled')) {
+                    if ($(this).is(':checkbox')) {
+                        formData.append($(this).attr('name'), $(this).is(':checked') ? true : false);
+                    } else if ($(this).is(':radio')) {
+                        if ($(this).is(':checked')) {
+                            formData.append($(this).attr('name'), $(this).val());
+                        }
+                    } else {
+                        formData.append($(this).attr('name'), $(this).val());
+                    }
+                }
+            });
+
+            if (!formData.has('lesson_price')) {
+                formData.append(
+                    'lesson_price',
+                    $currentCard.find('.lesson_price_hidden').val() || 0
+                );
+            }
+
+            // Always send tutor_price
+            if (!formData.has('tutor_price')) {
+                formData.append(
+                    'tutor_price',
+                    $currentCard.find('.tutor_price_hidden').val() || 0
+                );
+            }
+
+            const data = Object.fromEntries(formData.entries());
+            
+            $.ajax({
+                method: 'POST',
+                url: $(form).attr('action'),
+                data: data,
+                success: function() {
+                    if (callback) callback();
+                    updateStartLessonButton(); 
+                },
+               error: function (response) {
+                    $(".text-danger").remove();
+
+                    if (response.responseJSON?.errors) {
+                        $.each(response.responseJSON.errors, function (i, error) {
+                            const $field = $(`[name="${error.param}"],[name="${error.param}[]"]`);
+
+                            if ($field.hasClass('select2')) {
+                                $field.siblings('.select2-container')
+                                    .after(`<span class="text-danger">${error.msg}</span>`);
+                            } else {
+                                $field.after(`<span class="text-danger">${error.msg}</span>`);
+                            }
+
+                            $field.off("input change").on("input change", function () {
+                                $(this).siblings(".text-danger").remove();
+                                $(this).siblings('.select2-container').siblings(".text-danger").remove();
+                            });
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error saving attendance. Please check the form.'
+                        });
+                    }
+                }
+
+            });
+        }
+
+        // ==========================================================
+        // 🔹 NEW CODE: Track changes & only show modal if modified
+        // ==========================================================
+        let initialCardData = {};
+
+        function captureInitialCardData() {
+            $cards.each(function(index) {
+                let $card = $(this);
+                let data = {};
+                $card.find('input[name], select[name], textarea[name]').each(function() {
+                    if ($(this).is(':checkbox')) {
+                        data[$(this).attr('name')] = $(this).is(':checked');
+                    } else if ($(this).is(':radio')) {
+                        if ($(this).is(':checked')) {
+                            data[$(this).attr('name')] = $(this).val();
+                        }
+                    } else {
+                        data[$(this).attr('name')] = $(this).val();
+                    }
+                });
+                initialCardData[index] = data;
+            });
+        }
+
+        function hasCardChanged($card, cardIndex) {
+            let currentData = {};
+            $card.find('input[name], select[name], textarea[name]').each(function() {
+                if ($(this).is(':checkbox')) {
+                    currentData[$(this).attr('name')] = $(this).is(':checked');
+                } else if ($(this).is(':radio')) {
+                    if ($(this).is(':checked')) {
+                        currentData[$(this).attr('name')] = $(this).val();
+                    }
+                } else {
+                    currentData[$(this).attr('name')] = $(this).val();
+                }
+            });
+            let originalData = initialCardData[cardIndex];
+            return JSON.stringify(currentData) !== JSON.stringify(originalData);
+        }
+
+        function handleNextOrSave(direction) {
+            var $currentCard = $($cards[currentIndex]);
+
+            // if (!validatePaidAtLesson($currentCard)) {
+            //     return;
+            // }
+
+            if (hasCardChanged($currentCard, currentIndex)) {
+                Swal.fire({
+                    title: "Save Attendance?",
+                    text: "Do you want to save this attendance before moving?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Save",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveCurrentCard(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Saved!',
+                                text: 'Attendance saved successfully.',
+                                timer: 1200,
+                                showConfirmButton: false
+                            });
+                            captureInitialCardData();
+                            if (direction === 'next') nextStep();
+                            else if (direction === 'prev') prevStep();
+                        });
+                    }
+                });
+            } else {
+                if (direction === 'next') nextStep();
+                else if (direction === 'prev') prevStep();
+            }
+        }
+
+        $nextBtn.off("click").on("click", function() { handleNextOrSave('next'); });
+        $prevBtn.off("click").on("click", function() { handleNextOrSave('prev'); });
+        $(".save-btn").off("click").on("click", function(e) {
+            e.preventDefault();
+            saveCurrentCard(() => {
+                captureInitialCardData();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved!',
+                    text: 'Attendance saved successfully.',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+            });
+        });
+
+        // ----------------------
+        // Init
+        // ----------------------
+        initAttendanceCards();
+        updateView();
+        captureInitialCardData();
+        updateStartLessonButton();
+    });
+
+    // Start Lesson button handler
+    function startLesson() {
+        const eventId = $('input[name="event_id"]').val();
+        window.location.href = `/calendar/${eventId}/event-lessons`;
+    }
+    function handleSelectedStudents() {
+        var selectedStudentIds = [];
+        $('.attendance_status').each(function() {
+            const val = $(this).val();
+            const studentId = $(this).data('id');
+            if (val === 'present' || val === 'absent') {
+                selectedStudentIds.push(studentId);
+                $('input[type="checkbox"][value="' + studentId + '"]').prop('checked', true);
+            } else {
+                $('input[type="checkbox"][value="' + studentId + '"]').prop('checked', false);
+            }
+        });
+        return selectedStudentIds;
+    }
+
+    function toggleInputDisabledStates($card) {
+        $card.find('.unrecorded_group, .present_group, .absent_group').each(function() {
+            const $group = $(this);
+            if ($group.hasClass('d-none')) {
+                $group.find('input, select, textarea').prop('disabled', true);
+            } else {
+                $group.find('input, select, textarea').prop('disabled', false);
+            }
+        });
+    }
+    function toggleSaveBtn() {
+        let showSave = false;
+        let status = $(".attendance_card.active").find('select.attendance_status').val();
+        
+        if (status && status !== "") {
+            showSave = true;
+        }
+        if (showSave) {
+            $(".save-btn").prop("disabled", false);
+        } else {
+            $(".save-btn").prop("disabled", true);
+        }
+    }
+
+</script>
+

@@ -1,0 +1,1401 @@
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+        <% if(loggedUserInfo.role != 3) { %>
+        <a class="back-link" href="/families-invoices#FamilyAccounts"><span class="fa fa-chevron-left mr-2"></span>Back to family & invoices</a>
+        <div class="drop-down my-3 family_in_dropdown">
+            <div class="selected">
+                <a href="javascript:void(0)" class="item-selected">
+                    <% const activeFamily = familySets.find(set=> set._id.toString() === student._id.toString()); %>
+                        <%= activeFamily ? (activeFamily.familyNames || activeFamily.studentName) : " Select Family" %>
+                </a>
+            </div>
+            <div class="drop-options" style="display: none;">
+                <ul>
+                    <%
+                    if(familySets){ 
+                        familySets.forEach(set=> { %>
+                            <li>
+                               <a href="<%= loggedUserInfo.role != 3 ? '/families-invoices/family/' + set._id : 'javascript:void(0)' %>"
+                                class="<%= student._id.toString() === set._id.toString() ? 'active' : '' %>">
+                                <%= set.familyNames || set.studentName %>
+                                </a>
+                            </li>
+                        <% })
+                    } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+        <div class=" row row-gap-30">
+            <div class="col-xl-3 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="title-text mb-4">Family Details</h2>
+
+                        <div class="family_card">
+                            <div class="f_card_top">
+                                <h6>Students</h6>
+                                <% if (student) { %>
+                                    <span class="f_status 
+                                        <%= student.status == 0 ? 'f_inactive' : 
+                                        student.status == 1 ? 'f_active' : 
+                                        student.status == 2 ? 'f_trial' : 
+                                        student.status == 3 ? 'f_waiting' : 'f_inactive' %>">
+                                        <%= student.status == 0 ? 'Deactive' : 
+                                        student.status == 1 ? 'Active' : 
+                                        student.status == 2 ? 'Trial' : 
+                                        student.status == 3 ? 'Waiting' : 'Unknown' %>
+                                    </span>
+                                <% } %>
+                            </div>
+                            <div class="f_card_body">
+                                <ul class="f_detail_link_area">
+                                    <li>
+                                        <a href="<%= loggedUserInfo.role != 3 ? '/student-preferences/' + student._id : 'javascript:void(0)' %>"
+                                            class="f_detail_link">
+                                            <%= ucwords(student?.studentName) || '' %>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="family_card mt-3">
+                            <div class="f_card_top">
+                                <h6>Family Contacts</h6>
+                            </div>
+                            <div class="f_card_body">
+                                <ul class="f_detail_link_area">
+                                    <!-- student name as first family contact -->
+                                    <li>
+                                        <a href="<%= loggedUserInfo.role != 3 ? '/student-preferences/' + student._id : 'javascript:void(0)' %>"
+                                            class="f_detail_link">
+                                            <%= ucwords(student.studentName) %>
+                                        </a>
+                                        
+                                    </li>
+                                     <!-- family contacts -->
+                                    <% if(contacts){ 
+                                        contacts.forEach(contact=> { %>
+                                        <li>
+                                            <a href="<%= loggedUserInfo.role != 3 ? '/student-preferences/' + student._id : 'javascript:void(0)' %>"
+                                                class="f_detail_link">
+                                                <%= ucwords(contact.full_name) %>
+                                            </a>
+                                            <% if(contact.isInvoiceRecipient){ %>
+                                                <!-- <span class="f_status">Invoice Recipient</span> -->
+                                                <p class="f_status">Invoice Recipient</p>
+                                            <% } %>
+                                        </li>
+                                        <% })
+                                    } %>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+
+                        <% if (autoInvoiceDisplay) { %>
+                            <div class="family_card mt-3">
+                                <div class="f_card_top">
+                                    <h6>Next Invoice</h6>
+                                </div>
+                                <div class="f_card_body">
+                                    <p><b>Invoice Date:</b> <%= autoInvoiceDisplay.nextInvoiceDate %></p>
+                                    <p><b>Date Range:</b> <%= autoInvoiceDisplay.billingRange %></p>
+                                    <p><b>Total Due:</b> <%= currency.symbol %><%= Math.abs(finalBalance) %> Balance Owing</p>
+                                </div>
+                            </div>
+                            <div class="family_card mt-3">
+                                <div class="f_card_top">
+                                    <h6>Auto-Invoice Settings</h6>
+                                </div>
+                                <div class="f_card_body">
+                                    <p><%= autoInvoiceDisplay.invoiceFor %></p>
+                                    <p><b>Repeats:</b> <%= autoInvoiceDisplay.repeatRule %></p>
+                                    <p><b>Balance Forward:</b> 
+                                    <span class="badge badge-<%= autoInvoiceDisplay.balanceForward === 'Enabled' ? 'success' : 'danger' %>">
+                                        <%= autoInvoiceDisplay.balanceForward %>
+                                    </span>
+                                    </p>
+                                
+                                    <p><b>Auto-Email:</b> 
+                                        <span class="badge badge-<%= autoInvoiceDisplay.autoEmail === 'Enabled' ? 'success' : 'danger' %>">
+                                            <%= autoInvoiceDisplay.autoEmail %>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (loggedUserInfo.role != 3) { %>
+                            <div class="mt-3">
+                                <% if (autoInvoiceDisplay) { %>
+                                <!-- Edit Auto Invoicing -->
+                                <a href="#"
+                                    class="btn theme-btn custom-btns mb-2"
+                                    id="enable-auto-invoice"
+                                    data-id="<%= student._id %>"
+                                    title="Edit auto invoicing">
+                                    Edit Auto-Invoice Settings
+                                </a>
+
+                                <!-- Disable Auto Invoicing -->
+                                <a href="#"
+                                    class="btn theme-btn custom-btns btn-transparent"
+                                    id="disable-auto-invoice"
+                                    data-id="<%= student._id %>"
+                                    data-toggle="modal"
+                                    data-target="#disableAutoInvoicing"
+                                    title="Disable auto invoicing">
+                                    Disable Auto Invoicing
+                                </a>
+                                <% } else { %>
+                                <!-- Enable Auto Invoicing -->
+                                <a href="#"
+                                    class="btn theme-btn custom-btns mb-2"
+                                    id="enable-auto-invoice"
+                                    data-id="<%= student._id %>"
+                                    title="Enable auto invoicing">
+                                    Enable Auto Invoicing
+                                </a>
+                                <% } %>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-8">
+                <div class="card tabcard mb-3">
+                    <div class="card-body p-3">
+                        <!-- Tab Navigation -->
+                        <div class="setting_tab families-tab">
+                            <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-account-tab"
+                                        data-toggle="pill" href="#account" role="tab"
+                                        aria-controls="account"
+                                        aria-selected="false">Account</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-invoices-tab"
+                                        data-toggle="pill" href="#invoices" role="tab"
+                                        aria-controls="invoices"
+                                        aria-selected="false">Invoices</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="pills-tabContent">
+                    <!-- Family Accounts Tab -->
+                    <div class="tab-pane fade" id="account" role="tabpanel"
+                        aria-labelledby="pills-account-tab">
+                        <div class="card mb-3">
+                            <div class="card-body date_dropdown">
+                                <h2 class="title-text mb-0 balance-total">
+                                    Balance Remaining: <strong><%= Number(finalBalance).toFixed(2) %></strong> as of
+                                    <div class="ml-2">
+                                        <div id="display-date">
+                                            <%= filterDate ? new
+                                                Date(filterDate).toLocaleDateString('en-GB').replace(/\//g, '-'
+                                                ) : new Date(new Date().getFullYear(), new
+                                                Date().getMonth() + 1,
+                                                0).toLocaleDateString('en-GB').replace(/\//g, '-'
+                                                ) %>
+                                        </div>
+                                    </div>
+                                    <div class="ml-2 position-relative">
+                                        <span class="owed_date" style="cursor: pointer;">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                width="13" height="7" viewBox="0 0 13 7"
+                                                fill="none">
+                                                <path
+                                                    d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1"
+                                                    stroke="#201B53" stroke-width="1.5"
+                                                    stroke-miterlimit="10"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <input type="text" id="hidden-date-input" class="hidden_input_area" />
+                                    </div>
+                                </h2>
+                            </div>
+                            <%- include('../partials/balance_date_prompt') %>
+                        </div>
+                        <div class="x_panel">
+                            <div class="x_title">
+
+                                <% if(loggedUserInfo.role != 3) { %>
+                                <div class="left-btns">
+                                    <ul>
+                                        <li>
+                                            <a href="/families-invoices/transaction-details/<%= student._id %>" class="btn theme-btn"
+                                                data-toggle="tooltip" rel="tooltip"
+                                                data-placement="top" title="Add Transaction">+
+                                                Add Transaction</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <% } %>
+                                <ul class="right-btns settings_content">
+                                    <li class="both-btnli">
+                                        <div class="dropdown short_dropdown" id="transactions-sort-dropdown">
+                                            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown"  aria-expanded="false">
+                                                <img src="/images/short-icon.svg" alt="Setting"  class="mr-2">Sort</button>
+
+                                            <div class="dropdown-menu">
+                                                <button type="button" class="dropdown-item shortbtn sort-trigger" data-column="">Clear Sort</button>
+                                                <button type="button" class="dropdown-item sort-trigger" data-column-name="date" data-column="0" data-order="1" >Date</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="search_box searchDropdownCount both-btnli search_btn" id="familyTransactionDropdown">
+                                        <div class="dropdown">
+                                            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                <img src="/images/search-icon.svg" alt="Search" class="mr-2">
+                                                Search
+                                                <span class="sounts" style="display: none;"></span>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
+                                            <form id="familyTransactionSearchForm">
+                                                <div class="position-relative form-group">
+                                                    <input type="search" name="category_search" class="form-control" placeholder="Search by category or description..." />
+                                                    <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
+                                                </div>
+                                                <div class="form-group position-relative flaticon mb-0 mt-20">
+                                                    <label label="" for="amount_search" class="form-label">By Charges or Payments</label>
+                                                    <input type="number" class="pl-40 w-100" id="amount_search" name="amount_search" placeholder="0.00">
+                                                    <span class="input-icon"><i class="<%= currency.icon || 'fa fa-dollar' %>" aria-hidden="true"></i></span>
+                                                </div>
+                                                <div class="form-group form-check mt-20 mb-20">
+                                                    <input class="form-check-input" type="checkbox" value="1" id="show_zero_entries" name="show_zero_entries">
+                                                    <label class="form-check-label" for="show_zero_entries">Show <%= currency.symbol %>0.00 Entries</label>
+                                                </div>
+                                                <div class="d-flex mt-20">
+                                                    <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100">Clear</button>
+                                                    <button type="submit" class="btn theme-btn w-100">Search</button>
+                                                </div>
+                                            </form>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="card-box table-responsive allselect-table">
+                                    <table id="familyTransactionsTable"
+                                        class="table table-striped table-bordered dt-responsive nowrap"
+                                        cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="date">Date</th>
+                                                <th>Student</th>
+                                                <th>Description</th>
+                                                <th>Charges & Discounts</th>
+                                                <th>Payments & Refunds</th>
+                                                <th>Balance</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Invoices Tab -->
+                    <div class="tab-pane fade" id="invoices" role="tabpanel"
+                        aria-labelledby="pills-invoices-tab">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <!-- <% if(loggedUserInfo.role != 3) { %>
+                                    <div class="left-btns">
+                                        <ul>
+                                            <li>
+                                                <a href="/families-invoices/add-invoice-details/<%= student._id %>" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                    title="New Invoice">+ New
+                                                    Invoice</a>
+                                            </li>
+                                            <li class="both-btnli">
+                                                <div class="dropdown">
+                                                    <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown"
+                                                        aria-expanded="false"><img src="/images/options-icon.svg" alt="Options"
+                                                            class="mr-2">Options</button>
+                                                    <div class="dropdown-menu">
+                                                        <button type="button" class="dropdown-item">Download Selected
+                                                            Invoices</button>
+                                                        <button type="button" class="dropdown-item">Download Invoice
+                                                            Details</button>
+                                                        <button type="button" class="dropdown-item">Archive</button>
+                                                        <button type="button" class="dropdown-item">Unarchive</button>
+                                                        <button type="button" class="dropdown-item">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                <% } %> -->
+                                <% if(loggedUserInfo.role != 3) { %>
+                                    <div class="left-btns">
+                                        <ul>
+                                            <li>
+                                                <a href="/families-invoices/add-invoice-details/<%= student._id %>" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                                                    title="New Invoice">+ New Invoice</a>
+                                            </li>
+                                        
+                                            <li class="both-btnli">
+                                                <div class="dropdown">
+                                                    <button class="bus-outline-btn dropdown-toggle action-btn" type="button" data-toggle="dropdown"
+                                                        aria-expanded="false" disabled>
+                                                        <img src="/images/options-icon.svg" alt="Options" class="mr-2">Options
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <button type="button" class="dropdown-item download-selected">Download Selected Invoices</button>
+                                                        <button type="button" class="dropdown-item download-invoice-details">Download Invoice Details</button>
+                                                        <button type="button" class="dropdown-item archive-action" data-action="archive">Archive</button>
+                                                        <button type="button" class="dropdown-item archive-action" data-action="unarchive">Unarchive</button>
+                                                        <button type="button" class="dropdown-item delete-invoice">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                <% } %>
+                                <ul class="right-btns settings_content">
+                                    <li class="both-btnli">
+                                        <div class="dropdown select_all_dropdown" id="invoice-colvis-dropdown">
+                                            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <img src="/images/columns-icon.svg" alt="Email" class="mr-2">Columns
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <div class="dropdown-item">
+                                                    <label><input type="checkbox" class="select-all custom-colvis show-all" data-column="all" /><span></span>Show All</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <label><input type="checkbox" class="show-default custom-colvis" data-column="default" /><span></span>Show Default</label>
+                                                </div>
+                                                <hr style="margin:0;" />
+                                                <div class="dropdown-item">
+                                                    <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="due-date" data-column-index="3" /><span></span>Due
+                                                        Date</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="invoice-number" data-column-index="2" /><span></span>Invoice #</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <label><input type="checkbox" class="column-checkbox custom-colvis" data-column="private-note" data-column-index="5" /><span></span>Private Note</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="both-btnli">
+                                        <div class="dropdown short_dropdown" id="invoices-sort-dropdown">
+                                            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown"
+                                                aria-expanded="false"><img src="/images/short-icon.svg" alt="Setting" class="mr-2">Sort</button>
+                                            <div class="dropdown-menu">
+                                                <button type="button" class="dropdown-item shortbtn sort-trigger" data-column="">Clear Sort</button>
+                                                <button type="button" class="dropdown-item sort-trigger" data-column-name="invoice_amount" data-column="6" data-order="1">Invoice Amount</button>
+                                                <button type="button" class="dropdown-item sort-trigger" data-column-name="invoice_date" data-column="1" data-order="1">Invoice Date</button>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                    <li class="search_box searchDropdownCount both-btnli search_btn" id="invoicesDropdown">
+                                        <div class="dropdown">
+                                            <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                <img src="/images/search-icon.svg" alt="Search" class="mr-2">
+                                                Search
+                                                <span class="sounts"></span>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
+                                                <form id="invoicesSearchForm">
+                                                    <div class="position-relative form-group">
+                                                        <input type="search" class="form-control" id="family_or_invoice_number" name="family_or_invoice_number" placeholder="Family or invoice number..." />
+                                                        <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
+                                                    </div>
+                                                    <div class="form-group form-check mt-20 mb-20">
+                                                        <input class="form-check-input search-input" type="checkbox" value="1" id="filter_invoice_date" name="filter_invoice_date" />
+                                                        <label class="form-check-label" for="filter_invoice_date">Filter By Invoice Date</label>
+                                                    </div>
+                                                    <div class="form-group position-relative mb-0">
+                                                        <label label="" for="date_range_block" class="form-label">Date Range <span class="text-muted small">(Optional)</span></label>
+                                                        <input type="text" name="date_range_block" id="date_range_block" class="pl-40 w-100" disabled />
+                                                        <span class="input-icon"><img src="/images/date-icon.svg" alt="date-icon"></span>
+                                                    </div>
+                                                    <div class="mt-20 mb-20">
+                                                        <div class="form-group form-check mb-2">
+                                                            <input class="form-check-input search-input" type="checkbox" value="0" id="hide_emailed" name="hide_emailed" />
+                                                            <label class="form-check-label" for="hide_emailed">Hide Emailed Invoices</label>
+                                                        </div>
+                                                        <div class="form-group form-check mb-2">
+                                                            <input class="form-check-input search-input" type="checkbox" value="0" id="hide_voided" name="hide_voided" />
+                                                            <label class="form-check-label" for="hide_voided">Hide Void Invoices</label>
+                                                        </div>
+                                                        <div class="form-group form-check">
+                                                            <input class="form-check-input search-input" type="checkbox" value="0" id="hide_due_invoices" name="hide_due_invoices">
+                                                            <label class="form-check-label" for="hide_due_invoices">Hide ₹0.00 Due & Paid</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="archive_status">Archive Status</label>
+                                                        <select name="archive_status" id="archive_status" class="form-control search-input">
+                                                            <option value="all">All</option>
+                                                            <option value="archived">Archived</option>
+                                                            <option value="unarchived">Unarchived</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="d-flex mt-20">
+                                                        <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100">Clear</button>
+                                                        <button type="submit" class="btn theme-btn w-100">Search</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                     </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="card-box allselect-table">
+                                    <table id="familyInvoiceTable" class="table table-striped table-bordered dt-responsive checkbox_alignment" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                            <th style="text-align: center"><input type="checkbox" id="family_select_all" /></th>
+                                            <th class="invoice-date">Invoice Date</th>
+                                            <th class="invoice-number">Invoice #</th>
+                                            <th class="due-date">Due Date</th>
+                                            <th class="date-range">Date Range</th>
+                                            <th class="private-note">Private Note</th>
+                                            <th class="invoice-amount">Invoice Amount</th>
+                                            <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Send Email Invoice Modal -->
+    <div class="modal fade common-modal" data-backdrop="static" id="sendEmailInvoice" tabindex="-1" role="dialog" aria-labelledby="sendEmailInvoiceLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered max-928 normal_form_block" role="document">
+        <div class="modal-content form-wizard">
+          <div class="modal-header">
+            <h3 class="modal-title title_style" id="sendEmailInvoiceLabel">Send Email Invoice</h3>
+            <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <form class="form-design" method="post">
+            <input type="hidden" name="invoiceId" id="invoiceIdField" />
+            <div class="modal-body form_normal settings_content">
+              <div class="form-group">
+                <label for="from_mail" class="form-label">From</label>
+                <select multiple name="from_mail" id="from_mail" class="form-control select2">
+                  <% sentFrom.forEach(function(user, index) { %>
+                    <option value="<%= user.value %>" <%= index === 0 ? 'selected' : '' %>>
+                      <%= user.label %>
+                    </option>
+                  <% }); %>
+                </select>
+                 <div class="text-danger error-message" id="error-from_mail"></div>
+              </div>
+              <div class="form-group ">
+                <label for="to_mail" class="form-label">To</label>
+                <div id="to_mail_wrapper" class="select-box-user">
+                  <select name="to_mail" id="to_mail" class="form-control select2"></select>
+                  <div class="text-danger error-message" id="error-to_mail"></div>
+                </div>
+                <p class="select-comma-user" style="display: none;"></p>
+                <div id="to_mail_summary" class="mt-2" style="display: none;"></div>
+              </div>
+              <div class="form-group form-check">
+                <input class="form-check-input" type="checkbox" value="1" id="bcc_email" name="bcc_email">
+                <label class="form-check-label" for="bcc_email">BCC me on this Email</label>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Template</label>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                      <input class="form-check-input" type="radio" name="template_type" id="invoiceEmail" value="invoice_email" checked>
+                      <label class="radiolabel w-100 m-0" for="invoiceEmail">Invoice Email</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mt-2 mt-md-0">
+                    <div class="radio_group form-check form-check-inline w-100 m-0">
+                      <input class="form-check-input" type="radio" name="template_type" id="invoiceReminder" value="invoice_reminder">
+                      <label class="radiolabel w-100 m-0" for="invoiceReminder">Invoice Reminder</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="subject_field" class="form-label">Subject</label>
+                <input type="text" name="subject" id="subject_field" placeholder="Doe 13-06-2025 Invoice" class="form-control" />
+                <div class="text-danger error-message" id="error-subject"></div>
+              </div>
+              <div class="form-group">
+                <label for="message-notes" class="form-label">Message</label>
+                <textarea class="message-notes" name="message" id="message-notes" name="message_note"></textarea>
+                 <div class="text-danger error-message" id="error-message"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="d-flex w-100">
+                <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
+                <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0 send-email-btn">Send</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <%- include('./partials/auto-invoicing/_modals',{ invoiceTypes }); %>
+</div>
+
+
+<!-- Void Invoice Modal -->
+<div class="modal fade common-modal" data-backdrop="static" id="voidInvoice" tabindex="-1" role="dialog" aria-labelledby="voidInvoiceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered max-626 normal_form_block" role="document">
+    <div class="modal-content form-wizard">
+      <div class="modal-header">
+        <h3 class="modal-title title_style" id="voidInvoiceLabel">Void Invoice</h3>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+        <div class="modal-body form_normal settings_content">
+          <p class="main-color mb-0">Are you sure you want to void this invoice? You'll still be able to view, email, and download it from the list of invoices, but payments added to the Family Account will not mark this invoice as paid.</p>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex w-100">
+            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
+            <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0">Void Invoice</button>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function toggleActionButtons(tableId,section) {
+        const anyChecked = $(`#${tableId} tbody input[type="checkbox"]:checked`).length > 0;
+        $(`#${section} .action-btn`).prop('disabled', !anyChecked);
+    }
+
+    $(document).ready(function () {
+        $('.download-btn').click(function () {
+            const txnId = $(this).data('txn-id');
+            const element = document.getElementById(`pdf-content-${txnId}`);
+
+            // Temporarily make the content visible
+            element.style.visibility = 'visible';
+            element.style.position = 'relative';
+            element.style.height = 'auto';
+
+            const options = {
+                margin: 0.3,
+                filename: `payment-${txnId}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(options).from(element).save().then(() => {
+                // Hide it again after PDF is created
+                element.style.visibility = 'hidden';
+                element.style.position = 'absolute';
+                element.style.height = '0';
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    let invoiceDataTable;
+    let studentTransactionTable;
+    const familyDetailSearchformId = 'familyTransactionSearchForm';
+    const TRANS_SORT_STORAGE_KEY = 'studentTransactionsTable_Sort';
+    const TRANS_SEARCH_STORAGE_KEY = 'studentTransactionsSearch_Filters';
+    
+    const invoiceSearchformId = 'invoicesSearchForm';
+    const INV_STORAGE_KEY = 'familyDetailsInvoicesTable_columns';
+    const INV_SORT_STORAGE_KEY = 'studentInvoicesTable_Sort';
+    const INV_SEARCH_STORAGE_KEY = 'studentInvoicesSearch_Filters';
+
+    async function loadInvoices(studentId) {
+        if (!studentId) return;
+
+        if ($.fn.DataTable.isDataTable("#familyInvoiceTable")) {
+            $("#familyInvoiceTable").DataTable().clear().destroy();
+        }    
+
+        invoiceDataTable = $("#familyInvoiceTable").DataTable({
+            serverSide: true,
+            paging: true,
+            pageLength: 10,
+            responsive: false,
+            // scrollX: true,
+            autoWidth: false,
+            dom: '<"table-responsive families-invoices-responsive"t><"bottom_table_field"<""l><""i><""p>>r',
+            ajax: {
+                url: `/families-invoices/invoices/dataTable`,
+                type: "POST",
+                data: function (d) {
+                    d.studentId = studentId;
+
+                    // Custom Search Filters
+                    let drp = $(`#${invoiceSearchformId} #date_range_block`).data('daterangepicker');
+                    d.filter_invoice_start_date = drp.startDate.format('YYYY-MM-DD') || '';
+                    d.filter_invoice_end_date = drp.endDate.format('YYYY-MM-DD') || '';
+                    d.family_or_invoice_number = $(`#${invoiceSearchformId} #family_or_invoice_number`).val()?.trim() || '';
+                    d.filter_invoice_date = $(`#${invoiceSearchformId} #filter_invoice_date`).val()?.trim() || '';
+                    d.hide_emailed = $(`#${invoiceSearchformId} #hide_emailed`).is(':checked') ? 1 : 0;
+                    d.hide_voided = $(`#${invoiceSearchformId} #hide_voided`).is(':checked') ? 1 : 0;
+                    d.hide_due_invoices = $(`#${invoiceSearchformId} #hide_due_invoices`).is(':checked') ? 1 : 0;
+                    d.archive_status = $(`#${invoiceSearchformId} #archive_status`).val() || '';
+                    
+                    // Send current sort info from dropdown if exists
+                    // let sortInfo = $('#invoices-sort-dropdown').data('sort-info');
+                    // if (sortInfo) {
+                    //     d.order = [
+                    //         { column: sortInfo.column, dir: sortInfo.direction }
+                    //     ];
+                    // }else{
+                    //     d.order = [
+                    //         { column: 1, dir: 'desc' }
+                    //     ];
+                    // }
+                },
+                // dataSrc: "invoices" // from res.json({ invoices })
+                dataSrc: function(data) {
+                    return data.data || []; // Fallback to empty array
+                }
+            },
+            order: [[1, "desc"]],
+            drawCallback: function (settings) {
+                const order = settings.aaSorting;
+                // console.log("drawCallback: New sort", order);
+                $('[data-toggle="tooltip"]').tooltip();
+            },
+            columns: [
+                {
+                    data: "_id",
+                    render: function (id, type, row) {
+                        return `<input type="checkbox" class="invoice-checkbox" value="${id}" />`;
+                    },
+                    orderable: false
+                },
+                {   
+                    data: 'invoice_date',
+                    render: function (data, type, row) {
+                        const badges = [];
+                        const formattedDate = moment(new Date(data)).format("DD-MM-YYYY");
+
+                        if (row.is_void) {
+                        badges.push(`<span class="badge background-danger" data-toggle="tooltip" data-placement="bottom" title="This invoice has been voided.">Void</span>`);
+                        } else if (row.is_paid) {
+                        badges.push(`<span class="badge background-success" data-toggle="tooltip" data-placement="bottom" title="This invoice is paid in full.">Paid</span>`);
+                        }
+
+                        if (row.is_emailed) {
+                        const emailedAt = row.email_sent_at ? moment(row.email_sent_at).format("DD-MM-YYYY HH:mm:ss") : null;
+                        const tooltip = emailedAt ? `This invoice was emailed on ${emailedAt}.` : "This invoice has been emailed.";
+                        badges.push(`<span class="badge background-email" data-toggle="tooltip" data-placement="bottom" title="${tooltip}">Emailed</span>`);
+                        }
+
+                        if (row.is_archived) {
+                        badges.push(`<span class="badge background-neutral" data-toggle="tooltip" data-placement="bottom" title="This invoice is archived.">Archived</span>`);
+                        }
+
+                        return `
+                        <div class="invoices_table_data">
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div class="invoices_table_info">
+                            ${badges.join(" ")}
+                        </div>
+                        `;
+                    }
+                },
+                { data: 'invoice_number', orderable:false },
+                { 
+                    data: 'due_date', 
+                    orderable:false,
+                    render: function (data, type, row) {
+                        return (data) ? `${moment(new Date(data)).format('DD-MM-YYYY')}` : '-';
+                    }
+                },
+                { 
+                    data: 'date_range', 
+                    orderable:false,
+                    render: function(data, type, row) {
+                        if (!data) return '-';
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = data;
+                        const dates = Array.from(tempDiv.querySelectorAll('p')).map(p => p.textContent.trim());
+                        const formattedDates = dates.map(d => moment(d, "DD/MM/YYYY").format("DD-MM-YYYY"));
+                        return formattedDates.join(' - ');
+                    }     
+                },
+                { 
+                    data: 'private_note', orderable:false   
+                },
+                {
+                    data: 'invoice_amount',
+                    render: function (data, type, row) {
+                        return `${row.currency}${data}`;
+                    },
+                    orderable: true,
+                },
+                {
+                    data: "_id",
+                    render: (id, type, row) =>
+                        `<div class="dropdown dropup table_dropdown">
+                            <button class="dropdowntoggle bg-transparent border-0 shadow-none" type="button" data-toggle="dropdown" data-boundary="window" aria-expanded="false">
+                                <img src="/images/more-icon.svg" alt="more-icon" />
+                            </button>
+                            <div class="dropdown-menu invoice_body_dropdown dropdown-menu-area dropdown-menu-right">
+                                <a class="dropdown-item view-btn" href="#" data-txn-id="${row._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M18 19H6C5.45 19 5 18.55 5 18V6C5 5.45 5.45 5 6 5H11C11.55 5 12 4.55 12 4C12 3.45 11.55 3 11 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V13C21 12.45 20.55 12 20 12C19.45 12 19 12.45 19 13V18C19 18.55 18.55 19 18 19ZM14 4C14 4.55 14.45 5 15 5H17.59L8.46 14.13C8.07 14.52 8.07 15.15 8.46 15.54C8.85 15.93 9.48 15.93 9.87 15.54L19 6.41V9C19 9.55 19.45 10 20 10C20.55 10 21 9.55 21 9V4C21 3.45 20.55 3 20 3H15C14.45 3 14 3.45 14 4Z"></path> </svg>
+                                View</a>
+                                <a class="dropdown-item sendSingleEmailInvoice " href="javascript:void(0);" data-id="${row._id}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1946 19.4863C13.9814 20.0338 13.2783 20.1721 12.8692 19.7629L10.207 17.1122C9.91884 16.8241 9.88426 16.3631 10.1321 16.0346L17.1911 6.80895L7.9596 13.8622C7.63691 14.1157 7.17591 14.0812 6.88779 13.793L4.23706 11.1308C3.82792 10.7217 3.96622 10.0186 4.51366 9.80543L18.8795 4.06026C19.0211 4.0041 19.3733 3.86471 19.7258 3.72522C19.8229 3.68681 19.92 3.6484 20.0127 3.61171L20.2096 3.53382C20.3727 3.46929 20.5338 3.63083 20.4687 3.79375L20.3902 3.9904C20.3533 4.08297 20.3146 4.17992 20.2759 4.27691C20.1372 4.6244 19.9985 4.97233 19.9397 5.12055L14.1946 19.4863ZM3.77718 7.94595L18.1422 2.20109C18.3238 2.1291 18.8479 1.92173 19.277 1.75196L19.4739 1.67405C21.2681 0.964265 23.0415 2.74326 22.3262 4.53525L22.2477 4.73177C22.078 5.15708 21.8731 5.67081 21.7989 5.8578L21.7968 5.86321L16.054 20.223C15.3032 22.129 12.8677 22.5857 11.4581 21.1802L11.455 21.1772L8.79274 18.5264C8.10981 17.8435 7.84133 16.8806 8.02036 15.9783C7.11319 16.1604 6.14905 15.8827 5.47357 15.2073L5.47051 15.2042L2.82285 12.545L2.82107 12.5432C1.41397 11.1337 1.87048 8.69693 3.77718 7.94595Z"></path> </svg>
+                                    Email</a>
+                                <a class="dropdown-item download-btn bottom-border" href="#" data-txn-id="${row._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M12 15.575C11.8667 15.575 11.7417 15.5542 11.625 15.5125C11.5083 15.4708 11.4 15.4 11.3 15.3L7.7 11.7C7.5 11.5 7.40417 11.2667 7.4125 11C7.42083 10.7333 7.51667 10.5 7.7 10.3C7.9 10.1 8.1375 9.99583 8.4125 9.9875C8.6875 9.97917 8.925 10.075 9.125 10.275L11 12.15V4C11 3.71667 11.0958 3.47917 11.2875 3.2875C11.4792 3.09583 11.7167 3 12 3C12.2833 3 12.5208 3.09583 12.7125 3.2875C12.9042 3.47917 13 3.71667 13 4V12.15L14.875 10.275C15.075 10.075 15.3125 9.97917 15.5875 9.9875C15.8625 9.99583 16.1 10.1 16.3 10.3C16.4833 10.5 16.5792 10.7333 16.5875 11C16.5958 11.2667 16.5 11.5 16.3 11.7L12.7 15.3C12.6 15.4 12.4917 15.4708 12.375 15.5125C12.2583 15.5542 12.1333 15.575 12 15.575ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V17C3 16.7167 3.09583 16.4792 3.2875 16.2875C3.47917 16.0958 3.71667 16 4 16C4.28333 16 4.52083 16.0958 4.7125 16.2875C4.90417 16.4792 5 16.7167 5 17V19H19V17C19 16.7167 19.0958 16.4792 19.2875 16.2875C19.4792 16.0958 19.7167 16 20 16C20.2833 16 20.5208 16.0958 20.7125 16.2875C20.9042 16.4792 21 16.7167 21 17V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5Z"></path> </svg> 
+                                    Download PDF</a>
+                                <hr style="margin:0px">
+                                <div class="override my-2 py-1">
+                                    <h6 style="color:var(--dblue);">Override Status</h6>
+                                    <div class="d-flex align-items-center gap-10">
+                                        <button type="button" class="dropdown-item text-center rounded background-success mark-as-paid" data-id="${row._id}">Paid</button>
+                                        <button type="button" class="dropdown-item text-center rounded background-danger mark-as-void" data-id="${row._id}">Void</button>
+                                    </div>
+                                </div>
+                                <hr style="margin:0px">
+                                <a class="dropdown-item" href="/families-invoices/transaction-details/${row.student_id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M19 13H13V19C13 19.55 12.55 20 12 20C11.45 20 11 19.55 11 19V13H5C4.45 13 4 12.55 4 12C4 11.45 4.45 11 5 11H11V5C11 4.45 11.45 4 12 4C12.55 4 13 4.45 13 5V11H19C19.55 11 20 11.45 20 12C20 12.55 19.55 13 19 13Z"></path> </svg>
+                                Add A Payment</a>
+                                <hr style="margin:0px">
+                               <a class="dropdown-item archive-action" href="javascript:void(0);" data-id="${row._id}" data-action="${row.is_archived ? 'unarchive' : 'archive'}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 10C11.7167 10 11.4792 10.0958 11.2875 10.2875C11.0958 10.4792 11 10.7167 11 11V14.2L10.1 13.3C9.91667 13.1167 9.68333 13.025 9.4 13.025C9.11667 13.025 8.88333 13.1167 8.7 13.3C8.51667 13.4833 8.425 13.7167 8.425 14C8.425 14.2833 8.51667 14.5167 8.7 14.7L11.3 17.3C11.5 17.5 11.7333 17.6 12 17.6C12.2667 17.6 12.5 17.5 12.7 17.3L15.3 14.7C15.4833 14.5167 15.575 14.2833 15.575 14C15.575 13.7167 15.4833 13.4833 15.3 13.3C15.1167 13.1167 14.8833 13.025 14.6 13.025C14.3167 13.025 14.0833 13.1167 13.9 13.3L13 14.2V11C13 10.7167 12.9042 10.4792 12.7125 10.2875C12.5208 10.0958 12.2833 10 12 10ZM5 8V19H19V8H5ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V6.525C3 6.29167 3.0375 6.06667 3.1125 5.85C3.1875 5.63333 3.3 5.43333 3.45 5.25L4.7 3.725C4.88333 3.49167 5.1125 3.3125 5.3875 3.1875C5.6625 3.0625 5.95 3 6.25 3H17.75C18.05 3 18.3375 3.0625 18.6125 3.1875C18.8875 3.3125 19.1167 3.49167 19.3 3.725L20.55 5.25C20.7 5.43333 20.8125 5.63333 20.8875 5.85C20.9625 6.06667 21 6.29167 21 6.525V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM5.4 6H18.6L17.75 5H6.25L5.4 6Z"></path>
+                                    </svg>
+                                    ${row.is_archived ? 'Unarchive' : 'Archive'}
+                                </a>
+                                <a class="dropdown-item delete-invoice" href="javascript:void(0);" data-id="${row._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9C18 7.9 17.1 7 16 7H8C6.9 7 6 7.9 6 9V19ZM9 9H15C15.55 9 16 9.45 16 10V18C16 18.55 15.55 19 15 19H9C8.45 19 8 18.55 8 18V10C8 9.45 8.45 9 9 9ZM15.5 4L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H6C5.45 4 5 4.45 5 5C5 5.55 5.45 6 6 6H18C18.55 6 19 5.55 19 5C19 4.45 18.55 4 18 4H15.5Z"></path> </svg>
+                                Delete</a>
+                            </div>
+                        </div>`,
+                    orderable: false
+                }
+            ]
+        });
+
+        setTimeout(() => {
+            initColumnVisibilityControls({
+                table: invoiceDataTable, // your DataTable instance
+                storageKey: INV_STORAGE_KEY,
+                defaultCols: ['invoice-date', 'date-range', 'invoice-amount'],
+                checkboxSelector:'#invoice-colvis-dropdown .column-checkbox',
+                showAllSelector: '#invoice-colvis-dropdown .show-all',
+                showDefaultSelector: '#invoice-colvis-dropdown .show-default'
+            });
+        }, 200);
+    }
+
+    async function transactionTable() {
+        let studentId = '<%= studentId %>';
+        if ($.fn.DataTable.isDataTable("#familyTransactionsTable")) {
+            $("#familyTransactionsTable").DataTable().destroy();
+        }
+
+        let savedOrder = [[0, "desc"]]; 
+        try {
+            const saved = localStorage.getItem(TRANS_SORT_STORAGE_KEY);
+            if (saved) {
+                const { columnName, direction } = JSON.parse(saved);
+                const colMap = { 'date': 0 }; 
+                const colIndex = colMap[columnName];
+                if (colIndex !== undefined) {
+                    savedOrder = [[colIndex, direction]];
+                }
+            }
+        } catch(e) {}
+
+        studentTransactionTable = $("#familyTransactionsTable").DataTable({
+            serverSide: true,
+            paging: true,
+            pageLength: 10,
+            responsive: false,
+            // scrollX: true,
+            autoWidth: false,
+            dom: '<"table-responsive families-invoices-responsive"t><"bottom_table_field"<""l><""i><""p>>r',
+            // order: [[0, "desc"]],
+            order: savedOrder,
+            ajax: {
+                url: "/families-invoices/transactions/dataTable",
+                type: "POST",
+                data: function (d) {
+                    const selectedDate = $('#hidden-date-input').data('daterangepicker')?.startDate;
+                    
+                    // Convert single date to date range for recurring transactions
+                    if (selectedDate && moment(selectedDate).isValid()) {
+                        // For recurring transactions, we need to show all transactions UP TO the selected date
+                        // So we set start date to a very early date and end date to the selected date
+                        d.filter_start_date = '01-01-1972'; // Very early start date to capture all recurring transactions
+                        d.filter_end_date = selectedDate.format('DD-MM-YYYY'); // End at the selected date
+                    } else {
+                        // If no date selected, use current date as end point
+                        d.filter_end_date = moment().format('DD-MM-YYYY');
+                    }
+                    
+                    d.studentId = studentId;
+
+                    // Custom Search Filters
+                    d.searchCategory = $('#familyTransactionDropdown input[type="search"]').val()?.trim() || '';
+                    d.showZeroEntries = $('#familyTransactionDropdown #show_zero_entries').is(':checked') ? 1 : 0;
+                    d.searchAmount = $('#familyTransactionDropdown #amount_search').val() || '';
+                    
+                    // Add the single filterDate for backward compatibility if needed
+                    d.filterDate = selectedDate ? selectedDate.format('DD-MM-YYYY') : '';
+                }
+            },
+            columns: [
+                {
+                    data: "date",
+                    orderable:true,
+                    render: function (data, type, row) {
+                        const categoryTxt = (row.category) ? `<br/><span class="status-label background-neutral"><i class="fa fa-calendar"></i> ${row.category}</span>` : '';
+                        const recurringText = (row.recurring) ? `<br/><span class="status-label background-neutral"><i class="fa fa-refresh"></i> Recurring</span>` : '';
+                        return (row.date ? moment(row.date).format("DD-MM-YYYY") : "-") + ` ${categoryTxt} ${recurringText}`;
+                    }
+                },
+                {
+                    data: "student_name",
+                    orderable:false,
+                    defaultContent: "-"
+                },
+                {
+                    data: "note",
+                    orderable:false,
+                    defaultContent: "-"
+                },
+                {
+                    data: "null",
+                    orderable:false,
+                    render: function (data, type, row) {
+                        const amount_txt = row.amount.toFixed(2);
+                        const className = ['Charge','Discount'].includes(row.transaction_type) ? 'background-danger' : '';
+                        return ['Charge','Discount'].includes(row.transaction_type) ? `<span class="status-label ${className} nowrap">${row.transaction_type} ${row.currency}${amount_txt}</span>` : '-';
+                    }
+                },
+                {
+                    data: null,
+                    orderable:false,
+                    render: function (data, type, row) {
+                        const amount_txt = row.amount.toFixed(2);
+                        const className = ['Payment','Refund'].includes(row.transaction_type) ? 'background-success' : '';
+                        return ['Payment','Refund'].includes(row.transaction_type) ? `<span class="status-label ${className} nowrap">${row.transaction_type} ${row.currency}${amount_txt}</span>` : '-';
+                    }
+                },
+                {
+                    data: null,
+                    orderable:false,
+                    render: function (data, type, row) {
+                        const derived_amount_txt = row.derived_balance.toFixed(2);
+                        const className = (row.derived_balance > 0) ? 'background-success' : 'background-danger';
+                        return `<span class="status-label ${className}">${row.currency}${derived_amount_txt}</span>`;
+                    }
+                },
+                {
+                    data: "slug",
+                    orderable: false,
+                    name: 'actions',
+                    searchable: false,
+                    defaultContent: '',
+                    render: function (data, type, row) {
+                        let buttons = "";
+                        if (row.event && row.event !== null) {
+                            buttons += `
+                                <a class="dropdown-item" href="/attendance-notes/take-attendance/${row.event}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Edit Attendance
+                                </a>
+                            `;
+
+                            buttons += `
+                                <a class="dropdown-item" href="/calendar/edit-an-event/${row.event}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Edit Event Details
+                                </a>
+                            `;
+                        } else {
+                             buttons += `
+                                <a class="dropdown-item" href="/families-invoices/transaction-details/edit/${row._id}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Edit Transaction
+                                </a>`;
+                            if (row.transaction_type && ['Payment','Refund'].includes(row.transaction_type)) {
+                                buttons += `<a class="dropdown-item download-receipt" href="javascript:void(0);" data-id="${row._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M12 15.575C11.8667 15.575 11.7417 15.5542 11.625 15.5125C11.5083 15.4708 11.4 15.4 11.3 15.3L7.7 11.7C7.5 11.5 7.40417 11.2667 7.4125 11C7.42083 10.7333 7.51667 10.5 7.7 10.3C7.9 10.1 8.1375 9.99583 8.4125 9.9875C8.6875 9.97917 8.925 10.075 9.125 10.275L11 12.15V4C11 3.71667 11.0958 3.47917 11.2875 3.2875C11.4792 3.09583 11.7167 3 12 3C12.2833 3 12.5208 3.09583 12.7125 3.2875C12.9042 3.47917 13 3.71667 13 4V12.15L14.875 10.275C15.075 10.075 15.3125 9.97917 15.5875 9.9875C15.8625 9.99583 16.1 10.1 16.3 10.3C16.4833 10.5 16.5792 10.7333 16.5875 11C16.5958 11.2667 16.5 11.5 16.3 11.7L12.7 15.3C12.6 15.4 12.4917 15.4708 12.375 15.5125C12.2583 15.5542 12.1333 15.575 12 15.575ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V17C3 16.7167 3.09583 16.4792 3.2875 16.2875C3.47917 16.0958 3.71667 16 4 16C4.28333 16 4.52083 16.0958 4.7125 16.2875C4.90417 16.4792 5 16.7167 5 17V19H19V17C19 16.7167 19.0958 16.4792 19.2875 16.2875C19.4792 16.0958 19.7167 16 20 16C20.2833 16 20.5208 16.0958 20.7125 16.2875C20.9042 16.4792 21 16.7167 21 17V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5Z"></path> </svg>  
+                                    Download Receipt
+                                </a>`;
+                            }
+                            buttons += `<a class="dropdown-item delete-transaction" href="#" onclick="confirmBeforeDeletion('/families-invoices/transaction-details/destroy/${row._id}')" title="Delete Transaction">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9C18 7.9 17.1 7 16 7H8C6.9 7 6 7.9 6 9V19ZM9 9H15C15.55 9 16 9.45 16 10V18C16 18.55 15.55 19 15 19H9C8.45 19 8 18.55 8 18V10C8 9.45 8.45 9 9 9ZM15.5 4L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H6C5.45 4 5 4.45 5 5C5 5.55 5.45 6 6 6H18C18.55 6 19 5.55 19 5C19 4.45 18.55 4 18 4H15.5Z"></path> </svg>
+                                Delete Transaction</a>`;
+                        }
+                        
+                        return `
+                        <div class="dropdown dropup table_dropdown">
+                            <button class="dropdowntoggle bg-transparent border-0 shadow-none" type="button" data-toggle="dropdown" data-boundary="window" aria-expanded="false">
+                                <img src="/images/more-icon.svg" alt="more-icon" />
+                            </button>
+                            <div class="dropdown-menu invoice_body_dropdown dropdown-menu-area dropdown-menu-right">                            
+                                ${buttons}                                
+                            </div>
+                        </div>`;
+                    }
+                }
+            ],
+            initComplete: function(settings, json) {
+                applySavedSort(this.api(),'transactions-sort-dropdown',TRANS_SORT_STORAGE_KEY);
+            }
+        });
+
+        studentTransactionTable.on('order.dt', function () {
+            const order = studentTransactionTable.order();
+            if (order.length) {
+                const colIndex = order[0][0];
+                const direction = order[0][1];
+                const colMap = { 0: 'date' }; 
+                const columnName = colMap[colIndex];
+                if (columnName) {
+                    localStorage.setItem(TRANS_SORT_STORAGE_KEY, JSON.stringify({ columnName, direction }));
+                    $(`#transactions-sort-dropdown .sort-trigger`).removeClass('sort-asc sort-desc');
+                    $(`#transactions-sort-dropdown .sort-trigger[data-column-name="${columnName}"]`).addClass(`sort-${direction}`);
+                }
+            }
+        });
+    
+        
+        $('#familyTransactionsTable').on('xhr.dt', function (e, settings, json, xhr) {
+            const currency = json.currency || '$';
+            $('.balance-total strong').text(`${currency}${Math.abs(json.owed)}`);
+        });
+    }
+
+    // Function to show the correct tab based on URL hash
+    function showActiveTab(hash = "#account") {
+        const normalizedHash = hash.toLowerCase();
+        const tabMap = {
+            "#account": {
+                el: $('[href="#account"]'),
+                handler: () => transactionTable()
+            },
+            "#invoices": {
+                el: $('[href="#invoices"]'),
+                handler: () => loadInvoices('<%= studentId %>')
+            }
+        };
+
+        const tabEntry = tabMap[normalizedHash] || tabMap["#account"];
+
+        if (tabEntry?.el) {
+            tabEntry.el.tab('show');
+
+            // ✅ Trigger associated logic explicitly
+            setTimeout(() => {
+                tabEntry.handler?.();
+            }, 10); // allow Bootstrap's tab transition to complete
+        }
+    }
+
+    $(function () {
+        const currentHash = window.location.hash || "#account";
+        
+        try {
+            showActiveTab(currentHash);
+
+            $('#date_range_block').daterangepicker({
+                autoUpdateInput: false,
+                singleDatePicker: false,
+                showDropdowns: true,
+                minYear: 1901,
+                maxYear: parseInt(moment().format('YYYY'), 10),
+                //parentEl: '#invoicesDropdown',
+                locale: {
+                    format: 'DD-MM-YYYY'
+                }
+            });
+            $('#date_range_block').on('show.daterangepicker', function(ev, picker) {
+                picker.container.addClass('add-invoice-daterangepicker');
+            });
+
+            $(document).on('click', '.daterangepicker.add-invoice-daterangepicker', function (e) {
+                e.stopPropagation();
+            });
+
+            // Initially disable it
+            $('#date_range_block').prop('disabled', true).val('');
+
+            // Checkbox toggle
+            $('#filter_invoice_date').on('change', function () {
+                if ($(this).is(':checked')) {
+                    // Enable input
+                    $('#date_range_block').prop('disabled', false);
+
+                    // Set to current month range
+                    let startOfMonth = moment().startOf('month');
+                    let endOfMonth = moment().endOf('month');
+
+                    $('#date_range_block').data('daterangepicker').setStartDate(startOfMonth);
+                    $('#date_range_block').data('daterangepicker').setEndDate(endOfMonth);
+
+                    $('#date_range_block').val(
+                        startOfMonth.format('DD-MM-YYYY') + ' - ' + endOfMonth.format('DD-MM-YYYY')
+                    );
+                } else {
+                    // Disable and clear
+                    $('#date_range_block').prop('disabled', true).val('');
+                }
+            });
+
+            // Load saved filters
+            loadSearchFilters(familyDetailSearchformId,TRANS_SEARCH_STORAGE_KEY);
+
+            // Update count after loading
+            updateSearchCount(familyDetailSearchformId);
+
+            // Load saved filters
+            loadSearchFilters(invoiceSearchformId,INV_SEARCH_STORAGE_KEY);
+
+            // Update count after loading
+            updateSearchCount(invoiceSearchformId);            
+        } catch (e) {
+            console.error("Initialization error:", e);
+        }
+
+        $(document).on("click", ".download-receipt", function (e) {
+            e.preventDefault();
+            const id = $(this).data("id");
+            $.ajax({
+                url: `/families-invoices/transaction-details/${id}/download-receipt`,
+                method: "GET",
+                xhrFields: { responseType: 'blob' }, // expect PDF
+                success: function (data, status, xhr) {
+                const blob = new Blob([data], { type: "application/pdf" });
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `receipt-${id}.pdf`;
+                link.click();
+                },
+                error: function (err) {
+                Swal.fire("Error", "Failed to download receipt", "error");
+                },
+            });
+        });
+
+       
+        $('#familyInvoiceTable').on('change', 'input[type="checkbox"]', function () {
+            toggleActionButtons('familyInvoiceTable','invoices');
+        });
+
+        // Listen to 'select all' checkbox
+        $('#family_select_all').on('change', function () {
+            const isChecked = $(this).prop('checked');
+            $('#familyInvoiceTable tbody input[type="checkbox"]').prop('checked', isChecked);
+            toggleActionButtons('familyInvoiceTable','invoices');
+        });
+
+        $(`#${invoiceSearchformId}`).on("click", ".cancel-event", function () {
+            const form = $(this).closest("form")[0];
+            form.reset();
+            updateSearchCount(invoiceSearchformId);   
+            invoiceDataTable.ajax.reload();
+            $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+        $(`#${familyDetailSearchformId}`).on("click", ".cancel-event", function () {
+            const form = $(this).closest("form")[0];
+            form.reset();
+            updateSearchCount(familyDetailSearchformId);
+            studentTransactionTable.ajax.reload();
+            $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+        $(".drop-down .selected").on("click", function() {
+            $(this).next(".drop-options").toggle();
+        });
+
+        // Handle tab change and update hash in URL
+        $('a[data-toggle="pill"]').on('shown.bs.tab', async function (e) {
+            const hash = $(e.target).attr('href'); // e.g., #pills-general
+            let section = '';
+            switch (hash) {
+                case '#account':
+                    section = 'account';
+                    await transactionTable();
+                break;
+                case '#invoices':
+                    section = 'invoices';
+                    await loadInvoices('<%= studentId %>');
+                break;
+            }
+            if (history.pushState) {
+                history.pushState(null, null, '#' + section);
+            } else {
+                window.location.hash = '#' + section;
+            }
+        });
+        
+        $('#transactions-sort-dropdown .sort-trigger').on('click', function (e) {
+            const $btn = $(this);
+            triggerSortClick(studentTransactionTable, $btn,'transactions-sort-dropdown', TRANS_SORT_STORAGE_KEY);
+        });
+        
+        // Search button click
+        $(`#${familyDetailSearchformId}`).on('submit', function (e) {
+            e.preventDefault();
+            saveSearchFilters(familyDetailSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            updateSearchCount(familyDetailSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            studentTransactionTable.ajax.reload();
+            $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+        // Clear button
+        $('#familyTransactionDropdown .cancel-btn').on('click', function () {
+            $(`#${familyDetailSearchformId}`)[0].reset();
+            $('.search-input:checkbox').prop('checked', false);
+            localStorage.removeItem(TRANS_SEARCH_STORAGE_KEY);
+            updateSearchCount(familyDetailSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            studentTransactionTable.ajax.reload();
+            //$(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+
+        $('#invoices-sort-dropdown .sort-trigger').on('click', function (e) {
+            const $btn = $(this);
+            triggerSortClick(invoiceDataTable, $btn,'invoices-sort-dropdown', INV_SORT_STORAGE_KEY);
+        });
+
+        // Search button click
+        $(`#${invoiceSearchformId}`).on('submit', function (e) {
+            e.preventDefault();
+            saveSearchFilters(invoiceSearchformId, INV_SEARCH_STORAGE_KEY);
+            updateSearchCount(invoiceSearchformId, INV_SEARCH_STORAGE_KEY);
+            invoiceDataTable.ajax.reload();
+            $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+        // Clear button
+        $('#invoicesDropdown .cancel-btn').on('click', function () {
+            $(`#${invoiceSearchformId}`)[0].reset();
+            $('.search-input:checkbox').prop('checked', false);
+            localStorage.removeItem(INV_SEARCH_STORAGE_KEY);
+            updateSearchCount(invoiceSearchformId, INV_SEARCH_STORAGE_KEY);
+            invoiceDataTable.ajax.reload();
+        });
+    });
+
+    // Options dropdown functionality
+    $(document).on("click", ".dropdown-item.download-selected", function () {
+        let selectedIds = [];
+        $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+            let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+            if (rowId) selectedIds.push(rowId);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one invoice.");
+            return;
+        }
+        window.location.href = `/families-invoices/invoice/download-zip?ids=${selectedIds.join(",")}`;
+    });
+
+    $(document).on("click", ".dropdown-item.download-invoice-details", function () {
+        let selectedIds = [];
+        $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+            let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+            if (rowId) selectedIds.push(rowId);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one invoice.");
+            return;
+        }
+        window.location.href = `/families-invoices/invoice/download-excel?ids=${selectedIds.join(",")}`;
+    });
+
+    // Archive/Unarchive functionality
+    $(document).on("click", ".archive-action", function (e) {
+            e.preventDefault();
+            const ids = [];
+            const id = $(this).data("id"); // Single row
+            const action = $(this).data("action"); // archive / unarchive
+
+            if (id) ids.push(id);
+
+            // Collect selected checkboxes for bulk actions
+           $(".invoice-checkbox:checked").each(function () {
+            ids.push($(this).val());
+            });
+
+
+            if (ids.length === 0) {
+            Swal.fire("Warning", "No invoices selected", "warning");
+            return;
+            }
+
+            Swal.fire({
+            title: "Are you sure?",
+            text: `Do you want to ${action} the selected invoices?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: `Yes, ${action}`,
+            cancelButtonText: "Cancel",
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                url: `/families-invoices/invoices/change-archive-status`,
+                type: "POST",
+                data: { invoice_ids: ids, action },
+                success: function (res) {
+                    Swal.fire("Success", `Invoices ${action}d successfully`, "success");
+                    invoiceDataTable.ajax.reload();
+                },
+                error: function (err) {
+                    Swal.fire("Error", `Failed to ${action} invoices`, "error");
+                },
+                });
+            }
+            });
+    });
+
+    
+
+    $(document).on("click", ".delete-invoice", function (e) {
+        e.preventDefault();
+        const ids = [];
+        const id = $(this).data("id"); // Single row delete
+        if (id) ids.push(id);
+
+        // Collect selected checkboxes for bulk actions
+        $(".invoice-checkbox:checked").each(function () {
+        ids.push($(this).val());
+        });
+
+        if (ids.length === 0) {
+        Swal.fire("Warning", "No invoices selected", "warning");
+        return;
+        }
+        Swal.fire({
+        title: "Are you sure?",
+        text: `Do you want to delete the selected invoice(s)?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: `Yes, Delete`,
+        cancelButtonText: "Cancel",
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+            url: `/families-invoices/invoices/delete`,
+            type: "POST", // POST as you wrote
+            data: JSON.stringify({ invoice_ids: ids }),
+            contentType: "application/json",
+            success: function (res) {
+                if (res.success) {
+                Swal.fire("Success", res.message || "Invoice(s) deleted successfully", "success");
+                invoiceDataTable.ajax.reload();
+                } else {
+                Swal.fire("Warning", res.message || "Failed to delete invoices.", "warning");
+                }
+            },
+            error: function () {
+                Swal.fire("Error", "Something went wrong while deleting invoices.", "error");
+            }
+            });
+        }
+        });
+    });
+    
+    // Email multiple invoices
+    $(document).on("click", ".email-invoice-btn", function () {
+        let selectedIds = [];
+        $("#familyInvoiceTable tbody input[type='checkbox']:checked").each(function () {
+            let rowId = $(this).closest("tr").find("td._id input").val() || $(this).val();
+            if (rowId) selectedIds.push(rowId);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one invoice.");
+            return;
+        }
+
+        // Store selected IDs for use in the modal
+        $('#sendEmailInvoice').data('selected-invoices', selectedIds);
+        
+        // You might want to modify the modal to handle multiple invoices
+        // For now, we'll just show the modal for the first selected invoice
+        if (selectedIds.length > 0) {
+            $('#invoiceIdField').val(selectedIds[0]);
+            $('#sendEmailInvoice').modal('show');
+        }
+    });
+
+    // Toggle action buttons based on checkbox selection
+    function toggleActionButtons() {
+        const anyChecked = $("#familyInvoiceTable tbody input[type='checkbox']:checked").length > 0;
+        $(".action-btn").prop('disabled', !anyChecked);
+    }
+
+    // Listen to checkbox changes
+    $('#familyInvoiceTable').on('change', 'input[type="checkbox"]', function () {
+        toggleActionButtons();
+    });
+
+    // Listen to 'select all' checkbox
+    $('#family_select_all').on('change', function () {
+        const isChecked = $(this).prop('checked');
+        $('#familyInvoiceTable tbody input[type="checkbox"]').prop('checked', isChecked);
+        toggleActionButtons();
+    });
+    
+</script>
+
+<%- include('./partials/auto-invoicing/_script'); %>
+<%- include('./common_script',{ businessSettingValue }); %>
+<%- include('../partials/common_script'); %>
+<%- include('./family-details_script'); %>

@@ -1,0 +1,492 @@
+<script type="text/javascript">
+  /**
+   * @challenges script start.
+   */
+
+  $(document).on("click", ".addChallenge", function () {
+    $("#storeChallengeForm")[0].reset();
+    $("#challenge_id").val("");
+  });
+
+  $("#storeChallengeForm").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var form = $("#storeChallengeForm");
+    var formData = new FormData(form[0]);
+    formData.append("learning_content_id", learningContentId);
+    formData.append("lesson_id", lessonId);
+    let url = $("#storeChallengeForm").attr("action");
+    let challengeId = $(this).closest("form").find("#challenge_id").val();
+    let challengeTitle = $(this).closest("form").find("#ch_title").val();
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      beforeSend: function () {
+        $(".loader").show();
+      },
+      success: function (response) {
+        $(".close").trigger("click");
+        if (challengeId != "") {
+          setTimeout(() => {
+            new Noty({
+              theme: "relax",
+              text: "The challenge is updated successfully!",
+              type: "success",
+              layout: "topRight",
+              timeout: 1500,
+            }).show();
+          }, 1000);
+
+          $(".sort-slides1[data-uniqueid=" + challengeId + "]")
+            .find(".challenge-anchor")
+            .text(challengeTitle);
+          renderSliderContent(lessonId, "challenges", challengeId);
+        } else {
+          new Noty({
+            theme: "relax",
+            text: "The new challenge is created successfully!",
+            type: "success",
+            layout: "topRight",
+            timeout: 1500,
+          }).show();
+          location.reload();
+        }
+      },
+      error: function (response) {
+        if (response.responseJSON.errors) {
+          let errorMessages = "";
+          $.each(response.responseJSON.errors, function (field_name, error) {
+            $(document)
+              .find("[id=ch_" + error.param + "]")
+              .after(
+                '<span class="help-block text-danger">' + error.msg + "</span>"
+              );
+          });
+        }else{
+          Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: response.responseJSON.message,
+          });
+        } 
+      },
+      complete: function () {
+        if (challengeId != "") {
+          setTimeout(() => {
+            $(".loader").hide();
+          }, 1000);
+        } else {
+          $(".loader").hide();
+        }
+        $("#storeSlideBtn").attr("disabled", false);
+      },
+    });
+  });
+
+  $(".edit-challenge").click(function () {
+    let challengeId = $(this).attr("data-challengeId");
+    $.ajax({
+      type: "POST",
+      url:
+        "/learning-content/" +
+        learningContentSlug +
+        "/lessons/" +
+        lessonSlug +
+        "/challenges/edit",
+      data: {
+        lessonId: lessonId,
+        challengeId: challengeId,
+      },
+      dataType: "json",
+      beforeSend: function () {
+        $(".loader").show();
+      },
+      success: function (response) {
+        $(".challenge-toggle-input").prop("checked", false);
+        $("#challenge_id").val(challengeId);
+        $("#ch_title").val(response.data.title);
+        $("#ch_duration").val(response.data.duration);
+        $("#ch_type").val(response.data.type);
+        $("#ch_multiplication_no").val(response.data.multiplication_no);
+      },
+      error: function (response) {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: response.responseJSON.message,
+        });
+      },
+      complete: function () {
+        $(".loader").hide();
+        $("#challengeModal").modal("show");
+      },
+    });
+  });
+
+  $(".challenges-sortable").sortable({
+      swapThreshold: 1,
+      group: 'list',
+      animation: 200,
+      onChange: function (update, evt) {
+          var j = 1;
+          $(".sort-slides1").each(function () {
+          $(this).attr("data-challenge-position", j);
+          $(this).find(".challenge-anchor").attr("data-slide", j);
+          j++;
+          });
+      },
+      onSort: function (evt, ui) {
+          var positions = [];
+          $(".sort-slides1").each(function () {
+              positions.push([$(this).attr('data-uniqueid'), $(this).attr('data-challenge-position')]);
+          });
+          $.ajax({
+              url: '/learning-content/' + learningContentSlug + '/lessons/' + lessonSlug + '/challenges/update-position',
+              method: 'POST',
+              data: {
+                  positions: positions
+              },
+              dataType: "json",
+              beforeSend: function () {
+              },
+              success: function (response) {
+                  renderSliderContent(lessonId, 'challenges', activeContentId);
+              },
+              error: function (response) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: response.responseJSON.message,
+                });
+              },
+              complete: function () {
+              }
+          });
+      }
+  });
+
+  function resetChallenge() {
+    $('.winner-banner').hide();
+    $('#challenge-winner-text').text('');
+    $('.teacher-number').html('');
+    $('.teacher-count').text(0);
+    $('.user-number').html('');
+    $('.user-count').text(0);
+    $('.challenge-questions').removeClass('qactive');
+    $('.challenge-questions').eq(0).addClass("qactive");
+    $('.done').show();
+  }
+
+  var timerInterval = null;
+  var teacherInterval = null;
+  var currentStudentCount = 0;
+  var newStudentCount = 0;
+
+  function startChallenge() {
+
+    clearInterval(timerInterval);
+    // clearInterval(teacherInterval);
+    $('.challenge-preview-data').show();
+
+    const FULL_DASH_ARRAY = 283;
+    const WARNING_THRESHOLD = 10;
+    const ALERT_THRESHOLD = 5;
+    const COLOR_CODES = {
+      info: {
+        color: "green"
+      },
+      warning: {
+        color: "orange",
+        threshold: WARNING_THRESHOLD
+      },
+      alert: {
+        color: "red",
+        threshold: ALERT_THRESHOLD
+      }
+    };
+
+    var challengeDuration = '05:00';
+    var ch = challengeDuration.split(':');
+    var seconds = (+ch[0]) * 60 * 60 + (+ch[1]) * 60;
+    var TIME_LIMIT = $('.time-duration').val();
+    var timePassed = 0;
+    var timeLeft = TIME_LIMIT;
+    var remainingPathColor = COLOR_CODES.info.color;
+
+    let allButtons = $('.button');
+    let typedAns = $('#typed-answer');
+    let currentNumber = "";
+    let arr = Array.from(allButtons);
+
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+
+      if (seconds < 10) {
+        seconds = `0${seconds}`;
+      }
+      return `${minutes}:${seconds}`;
+    }
+
+    function setRemainingPathColor(timeLeft) {
+      const { alert, warning, info } = COLOR_CODES;
+      if (timeLeft <= alert.threshold) {
+        $('#base-timer-path-remaining').removeClass(warning.color);
+        $('#base-timer-path-remaining').addClass(alert.color);
+      } 
+      else if (timeLeft <= warning.threshold) {
+        $('#base-timer-path-remaining').removeClass(info.color);
+        $('#base-timer-path-remaining').addClass(warning.color);
+      }
+    }
+
+    function calculateTimeFraction() {
+      const rawTimeFraction = timeLeft / TIME_LIMIT;
+      return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+    }
+
+    function setCircleDasharray() {
+      const circleDasharray = `${(
+        calculateTimeFraction() * FULL_DASH_ARRAY
+      ).toFixed(0)} 283`;
+      $('#base-timer-path-remaining').attr("stroke-dasharray", circleDasharray);
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timePassed = timePassed += 1;
+        timeLeft = TIME_LIMIT - timePassed;
+        $('#base-timer-label').html(formatTime(timeLeft));
+        setCircleDasharray();
+        setRemainingPathColor(timeLeft);
+        if (timeLeft === 0) {
+          $('.winner-banner').show();
+          $('.challenges-answer-partbackground').removeClass("remove-curtain");
+          currentNumber = "";
+          onTimesUp();
+        }
+      }, 1000);
+
+      teacherInterval = setInterval(() => {
+        let count = $('.teacher-count').text();
+        let totalCount = $('.challenge-questions').length;
+        $('.teacher-count').text(parseInt(count) + 1);
+        $('.teacher-number').append('<div class="line_up"></div>');
+      }, 30000);
+    }
+
+    function onTimesUp() {
+      clearInterval(timerInterval);
+      clearInterval(teacherInterval);
+      finalResult();
+    }
+
+    $('#countdown-timer').html(`<div class="base-timer">
+        <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g class="base-timer__circle">
+        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+        <path
+            id="base-timer-path-remaining"
+            stroke-dasharray="283"
+            class="base-timer__path-remaining ${remainingPathColor}"
+            d="
+            M 50, 50
+            m -45, 0
+            a 45,45 0 1,0 90,0
+            a 45,45 0 1,0 -90,0
+            "
+        ></path>
+        </g>
+        </svg>
+        <span id="base-timer-label" class="base-timer__label">${formatTime(
+      timeLeft
+    )}</span>
+      </div>`);
+
+    $('#challenge-play-btn').unbind().click(async function () {
+      $(this).hide();
+      $('.challenge-started').show();
+      $('.challenge-questions').addClass('qactive');
+      $('#inputBox').focus();
+      localStorage.removeItem("challengeAttempts");
+      localStorage.removeItem("assessmentDetails");
+      localStorage.removeItem("lessonContent");
+
+      clearInterval(timerInterval);
+      // clearInterval(teacherInterval);
+      var timerElement = document.getElementById('timer');
+      var seconds = 3;
+      var timer = setInterval(function () {
+        seconds--;
+        timerElement.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          $('.playtask').hide();
+          $('.counter-block').show();
+          $(".done").removeClass("d-none");
+          $(".calculator1").removeClass("pe-none");
+          $('.challenges-answer-partbackground').addClass("remove-curtain");
+          startTimer();
+        }
+      }, 1000);
+    });
+
+    function finalResult() {
+      let teacherScore = $('.teacher-count').text();
+      let studentScore = $('.user-count').text();
+      let text;
+      $('.done').hide();
+        // if (parseInt(studentScore) >= parseInt(teacherScore)) {
+        //   text = "Congratulations, You won the challenge.";
+        // } else {
+        //   text = "You lost the challenge.";
+        // }
+      $('.challenge-preview-data').hide();
+      $('.teacher-count').html('0');
+      $('.teacher-number').html('');
+      $('.student-count').html('0');
+      $('.student-number').html('');
+      setTimeout(function () {
+        submitOnTimeUp();
+      }, 3000);
+    }
+
+    function submitOnTimeUp() {
+      let challengeAttempts = JSON.parse(localStorage.getItem("challengeAttempts")) ?? {};
+      let correctCount = 0;
+      let incorrectCount = 0;
+
+      if(Object.keys(challengeAttempts).length > 0){
+        challengeAttempts.forEach(attempt => {
+          if (attempt.isCorrect) {
+            correctCount++;
+          } else {
+            incorrectCount++;
+          }
+        });
+      }
+
+      Swal.fire({
+        confirmButtonText: "Save!",
+        customClass: {
+          container: 'challenge-summry-popup',
+        },
+        allowOutsideClick: false,
+        html: '<div class="challenge-summry-box"><div class="challenge-summry-box-inner"><img src="/images/success.png" alt="success"><h3>You have completed the challenge!!</h3><ul class="challenge-summry"><li class="challenge-summry-list bg-light-gray"><span>Attempted</span>' + Object.keys(challengeAttempts).length + '</li><li class="challenge-summry-list bg-light-green"><span>Correct</span>' + correctCount + '</li><li class="challenge-summry-list bg-light-denger"><span>Incorrect</span>' + incorrectCount + '</li></ul><p>You have earn 0 coins in this challenges.</p><div class="challenge-cointotal"><div class="challenge-coinbox bg-light-yellow"><img src="/images/nocoin.png" alt="nocoin">No coins</div></div><p class="mt-2"><strong>Please click save button to submit this assessment. </strong></p></div></div>',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if (userRole == 3) {
+            submitChallenge();
+          } else {
+            window.location.reload();
+          }
+        }
+      });
+    }
+
+    function submitAnswer() {
+      let challengeId = activeContentId;
+      let tableNo = $('#table-no').text();
+      let currentTableIndex = $('#current-table-index').text();
+      let submittedAnswer = currentNumber;
+      let tableAnswer = parseFloat(tableNo * currentTableIndex);
+      let isCorrect = (parseFloat(submittedAnswer) === tableAnswer ? true : false);
+      let challengeAttempts = localStorage.getItem("challengeAttempts");
+      if (challengeAttempts !== null) {
+        challengeAttempts = JSON.parse(localStorage.getItem("challengeAttempts"));
+      } else {
+        challengeAttempts = [];
+      }
+
+      const attempt = {};
+      attempt['question'] = tableNo + 'X' + currentTableIndex;
+      attempt['submittedAnswer'] = (parseFloat(submittedAnswer) > 0 ?  parseFloat(submittedAnswer) : 0);
+      attempt['correctAnswer'] = tableAnswer;
+      attempt['isCorrect'] = isCorrect;
+
+      challengeAttempts.push(attempt);
+      localStorage.setItem("challengeAttempts", JSON.stringify(challengeAttempts));
+
+      if (isCorrect) {
+        currentStudentCount = $('.user-count').html();
+        newStudentCount = parseInt(currentStudentCount) + 1;
+        $('.user-count').html(newStudentCount);
+        $('.user-number').append('<div class="line_up"></div>');
+      } else {
+        // $('.incorrect-answer-msg').show();
+      }
+    }
+
+    function replicateTableIndex() {
+      let number = Math.floor(Math.random() * 10) + 1
+      return number;
+    }
+
+    $('.done').unbind().click(async function () {
+      await handleSubmit();
+    });
+
+    $(document).keyup(async function(e) {
+      if (e.key === "Enter") {
+        await handleSubmit();
+      }
+    });
+
+    async function handleSubmit() {
+      if(currentNumber !== ""){
+        await submitAnswer();
+        currentNumber = "";
+        $('#typed-answer').html('');
+        $('.inputBoxValue').val('');
+        let tableIndex = await replicateTableIndex();
+        $('#current-table-index').text(tableIndex);
+      }
+    }
+
+
+    $('.button').unbind().click(async function (e) {
+      handleButtonClick(e.target.innerHTML);
+    });
+
+
+    $(document).keyup(function(e) {
+      if (e.key.match(/[0-9\.]/)) {
+        handleButtonClick(e.key);
+      } else if (e.key === "Backspace") {
+        handleButtonClick('DEL');
+      } else {
+        e.preventDefault();
+      }
+    });
+
+
+    function handleButtonClick(buttonValue) {
+      if (buttonValue == 'AC') {
+        currentNumber = "";
+        $('#inputBox').val(currentNumber);
+        $('#typed-answer').html(currentNumber);
+      } else if (buttonValue == 'DEL') {
+        currentNumber = currentNumber.substring(0, currentNumber.length - 1);
+        $('#inputBox').val(currentNumber);
+        $('#typed-answer').html(currentNumber);
+      } else {
+        if (/^\d*\.?\d*$/.test(buttonValue)) {
+          currentNumber += buttonValue;
+          $('#inputBox').val(currentNumber);
+          $('#typed-answer').html(currentNumber);
+        }
+      }
+      
+  
+    }
+
+  }
+  /**
+   * @challenges script end.
+   */
+</script>
+

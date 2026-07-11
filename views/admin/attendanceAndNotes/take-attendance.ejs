@@ -1,0 +1,229 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css"/>
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+      <a href="/calendar" class="back-link back-linkwicon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+            <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#cd4236" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg> 
+        Back to Calendar
+      </a>      
+      <h2 class="title-text mt-3 mb-4">Take Attendance</h2>
+      <div class="row row-gap-30">
+        <div class="col-xl-3 col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="note-top">   
+                <h4><%=fetchedEvent.event_category_id.name%></h4>
+              </div>
+              <div class="family-contactlistdetail mt-4">
+                <ul>
+                  
+                  <li><span class="contdetail-icon"><img src="/images/calendar.svg" alt=""></span><%=moment(fetchedEvent.start_time).format('YYYY-MM-DD')%></li>
+                  <li class="pb-0"><span class="contdetail-icon"><img src="/images/timer-pause.svg" alt=""></span>
+                    <% 
+                    let time;
+                    if (loggedUserInfo.time_zone) {
+                      time = moment.tz(fetchedEvent.start_time, loggedUserInfo.time_zone).format('hh:mm A') + ' - ' + moment.tz(fetchedEvent.end_time, loggedUserInfo.time_zone).format('hh:mm A');
+                    } else {
+                      time = moment(fetchedEvent.start_time).format('hh:mm A') + ' - ' + moment(fetchedEvent.end_time).format('hh:mm A');
+                    }
+                  %>
+                  <p class="lesson-time"><%= time %></p>
+                  </li>
+                  <span></span>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-4">
+            <div class="card-body">
+              <div class="note-top d-flex justify-content-between align-items-center">
+                <h4>Session Notes</h4>
+                <% if(markedAttendance.length == 0) { %>
+                  <a href="javascript:void(0)" class="bus-outline-btn " data-toggle="tooltip" rel="tooltip" data-placement="top" title="Please mark attendance first to add group notes" style="cursor: not-allowed;">+ Add </a>
+                <% }else { 
+                  if(fetchedEvent.event_attendance_id.group_note_id !== null){ %> 
+                    <a href="javascript:void(0)" class="bus-outline-btn cursor-pointer add-group-note" data-id="<%=fetchedEvent.event_attendance_id.group_note_id._id%>">+ Edit</a>
+                  <% } else { %>
+                  <a href="javascript:void(0)" class="bus-outline-btn cursor-pointer add-group-note" data-id="">+ Add</a>
+                <% } }%>
+              </div>
+              <div class="mt-3">
+                <!-- <span class="stu-present"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none" class="mr-2">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M13.7429 0.186325C14.059 0.462952 14.0877 0.94487 13.8065 1.25697L5.89065 10.043C5.60799 10.3568 5.12266 10.3767 4.8152 10.0873L0.234592 5.77505C-0.0510696 5.50612 -0.0784145 5.058 0.166674 4.75165C0.437112 4.4136 0.940728 4.36707 1.26258 4.65656L4.81652 7.85326C5.12537 8.13108 5.60087 8.10623 5.87913 7.79777L12.6879 0.248604C12.9634 -0.0568886 13.4333 -0.0845802 13.7429 0.186325Z" fill="#79af32"/>
+                  </svg>Student Group Note Added</span> -->
+              </div>
+            </div>
+          </div>
+          <div class="card mt-4">
+            <div class="card-body">
+              <div class="note-top">
+                <h4><span class="attendees_number"><%=fetchedEvent.student_ids.length%></span> Attendees</h4>
+                <p><span id="selectedCount">0</span>selected</p>
+              </div>
+              <div class="settings_content">
+                <ul class="settinglist mt-0">
+                  <li class="w-100 form-group">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="attendees_student_all">
+                      <label class="form-check-label select_all_atten" for="attendees_student_all">Select All</label>
+                    </div>
+                  </li>
+                </ul>
+                <ul class="settinglist mt-4">
+                  <% 
+                    if (fetchedEvent.student_ids.length > 0) {
+                      let i = 0;
+                      for (let studentData of fetchedEvent.student_ids) {
+                        i++;
+
+                        // defaults
+                        let studentId = '';
+                        let icons = '/images/faq-icon.svg';
+                        let tooltipText = 'Unrecorded';
+
+                        // check if student has marked attendance
+                        if (markedAttendance.length > 0) {
+                          const student = markedAttendance.find(
+                            record => record.student_id.toString() === studentData._id.toString()
+                          );
+
+                          if (student) {
+                            studentId = student.student_id.toString();
+                            const status = student.status;
+
+                            if (status === 'present') {
+                              icons = '/images/approve-check.svg';
+                              tooltipText = 'Present';
+                            } else if (status === 'absent') {
+                              icons = '/images/approve-cancel.svg';
+                              tooltipText = 'Absent';
+                            }
+                          }
+                        }
+                  %>
+
+                    <li class="w-100 form-group ssssss">
+                      <div class="form-check d-flex justify-content-between">
+                        <!-- Disabled checkbox (readonly effect) -->
+                        <input type="checkbox" 
+                              class="form-check-input checksingle <%=studentId%>" 
+                              id="attendees_student<%=i%>" 
+                              value="<%=studentData.id%>" 
+                              <%= studentId == studentData.id && tooltipText !== 'Unrecorded' ? 'checked' : '' %> 
+                              >
+
+                        <!-- Hidden input with [] so Express parses it into array -->
+                        <% if (studentId == studentData.id && tooltipText !== 'Unrecorded') { %>
+                          <input type="hidden" name="attendees_student" value="<%=studentData.id%>">
+                        <% } %>
+
+                        <label class="form-check-label" for="attendees_student<%=i%>">
+                          <%= studentData.first_name + ' ' + studentData.last_name %>
+                        </label>
+
+                        <span>
+                          <img src="<%=icons%>" alt="" 
+                              data-toggle="tooltip" 
+                              data-placement="top" 
+                              title="<%=tooltipText%>">
+                        </span>
+                      </div>
+                    </li>
+
+                  <% } } %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-9 col-lg-8 ">
+          <div class="settings_content h-100">
+            <div class="card tabcard h-100">
+              <div class="card-body">
+                <div class="blank-family-cont" style="display: none;">
+                  <div class="bfamily-img text-center py-4">
+                    <img src="/images/attendance-blank.svg" alt="Attendance Notes">
+                  </div>
+                  <h3>Hi,</h3>
+                  <p class="text-center size-14 mb-4">You can record event attendees' names and track attendance here.</p>
+                  <div class="text-center">
+                    <button type="button" class="btn theme-btn take-attendance-btn" disabled>Take Attendance</button>
+                  </div>
+                </div>
+                
+                <!-- take attendance form -->
+                <%- include('./partials/take-attendance-form'); %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<%- include('./modals/session-notes'); %>
+
+<script type="text/javascript" src="/vendors/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js"></script>
+
+<script type="text/javascript">
+  const userId= '<%=loggedUserInfo.id%>';
+  const mediaFolder = 'EventAttachments';
+</script>
+
+<%- include('./session-notes-js'); %>
+
+<script type="text/javascript">
+ 
+  $(document).ready(function() {  
+      function updateSelectedCount() {
+        var selectedCount = $(".checksingle:checked").length;
+        $("#selectedCount").text(selectedCount);
+        $(".take-attendance-btn").prop("disabled", selectedCount === 0);
+        $(".take-attendance-btn").prop("disabled", selectedCount === 0);
+        $("#selected-attendees").text(selectedCount);       
+      }
+
+      $("#attendees_student_all").change(function() {
+        if(this.checked){
+          $(".checksingle").each(function(){
+            this.checked = true;
+          });              
+        } else {
+          $(".checksingle").each(function(){
+            this.checked = false;
+          });              
+        }
+        updateSelectedCount();
+      });
+      
+      $(".checksingle").click(function () {
+        if ($(this).is(":checked")) {
+          var isAllChecked = 0;
+          $(".checksingle").each(function(){
+            if(!this.checked)
+              isAllChecked = 1;
+          });              
+          if(isAllChecked == 0){ 
+            $("#attendees_student_all").prop("checked", true); 
+          }     
+        } else {
+          $("#attendees_student_all").prop("checked", false);
+        }
+        updateSelectedCount();
+      });
+
+      $('.take-attendance-btn').click(function(){
+        $(this).parents().find('.blank-family-cont').hide();
+        $('.attendance_details').show();
+      });
+
+      $('.cancel-btn').click(function(){
+        $(this).parents().find('.blank-family-cont').show();
+        $('.attendance_details').hide();
+        $('.checksingle, #attendees_student_all').prop('checked',false);
+        $('.take-attendance-btn').prop('disabled',true);
+      });
+  });
+</script>

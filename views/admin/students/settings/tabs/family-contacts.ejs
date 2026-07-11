@@ -1,0 +1,192 @@
+<div class="tab-pane fade show active" id="family-contacts" role="tabpanel" aria-labelledby="family-contacts-tab">
+  <div class="row row-gap-30 mx-0">
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <div class="d-flex flex-wrap align-items-center">
+            <h3 class="setting_title mr-auto">Family Contacts</h3>
+            <% if(userRole===1){ %>
+              <a href="javascript:void(0)" class="theme-btn add-contact">Add Contact</a>
+              <% } %>
+          </div>
+          <div class="fcontact-bottom settings"></div>
+          <div class="blank-family-cont <%=familyContacts.length == 0 ? '' : 'd-none'%>">
+            <div class="bfamily-img text-center py-4">
+              <img src="/images/blank-family.svg" alt="Family Contacts">
+            </div>
+            <h3>You have no additional contacts for this student yet</h3>
+            <p class="text-center size-14 mb-4">You can allow additional contacts to receive invoices, lesson reminders,
+              and more!</p>
+          </div>
+          <% for(let contact of familyContacts) { %>
+            <div class="family-contacts-list mt-2">
+              <div class="family-contacts-inlist">
+                <div class="family-contactlist-top">
+                  <h3 class="common-text m-0">
+                    <span class="contdetail-icon"><img src="/images/user.svg" alt=""></span>
+                    <%= contact.user_id?.title %>
+                      <% if (contact.user_id?.company_name && contact.user_id.company_name.trim() !=="" ) { %>
+                        <%= contact.user_id.company_name %>
+                          <% } else { %>
+                            <%= (contact.user_id?.first_name?.trim() || '' ) + " " + (contact.user_id?.last_name?.trim()
+                              || '' ) %>
+                              <% } %>
+                                <%= contact.user_id?.relationship ? "(" + ucwords(contact.user_id?.relationship || '' )
+                                  + ")" : "" %>
+
+                  </h3>
+                  <!-- <h3 class="common-text m-0"><img src="/images/edit.svg" alt="icon" class="edit-contacts cursor-pointer" data-id="<%=contact.id%>"> <img src="/images/trash.svg" alt="icon"></h3> -->
+                  <% if(userRole===1){ %>
+                    <ul class="multi-btn d-flex pl-3">
+                      <li>
+                        <button class="icon-btn edit-contacts" data-id="<%=contact._id%>">
+                          <img src="/images/edit.svg" alt="Edit">
+                        </button>
+                      </li>
+                      <li>
+                        <button class="icon-btn"
+                          onclick="confirmBeforeDeletion('/student-preferences/destroy/<%=contact._id%>')">
+                          <img src="/images/trash-icon.svg" alt="Delete">
+                        </button>
+                      </li>
+                    </ul>
+                    <% } %>
+                </div>
+                <div class="family-contactlistdetail pb-3">
+                  <ul>
+                    <!-- <li><span class="contdetail-icon"><img src="/images/user.svg" alt=""></span>
+                      <% if (contact.user_id?.company_name && contact.user_id.company_name.trim() !=="" ) { %>
+                        <%= contact.user_id.company_name %>
+                      <% } else { %>
+                        <%= (contact.user_id?.first_name?.trim() || '' ) + " " + (contact.user_id?.last_name?.trim()
+                          || '' ) %>
+                      <% } %>
+                    </li> -->
+
+                    <% if(contact.user_id?.email !='' ) { %>
+                      <li><span class=" contdetail-icon"><img src="/images/msg-icon.svg" alt=""></span>
+                        <%=contact.user_id?.email%>
+                      </li>
+                      <% } if(contact.work_number.phone !='' ) { %>
+                        <li><span class="contdetail-icon"><img src="/images/telephone-icon.svg" alt=""></span>
+                          <%=contact.work_number.phone%>
+                            <% if(contact.work_number.sms_capable===true){ %>
+                              <span class="student-endis">SMS Enabled</span>
+                              <% } %>
+                        </li>
+                        <% } if(contact.home_number.phone !='' ) { %>
+                          <li><span class="contdetail-icon"><img src="/images/telephone-icon2.svg" alt=""></span>
+                            <%= contact.home_number.phone %>
+                              <% if(contact.home_number.sms_capable===true){ %>
+                                <span class="student-endis">SMS Enabled</span>
+                                <% } %>
+                          </li>
+                          <% } if(contact.mobile_number.phone !='' ) { %>
+                            <li><span class="contdetail-icon"><img src="/images/mobile-icon.svg" alt=""></span>
+                              <%=contact.mobile_number.phone%>
+                                <% if(contact.mobile_number.sms_capable===true){ %>
+                                  <span class="student-endis">SMS Enabled</span>
+                                  <% } %>
+                            </li>
+                            <% } if(contact.user_id.address !='' ) { %>
+                              <li><span class="contdetail-icon"><img src="/images/home-icon.svg" alt=""></span>
+                                <%=contact.user_id.address%>
+                              </li>
+                              <% } %>
+                  </ul>
+                </div>
+                <div class="common-form">
+                <div class="form-group pb-2">
+                  <label>Preferences</label>
+                  <ul class="settinglist mt-0">
+                
+                    <li class="w-100">
+                      <% if (contact.preferred_invoice_recipient===true) { %>
+                        <img src="/images/check-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                        <% } else { %>
+                          <img src="/images/close-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                          <% } %>
+                            <span>Set as the preferred invoice recipient</span>
+                    </li>
+                
+                    <li class="w-100">
+                      <% if (contact.show_in_student_portal===true) { %>
+                        <img src="/images/check-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                        <% } else { %>
+                          <img src="/images/close-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                          <% } %>
+                            <span>Show in Student Portal contacts</span>
+                    </li>
+                
+                    <li class="w-100">
+                      <% if (contact.email_lesson_reminders===true) { %>
+                        <img src="/images/check-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                        <% } else { %>
+                          <img src="/images/close-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                          <% } %>
+                            <span>Send email lesson reminders</span>
+                    </li>
+                
+                    <li class="w-100">
+                      <% if (contact.sms_lesson_reminders===true) { %>
+                        <img src="/images/check-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                        <% } else { %>
+                          <img src="/images/close-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                          <% } %>
+                            <span>Send SMS lesson reminders</span>
+                            <small class="d-block">Will only be sent if SMS messaging is allowed</small>
+                    </li>
+                
+                    <li class="w-100">
+                      <% if (contact.legal_parents===true) { %>
+                        <img src="/images/check-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                        <% } else { %>
+                          <img src="/images/close-icon.svg" alt="img" style="width: 17px; height: 17px;">
+                          <% } %>
+                            <span>Legal Guardian/Parent</span>
+                            <small class="d-block">Will only be Legal Guardian/Parent</small>
+                    </li>
+                
+                  </ul>
+                </div>
+
+                  <% if (contact.private_note && contact.private_note.trim() !=="" ) { %>
+                    <div class="form-group">
+                      <label>Private Note </label>
+                      <p>
+                        <%= contact.private_note %>
+                      </p>
+                    </div>
+                    <% } %>
+
+                </div>
+              </div>
+            </div>
+            <% } %>
+
+              <!-- add family form -->
+              <div class="add-family-cont d-none settings">
+                <form method="post" action="/student-preferences/store" class="common-form family-contact-form"
+                  id="family-contact-form">
+                  <input type="hidden" name="student_id" class="student_id" value="<%= currentStudent.id %>" />
+
+                  <%- include('../partials/family-contact-form.ejs',{"formType" : "add" }) %>
+                    <div class="col-md-12 text-right pt-4">
+                      <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                      <button type="submit" class="btn form-button save-btn theme-btn">Save</button>
+                    </div>
+                </form>
+              </div>
+              <!-- end of add family form -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../modals/add-family-contacts.ejs'); %>
+<%- include('../modals/edit-family-contacts.ejs'); %>
+<%- include('../modals/add-attachment.ejs'); %>
+<%- include('../modals/edit-attachment.ejs'); %>
+<%- include('../modals/add-notes.ejs'); %>

@@ -1,0 +1,113 @@
+<script>
+    $(function () {
+        $('#families').select2({ width: '100%' });
+        $('#category').select2({ width: '100%' });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+          const today = moment();
+
+        // Initialize pickers
+        $('#start_date, #end_date').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: { format: 'DD-MM-YYYY' }
+        });
+
+        // --- SET TODAY AS DEFAULT ---
+        $('#start_date').data('daterangepicker').setStartDate(today);
+        $('#end_date').data('daterangepicker').setStartDate(today);
+
+        // Set backend format (YYYY-MM-DD)
+        $('#start_date').val(today.format('YYYY-MM-DD'));
+        $('#end_date').val(today.format('YYYY-MM-DD'));
+
+        // Set hidden date_range (DD-MM-YYYY - DD-MM-YYYY)
+        $('#date_range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
+
+        // Update when date changes
+        function updateDateRange() {
+            let startPicker = $('#start_date').data('daterangepicker').startDate;
+            let endPicker = $('#end_date').data('daterangepicker').startDate;
+
+            $('#start_date').val(startPicker.format('YYYY-MM-DD'));
+            $('#end_date').val(endPicker.format('YYYY-MM-DD'));
+            $('#date_range').val(startPicker.format('DD-MM-YYYY') + ' - ' + endPicker.format('DD-MM-YYYY'));
+        }
+
+        $('#start_date').on('apply.daterangepicker', updateDateRange);
+        $('#end_date').on('apply.daterangepicker', updateDateRange);
+
+        // --- BEFORE FORM SUBMIT: if empty, use today ---
+        $('#new-invoice-form').submit(function () {
+            if (!$('#start_date').val()) {
+                $('#start_date').val(today.format('YYYY-MM-DD'));
+            }
+            if (!$('#end_date').val()) {
+                $('#end_date').val(today.format('YYYY-MM-DD'));
+            }
+            if (!$('#date_range').val()) {
+                $('#date_range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
+            }
+        });
+
+        $('#invoice_date').daterangepicker({
+            autoUpdateInput: false,
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: 9999, 
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        });
+
+        $('#invoice_date').daterangepicker({
+            autoUpdateInput: false,
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: 9999, 
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        });
+
+        $('#invoice_date').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD'));
+        });
+
+        $('input[name="display_type"]').on('change', function(){
+            let img = $(this).attr('data-image');
+            $('#display_type_img').attr('src',img);
+        });
+
+        $('input[name="display_type"]:checked').trigger('change');
+        
+        $('input[name="include_type"]').on('change', function () {
+            if ($('#chargesDiscounts').is(':checked')) {
+                $('#categorySelectWrapper').slideDown();
+            } else {
+                $('#categorySelectWrapper').slideUp();
+            }
+        });
+
+        $('input[name="date_type"]').on('change', function () {
+            if ($('#choose_date').is(':checked')) {
+                $('#dueDateInput').slideDown();
+            } else {
+                $('#dueDateInput').slideUp();
+            }
+        });
+        $('#private_note').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#privateNoteInput').slideDown();
+            } else {
+                $('#privateNoteInput').slideUp();
+            }
+        });
+    });
+</script>
+

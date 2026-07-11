@@ -1,0 +1,467 @@
+
+
+<script>
+  const staffsArr = <%- staffsObj %>;
+  const selectedtutorId = "<%= tutorId || '' %>";
+
+  const $tutorId = $('#tutor_id');
+  const RECURRING_LIMITS = {
+    daily: <%= parseInt(process.env.RECUR_DAILY_LIMIT || 6) %>,
+    weekly: <%= parseInt(process.env.RECUR_WEEKLY_LIMIT || 12) %>,
+    monthly: <%= parseInt(process.env.RECUR_MONTHLY_LIMIT || 15) %>,
+    yearly: <%= parseInt(process.env.RECUR_YEARLY_LIMIT || 24) %>
+  };
+</script>
+
+<script>
+  async function selectCard(card, type) {
+    $('.transaction-card').removeClass('selected');
+    $(card).addClass('selected');
+    $('#transaction_type').val(type);
+    $("#transactionHeading").text(type + " Transaction");
+
+    //clear validation errors
+    clearValidationErrors('#payment-refund-form');
+    clearValidationErrors('#charges-discount-form');
+
+    // Reset all form fields before switching
+    resetForm('#payment-refund-form',type);
+    resetForm('#charges-discount-form',type);
+
+    if (type === 'Payment' || type === 'Refund') {
+      $('#payment-refund-form').show();
+      $('#charges-discount-form').hide();
+    } else {
+      $('#payment-refund-form').hide();
+      $('#charges-discount-form').show();
+    }
+
+    if($('#unpaidInvoices').length > 0){
+      setTimeout(async function() {
+        await initUnpaidInvoicesTable(selectedtutorId);
+      }, 100);
+    }
+    
+  }
+
+  function clearValidationErrors(formSelector) {
+    const $form = $(formSelector);
+    $form.find('span.help-block.text-danger').remove();
+    $form.find('.is-invalid').removeClass('is-invalid');
+  }
+
+  // Utility: reset form fields
+  function resetForm(formSelector,transType) {
+    const $form = $(formSelector);
+    $form.find('input[type="text"], input[type="number"], input[type="date"], input[type="hidden"], textarea').val('');
+    $form.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+    
+    $form.find('select').val('').trigger('change');
+    
+    $form.find('input.daterangepicker').val('');
+
+    $form.find('.repeat_until_wrap, #recurringOptions').hide();
+  }
+
+  // Function to toggle Repeat until based on Repeat indefinitely
+  function toggleRepeatUntil() {
+    if ($('#repeat_indefinitely').is(':checked')) {
+      $('#repeat_until').closest('.repeat_until_wrap').show();
+    } else {
+      $('#repeat_until').closest('.repeat_until_wrap').show();
+    }
+  }
+
+  function toggleRepeatOn() {
+    const frequency = $('input.repeat-frequency:checked').val();
+    if (frequency === 'daily') {
+      $('#repeat_on').show();
+      $('#repeat_on').find('.repeat_on_checkbox').prop('checked',true);
+      $('#monthlyRepeatOptions').hide();
+      $('#repeat_until').closest('.repeat_until_wrap').show();
+    } else if (frequency === 'monthly') {
+      $('#repeat_on').hide();
+      $('#repeat_on').find('.repeat_on_checkbox').prop('checked',false);
+      $('#monthlyRepeatOptions').show();
+    } else {
+      $('#repeat_on').hide();
+      $('#repeat_on').find('.repeat_on_checkbox').prop('checked',false);
+      $('#monthlyRepeatOptions').hide();
+      toggleRepeatUntil();
+    }
+  }
+
+  async function initUnpaidInvoicesTable(tutorId) {
+    // Destroy if already initialized
+    if ($.fn.DataTable.isDataTable('#unpaidInvoices')) {
+      $('#unpaidInvoices').DataTable().destroy();
+      $('#unpaidInvoices tbody').empty();
+    }
+    if($('#transaction_type').val() != 'Payment'){
+      $('#selected-unpaid-invoices').hide();
+      return;
+    }
+
+    let totalAmount = 0;
+    const table = $('#unpaidInvoices').DataTable({
+      processing: true,
+      serverSide: true,
+      ordering: true,
+      responsive: false,
+      // scrollX: true,
+      autoWidth: false,
+      dom: 't',
+      ajax: {
+        url: '/staff-invoices/get-unpaid-invoices',
+        type: 'POST',
+        data: { tutorId: tutorId },
+        dataSrc: function (json) {
+          if (json.results && json.results.invoices.length > 0) {
+            $('#selected-unpaid-invoices').show();
+
+            // attach currency to each invoice row
+            json.results.invoices.forEach(inv => {
+              inv.currency = json.results.currency;
+            });
+            
+            return json.results.invoices;
+          } else {
+            $('#selected-unpaid-invoices').hide();
+            return []; // no data
+          }
+        }
+      },
+      columns: [
+        {
+          data: null,
+          orderable: false,
+          render: function(data, type, row){ 
+            return `<input class="text-center unpaid-invoice" name="selected_invoices[]" data-amount="${row.invoice_amount}" value="${row._id}" type="checkbox" />`;
+          },
+          className: "text-center"
+        },
+        {
+          data: "date",
+          orderable: true,
+          render: (data, type, row) =>
+            `${new Date(row.date).toLocaleDateString("en-GB")}<br>
+            ${new Date(row.date_range.start).toLocaleDateString("en-GB")} -
+            ${new Date(row.date_range.end).toLocaleDateString("en-GB")}`
+        },
+        { data: "invoice_number",orderable: true },
+        {
+          data: "invoice_amount",
+          orderable: true,
+          render: function (data, type, row, meta) {
+            return `${row.currency ? row.currency.symbol : ''}${data}`;
+          }
+        }
+      ],
+      drawCallback: function () {
+        // Re-bind checkbox change every time table redraws
+        $('.unpaid-invoice').off('change').on('change', function () {
+          recomputeTotal();
+        });
+      },
+      order: [[1, 'desc']],
+    });
+
+  }
+
+  // Function to recalc based on checked invoices
+  function recomputeTotal() {
+    totalAmount = 0;
+    $('.unpaid-invoice:checked').each(function () {
+      totalAmount += parseFloat($(this).data('amount')) || 0;
+    });
+    $('#payment_refund_amount').val(totalAmount);
+    if(totalAmount > 0){
+      $('#payment_refund_amount').attr('readonly',true);
+    }else{
+       $('#payment_refund_amount').removeAttr('readonly');
+    }
+  }
+
+  $(function () {
+
+    $('#payment_refund_date, #charges_discount_date').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        locale: { format: 'DD-MM-YYYY' }
+    });
+
+    // Force input value update on apply
+    $('#payment_refund_date, #charges_discount_date').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD-MM-YYYY'));
+    });
+
+    if($('.transaction-card').length > 0){
+      const firstCard = $('.transaction-card').first();
+      selectCard(firstCard[0], 'Payment');
+    }
+
+    $('.select2').select2({ width: '100%' });
+
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('.category-dropdown').length) {
+        $('.drop-options').slideUp();
+      }
+    });
+    
+    // Show/hide recurring section
+    $('#recurring').on('change', function () {
+      if ($(this).is(':checked')) {
+        $('#recurringOptions').slideDown();
+      } else {
+        $('#recurringOptions').slideUp();
+      }
+    }); 
+
+    // Trigger toggle when frequency changes
+    $('input.repeat-frequency').on('change', function () {
+      toggleRepeatOn();
+    });    
+    
+    $('#repeat_indefinitely').on('change', function () {
+      toggleRepeatUntil();
+    });
+
+    $(document).on('change','#emailRecipient', function(event){
+      let contactId = $(this).find('option:selected').attr('data-contact-user-id');
+      let $form = $(this).parents('form');
+      if(contactId){
+        $form.find('#emailRecipient').append('<input type="hidden" name="contact_user_id" id="contact_user_id" value="'+contactId+'" />');
+      }else{
+        $form.find('#contact_user_id').remove();
+      }
+    });
+
+    // Select/Deselect All
+    $(document).on('change', '#select_all', function () {
+      let isChecked = $(this).is(':checked');
+      $('#unpaidInvoices tbody input[type="checkbox"]').prop('checked', isChecked);
+      recomputeTotal();
+    });
+
+    // Sync Select All if individual row changes
+    $(document).on('change', '#unpaidInvoices tbody input[type="checkbox"]', function () {
+      let total = $('#unpaidInvoices tbody input[type="checkbox"]').length;
+      let checked = $('#unpaidInvoices tbody input[type="checkbox"]:checked').length;
+
+      $('#select_all').prop('checked', total === checked);
+    });
+
+    let selectedtutorId = '<%= tutorId %>';
+
+    // Toggle email details on checkbox
+    $('#sendReceipt').on('change', function () {
+      if ($(this).is(':checked')) {
+        if($('#tutor_id').val() == ""){
+          $('#emailDetails').slideDown();
+        }
+        else{
+          $('#emailDetails').slideDown();
+        }
+      } else {
+        $('#emailDetails').slideUp();
+      }
+    });
+
+
+    // Toggle SMS details on checkbox
+    // $('#sendSMSReceipt').on('change', function () {
+    //   if ($(this).is(':checked')) {
+    //     if($('#familySelect').val() == "" || $('#student_id').val() == ""){
+    //       $('#smsDetails').slideUp();
+    //     } else {
+    //       $('#smsDetails').slideDown();
+    //     }
+    //   } else {
+    //     $('#smsDetails').slideUp();
+    //   }
+    // });
+
+   
+    const $select = $('#category-select');
+
+    // Initialize select2 with custom markup
+    $select.select2({
+      placeholder: 'Optional',
+      allowClear: true,
+      dropdownParent: $('body'),
+      language: {
+        noResults: function () {
+          return `
+            <div class="px-2 py-1">
+              <button class="btn btn-sm btn-link w-100 text-start" id="triggerAddCategory">
+                <i class="fa fa-plus text-primary me-1"></i> Add new category
+              </button>
+              <div id="addCategoryForm" style="display: none;" class="mt-2">
+                <input type="text" class="form-control" id="newCategoryInput" placeholder="Enter category name" />
+                <div class="d-flex justify-content-between mt-2">
+                  <button class="btn btn-sm btn-success" id="saveCategoryBtn">Save</button>
+                  <button class="btn btn-sm btn-secondary" id="cancelCategoryBtn">Cancel</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      },
+      escapeMarkup: function (markup) {
+        return markup;
+      }
+    });
+
+    // Event binding on dropdown open
+    $select.on('select2:open', function () {
+      const $results = $('.select2-results');
+
+      // Prevent duplicate bindings
+      $results.off('click', '#triggerAddCategory');
+      $results.off('click', '#cancelCategoryBtn');
+      $results.off('click', '#saveCategoryBtn');
+
+      // Show form
+      $results.on('click', '#triggerAddCategory', function (e) {
+        e.stopPropagation();
+        $('#addCategoryForm').slideDown();
+      });
+
+      // Hide form
+      $results.on('click', '#cancelCategoryBtn', function (e) {
+        e.stopPropagation();
+        $(document).find('#newCategoryInput .text-danger').remove();
+        $('#addCategoryForm').slideUp();
+      });
+
+      // Save new category
+      $results.on('click', '#saveCategoryBtn', function (e) {
+        e.stopPropagation();
+        $(document).find('#newCategoryInput .text-danger').remove();
+        const name = $('#newCategoryInput').val().trim();
+        if (!name) return alert('Please enter a name');
+
+        $.ajax({
+          url: '/staff-invoices/categories/store',
+          method: 'POST',
+          data: { name },
+          success: function (res) {
+            if (res.success && res.category) {
+              const newOption = new Option(res.category.name, res.category._id, true, true);
+              $select.append(newOption).trigger('change');
+              $select.select2('close');
+            } else {
+              alert(res.error || 'Failed to add category');
+            }
+          },
+          error: function (response) {
+            if (response.responseJSON && response.responseJSON.errors) {
+              response.responseJSON.errors.forEach(err => {
+                $(document).find('#newCategoryInput').after(`<div class="text-danger">${err.msg}</div>`);
+              });
+            } else {
+              alert("Something went wrong.");
+            }
+          }
+        });
+          
+      });
+    });
+
+    function calculateMaxDate(frequency, startDate) {
+      return moment(startDate, 'DD-MM-YYYY').add(RECURRING_LIMITS[frequency], 'months').format('YYYY-MM-DD');
+    }
+
+    function updateRepeatUntilDate() {
+      const frequency = $('input.repeat-frequency:checked').val();
+      const startDate = $('#payment-refund-form').is(':visible') ? $('#payment_refund_date').val() : $('#charges_discount_date').val();
+      
+
+      // For daily frequency, check if at least one day is selected
+      if (frequency === 'daily') {
+        const selectedDays = $('.repeat_on_checkbox:checked').length;
+        if (selectedDays === 0) {
+          console.log('No days selected for daily recurrence');
+          $('#repeat_until').val(''); // Clear the date if no days selected
+          return;
+        }
+      }
+
+      if (frequency && startDate) {
+        const maxDate = calculateMaxDate(frequency, startDate);
+        // Always update the repeat until date when days change
+        $('#repeat_until').val(maxDate);
+        validateDate();
+      }
+    }
+
+    function validateDate() {
+      const frequency = $('input.repeat-frequency:checked').val();
+      const startDate = $('#payment-refund-form').is(':visible') ? $('#payment_refund_date').val() : $('#charges_discount_date').val();
+      const selectedDate = $('#repeat_until').val();
+      
+      if (frequency && startDate && selectedDate) {
+        const maxDate = calculateMaxDate(frequency, startDate);
+        if (moment(selectedDate).isAfter(maxDate)) {
+          $('#maxAllowedDate').text(moment(maxDate).format('DD-MM-YYYY'));
+          $('#repeatUntilWarning').show();
+          $('#repeat_until').data('max-date', maxDate);
+        } else {
+          $('#repeatUntilWarning').hide();
+          $('#repeat_until').removeData('max-date');
+        }
+      }
+    }
+
+    $('#payment_refund_date, #charges_discount_date').on('apply.daterangepicker', updateRepeatUntilDate);
+    $('input.repeat-frequency').on('change', updateRepeatUntilDate);
+    $('#recurring').on('change', updateRepeatUntilDate);
+    $('#repeat_until').on('change', validateDate);
+  });
+</script>
+
+
+<script>
+  $(document).ready(function () {
+    $('#add-transaction-form').submit(function (e) {
+      e.preventDefault();
+      $('#submit_form').attr('disabled',true);
+      $(document).find("span.text-danger").remove();
+
+        const maxDate = $('#repeat_until').data('max-date');
+        if (maxDate) $('#repeat_until').val(maxDate);
+
+      const formData = $(this).serialize();
+      
+      const url = $(this).attr('action');
+
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: formData,
+        success: function (response) {
+          if (response.success === true) {
+            window.location = response.redirectUrl;
+          }
+        },
+        error: function (response) {
+          if (response.responseJSON?.errors) {
+              $.each(response.responseJSON.errors, function (field_name, error) {
+                const $field = $(`[id=${error.param}]`);
+                
+                if ($field.hasClass('select2-hidden-accessible')) {
+                    $field.next('.select2').after(`<span class="help-block text-danger">${error.msg}</span>`);
+                } else {
+                    $field.after(`<span class="help-block text-danger">${error.msg}</span>`);
+                }
+            });
+          }
+        },
+        complete: function(response){
+          $('#submit_form').attr('disabled',false);
+        }
+      });
+    });
+    
+  });
+</script>

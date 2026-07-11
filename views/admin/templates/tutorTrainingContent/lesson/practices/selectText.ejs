@@ -1,0 +1,98 @@
+
+<!-- tutor-training select text practice starts -->
+  <div class="row w-100" id="row">    
+      <div class="col-sm-12">
+        <!-- <div class="que-block text-center"> -->
+        <div class="que-block">
+          <h3 class="title-text">
+            <span class="text-center"><%-practice.question%></span>
+          </h3>
+          <% if(practice.question_audio && practice.question_audio !=''){ %> 
+            <div class="audio drop-objects">
+              <p>Click on the play button to play a sound:</p>
+              
+            <% if(audioExtension === '.mp3'){ %> 
+            <audio controls class="audio-stop">
+                <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mpeg">
+            </audio>
+            <% } %>
+
+            <% if(audioExtension === '.m4a'){ %> 
+              <audio controls class="audio-stop">
+                <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/ogg">
+                <source src="/TutorTrainingContent/<%=practice.content_directory%>/<%=practice.question_audio%>" type="audio/mp4">
+            </audio>
+            <% } %>  
+
+            </div>
+          <% } %>
+          <!-- <p class="desctext"></p> -->
+          <form method="post" action="./check-practice-answer">
+            <input type="hidden" class="lesson_id" name="lesson_id" value="<%=lessonId%>">
+            <input type="hidden" class="practice_id" name="practice_id" value="<%=practice.id%>">
+            <input type="hidden" class="practice_type" value="<%=practice.question_type%>" name="practice_type">     
+            <input type="hidden" class="question_content_type" value="practices">
+      
+            <ul class="quest-list <%=(practice.question_type == 'multi_select') ? 'multi-select':'' %>">
+            <%if(practice.question_type == 'single_select'){ %> 
+              <p>Please select one option.</p>
+            <% } %>
+
+            <%if(practice.question_type == 'multi_select'){ %> 
+            <p>please select more than one answer.</p>
+            <% } %>
+
+              <% 
+                let j = 0;
+                for (option of practice.options) {
+                j++;
+              %>
+              <li>
+                <%if(practice.question_type == 'single_select'){ %>
+                  <input type="radio" id="question<%=j%>" class="custom-option" name="question" value="<%=option.id%>" <%=(savedQuestion.includes(option.id) ?  'checked': '')%>>
+                  <label class="label-option" for="question<%=j%>"><%=option.option_text%></label>
+                <% } else { %>
+                  <input type="checkbox" id="question<%=j%>" class="custom-option" name="question[]" value="<%=option.id%>" <%=(savedQuestion.includes(option.id) ?  'checked': '')%>>
+                  <label class="label-option" for="question<%=j%>"><%=option.option_text%></label>
+                <% } %>
+              </li>
+              <% } %>
+              <div class="quest-bottom text-center text-md-left">
+                <div class="row">
+                  <div class="col-sm-12 col-md-6 align-self-center">
+                    <% if(userRole == '2'){ %> 
+                      <button type="button" class="check-btn mb-md-0 correct-btn submit_question">Submit</button>
+                    <% } else { %> 
+                        <button type="button" class="check-btn mb-md-0 check_question">Check Answer</button>
+                    <% } %>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <div class="answer-submitted">
+                      <span>Answer Submitted</span>
+                    </div>
+                    <div class="single-text answer-msg correct-answer-msg" style="display:none;">
+                      <img src="/images/correct-answer-icon.svg" alt="icon">
+                      <span>Congratulations <small>Correct Answer</small></span>
+                    </div>
+                    <div class="single-text answer-msg incorrect-answer-msg" style="display:none;">
+                      <img src="/images/incorrect-answer-icon.svg" alt="icon">
+                      <span>Wrong <small>Incorrect Answer</small></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ul>
+            <div class="col-sm-12 explanation-div">
+              <div class="explanation">
+                <h4 class="text-dgreen">Explanation</h4>
+                <p><%-practice.question_explanation%></p>
+              </div>
+            </div>
+
+          </form>
+        </div>              
+      </div>
+  </div>
+<!-- tutor-training select text practice starts -->
+
+

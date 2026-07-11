@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Student Auto Invoicing Summary</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      text-align: left;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      color: #ffffff;
+      background: #F47817;
+    }
+  </style>
+</head>
+<body>
+  <h3 style="color: #F47817;">Automatic Invoice Summary - <%= todayDate %></h3>
+  <p>Hii <%= creatorName %>,</p>
+  <p>Here is your Automatic Invoice Preview for <%= todayDate %>. Invoices for the amounts shown will be created on the invoice dates indicated below.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice Date</th>
+        <th>Name</th>
+        <th>Date Range</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% if (invoiceDataArray && invoiceDataArray.length > 0) { %>
+          <% invoiceDataArray.forEach(inv => { %>
+            <tr>
+              <td><%= inv.invoiceDate %></td>
+              <td><%= inv.studentName %></td>
+              <td><%= inv.dateRange %></td>
+              <td><%= inv.amount %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td style="text-align: center;" colspan="4">There are no automatic invoices scheduled.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  <br />
+  <br />
+  <p style="margin-top: 5px;">Thank you,</p>
+  <p><%= creatorName %></p>
+  <p><%= businessName %></p>
+</body>
+</html>

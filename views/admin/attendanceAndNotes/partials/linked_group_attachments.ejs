@@ -1,0 +1,24 @@
+<%
+let eventNoteId =  fetchedEvent.event_attendance_id !=null ? fetchedEvent.event_attendance_id.group_note_id : null;
+if(eventNoteId !== null){
+let attachments = fetchedEvent.event_attendance_id.group_note_id.attachments;
+for(let attachment of attachments){ %> 
+    <div class="form-group">
+        <label class="mb-1">Linked Online Resource</label>
+        <ul class="linked_resource">
+          <li>
+            <div class="linked_resource_top">
+              <h6><%=attachment.name%></h6>
+              <a class="delete-note-attachment" data-attachment-id="<%=attachment._id%>" data-id="<%=eventNoteId._id%>" href="javascript:void(0)" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"><img src="/images/trash-icon.svg" alt=""></a>
+            </div>
+            <div class="linked_resource_bottom">
+              <ul class="notes-file-size pb-2">
+                <li><img src="/images/files.svg" alt="files" class="img-fluid"> <span><%=attachment.extension%></span></li>
+                <li><%=attachment.size%></li>
+              </ul>
+              <a href="/EventAttachments/<%=attachment.name%>" class="note_download" download ><img src="/images/download-orange.svg" alt="" class="mr-2">Download</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+<% }} %>

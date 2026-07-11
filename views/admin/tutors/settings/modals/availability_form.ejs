@@ -1,0 +1,125 @@
+<div class="modal fade common-modal tuAvail-modal" data-backdrop="static" id="tutorAvailability" tabindex="-1" role="dialog"
+    aria-labelledby="tutorAvailabilityLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="tutorAvailabilityLabel">Availability Form</h3>
+            </div>
+            <form class="modal-form-area common-form availability-form" >
+                <div class="modal-body">
+                    <input type="hidden" name="availability_id" id="availability_id" value="">
+                    <div class="form-area">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="mb-2">Days</label>
+                                    <ul class="settinglist mt-0">
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilitySun"
+                                                    class="form-check-input days-checkbox" checked value="0">
+                                                <label class="form-check-label fw-400" for="availabilitySun">Sun</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilityMon"
+                                                    class="form-check-input days-checkbox" checked value="1">
+                                                <label class="form-check-label fw-400" for="availabilityMon">Mon</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilityTue"
+                                                    class="form-check-input days-checkbox" checked value="2">
+                                                <label class="form-check-label fw-400" for="availabilityTue">Tue</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilityWed"
+                                                    class="form-check-input days-checkbox" checked value="3">
+                                                <label class="form-check-label fw-400" for="availabilityWed">Wed</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilityThu"
+                                                    class="form-check-input days-checkbox" checked value="4">
+                                                <label class="form-check-label fw-400" for="availabilityThu">Thu</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilityFri"
+                                                    class="form-check-input days-checkbox" checked value="5">
+                                                <label class="form-check-label fw-400" for="availabilityFri">Fri</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="days[]" id="availabilitySat"
+                                                    class="form-check-input days-checkbox" checked value="6">
+                                                <label class="form-check-label fw-400" for="availabilitySat">Sat</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Start Date</label>
+                                    <input class="form-control date-picker" name="start_date" type="text"
+                                        id="tutAvailSdate" placeholder="Select a date..." autocomplete="off" />
+                                    <span class="input-icon"><img src="../images/calendar.svg"
+                                            alt="calendar-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>End Date</label>
+                                    <input class="form-control date-picker" name="end_date" type="text"
+                                        id="tutAvailEdate" placeholder="Select a date..." autocomplete="off" />
+                                    <span class="input-icon"><img src="../images/calendar.svg"
+                                            alt="calendar-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Start Time</label>
+                                    <input class="form-control time-picker" name="start_time" type="text"
+                                        id="tutAvailStime" placeholder="Select a time..." autocomplete="off" />
+                                    <span class="input-icon"><img src="../images/timer.svg" alt="clock-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>End Time</label>
+                                    <input class="form-control time-picker" name="end_time" type="text"
+                                        id="tutAvailEtime" placeholder="Select a time..." />
+                                    <span class="input-icon"><img src="../images/timer.svg" alt="clock-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Note <small>Optional</small></label>
+                                    <textarea id="note" name="note" id="" cols="30" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-leftarea">
+                        <!-- <button type="button" class="restore-btn">Restore Default Template</button> -->
+                    </div>
+                    <div class="btn-rightarea">
+                        <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+                        <!-- <button type="button" class="bus-outline-btn preview-btns">Preview</button> -->
+                        <button type="button" class="btn theme-btn submit-availability" id="submitAvailabilityBtn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

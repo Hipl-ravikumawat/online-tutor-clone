@@ -1,0 +1,59 @@
+<div class="right_col" role="main">
+  <!-- create group tag page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <a class="back-link" href="/group-tags"><span class="fa fa-chevron-left mr-2"></span>Back to Group Tag</a>
+      <div class="x_title">
+        <h2 class="title-text">Add Group Tag</h2>
+      </div>
+      <div class="x_content">
+        <form id="storeGroupTagForm" action="/group-tags/store" method="post" class="form-horizontal form-label-left">
+            <div class="row justify-content-center">
+                <div class="col-md-9">
+                    <%- include('./partials/_form',{ tag_colors, data:null, students }) %>
+
+                    <div class="ln_solid"></div>
+                    <div class="text-right">
+                        <button type="submit" id="storeBtn" class="btn theme-btn">Save</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- create grade page content end -->
+</div>
+
+<%- include('./partials/form_script'); %>
+
+<script type="text/javascript">
+  $("#storeGroupTagForm").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var formData = $('#storeGroupTagForm').serialize();
+    var url = $('#storeGroupTagForm').attr('action');
+    $("#storeBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#storeBtn").prop('disabled', false);
+      },
+    })
+  });
+</script>

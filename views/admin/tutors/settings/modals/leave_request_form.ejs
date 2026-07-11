@@ -1,0 +1,53 @@
+<div class="modal fade common-modal tuAvail-modal" data-backdrop="static" id="tutorLeaveRequest" tabindex="-1" role="dialog"
+    aria-labelledby="tutorLeaveRequestLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="tutorLeaveRequestLabel">Leave Request Form</h3>
+            </div>
+            <form class="modal-form-area common-form leave-request-form" >
+                <div class="modal-body">
+                    <input type="hidden" name="leave_request_id" id="leave_request_id" value="">
+                    <div class="form-area">
+                        <div class="row">
+                           
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Start Date</label>
+                                    <input class="form-control date-picker" name="start_date" type="text"
+                                        id="tutLeaveSdate" placeholder="Select a date..." autocomplete="off" />
+                                    <span class="input-icon"><img src="../images/calendar.svg"
+                                            alt="calendar-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>End Date</label>
+                                    <input class="form-control date-picker" name="end_date" type="text"
+                                        id="tutLeaveEdate" placeholder="Select a date..." autocomplete="off" />
+                                    <span class="input-icon"><img src="../images/calendar.svg"
+                                            alt="calendar-icon"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Reason for Leave<span class="required">*</span></label>
+                                    <textarea id="tutLeaveNote" name="note" cols="30" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-leftarea">
+                        <!-- <button type="button" class="restore-btn">Restore Default Template</button> -->
+                    </div>
+                    <div class="btn-rightarea">
+                        <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+                        <button type="button" class="btn theme-btn submit-leave-request" id="submitLeaveBtn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

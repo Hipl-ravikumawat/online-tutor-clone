@@ -1,0 +1,442 @@
+<div id="messageHistoryPanel">
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel message_full_panel">
+       <div class="x_title d-flex align-items-center justify-content-between flex-wrap">
+          <!-- Left Section -->
+          <div class="d-flex align-items-center dropdown_break_title">
+            <h2 class="title-text m-0 mr-3">Message History</h2>
+            <div class="drop-down table_filter_dropdown">
+              <div class="selected">
+                <a href="javascript:void(0)" class="item-selected">Last 3 Months</a>
+              </div>
+              <div class="drop-options" style="display: none;">
+                <ul>
+                  <li><a href="#" data-value="3">Last 3 Months</a></li>
+                  <li><a href="#" data-value="6">Last 6 Months</a></li>
+                  <li><a href="#" data-value="12">Last Year</a></li>
+                  <li><a href="#" data-value="">Entire History</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Section: Sort + Search -->
+          <ul class="right-btns settings_content d-flex align-items-center mb-0">
+            <!-- Sort Dropdown -->
+            <li class="both-btnli mr-2">
+              <div class="dropdown short_dropdown" id="messages-sort-dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                  <img src="/images/short-icon.svg" alt="Setting" class="mr-2">Sort
+                </button>
+                <div class="dropdown-menu">
+                  <button type="button" class="dropdown-item sort-trigger" data-column="">Clear Sort</button>
+                  <button type="button" class="dropdown-item sort-trigger" data-column="4" data-order="desc">Date</button>
+                </div>
+              </div>
+            </li>
+
+            <!-- Search Dropdown -->
+            <li class="search_box searchDropdownCount both-btnli search_btn">
+              <div class="dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                  <img src="/images/search-icon.svg" alt="Search" class="mr-2"> Search
+                </button>
+                <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
+                  <form id="messageSearchForm">
+                    <div class="position-relative form-group">
+                      <input type="search" name="category_search" class="form-control" placeholder="Search by subject & sender-receiver" />
+                      <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
+                    </div>
+                    <div class="form-group mt-20 mb-20">
+                      <label class="form-label" for="by_type">By Type</label>
+                      <select name="by_type" id="by_type" class="form-control search-input">
+                        <option value="">All</option>
+                        <option value="email">Email</option>
+                        <option value="sms">SMS</option>
+                      </select>
+                    </div>
+                    <div class="form-group form-check">
+                      <input class="form-check-input" type="checkbox" id="message_body" name="message_body" value="1">
+                      <label class="form-check-label" for="message_body">Search within message body</label>
+                    </div>
+                    <div class="d-flex mt-20">
+                      <button type="button" class="btn cancel-btn theme-btn cancel-search w-100 mr-3">Clear</button>
+                      <button type="submit" class="btn theme-btn w-100">Search</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box student_message_history">
+                <!-- Blank State -->
+                <div id="blank-family-msg-history" class="blank-family-cont" style="display: none;">
+                  <div class="bfamily-img text-center py-4">
+                    <img src="/images/message-history-blank.svg" alt="Message History">
+                  </div>
+                  <h3>No messages found</h3>
+                </div>
+                <div class="table-responsive families-invoices-responsive">
+                  <table id="message-history-table" class="table table-striped table-bordered without-crop-table dataTable no-footer" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th>Subject</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Status</th>
+                        <th>Date / Time</th>
+                        <th>Attachments</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Attachments Modal -->
+<div class="modal fade common-modal" id="attachmentModal" tabindex="-1" role="dialog" aria-labelledby="attachmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-none">
+      <div class="modal-header">
+        <h5 class="modal-title title_style">Attachments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body stud_message_details">
+        <div class="main_stud_info">
+          <h6>Student message history files</h6>
+          <div id="attachmentButtons" class="stud_info">
+            <div class="stud_action_btns">
+              <button class="" id="view-btn" data-txn-id="" data-invoice-id="">
+                <img src="/images/view-declined.svg" alt="View"> View
+              </button>
+              <button class="" id="download-btn" data-txn-id="" data-invoice-id="">
+                <img src="/images/download-orange2.svg" alt="Download"> Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn cancel-btn theme-btn" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+<!-- View Message Modal -->
+<div class="modal fade common-modal" id="viewMessageModal" tabindex="-1" role="dialog" aria-labelledby="viewMessageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-none">
+      <div class="modal-header">
+        <h3 class="modal-title title_style">View Message</h3>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body stud_message_details">
+        <div class="main_stud_info">
+          <h6>Subject</h6>
+          <div id="vm-subject" class="stud_info"></div>
+        </div>
+        <div class="main_stud_info">
+          <h6>Recipients</h6>
+          <div id="vm-recipients" class="stud_info"></div>
+        </div>
+        <div class="main_stud_info">
+          <h6>Message</h6>
+          <div id="vm-message" class="stud_info"></div>
+        </div>
+        <div class="main_stud_info">
+          <h6>Attachments</h6>
+          <div id="vm-attachments" class="stud_info stud_attached_info"></div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer border-0 px-4 pb-4">
+        <button type="button" class="btn cancel-btn theme-btn" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+  let table;
+  $(document).ready(function () {
+    const $blankUI = $("#blank-family-msg-history");
+    const $tableContainer = $("#message-history-table").parents(".table-responsive");
+    let selectedMonths = 3; 
+
+    table = $('#message-history-table').DataTable({
+      destroy: true,
+      paging: true,
+      pageLength: 10,
+      processing: true,
+      serverSide: true,
+      responsive: false,
+      autoWidth: false,
+      dom: '<"table-responsive families-invoices-responsive"t><"bottom_table_field"<""l><""i><""p>>r',
+
+      ajax: {
+        url: '/student/message-history/dataTable',
+        type: 'POST',
+        data: function (d) {
+          return $.extend({}, d, {
+            studentId: "<%= studentId %>",
+            months: selectedMonths,
+            by_type: $('#by_type').val(),
+            message_body: $('#message_body').is(':checked') ? 1 : 0,
+            category_search: $('input[name="category_search"]').val()
+          });
+        },
+        dataSrc: function (res) {
+          if (res.success && res.data.length > 0) {
+            $blankUI.hide();
+            $tableContainer.show();
+            return res.data;
+          } else {
+            $blankUI.hide(); // keep table visible
+            $tableContainer.show();
+
+            // return one dummy empty row so all fields are blank
+            return [{
+              subject: "",
+              type: "",
+              sender: {},
+              receiver: {},
+              status: "",
+              created_at: "",
+              meta: null
+            }];
+          }
+        }
+
+      },
+      columns: [
+        {
+          data: "subject",
+          render: function (d, type, row) {
+            const subject = d || "";
+            const messageType = row.type ? row.type.toLowerCase() : "-";
+
+            let badgeHtml = "";
+            if (messageType === "sms") {
+              badgeHtml =
+                '<span class="badge badge-sms"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.17157 16H20V4H4V17.1716L5.17157 16ZM2 22V4C2 2.9 2.9 2 4 2H20C21.1 2 22 2.9 22 4V16C22 17.1 21.1 18 20 18H6L2 22Z" fill="#016faa"></path></svg> SMS</span>';
+            } else if (messageType === "email") {
+              badgeHtml =
+                '<span class="badge badge-email"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM19 18H5C4.45 18 4 17.55 4 17V8L10.94 12.34C11.59 12.75 12.41 12.75 13.06 12.34L20 8V17C20 17.55 19.55 18 19 18ZM12 11L4 6H20L12 11Z" fill="#7a4600"></path></svg> Email</span>';
+            } else {
+              badgeHtml = `${row.type || "-"}</span>`;
+            }
+
+            return `
+              <div>
+                <p>${subject}</p>
+                <p>${badgeHtml}</p>
+              </div>
+            `;
+          }
+        },
+        { data: "sender", render: s => s ? `${s.email || "-"}` : "" },
+        { data: "receiver", render: r => r ? `${r.email || r.phone || ""}` : "" },
+        {
+          data: "status",
+          render: d => {
+            if (d === "sent") return `<span class="stu-present">Sent</span>`;
+            if (d === "unsent") return `<span class="stu-unrecorded">Unsent</span>`;
+            if (d === "queued") return `<span class="stu-unrecorded">Queued</span>`;
+            return d || "-";
+          }
+        },
+        { data: "created_at", render: (data, type, row) => row.created_at },
+        {
+          data: "meta",
+          render: d => {
+            if (!d) return "-";
+            const txnId = d.transactionId;
+            const invoiceId = d.invoiceId;
+            if (!txnId && !invoiceId) return "-";
+            return `
+              <button 
+                class="attachment-icon td_btn" 
+                data-txn-id="${txnId || ''}" 
+                data-invoice-id="${invoiceId || ''}"
+                type="button">
+                  <img src="/images/attachment1.svg" alt="Attachment">
+              </button>
+              <button 
+                class="view-message td_btn" 
+                data-txn-id="${txnId || ''}" 
+                data-invoice-id="${invoiceId || ''}"
+                type="button">
+                  <img src="/images/eye.svg" alt="Eye">
+              </button>
+            `;
+          }
+        }
+      ],
+      columnDefs: [
+    { targets: 5, orderable: false } // disable sorting on Attachments column
+  ]
+    });
+
+    $(".drop-down .selected").on("click", function () {
+      $(this).next(".drop-options").toggle();
+    });
+
+    $(".drop-down .drop-options ul li a").on("click", function () {
+      let text = $(this).text();
+      selectedMonths = $(this).data("value");
+      $(".drop-down .selected").html('<a href="javascript:void(0)" class="item-selected">' + text + '</a>');
+      $(".drop-options ul li a").removeClass("active");
+      $(this).addClass("active");
+      $(this).parents(".drop-options").hide();
+      table.ajax.reload();
+    });
+
+    $(document).on("click", function (e) {
+      if (!$(e.target).closest(".drop-down").length) {
+        $(".drop-down .drop-options").hide();
+      }
+    });
+
+    // Attachment modal
+    $('#message-history-table').on('click', '.attachment-icon', function (e) {
+      e.preventDefault();
+      const txnId = $(this).data('txn-id');
+      const invoiceId = $(this).data('invoice-id');
+
+      if (!txnId && !invoiceId) return;
+
+      $('#attachmentModal').find('#view-btn').attr('data-txn-id', txnId || '').attr('data-invoice-id', invoiceId || '');
+      $('#attachmentModal').find('#download-btn').attr('data-txn-id', txnId || '').attr('data-invoice-id', invoiceId || '');
+      $('#attachmentModal').modal('show');
+    });
+
+    $('#attachmentModal').on('click', '#view-btn', function (e) {
+      e.preventDefault();
+      const txnId = $(this).attr('data-txn-id');
+      const invoiceId = $(this).attr('data-invoice-id');
+      if (invoiceId) {
+        window.open(`/student/message-history/generate/pdf/${invoiceId}`, "_blank");
+      } else if (txnId) {
+        window.open(`/student/message-history/download-transaction/pdf/${txnId}`, "_blank");
+      }
+    });
+
+    $('#attachmentModal').on('click', '#download-btn', function (e) {
+      e.preventDefault();
+      const txnId = $(this).attr('data-txn-id');
+      const invoiceId = $(this).attr('data-invoice-id');
+      if (invoiceId) {
+        window.location.href = `/student/message-history/generate/pdf/${invoiceId}`;
+      } else if (txnId) {
+        window.location.href = `/student/message-history/download-transaction/pdf/${txnId}?download=true`;
+      }
+    });
+  });
+
+  // View Message modal
+  $('#message-history-table').on('click', '.view-message', function (e) {
+    e.preventDefault();
+
+    const rowData = $('#message-history-table').DataTable().row($(this).closest('tr')).data();
+    if (!rowData) return;
+
+    $('#vm-subject').text(rowData.subject || '-');
+
+    let recipients = '-';
+    if (rowData.receiver) {
+      recipients = rowData.receiver.email || rowData.receiver.name || '-';
+    }
+    $('#vm-recipients').text(recipients);
+
+    $('#vm-message').html(rowData.messageBody || '-');
+
+    const meta = rowData.meta;
+    let attachHtml = '<div class="text-muted">No attachments</div>';
+    if (meta && (meta.transactionId || meta.invoiceId)) {
+      const viewLink = meta.invoiceId
+        ? `/student/message-history/generate/pdf/${meta.invoiceId}`
+        : `/student/message-history/download-transaction/pdf/${meta.transactionId}`;
+
+      const fileName = meta.invoiceId
+        ? `Invoice-${meta.invoiceId}`
+        : meta.transactionId
+        ? `Transaction-${meta.transactionId}`
+        : "Attachment";
+
+      attachHtml = `
+        <div class="stud_file_name"><img src="/images/file.svg" alt="file"> ${fileName}</div>
+        <div class="stud_action_btns">
+          <a href="${viewLink}" target="_blank">
+            <img src="/images/view-declined.svg" alt="View"> View
+          </a>
+          <a href="${viewLink}?download=true">
+            <img src="/images/download-orange2.svg" alt="Download"> Download
+          </a>
+        </div>`;
+    }
+    $('#vm-attachments').html(attachHtml);
+
+    $('#viewMessageModal').modal('show');
+  });
+
+  // Sort buttons
+  $(document).on("click", ".sort-trigger", function () {
+    const colIndex = $(this).data("column");
+    let order = $(this).data("order");
+    
+    if (colIndex === "") {
+        table.order([]).draw();
+    } else {
+        table.order([parseInt(colIndex), order]).draw();
+        
+        // Toggle the order for next click
+        const newOrder = order === 'desc' ? 'asc' : 'desc';
+        $(this).data('order', newOrder);
+        
+        // Update button text to show next state
+        if (colIndex === "4") {
+            $(this).text(newOrder === 'desc' ? 'Date (Newest First)' : 'Date (Oldest First)');
+        }
+    }
+});
+
+  // Search form
+  $("#messageSearchForm").on("submit", function (e) {
+    e.preventDefault();
+    table.ajax.reload();
+  });
+
+  // Clear search
+  $(".cancel-search").on("click", function () {
+    $("#messageSearchForm")[0].reset();
+    table.ajax.reload();
+  });
+</script>
+

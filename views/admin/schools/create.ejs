@@ -1,0 +1,110 @@
+<div class="right_col" role="main">
+  <!-- create school page content starts -->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Add School</h2>
+      </div>
+      <div class="x_content">
+        <form id="createSchool" action="./store" method="post" class="form-horizontal form-label-left" novalidate>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="name">School Name<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                  <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name"
+                    required="required" maxlength="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="phone">Contact No.
+                </label>
+                <div class="phone-group">
+                  <input type="hidden" name="dial_code" id="dial_code">
+                  <input type="hidden" name="iso_code" id="iso_code">
+                  <input type="number" name="phone" class="form-control " id="phone">
+                  <span id="error-msg" class="hide"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="email">Email Address
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                  <input type="email" name="email" class="form-control" placeholder="Enter Email.." id="email">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                </label>
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control" name="status" id="status" tabindex="-1" single>
+                    <option value="1">Activate</option>
+                    <option value="0">Deactivate</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="address">School Address
+                </label>
+                <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
+                  id="address"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="storeSchoolBtn" class="btn theme-btn form-button">Save</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- create school page content end -->
+</div>
+<script>
+  var defaultNumber = "412345678"; 
+</script>
+<%- include('./form_script.ejs'); %>
+<script type="text/javascript">
+  $("#createSchool").submit(function (e) {
+    e.preventDefault();
+    $(document).find("span.text-danger").remove();
+    var formData = $('#createSchool').serialize();
+    var url = $('#createSchool').attr('action');
+    $("#storeSchoolBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      },
+      complete: function () {
+        $("#storeSchoolBtn").prop('disabled', false);
+      },
+    })
+  });
+</script>

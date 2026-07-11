@@ -1,0 +1,115 @@
+<div class="right_col" role="main"> 
+    <!-- learningContent index page content starts -->
+    <% if(loggedUserRole==1){ %>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="stcard-box">
+                <span class="shade5">
+                    <%=learningContentObject.total%>
+                </span>
+                <h3 class="title-text mb-0">Total</h3>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="stcard-box">
+                <span class="shade1">
+                    <%=learningContentObject.active%>
+                </span>
+                <h3 class="title-text mb-0">Active</h3>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="stcard-box">
+                <span class="shade3">
+                    <%=learningContentObject.deactive%>
+                </span>
+                <h3 class="title-text mb-0">Deactive</h3>
+            </div>
+        </div>
+    </div>
+    <% } %>
+    <div class="card-block mb-30">
+        <h2 class="title-text">Filter Learning Contents</h2>
+        <ul class="filter-row">
+            <li class="filter-col">
+                <select class="form-control select2" id="grades" tabindex="-1" single>
+                    <option value="">Select Grade</option>
+                    <% for(grades of grades) { %>
+                        <option value="<%=grades.id%>">
+                            <%=grades.name%>
+                        </option>
+                        <% } %>
+                </select>
+            </li>
+            <li class="filter-col">
+                <select class="form-control select2" id="topics" tabindex="-1" single>
+                    <option value="">Select Main Topic</option>
+                    <% for(topic of topics) { %>
+                        <option value="<%=topic.id%>">
+                            <%=topic.name%>
+                        </option>
+                        <% } %>
+                </select>
+            </li>
+            <li class="filter-col">
+                <select class="form-control select2" id="subTopic" tabindex="-1" single>
+                    <option value="">Select Sub Topic</option>
+                </select>
+            </li>
+            <li class="filter-col">
+                <select class="form-control select2" id="status" tabindex="-1" single>
+                    <option value="">Select Status</option>
+                    <option value="1">Active</option>
+                    <option value="0">Deactive</option>
+                </select>
+            </li>
+            <li class="filter-col">
+                <button class="btn theme-btn filter">Filter</button>
+                <button class="btn theme-btn reset">Reset</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-block text-center text-md-left">
+        <div class="row">
+            <div class="col-sm-12 col-md-4 align-self-center">
+                <h2 class="title-text mb-0">Contents List <span class="total-count">Total Courses :
+                        <%=(loggedUserInfo.role > 1) ? '' :   +learningContentObject.total  %>
+                    </span></h2>
+            </div>
+            <div class="col-sm-12 col-md-8 align-self-center">
+                <div class="course-pagination">
+                    <div class="input-group my-3 m-md-0 input-search">
+                        <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button class="btn" type="button"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12" id="myContent">
+                <ul class="col-sm-12 course-list">
+
+                </ul>
+            </div>
+            <div class="col-sm-12">
+                <ul class="pagination mb-0 justify-content-end">
+                    <input type="hidden" name="offset" id="offset" value="0">
+                    <li><span class="showing-item">Showing <span id="CurrentPageNumber">1</span> of <span
+                                id="totalRecords">2</span>
+                    </li>
+                    <li class="page-item previous-btn">
+                        <a class="page-link paging" data-type="prev"><i class="fa fa-angle-left"></i></a>
+                    </li>
+                    <li class="page-item current"><a class="page-link">1</a></li>
+                    <li class="page-item next-btn">
+                        <a class="page-link paging" data-type="next"><i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- learningContent index page content end -->
+</div>
+
+<%- include('./index_script'); %>

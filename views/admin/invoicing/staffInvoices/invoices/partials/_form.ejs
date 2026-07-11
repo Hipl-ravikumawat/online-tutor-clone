@@ -1,0 +1,150 @@
+<div class="form-group position-relative">
+    <label class="form-label" for="invoice_date">Invoice Date
+        <p class="m-0" style="font-size: 10px;">Invoice date appears on top of your invoice</p>
+    </label>
+    <input type="text" name="invoice_date" placeholder="Select invoice date" id="invoice_date"
+        class="form-control" />
+</div>
+<div class="mb-20">
+    <label class="form-label">What do you want to include?</label><br>
+    <div class="radio_group form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="include_type" id="chargesDiscounts"
+            value="charges">
+        <label class="radiolabel" for="chargesDiscounts">Only charges & discounts within the date
+            range</label>
+    </div>
+    <div class="radio_group form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="include_type" id="previousBalance"
+            value="balance" checked>
+        <label class="radiolabel" for="previousBalance">Include previous balance & payments from
+            before the start date</label>
+    </div>
+</div>
+<div class="mb-2" id="categorySelectWrapper" style="display: none;">
+    <label class="form-label">Categories</label>
+    <select multiple name="category[]" id="category" class="form-control select2"
+        style="width:100%">
+        <% categories.forEach(cat=> { %>
+            <option value="<%= cat._id %>">
+                <%= cat.name %>
+            </option>
+            <% }); %>
+    </select>
+</div>
+<h2 class="title-text mb-20" id="">What date range do you want the invoice to cover?</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group position-relative">
+            <label class="form-label">Start Date</label>
+            <input type="text" name="start_date" id="start_date" class="form-control full_date_click" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group position-relative">
+            <label class="form-label">End Date</label>
+            <input type="text" name="end_date" id="end_date" class="form-control full_date_click" />
+        </div>
+    </div>
+</div>
+<input type="hidden" name="date_range" id="date_range" />
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group position-relative">
+            <label class="form-label">What is the due date?</label>
+            <div class="position-relative row">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <div class="radio_group form-check form-check-inline m-0 w-100">
+                        <input class="form-check-input" type="radio" name="date_type" id="no_due_date"
+                            value="no_due_date">
+                        <label class="radiolabel mb-0 w-100 py-10px" for="no_due_date">No due
+                            date</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="radio_group form-check form-check-inline m-0 w-100">
+                        <input class="form-check-input" type="radio" name="date_type"
+                            id="choose_date" value="choose_date">
+                        <label class="radiolabel mb-0 w-100 py-10px" for="choose_date">Choose a
+                            date</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dueDateInput" class="mt-3" style="display: none;">
+                <input type="date" name="due_date" class="form-control" />
+            </div>
+        </div>        
+    </div>
+</div>
+
+
+<h2 class="title-text mb-20" id="">Tell us more about the invoice</h2>
+<div class="form-group">
+    <label class="form-label">How do you want to display invoice items?</label>
+    <div class="row">
+        <div class="col-7 col-md-6">
+            <% invoiceTypes.map((type) => { %>
+                <div class="radio_group form-check form-check-inline m-0 mb-3 w-100">
+                    <input class="form-check-input" type="radio" data-image="/images/invoiceIcons/<%= type.img || '' %>" name="display_type" id="display_type_<%= type.label || '' %>" value="<%= type.val || '' %>" <%= (type.default) ? 'checked' : '' %> />
+                    <label class="radiolabel mb-0 w-100" for="display_type_<%= type.label || '' %>"><%= type.label || '' %> <br> 
+                        <span class="d-block size-12"><%= type.description || '' %></span>
+                    </label>
+                </div>
+            <% }) %>
+        </div>
+        <div class="col-5 col-md-6 align-self-center">
+            <div class="text-center"><img src="" id="display_type_img" class="img img-fluid" /></div>
+        </div>
+    </div>
+</div>
+<div class="form-group mb-2">
+    <label class="form-label">Footer Note <span class="text-muted small">(Optional)</span></label>
+    <textarea name="footer_note" class="form-control h-130" rows="4" placeholder="An optional private note. This will NOT be included on the invoice."></textarea>
+</div>
+<div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="private_note" name="private_note" value="1" />
+    <label class="form-check-label" for="private_note">I would like to add a private note for my records.</label>
+</div>
+<div id="privateNoteInput" class="form-group mb-2" style="display: none;">
+    <label class="form-label">Private Note <span class="text-muted small">(Optional)</span></label>
+    <textarea name="private_note_text" class="form-control h-130" rows="4" placeholder="This note will only be visible to you and not appear on the invoice..."></textarea>
+</div>
+<div class="form-group">
+    <label class="form-label">Do you want to email the invoice?</label>
+    <div class="row">
+        <div class="col-md-3 mb-2 mb-md-0">
+            <div class="radio_group form-check form-check-inline m-0 w-100">
+                <input class="form-check-input" type="radio" name="send_email" id="email_invoice" value="0" checked>
+                <label class="radiolabel mb-0 w-100" for="email_invoice">Create but don't email</label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="radio_group form-check form-check-inline m-0 w-100">
+                <input class="form-check-input" type="radio" name="send_email" id="immediately_invoice" value="1">
+                <label class="radiolabel mb-0 w-100" for="immediately_invoice">Email invoices immediately</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <div class="form-group">
+    <label class="form-label">Do you want to sms the invoice?</label>
+    <div class="row">
+        <div class="col-md-3 mb-2 mb-md-0">
+            <div class="radio_group form-check form-check-inline m-0 w-100">
+                <input class="form-check-input" type="radio" name="send_sms"
+                    id="sms_invoice" value="0" checked>
+                <label class="radiolabel mb-0 w-100" for="sms_invoice">Create but don’t
+                    sms</label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="radio_group form-check form-check-inline m-0 w-100">
+                <input class="form-check-input" type="radio" name="send_sms"
+                    id="immediately_sms_invoice" value="1">
+                <label class="radiolabel mb-0 w-100" for="immediately_sms_invoice">Sms invoices
+                    immediately</label>
+            </div>
+        </div>
+    </div>
+</div> -->

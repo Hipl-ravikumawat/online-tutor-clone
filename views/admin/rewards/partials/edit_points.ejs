@@ -1,0 +1,111 @@
+<div class="modal fade common-modal" data-backdrop="static" id="edit-points" tabindex="-1" role="dialog"
+    aria-labelledby="editPointsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="assign-points-form">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Reward Points</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="rewards-history-data">
+                        <ul>
+                            <li><label>Student Name :</label> Marvin McKinney </li>
+                            <li class="date">18-07-2024 </li>
+                            <li><label>Tutor Name :</label> Wade Warren</li>
+                        </ul>
+                    </div>
+                    <div class="x_content table-text-center mt-2">
+                        <table id="studentPoints" class="table table-striped table-bordered dt-responsive nowrap"
+                            cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Value</th>
+                                    <th>Earned</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Attending Class On Time</td>
+                                    <td><span class="studants-points">
+                                            Points
+                                        </span></td>
+                                    <td class="select-points">
+                                        <div class="studants-points-check">
+                                            <input type="checkbox" name="attendingClassOnTime"
+                                                id="attendingClassOnTime">
+                                            <label for="attendingClassOnTime"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Asking Questions</td>
+                                    <td><span class="studants-points">
+                                            Points
+                                        </span></td>
+                                    <td class="select-points">
+                                        <div class="studants-points-check">
+                                            <input type="checkbox" name="askingQuestions" id="askingQuestions">
+                                            <label for="askingQuestions"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Home Work Submission</td>
+                                    <td><span class="studants-points">
+                                            Points
+                                        </span></td>
+                                    <td class="select-points">
+                                        <div class="studants-points-check">
+                                            <input type="checkbox" name="homeworkSubmission" id="homeworkSubmission">
+                                            <label for="homeworkSubmission"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Participating In Class Activities</td>
+                                    <td><span class="studants-points">
+                                            Points
+                                        </span></td>
+                                    <td class="select-points">
+                                        <div class="studants-points-check">
+                                            <input type="checkbox" name="participatingClassActivities"
+                                                id="participatingClassActivities">
+                                            <label for="participatingClassActivities"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Bonus Points</td>
+                                    <td><span class="studants-points">
+                                            Points
+                                        </span></td>
+                                    <td class="select-points">
+                                        <div class="studants-points-check">
+                                            <input type="checkbox" name="bonusPoints" id="bonusPoints">
+                                            <label for="bonusPoints"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>Maximum Points Per Week</td>
+                                    <td><span class="studants-points-total">40 Points</span></td>
+                                    <td class="select-total-points">00 Points</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-rightarea">
+                        <button type="button" data-dismiss="modal" class="bus-outline-btn"
+                            id="resetForm">Cancel</button>
+                        <button type="submit" class="btn theme-btn" id="assignPointBtn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

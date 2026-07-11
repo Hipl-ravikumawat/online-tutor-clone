@@ -1,0 +1,361 @@
+<script>
+    function fillAutoInvoicingForm(data) {
+        // Billing Cycle Start Date
+        if (data.invoiceDetails?.billingCycleStartDate) {
+            $("input[name='invoiceDetails[billingCycleStartDate]']")
+                .val(moment(data.invoiceDetails.billingCycleStartDate).format("YYYY-MM-DD"));
+        }
+
+        // Invoice For
+        $(`input[name='invoiceDetails[invoiceFor]'][value='${data.invoiceDetails.invoiceFor[0]}']`)
+            .prop("checked", true);
+
+        // Invoice Creation Date
+        $(`input[name='invoiceDetails[invoiceCreationDate][option]'][value='${data.invoiceDetails.invoiceCreationDate.option}']`)
+            .prop("checked", true);
+
+        // Due Date Setup
+        $(`input[name='invoiceDetails[dueDateSetup][option]'][value='${data.invoiceDetails.dueDateSetup.option}']`)
+            .prop("checked", true);
+
+        // Frequency
+        $(`input[name='invoiceDetails[autoInvoicingSchedule][frequency]'][value='${data.invoiceDetails.autoInvoicingSchedule.frequency}']`)
+            .prop("checked", true);
+
+        // Repeats Every
+        $("input[name='invoiceDetails[autoInvoicingSchedule][repeatsEvery]']")
+            .val(data.invoiceDetails.autoInvoicingSchedule.repeatsEvery);
+
+        // Preferences
+        $(`input[name='preferences[displayStyle]'][value='${data.preferences.displayStyle}']`)
+            .prop("checked", true);
+
+        $(`input[name='preferences[zeroBalanceHandling]'][value='${data.preferences.zeroBalanceHandling}']`)
+            .prop("checked", true);
+
+        $("input[name='preferences[balanceForward]']").prop("checked", data.preferences.balanceForward);
+        $("input[name='preferences[autoEmail]']").prop("checked", data.preferences.autoEmail);
+        $("textarea[name='preferences[footerNote]']").val(data.preferences.footerNote || "");
+    }
+
+    function resetAutoInvoicingForm() {
+        $("#automatic-invoicing-add-form")[0].reset();
+    }
+
+
+    $(function() {
+        var businessSettingValue = <%- JSON.stringify(businessSettingValue || {}) %>;
+
+        $('.owed_date, .owed_date_family').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: parseInt(moment().format('YYYY'), 10),
+        }, function (start, end, label) {
+            let formattedDate = start.format('YYYY-MM-DD');
+            localStorage.setItem("staff_account_filter_date", formattedDate);
+            $('#hidden-date-input').val(start.format('DD-MM-YYYY'));
+            $('#display-date').text(start.format('DD-MM-YYYY'));
+            // Trigger the hidden input's date picker to update its internal state
+            $('#hidden-date-input').data('daterangepicker').setStartDate(start);
+            $('#hidden-date-input').data('daterangepicker').setEndDate(start);
+        });
+
+        let storedDate = localStorage.getItem("staff_account_filter_date");
+        let defaultStart;
+        if (storedDate && moment(storedDate, "YYYY-MM-DD", true).isValid()) {
+            defaultStart = moment(storedDate, "YYYY-MM-DD");
+        } else if (businessSettingValue.defaultStart) {
+            defaultStart = moment(businessSettingValue.defaultStart, "YYYY-MM-DD");
+        } else {
+            defaultStart = moment().endOf("month").format("YYYY-MM-DD");
+        }
+
+        $('#hidden-date-input').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            startDate: defaultStart,
+            autoUpdateInput: false,
+            locale: {
+                format: 'DD-MM-YYYY'
+            }
+        }, function (start, end, label) {
+            let formattedDate = start.format('YYYY-MM-DD');
+            localStorage.setItem("staff_account_filter_date", formattedDate);
+            $('#hidden-date-input').val(start.format('DD-MM-YYYY'));
+            $('#display-date').text(start.format('DD-MM-YYYY'));
+        });
+
+        if (storedDate) {
+            $('#display-date').text(defaultStart.format('DD-MM-YYYY'));
+            $('#hidden-date-input').val(defaultStart.format('DD-MM-YYYY'));
+            defaultStart = defaultStart.format('YYYY-MM-DD');
+        }else{
+            $('#display-date').text(defaultStart);
+            $('#hidden-date-input').val(defaultStart);
+        }
+        
+        if (defaultStart < moment().utc().format('YYYY-MM-DD')) {
+            $('#balance-date-alert').removeClass('d-none');
+        } else {
+            $('#balance-date-alert').addClass('d-none');
+        }
+
+        $('#hidden-date-input').on('apply.daterangepicker', function (ev, picker) {
+            $('#display-date').text(picker.startDate.format('DD-MM-YYYY'));
+            const selectedDate = picker.startDate.format('YYYY-MM-DD');
+            localStorage.setItem("staff_account_filter_date", selectedDate);
+
+            const currentUrl = window.location.href;
+            if (currentUrl.includes("/staff-invoices/staff/")) {
+                transactionTable();
+            } else {
+                $('#staffAccountTable').DataTable().ajax.reload();
+            }
+
+            if (selectedDate < moment().utc().format('YYYY-MM-DD')) {
+                $('#balance-date-alert').removeClass('d-none');
+            } else {
+                $('#balance-date-alert').addClass('d-none');
+            }
+        });
+
+
+        $(document).on('click', '.owed_date', function () {
+            $('#hidden-date-input').trigger('click');
+        });
+        
+        $('#update-balance-date-btn').on('click', function (e) {
+            const today = moment().utc(); // use moment to get today's date
+            const formattedDisplay = today.format('DD-MM-YYYY');
+            const formattedValue = today.format('YYYY-MM-DD');
+            localStorage.setItem("staff_account_filter_date", formattedValue);
+            // Update the UI
+            $('#display-date').text(formattedDisplay);
+            $('#hidden-date-input').data('daterangepicker').setStartDate(today);
+            $('#hidden-date-input').data('daterangepicker').setEndDate(today);
+
+            // Hide the alert
+            $('#balance-date-alert').addClass('d-none');
+
+            // Reload the DataTable with new date
+            $('#staffAccountTable').DataTable().ajax.reload();
+        });
+
+        $(".auto-invoice-scheduled").on('change', function() {
+            let auto_invoice_scheduled = $(this).val();
+            $('.duration-label').text(auto_invoice_scheduled.charAt(0).toUpperCase() + auto_invoice_scheduled.slice(1));
+            if(auto_invoice_scheduled === "monthly"){
+                $('.repeat-data').removeClass('d-none');
+            }else{
+                $('.repeat-data').addClass('d-none');
+            }
+        });
+
+        $(".invoice-creation-date").on('change', function() {
+            let invoice_creation_date = $(this).val();
+            if(invoice_creation_date === "choose_date"){
+                $('.full_date_click').removeClass('d-none');
+            }else{
+                $('.full_date_click').addClass('d-none');
+            }
+        });
+        $(".due-date-setup").on('change', function() {
+            let invoice_creation_date = $(this).val();
+            if(invoice_creation_date === "choose_date"){
+                $('.choose-due-date-setup').removeClass('d-none');
+            }else{
+                $('.choose-due-date-setup').addClass('d-none');
+            }
+        });
+    });
+
+    $(document).on("click", "#enable-auto-invoice", function () {
+        const ids = [];
+        const id = $(this).data("id"); // Single row
+        if (id) {
+            $("#automaticInvoicing").find('.invoicing_tutor_ids').val(id);
+            ids.push(id);
+        }
+
+        // Collect selected checkboxes for bulk actions
+        $(".tutor_id:checked").each(function () {
+            ids.push($(this).val());
+        });
+        
+        if (ids.length === 0) {
+            alert("Please select at least one tutor.");
+            return false;
+        }
+
+        if (ids.length === 1) {
+            let tutorId = ids[0];
+            $('.loader').show();
+            $.ajax({
+                url: `/staff-invoices/automatic-invoicing/get`,
+                type: "POST",
+                data: {
+                    tutorId:tutorId
+                },
+                success: function (response) {
+                    if (response && response.data) {
+                        fillAutoInvoicingForm(response.data);
+                    } else {
+                        resetAutoInvoicingForm();
+                    }
+                    // open modal
+                    $("#automaticInvoicing").modal("show");
+                },
+                error: function () {
+                    alert("Failed to fetch invoicing settings.");
+                },
+                complete: function(response){
+                    $('.loader').hide();
+                }
+            });
+        } else {
+            // Multiple tutors → reset form
+            resetAutoInvoicingForm();
+            $("#automaticInvoicing").modal("show");
+        }
+    });
+
+    $(document).on("submit","#automatic-invoicing-add-form", function (e) {
+        e.preventDefault();
+        const $form = $(this);
+        const url = $form.attr("action");
+        const formData = getFormData($form[0]);
+        $('.loader').show();
+        // AJAX request
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            success: function (response) {
+                location.reload();
+            },
+            error: function () {
+                console.log("error", "An unexpected error occurred. Please try again later.");
+            },
+            complete: function(response){
+                $('.loader').hide();
+            }
+        });
+    });
+
+    $(document).on("click", "#disable-auto-invoice", function (e) {
+        e.preventDefault();
+        
+        let tutor_ids = [];
+        
+        const id = $(this).data("id");
+        if (id) {
+            tutor_ids = [id];
+        } else {
+            $(".tutor_id:checked").each(function () {
+                tutor_ids.push($(this).val());
+            });
+        }
+        
+        if (tutor_ids.length === 0) {
+            alert("Please select at least one tutor.");
+            return false;
+        }
+        
+        // Set the value as comma-separated string or array
+        $("#disableAutoInvoicing").find('.invoicing_tutor_ids').val(tutor_ids.join(','));
+        $("#disableAutoInvoicing").modal("show");
+    });
+
+    $(document).on("submit", "#disable-auto-invoicing-form", function (e) {
+        e.preventDefault();
+        const $form = $(this);
+        const url = $form.attr("action");
+        const tutorIds = $form.find('.invoicing_tutor_ids').val();
+        
+        if (!tutorIds) {
+            alert("No tutors selected");
+            return false;
+        }
+        
+        $('.loader').show();
+        
+        // Send the data directly instead of using getFormData
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { tutorIds: tutorIds }, // Send explicitly
+            success: function (response) {
+                $("#disableAutoInvoicing").modal('hide');
+                const currentUrl = window.location.href;
+                if (currentUrl.includes("/staff-invoices/staff/")) {
+                    if ($.fn.DataTable.isDataTable("#staffTransactionsTable")) {
+                        $('#staffTransactionsTable').DataTable().ajax.reload();
+                    }
+                } else {
+                    if ($.fn.DataTable.isDataTable("#staffAccountTable")) {
+                        $('#staffAccountTable').DataTable().ajax.reload();
+                    }
+                }
+                location.reload();
+            },
+            error: function (error) {
+                console.error(error);
+                alert("An unexpected error occurred. Please try again later.");
+            },
+            complete: function(response){
+                $('.loader').hide();
+            }
+        });
+    });
+
+    $(".resend-summary").on("click", function (e) {
+        e.preventDefault();
+         let tutor_ids = $(".tutor_id:checked")   // find all checked
+            .map(function () {
+                return $(this).val();
+            })
+            .get(); 
+        $('.loader').show();
+        // AJAX request
+        $.ajax({
+            type: "POST",
+            url: "/staff-invoices/automatic-invoicing/resend-summary",
+            data: {tutor_ids: tutor_ids},
+            success: function (response) {
+                $("#summeryResend").modal('show');
+                const currentUrl = window.location.href;
+                if (currentUrl.includes("/staff-invoices/staff/")) {
+                    $('#staffTransactionsTable').DataTable().ajax.reload();
+                } else {
+                    $('#staffAccountTable').DataTable().ajax.reload();
+                }
+            },
+            error: function () {
+                console.log("error", "An unexpected error occurred. Please try again later.");
+            },
+            complete: function(response){
+                $('.loader').hide();
+            }
+        });
+    });
+    function getFormData(form) {
+        return [...new FormData(form)]
+        .filter(([_, value]) => value.trim() !== "")
+        .reduce((acc, [key, value]) => {
+            acc[key] = acc[key] ? [].concat(acc[key], value) : value;
+            return acc;
+        }, {});
+    }
+    // invoiving_tutor_ids
+
+    $(document).on('click', '.tutor_id', function () {
+        let tutor_ids = $(".tutor_id:checked")   // find all checked
+            .map(function () {
+                return $(this).val();
+            })
+            .get(); // convert to array
+        // store as comma-separated (or JSON string) in hidden input
+        $('.invoicing_tutor_ids').val(tutor_ids.join(','));
+    });
+</script>

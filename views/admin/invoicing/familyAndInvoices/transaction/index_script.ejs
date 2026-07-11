@@ -1,0 +1,297 @@
+<script>
+    let transactionsTable;
+    const transactionSearchformId = 'transactionsSearchForm';
+    const TRANS_SORT_STORAGE_KEY = 'transactionsTable_Sort';
+    const TRANS_SEARCH_STORAGE_KEY = 'transactionsSearch_Filters';
+
+    async function transactionTable() {
+        if ($.fn.DataTable.isDataTable("#transactionTable")) {
+            $("#transactionTable").DataTable().destroy();
+        }
+
+        transactionsTable = $("#transactionTable").DataTable({
+            serverSide: true,
+            paging: true,
+            pageLength: 10,
+            responsive: false,
+            // scrollX: true,
+            autoWidth: false,
+            dom: '<"table-responsive families-invoices-responsive"t><"bottom_table_field"<""l><""i><""p>>r',
+            order: [[0, "desc"]],
+            language: {
+                searchPlaceholder: "Search",
+            },
+            ajax: {
+                url: "/families-invoices/transactions/dataTable",
+                type: "POST",
+                data: function (d) {
+                    d.filter_start_date = $('#trans_start_date').text() || '';
+                    d.filter_end_date =  $('#trans_end_date').text() || '';
+
+                    // Custom Search Filters
+                    d.family_or_note = $(`#${transactionSearchformId} #search_family_note`).val()?.trim() || '';
+                    d.searchAmount = $(`#${transactionSearchformId} #amount_search`).val() || '';
+                    d.showZeroEntries = $(`#${transactionSearchformId} #show_zero_entries`).is(':checked') ? 1 : 0;
+                    d.show_payments = $(`#${transactionSearchformId} #show_payments`).is(':checked') ? 1 : 0;
+                    d.show_refunds = $(`#${transactionSearchformId} #show_refunds`).is(':checked') ? 1 : 0;
+                    d.show_charges = $(`#${transactionSearchformId} #show_charges`).is(':checked') ? 1 : 0;
+                    d.show_discounts = $(`#${transactionSearchformId} #show_discounts`).is(':checked') ? 1 : 0;
+                    
+                    // Send current sort info from dropdown if exists
+                    // let sortInfo = $('#transactions-sort-dropdown').data('sort-info');
+                    // if (sortInfo) {
+                    //     d.order = [
+                    //         { column: sortInfo.column, dir: sortInfo.direction }
+                    //     ];
+                    // }else{
+                    //     d.order = [
+                    //         { column: 0, dir: 'desc' }
+                    //     ];
+                    // }
+                }
+            },
+            columns: [
+                {
+                    data: "date",
+                    orderable: true,
+                    render: function (data, type, row) {
+                        const categoryTxt = (row.category) ? `<br/><span class="status-label background-neutral"><i class="fa fa-calendar"></i> ${row.category}</span>` : '';
+                        const recurringText = (row.recurring) ? `<br/><span class="status-label background-neutral"><i class="fa fa-refresh"></i> Recurring</span>` : '';
+                        // console.log(recurringText,'recurringText');
+                        return (row.date ? moment(row.date).format("DD-MM-YYYY") : "-") + ` ${categoryTxt} ${recurringText}`;
+                    }
+                },
+                {
+                    data: "family",
+                    orderable:true,
+                    defaultContent: "-"
+                },
+                {
+                    data: "transaction",
+                    orderable:true,
+                    render: function (data, type, row) {
+                        const amount_txt = row.amount.toFixed(2);
+                        const className = ['Payment','Refund'].includes(row.transaction_type) ? 'background-success' : 'background-danger';
+                        return `<span class="status-label ${className} nowrap">${row.transaction_type} ${row.currency}${amount_txt}</span>`;
+                    }
+                },
+                {
+                    data: "note",
+                    orderable:false,
+                    defaultContent: "-"
+                },
+                {
+                    data: "slug",
+                    orderable: false,
+                    name: 'actions',
+                    searchable: false,
+                    defaultContent: '',
+                    render: function (data, type, row) {
+                        let buttons = "";
+                        if (row.event && row.event !== null) {
+                            buttons += `
+                                <a class="dropdown-item" href="/attendance-notes/take-attendance/${row.event}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Edit Attendance
+                                </a>
+                            `;
+                        } else {
+                            buttons += `
+                                <a class="dropdown-item" href="/families-invoices/transaction-details/edit/${row._id}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Edit Transaction
+                                </a>`;
+                            if (row.transaction_type && ['Payment','Refund'].includes(row.transaction_type)) {
+                                buttons += `<a class="dropdown-item download-receipt" href="javascript:void(0);" data-id="${row._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M12 15.575C11.8667 15.575 11.7417 15.5542 11.625 15.5125C11.5083 15.4708 11.4 15.4 11.3 15.3L7.7 11.7C7.5 11.5 7.40417 11.2667 7.4125 11C7.42083 10.7333 7.51667 10.5 7.7 10.3C7.9 10.1 8.1375 9.99583 8.4125 9.9875C8.6875 9.97917 8.925 10.075 9.125 10.275L11 12.15V4C11 3.71667 11.0958 3.47917 11.2875 3.2875C11.4792 3.09583 11.7167 3 12 3C12.2833 3 12.5208 3.09583 12.7125 3.2875C12.9042 3.47917 13 3.71667 13 4V12.15L14.875 10.275C15.075 10.075 15.3125 9.97917 15.5875 9.9875C15.8625 9.99583 16.1 10.1 16.3 10.3C16.4833 10.5 16.5792 10.7333 16.5875 11C16.5958 11.2667 16.5 11.5 16.3 11.7L12.7 15.3C12.6 15.4 12.4917 15.4708 12.375 15.5125C12.2583 15.5542 12.1333 15.575 12 15.575ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V17C3 16.7167 3.09583 16.4792 3.2875 16.2875C3.47917 16.0958 3.71667 16 4 16C4.28333 16 4.52083 16.0958 4.7125 16.2875C4.90417 16.4792 5 16.7167 5 17V19H19V17C19 16.7167 19.0958 16.4792 19.2875 16.2875C19.4792 16.0958 19.7167 16 20 16C20.2833 16 20.5208 16.0958 20.7125 16.2875C20.9042 16.4792 21 16.7167 21 17V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5Z"></path> </svg>  
+                                    Download Receipt
+                                </a>`;
+                            }
+                            buttons += `<a class="dropdown-item delete-transaction" href="#" onclick="confirmBeforeDeletion('/families-invoices/transaction-details/destroy/${row._id}')" title="Delete Transaction">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a4674" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9C18 7.9 17.1 7 16 7H8C6.9 7 6 7.9 6 9V19ZM9 9H15C15.55 9 16 9.45 16 10V18C16 18.55 15.55 19 15 19H9C8.45 19 8 18.55 8 18V10C8 9.45 8.45 9 9 9ZM15.5 4L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H6C5.45 4 5 4.45 5 5C5 5.55 5.45 6 6 6H18C18.55 6 19 5.55 19 5C19 4.45 18.55 4 18 4H15.5Z"></path> </svg>
+                                Delete Transaction</a>`;
+                        }
+                        
+                        return `
+                        <div class="dropdown dropup table_dropdown">
+                            <button class="dropdowntoggle bg-transparent border-0 shadow-none" type="button" data-toggle="dropdown" data-boundary="window" aria-expanded="false">
+                                <img src="/images/more-icon.svg" alt="more-icon" />
+                            </button>
+                            <div class="dropdown-menu invoice_body_dropdown dropdown-menu-area dropdown-menu-right">                            
+                                ${buttons}                                
+                            </div>
+                        </div>`;
+                    }
+                }  
+            ],
+            initComplete: function(settings, json) {
+                applySavedSort(this.api(),'transactions-sort-dropdown',TRANS_SORT_STORAGE_KEY);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Transaction Date
+        let storedDateRange = localStorage.getItem("transaction_filter_date");
+        let defaultStart = moment().startOf('month');
+        let defaultEnd = moment().endOf('month');
+
+        if (storedDateRange) {
+            try {
+                const parsed = JSON.parse(storedDateRange);
+                if (parsed.trans_start_date && moment(parsed.trans_start_date, 'YYYY-MM-DD', true).isValid()) {
+                    defaultStart = moment(parsed.trans_start_date, 'YYYY-MM-DD');
+                }
+                if (parsed.trans_end_date && moment(parsed.trans_end_date, 'YYYY-MM-DD', true).isValid()) {
+                    defaultEnd = moment(parsed.trans_end_date, 'YYYY-MM-DD');
+                }
+            } catch (e) {
+                console.error("Invalid date range in localStorage", e);
+            }
+        }
+
+        $('#hidden-date-range-input').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true,
+            startDate: defaultStart,
+            endDate: defaultEnd,
+            autoUpdateInput: false,
+            locale: {
+                format: 'DD-MM-YYYY'
+            }
+        }, function (start, end) {
+            const formattedStart = start.format('YYYY-MM-DD');
+            const formattedEnd = end.format('YYYY-MM-DD');
+
+            localStorage.setItem("transaction_filter_date", JSON.stringify({
+                trans_start_date: formattedStart,
+                trans_end_date: formattedEnd
+            }));
+
+            $('#hidden-start-date-input').val(start.format('DD-MM-YYYY'));
+            $('#hidden-end-date-input').val(end.format('DD-MM-YYYY'));
+            $('#trans_start_date').text(start.format('DD-MM-YYYY'));
+            $('#trans_end_date').text(end.format('DD-MM-YYYY'));
+        });
+
+        // On Apply
+        $('#hidden-date-range-input').on('apply.daterangepicker', function (ev, picker) {
+            const startDate = picker.startDate;
+            const endDate = picker.endDate;
+
+            $('#trans_start_date').text(startDate.format('DD-MM-YYYY'));
+            $('#trans_end_date').text(endDate.format('DD-MM-YYYY'));
+
+            localStorage.setItem("transaction_filter_date", JSON.stringify({
+                trans_start_date: startDate.format('YYYY-MM-DD'),
+                trans_end_date: endDate.format('YYYY-MM-DD')
+            }));
+
+            $('#transactionTable').DataTable().ajax.reload();
+        });
+
+        // Initial UI update
+        $('#trans_start_date').text(defaultStart.format('DD-MM-YYYY'));
+        $('#trans_end_date').text(defaultEnd.format('DD-MM-YYYY'));
+        $('#hidden-start-date-input').val(defaultStart.format('DD-MM-YYYY'));
+        $('#hidden-end-date-input').val(defaultEnd.format('DD-MM-YYYY'));
+
+        // Dropdown checkbox
+        $('.select_all_dropdown .dropdown-menu').on('click', '.dropdown-item', function (e) {
+            e.stopPropagation();
+        });
+        $('.select-all').on('change', function () {
+            const checked = $(this).is(':checked');
+            $('.column-checkbox').prop('checked', checked);
+        });
+        $('.column-checkbox').on('change', function () {
+            const all = $('.column-checkbox').length;
+            const checked = $('.column-checkbox:checked').length;
+            $('.select-all').prop('checked', all === checked);
+        });
+
+    });
+
+</script>
+
+<script>
+    $(function () {
+        // Load saved filters
+        loadSearchFilters(transactionSearchformId,TRANS_SEARCH_STORAGE_KEY);
+
+        // Update count after loading
+        updateSearchCount(transactionSearchformId);
+        
+        
+        $(`#${transactionSearchformId}`).on("click", ".cancel-event", function () {
+            const form = $(this).closest("form")[0];
+            form.reset();
+            updateSearchCount(transactionSearchformId);
+            transactionsTable.ajax.reload();
+        });
+
+        $('#transactions-sort-dropdown .sort-trigger').on('click', function (e) {
+            const $btn = $(this);
+            triggerSortClick(transactionsTable, $btn,'transactions-sort-dropdown', TRANS_SORT_STORAGE_KEY);
+        });
+
+        // Search button click
+        $(`#${transactionSearchformId}`).on('submit', function (e) {
+            e.preventDefault();
+            saveSearchFilters(transactionSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            updateSearchCount(transactionSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            transactionsTable.ajax.reload();
+            $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
+        });
+
+        // Clear button
+        $('#transactionsDropdown .cancel-btn').on('click', function () {
+            $(`#${transactionSearchformId}`)[0].reset();
+            $('.search-input:checkbox').prop('checked', false);
+            localStorage.removeItem(TRANS_SEARCH_STORAGE_KEY);
+            updateSearchCount(transactionSearchformId, TRANS_SEARCH_STORAGE_KEY);
+            transactionsTable.ajax.reload();
+        });
+
+        $(document).on("click", ".download-receipt", function (e) {
+            e.preventDefault();
+            const id = $(this).data("id");
+            // console.log('id',id);
+            $.ajax({
+                url: `/families-invoices/transaction-details/${id}/download-receipt`,
+                method: "GET",
+                xhrFields: { responseType: 'blob' }, // expect PDF
+                success: function (data, status, xhr) {
+                const blob = new Blob([data], { type: "application/pdf" });
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `receipt-${id}.pdf`;
+                link.click();
+                },
+                error: function (err) {
+                Swal.fire("Error", "Failed to download receipt", "error");
+                },
+            });
+        });
+    });
+
+    // Intercept fetch calls globally
+    const originalFetch = window.fetch;
+    window.fetch = async function(url, options) {
+        const response = await originalFetch(url, options);
+        
+        if (url.includes('/families-invoices/transaction-details/destroy/')) {
+            const data = await response.clone().json(); 
+            if (data.success && transactionsTable) {
+                transactionsTable.ajax.reload(null, false); 
+            }
+        }
+
+        return response;
+    };
+
+</script>

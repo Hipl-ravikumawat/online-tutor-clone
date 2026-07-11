@@ -1,0 +1,305 @@
+<script type="text/javascript">
+  /**
+   * assessment index page script.
+   * @script start
+  */
+  const loggedUserRole = '<%=loggedUserInfo.role%>';
+  const loggedUserId = '<%=loggedUserInfo._id.toString()%>';
+
+  let assessmentTable; // persist instance
+
+  $(document).ready(function () {
+    localStorage.setItem("FormSubmitted", JSON.stringify(''));
+
+    dataTable();
+
+    $(".select2").select2({
+      allowClear: false,
+    });
+
+    $(".reset").click(function () {
+      $("#assessment").val(null).trigger("change");
+      $("#tutor").val(null).trigger("change");
+      $("#status").val(null).trigger("change");
+      dataTable();
+    });
+
+    $(".filter").click(function () {
+      let sl_assessment = $('#assessment').val();
+      let sl_tutor = $('#tutor').val();
+      let sl_status = $('#status').val();
+      dataTable(sl_assessment, sl_tutor, sl_status);
+    });
+
+    //  FIX: prevent multiple bindings
+    $("#select_all").off("click").on("click", function () {
+      if (!assessmentTable) return;
+
+      if ($(this).is(":checked")) {
+        assessmentTable.rows().select();
+        $('.select-checkbox').prop('checked', true);
+      } else {
+        assessmentTable.rows().deselect();
+        $('.select-checkbox').prop('checked', false);
+      }
+    });
+  });
+
+  function dataTable(sl_assessment = '', sl_tutor = '', sl_status = '') {
+    $.fn.dataTable.moment('DD:MM:YYYY HH:mm a');
+
+    //  FIX: destroy only if initialized
+    if ($.fn.DataTable.isDataTable('#assessmentTable')) {
+      $('#assessmentTable').DataTable().destroy();
+    }
+
+    assessmentTable = $('#assessmentTable').DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: '<div><div></div><div></div><div></div><div></div></div>'
+      },
+      processing: true,
+      serverSide: true,
+      columnDefs: [
+        {
+          targets: [3],
+          visible: loggedUserRole != 3,
+          orderable: false,
+        },
+        {
+          targets: [3, 4, 5, 6],
+          orderable: false,
+        },
+      ],
+      order: [[5, 'desc']],
+      ajax: {
+        url: '/assessments/dataTable',
+        type: 'POST',
+        data: {
+          assessment_id: sl_assessment,
+          tutor: sl_tutor,
+          status: sl_status
+        },
+      },
+      drawCallback: function (settings) {
+        var response = settings.json;
+
+        if (loggedUserRole != 3) {
+          $('.not-attempt').remove();
+        } else {
+          $('#assessmentTable').DataTable().column(3).visible(false);
+          $('.view-report').remove();
+        }
+
+        //  FIX: correct place for tooltip reinit
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
+      },
+      columns: [
+        {
+          data: "name",
+          name: 'name',
+        },
+        {
+          data: "tutor_id",
+          render: function (data, type, row) {
+            let html = '';
+            if (data != undefined) {
+              html = `<div class="subcat-info"><span class="badge badge-info">${row.tutor_id._id
+                ? row.tutor_id.first_name + ' ' + row.tutor_id.last_name : ''}</span></div>`;
+            }
+            return html;
+          }
+        },
+        {
+          data: "apply_duration",
+          render: function (data, type, row) {
+            return `<span class="td-items badge badge-info" style="width:100px;">${(row.apply_duration) ? 'Yes' : 'No'}</span>`;
+          }
+        },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return (loggedUserRole != 3) ? data : "";
+          }
+        },
+        {
+          data: "date",
+          render: function (data, type, row) {
+            return `<span class="td-items"><i class="fa fa-calendar"></i>${row.date}</span>`;
+          }
+        },
+        {
+          data: "created_at",
+          render: function (data, type, row) {
+            return `<span class="td-items"><i class="fa fa-calendar"></i>${moment(row.created_at).format('DD MMM YYYY')}</span>`;
+          }
+        },
+        {
+          data: "actions",
+          render: function (data, type, row) {
+            let status = row.status;
+            let actions = '';
+            let fStatus = 'N/A';
+
+            if (loggedUserRole == 3) {
+              // console.log(row,'row');
+              const filteredObjects = row.student_assessment_ids;
+
+              let statusClass = 'not-attempt';
+              let url = 'javascript:void(0)';
+
+              if (filteredObjects.length > 0) {
+                const matchedRecord = filteredObjects.filter(record => {
+                  return record.student_id?.id === loggedUserId;
+                });
+                
+                if(matchedRecord.length > 0){
+                    const status = matchedRecord[0].status?.trim();                    
+                    statusClass = (status == 'Completed') ? 'complete-result ' : 'not-attempt';
+                    url = (status === 'Completed')
+                      ? `/attempted-assessments/detailed-report/${row._id}/student/${loggedUserId}`
+                      : 'javascript:void(0)';
+    
+                    if (status === 'Completed') {
+                      fStatus = 'View Result';
+                    } else if (status === 'N/A') {
+                      fStatus = 'Start';
+                    } else if(status === 'Almost,Try Again') {
+                      fStatus = 'Resubmit';
+                    } 
+                    else {
+                      fStatus = status;
+                    }
+                }
+              }
+
+              actions = `<a href="${url}" class="badge badge-info ${statusClass} width-auto" data-id="${row._id}">${fStatus}</a>`;
+            } else {
+              actions += `<div class="d-flex">
+                <a href="/attempted-assessments/detailed-report/${row.slug}" class="view-report" data-id="${row._id}">
+                  <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" title="View Details">
+                </a>`;
+
+              if (status === 'N/A' && loggedUserRole == 1) {
+                actions += `<a href="/assessments/edit/${row.slug}" class="ml-2 delete-assessment-${row._id}">
+                  <img src="/images/edit.svg" alt="icon" data-toggle="tooltip" title="Edit">
+                </a>`;
+
+                actions += `<a href="javascript:void(0)" class="ml-2 delete-assessment-${row._id}"
+                  onclick="confirmBeforeDeletion('/assessments/destroy/${row._id}')">
+                  <img src="/images/trash.svg" alt="icon" data-toggle="tooltip" title="Delete">
+                </a>`;
+              }
+
+              actions += `</div>`;
+            }
+
+            return actions;
+          }
+        }
+      ],
+    });
+
+    // ❌ REMOVED: ajax.reload (this was the double call cause)
+  }
+
+  $(document).on("click", '.not-attempt', function () {
+    let assessmentId = $(this).data("id");
+    $('#lesson-modal').modal('show');
+    $.ajax({
+      type: 'POST',
+      url: '/assessments/attached-lessons',
+      dataType: 'html',
+      data: { assessmentId },
+      success: function (response) {
+        $(".lesson-content").html(response);
+      }
+    });
+  });
+
+  $(document).on("click", '.lesson_card', function () {
+    let lessonId = $(this).data("lesson-id");
+    let assessmentId = $(this).data("id");
+    let url = $(this).data("link");
+    let totalChallenges = $(this).find('.totalChallenges').text();
+    let totalPractices = $(this).find('.totalPractices').text();
+
+    if (totalPractices == 0) $('.practice-section').remove();
+    if (totalChallenges == 0) $('.challenge-section').remove();
+
+    $.ajax({
+      type: "POST",
+      url: '/assessments/attached-lesson-tasks',
+      dataType: 'json',
+      data: { lessonId, assessmentId },
+      success: function (response) {
+        if (response.success) {
+          let challengeData = response.data.challenges;
+          let practicesData = response.data.practices;
+
+          updateButton('.challenge-btn', challengeData.status);
+          updateButton('.practice-btn', practicesData.status !== 'Start' ? 'Completed' : 'Start');
+          updateText('.totalChallenge', `${challengeData.totalChallenge}/${totalChallenges}`);
+          updateText('.challenge-percentage', `${challengeData.percentage}%`);
+          updateText('.practice-percentage', `${practicesData.percentage}%`);
+          updateText('.totalPractices1', `${practicesData.isAttempted ? totalPractices : 0}/${totalPractices}`);
+
+          updateButtonStatus('.lesson-link[data-type~="challenges"] button', challengeData.status);
+          updateButtonStatus('.lesson-link[data-type~="practices"] button', practicesData.status);
+
+          showChallengesButton('.challenge-section', challengeData.status, url, assessmentId);
+          showPracticesButton('.practice-section', practicesData.status, url, assessmentId);
+          commentForPendingQuestion('.practice-section', practicesData.status, practicesData.countTextQuestion);
+        }
+      }
+    });
+
+    $('.close').trigger('click');
+    $('#Modal2').modal('show');
+  });
+
+  function updateButton(selector, text) { $(selector).text(text); }
+  function updateText(selector, text) { $(selector).text(text); }
+  function updateButtonStatus(selector, status) { $(selector).addClass(status); }
+
+  function showChallengesButton(selector, status, url, assessmentId) {
+    $('.slides-status').remove();
+    if (status === 'Completed') {
+      $(selector).append(`<button class="btn btn-outline-success slides-status Completed"><span class="slide-btn">Completed</span></button>`);
+    } else {
+      $(selector).append(`<a class="lesson-link" href="${url}/assessment/challenges/${assessmentId}" data-type="challenges">
+        <button class="btn btn-outline-success slides-status ${status}">
+          <img src="/images/play.svg"><span class="slide-btn">${status}</span>
+        </button></a>`);
+    }
+  }
+
+  function showPracticesButton(selector, status, url, assessmentId) {
+    $('.practices-status').remove();
+    if (status == 'Completed') {
+      $(selector).append(`<button type="button" class="btn btn-outline-success practices-status"><span class="slide-btn">Completed</span></button>`);
+    } else if (status == 'Almost,Try Again') {
+      $(selector).append(`<a class="lesson-link" href="${url}/assessment/practices/${assessmentId}" title="Challenges" data-type="practices"><button type="button" class="btn btn-outline-success practices-status ${status}"><img src="/images/play.svg" alt="play"/><span class="slide-btn">Resubmit</span></button></a>`);
+    } else {
+      $(selector).append(`<a class="lesson-link" href="${url}/assessment/practices/${assessmentId}" data-type="practices">
+        <button class="btn btn-outline-success practices-status ${status}">
+          <img src="/images/play.svg"><span>${status}</span>
+        </button></a>`);
+    }
+  }
+
+  function commentForPendingQuestion(selector, status, countTextQuestion) {
+    $('.w-comment').remove();
+    if (countTextQuestion > 0 && status != 'Start') {
+      $(selector).append(`<p class="w-comment"><code>Note:</code> <strong>${countTextQuestion} Answers</strong> waiting for Tutor's comment</p>`);
+    }
+  }
+
+  /**
+   * assessment index page script.
+   * @script end.
+  */
+</script>

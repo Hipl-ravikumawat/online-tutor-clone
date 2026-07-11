@@ -1,0 +1,271 @@
+<div class="right_col" role="main">
+  <!-- page content starts -->
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade5">
+            <%=programObject?.total ?? 0 %>
+          </span>
+          <h3 class="title-text mb-0">Total</h3>
+        </div>         
+      </div>
+    </div>
+    <div class="card-block mb-30">
+      <h2 class="title-text">Filter Classes</h2>
+        <ul class="filter-row">
+            <li class="filter-col">
+              <select class="form-control select2" id="program" tabindex="-1" single>
+              <option value="">Select Class</option>
+              <% for(program of programs) { %>
+              <option value="<%=program.id%>">
+                <%=program.name%>
+              </option>
+              <% } %>
+              </select>
+            </li>
+
+            <li class="filter-col">
+              <button class="btn theme-btn filter">Filter</button>
+              <button class="btn theme-btn reset">Reset</button>
+            </li>
+        </ul>
+    </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text mb-0">Classes List</h2>
+          <ul class="right-btns">
+            <% if(loggedUserRole==1){ %>
+            <li> <a href="./programs/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip"
+                data-placement="top" title="Assign Class">+ Assign</a>
+            </li>
+            <% } %>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive">
+                <table id="programTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                width="100%">
+                <thead>
+                  <tr>
+                    <th>Class Name</th>
+                    <th>Learning Contents</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody> 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- page content end -->
+</div>
+
+<script type="text/javascript">
+  var loggedUserRole = parseInt(' <%=loggedUserRole%>');
+
+  $(document).ready(function () {
+    dataTable();
+
+    $(".select2").select2({
+      allowClear: false,
+    });
+
+    $("#student").select2({
+      allowClear: false,
+      placeholder:'Select Students'
+    });
+
+    $(".reset").click(function () {
+      $("#program").val(null).trigger("change");
+      dataTable();
+    });
+
+    $(".filter").click(function () {
+      let programId = $('#program').val();
+      dataTable(programId);
+    });
+  });
+
+  var dt = $("#programTable").dataTable();
+
+  function dataTable(programId = '') {
+    $.fn.dataTable.moment('DD:MM:YYYY HH:mm a');
+    dt.dataTable().fnDestroy()
+    var userRole = '';
+    var gradeTable = $('#programTable').DataTable({
+      "paging": true,
+      "pageLength": 10,
+      "language": { 
+          "searchPlaceholder": "Search",
+          "processing": '<div><div></div><div></div><div></div><div></div></div>'
+      },  
+      "processing": true,
+      "serverSide": true,
+      'columnDefs': [
+        {
+        'targets': [2], /* column index */
+        'orderable': false, /* true or false */
+        'visible':loggedUserRole != 3,
+        },
+        {
+        'targets': [1], /* column index */
+        'orderable': false, /* true or false */
+        'visible':loggedUserRole != 2,
+        },
+      ],
+      "order": [],
+      'ajax':
+      {
+        'url': '/programs/dataTable',
+        'type': 'POST',
+        'data': {
+          "programId": programId,
+        },
+      },
+      "drawCallback": function (settings) {
+        // Here the response
+        programContent();
+        if (loggedUserRole != 1) {
+          $('.secret_login').remove();
+        }
+      },
+      'columns': [
+      { data: "name", 'name': 'name', },
+      {
+        data: "content",
+        "render": function (data, type, row) {
+          var html ='';
+          if(loggedUserRole == 1){
+            html = `<div class="subcat-info">`;
+              let uniqueLearningContent = [];
+              for (content of row.ex_content) {
+                if (uniqueLearningContent.includes(content.learning_content_id._id) === false) {
+                  let showPopup = '';
+                  if(loggedUserRole > 1){
+                    showPopup = 'show-popover';
+                  }
+                  html += `<span class="program-info show-popover" data-program-id="${row._id}" data-learningcontent-id="${content.learning_content_id._id}" data-toggle="popover"><a href="javascript:void(0)" class="badge badge-info">${content.learning_content_id.title}</a><div class="program-dtl popover-content d-none"><div class="d-flex align-items-center justify-content-between border-bottom px-3 py-2"></div></div></span>`;
+                }
+                uniqueLearningContent.push(content.learning_content_id._id);
+              }
+            html += `</div>`;
+          }
+          return html;
+        }
+      },   
+      {
+          data: "",
+          "render": function (data, type, row) {
+            let actions = ``;
+            actions += `<div class="d-flex align-items-center justify-content-center">`;
+              if(loggedUserRole == 1 && row.status == 'N/A'){
+                actions += `<a class="" href="/programs/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit"><img src="/images/edit.svg" alt="icon"></a>  
+                <a href="javascript:void(0)" class="ml-2" onclick="confirmBeforeDeletion('/programs/destroy/${row._id}')"><img src="/images/trash.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>`; 
+              } else if(loggedUserRole != 1 ){ 
+                actions += `<div class="subcat-info"><span class="program-info show-popover" data-program-id="${row._id}" data-learningcontent-id="" data-toggle="popover"><a href="javascript:void(0)" class="theme-btn py-1 fn-12" style="padding:0px 15px">View program</a><div class="program-dtl popover-content d-none"><div class="d-flex align-items-center justify-content-between border-bottom px-3 py-2"></div></div></span></div>`;
+              }
+            actions += `</div>`;
+            return actions;
+          }
+      }
+      ],
+    });
+
+    gradeTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+
+  function programContent(){
+    $('.show-popover').popover({
+      container: 'body',
+      html: true,
+      placement: 'top',
+      sanitize: false,
+      content: function() {
+        return $('.popover-content').html();
+      }
+    })
+
+    $('[data-toggle=popover]').on('click', function (e) {
+      $('[data-toggle=popover]').not(this).popover('hide');
+    });
+  }
+
+  $('body').on('click', function (e) {
+      $('[data-toggle=popover]').each(function () {
+          // hide any open popovers when the anywhere else in the body is clicked
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+              $(this).popover('hide');
+          }
+      });
+  });
+
+  $(document).on('click','.program-info', function(){
+    let programId = $(this).data('program-id');
+    let learningContentId = $(this).data('learningcontent-id');
+    $('.popover-body').html('');
+    $.ajax({
+        type: "POST",
+        url: '/programs/program-score',
+        dataType:'json',
+        data: {
+          program_id: programId,
+          learning_content_id: learningContentId,
+        },
+        success: function (response) {
+          let lessonData = response.lessons;
+          let programPercentage = response?.program_percentage;
+          let html = `<div class="d-flex align-items-center justify-content-between border-bottom px-3 py-2"><h3 class="title-text fn-18 mb-0">${response.program_name}</h3><div class="spring-icon-wrap d-flex align-items-center justify-content-center fn-w600">${programPercentage.toFixed(2)}%</div></div>`;
+          let i=0;
+          for(data in lessonData){
+            i++;
+            data = lessonData[data];
+            html += `<div class="classContent"><div class="inListlesson program-popup-hover">
+            <ul class="fn-13 pro_classes">`;
+            html += `<li data-toggle="tooltip" data-placement="right" title="${data.learning_content_name}"><a href="./learning-content/${data.learning_content_slug}/lessons/${data.lesson_slug}/program/${data.lesson_id}/${response.program_id}">${i}. ${data.lesson_name}</a> <div>`;
+              if (loggedUserRole == 2) { 
+              html += `<span class="${data.is_skipped ? 'skipped-lesson skip-lesson':'skip-lesson'}" data-type = ${data.is_skipped} data-lesson-id =${data.lesson_id} data-program-id=${response.program_id}>${data.is_skipped ? 'skipped':'skip'}</span>`;
+              }
+            html += `<span class="spbage bglightred">${data.lesson_percentage}%</span></div></li>`
+            html +=`</ul></div></div>`;
+          }
+          html +`</div>`;
+          $('.popover-body').html(html);
+        },
+    });
+  });
+
+  $(document).on('click','.skip-lesson', function(){
+    let lessonId = $(this).data('lesson-id');
+    let programId = $(this).data('program-id');
+    let type = $(this).data('type');
+    $.ajax({
+      type: "POST",
+        url: '/programs/skip-lesson',
+        dataType:'json',
+        data: {
+          program_id: programId,
+          lesson_id: lessonId,
+          type:type,
+        },
+        success: function (response) {
+          if(response.success){
+            window.location.href = response.redirectUrl;
+          }
+        }
+    })
+  });
+</script>

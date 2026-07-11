@@ -1,0 +1,809 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.css">
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+      <h2 class="titleheading">Calender Events</h2>
+      <div class="settings_content">
+        <div class="row">
+          <div class="col-12">     
+            <div class="card tabcard">
+              <div class="card-body">
+                <h3 class="setting_title">Edit An Event</h3>
+                <% if (eventStatus === "past" || eventStatus === "ongoing") { %>
+                  <div style="background-color:#fff3cd; color:#856404; padding:10px; border:1px solid #ffeeba; border-radius:5px; margin-bottom:15px;">
+                    ⚠️ Past or ongoing events have limited edit access.
+                  </div>
+                <% } %>
+                <form id="update-an-event" method="POST" action="/calendar/update-event">
+                  <input type="hidden" name="event_id" value="<%=data._id.toString()%>">
+
+                  <div class="settings">
+                    <div class="attendance-pref common-form add-event-block">
+                      <div class="row row-gap-20">
+                        <div class="col-md-12 col-lg-6">
+                          <div class="form-group mb-0 attendess_select2">
+                            <label class="mb-1 w-100">Tutor</label>
+                            <div class="input-group mb-0">
+                              <select name="tutor_id" id="tutor_id" class="form-control w-100 single-select dt-scheduling-conflict" single>
+                                <option value="">Select A Tutor</option>
+                                <% for(tutor of tutors) { %>
+                                  <option value="<%=tutor.id%>" <%=data.tutor_id == tutor.id ? 'selected' : '' %>>
+                                    <%=tutor.first_name+' '+tutor.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>  
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="is_substitute_tutor" value="1" class="form-check-input dt-scheduling-conflict" id="add_substitute_tutor" <%=data.is_substitute_tutor == true ? 'checked' : '' %>>
+                              <label class="form-check-label" for="add_substitute_tutor">Add substitute tutor</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12 col-lg-6">
+                                  <div class="form-group mb-0 attendess_select2 add_substitute_block width-block">
+                                    <label class="mb-1">Add A Substitute Tutor</label>
+                                      <div class="input-group">
+                                        <select name="substitute_tutor_id" id="substitute_tutor_id" class="form-control w-100 single-select" single>
+                                          <option value="">Select A Substitute Tutor</option>
+                                          <% for(substitute_tutor of substitute_tutors) { %>
+                                            <option value="<%=substitute_tutor.id%>" <%=data.substitute_tutor_id == substitute_tutor.id ? 'selected' : '' %>>
+                                              <%=substitute_tutor.first_name+' '+substitute_tutor.last_name %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                      </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group attendess_select2 attendess_select2_withModal">
+                            <div class="d-flex justify-content-between">
+                              <label class="mb-1">Attendees</label>
+                              <% if(groupTags.length > 0){ %>
+                                <div class="dropdown label_dropdown" id="families">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        Group Tags 
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <rect width="20" height="20" rx="5" fill="white"/>
+                                            <path d="M14 8L10.7071 11.6745C10.3182 12.1085 9.68182 12.1085 9.29293 11.6745L6 8" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" id="tags-dropdown">
+                                        <button type="button" class="dropdown-item" data-type="all-families">All Families</button>
+                                        <% groupTags.map((tag) => { 
+                                            let taggedFamilies =  tag.student_ids.map((entry) => {
+                                                return entry._id;
+                                            });   
+                                        %>
+                                            <hr style="margin: 0;" />
+                                            <button type="button" class="dropdown-item" data-type="family-tag" data-families="<%= taggedFamilies %>"><%= tag.name %> (<%= tag.student_ids.length %>)</button>
+                                        <% }); %>
+                                        <button type="button" class="dropdown-item" data-type="clear">Clear Selection</button>
+                                    </div>
+                                 </div>
+                              <% } %>
+                            </div>
+                            <div class="input-group">
+                              <select class="form-control dt-scheduling-conflict" id="student_ids" tabindex="-1" multiple>
+                                <% for(student of students) { %>
+                                  <option value="<%=student.id%>" <% if (data.student_ids.includes(student.id)) { %> selected <%
+                                  } %>>
+                                    <%=student.first_name+' '+student.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="form-check add_content_checkbox">
+                          <input type="checkbox" name="" value="1" class="form-check-input lesson-pricing" id="add_learn_content">
+                          <label class="form-check-label" for="add_learn_content">Add Learning content</label>
+                          <div class="learning_content_group mt-2">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group border_select">
+                                  <label class="mb-1">Grade</label>
+                                  <div class="input-group">
+                                    <select class="form-control w-100 single-select filter-content" id="sc_grade" tabindex="-1" single>.
+                                      <option value="">Select A Grade</option>
+                                      <% for(grade of activeGrades) { %>
+                                        <option value="<%=grade.id%>">
+                                          <%=grade.name%>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div class="col-md-6">
+                                <div class="form-group border_select">
+                                  <label class="mb-1">Topic</label>
+                                  <div class="input-group">
+                                    <select class="form-control w-100 single-select filter-content" id="sc_topic" tabindex="-1" single>
+                                      <option value="">Select A Topic</option>
+                                      <% for(topic of activeTopics) { %>
+                                        <option value="<%=topic.id%>">
+                                          <%=topic.name%>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group border_select">
+                                  <label class="mb-1">Subtopic</label>
+                                  <div class="input-group">
+                                    <select class="form-control w-100 single-select filter-content" id="sc_sub_topic" tabindex="-1" single>
+                                      <option value="">Select A Subtopic</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group border_select">
+                                  <label class="mb-1">Learning Content</label>
+                                  <div class="input-group">
+                                    <select class="form-control w-100 single-select" id="sc_learning_content" tabindex="-1" single>
+                                      <option value="">Select A Learning Content</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group border_select">
+                                  <label class="mb-1">Lessons</label>
+                                  <div class="input-group">
+                                    <select class="form-control w-100 single-select" id="sc_lessons" tabindex="-1" multiple>
+                                      <option value="">Select Lessons</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label class="d-none d-md-block">&nbsp;</label>
+                                <button type="button" class="content-submit theme-btn" id="add_content">Add Content</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group mt-3 mt-md-0">
+                            <label class="mb-1">Lesson Content <small>(Optional)</small> <span class="event_total"><%=oldEventContents.length%></span></label>
+                            <div class="text-right clear_btn_position">
+                              <a href="javascript:void(0)" class="outline-btn clear-all mb-0">Clear All</a>
+                            </div>
+                            <ul class="selectedcontent lesson-content-sortable max-height-450 content_row_list" id="select-assessment">
+                            <% let contentIndex = 1; for(let eventContent of oldEventContents){ %>
+                              <li class="sort-program" 
+                                      data-content-position="<%=contentIndex%>"
+                                      data-slide-score="<%= eventContent.slide_score || 0 %>">
+
+                                      <div class="list_number"><%=contentIndex%>.</div>
+
+                                      <div class="iconleft">
+                                        <img src="/images/lesson.svg" alt="img">
+                                      </div>
+
+                                      <div class="content-detail-block lesson-items" data-id="<%=eventContent.lesson_id.id%>">
+                                        <h5>
+                                          <%=eventContent.lesson_id.title%>
+
+                                          <!-- Slide Score Badge -->
+                                          <span class="badge badge-info ml-2" style="background-color: #001d3d;">
+                                            Score: <%= eventContent.slide_score || 0 %> %
+                                          </span>
+                                        </h5>
+
+                                        <ol class="breadcrumb">
+                                          <li class="breadcrumb-item 5"><%=eventContent.learning_content_id.gradeTitle%></li>
+                                          <li class="breadcrumb-item 5"><%=eventContent.learning_content_id.topicTitle%></li>
+
+                                          <% if(eventContent.learning_content_id.subTopicTitle !== undefined){ %>
+                                            <li class="breadcrumb-item 5">
+                                              <%=eventContent.learning_content_id.subTopicTitle%>
+                                            </li>
+                                          <% } %>
+
+                                          <li class="breadcrumb-item 2">
+                                            <%=eventContent.learning_content_id.title%>
+                                          </li>
+                                        </ol>
+                                      </div>
+
+                                      <% if((eventContent.slide_score || 0) <= 0){ %>
+                                        <div class="action-right">
+                                          <a class="remove_content" href="javascript:void(0);">×</a>
+                                        </div>
+                                      <% } %>
+
+                                      <input type="hidden"
+                                            name="selected_contents[]"
+                                            value="<%=eventContent.learning_content_id.id%>--<%=eventContent.lesson_id.id%>">
+                                  </li>
+                            <%  contentIndex++;  } %>
+                          </ul>
+                              
+                          </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Category</label>
+                            <select class="form-control single-select" name="event_category_id" id="event_category_id" tabindex="-1" single>
+                              <option value="">Select Event Category</option>
+                              <% for(category of eventCategories) { %>
+                                <option value="<%=category.id%>" <%=data.event_category_id == category.id ? 'selected' : '' %>>
+                                  <%=category.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Location</label>
+                            <select class="form-control single-select" name="event_location_id" id="event_location_id" tabindex="-1" single>
+                              <option value="">Select Event Location</option>
+                              <% for(location of eventLocations) { %>
+                                <option value="<%=location.id%>" <%=data.event_location_id == location.id ? 'selected' : '' %>>
+                                  <%=location.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                              <label class="mb-1">Date</label>
+                              <input type="date" name="start_date" min="<%=moment(data.start_date).add(0, 'days').format('YYYY-MM-DD');%>" class="form-control pl-40 dt-scheduling-conflict recurring_count" id="start_date" autocomplete="off" value="<%=data.start_date != '' ? moment(data.start_date).format('YYYY-MM-DD') : moment().add(0, 'days').format('YYYY-MM-DD')%>" <%=data.start_date%>>
+                              <span class="input-icon"><img src="/images/timer.svg" alt="calendar-icon"></span>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                            <label class="mb-1">Time </label>
+                            <input class="form-control time-picker pl-40 dt-scheduling-conflict" name="start_time" type="text" id="start_time" placeholder="" autocomplete="off" value="<%=moment(data.start_time).tz(userTimeZone).format('hh:mm A');%>" />
+                            <span class="input-icon"><img src="/images/timer.svg" alt="clock-icon"></span>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            
+                            <label class="mb-1">Duration</label>
+                            <input class="form-control dt-scheduling-conflict"
+                              name="duration"
+                              type="number"
+                              id="duration"
+                              min="1"
+                              step="1"
+                              value="<%=data.duration%>"
+                            >
+                            <span class="label-after duration-value">(In Minutes)</span>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 conflict_area" id="conflict_area"></div>
+
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="will_repeat" value="1" class="form-check-input dt-scheduling-conflict" id="will_repeat" <%=data.will_repeat == true ? 'checked' : '' %> data-event-type="<%=data.will_repeat == true ? 'recurring' : 'single' %>" data-event-parent="<%=data.parent_event_id == null ? true : false %>">
+                              <label class="form-check-label" for="will_repeat">This event repeats</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12">
+                                  <div class="event-repeat-area show_repeat_indefinitely show_repeat_until" id="recurringSettings">
+                                    <h2 class="title-text mb-3">Recurring Event</h2>
+                                    <div class="form-group event_occurrence">
+                                      <label>Frequency</label>
+                                      <ul class="settinglist flex-column mt-0">
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_weekly" value="weekly" <%=data.recurring_info[0]?.recurring_type == 'weekly' ? 'checked' : '' %>>
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_weekly">Weekly</label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control dt-scheduling-conflict recurring_count" name="no_of_week" type="number" id="no_of_week" placeholder="" value="<%=data.recurring_info[0]?.no_of_recurring%>" min="2" max="10">
+                                                <span class="label-after">Week(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_fortnightly" value="fortnightly" <%=data.recurring_info[0]?.recurring_type == 'fortnightly' ? 'checked' : '' %>>
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_fortnightly">Fortnightly </label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control recurring_count" name="no_of_fortnightly" type="number" id="no_of_fortnightly" placeholder="" value="<%=data.recurring_info[0]?.no_of_recurring%>" min="2" max="10">
+                                                <span class="label-after">Fortnight(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      </ul>
+                                      <span class="error-msg-rec-event"></span>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                      <div class="form-check uncheck-dropshow">
+                                        <input type="checkbox" name="repeat_indefinitely" value="1" class="form-check-input recurring_count" id="repeat_indefinitely" <%=data.recurring_info[0]?.repeat_indefinitely == true ? 'checked' : '' %>>
+                                        <label class="form-check-label d-inline-block" for="repeat_indefinitely">Repeat indefinitely</label>
+                                        <div class="open_group row pl-0">
+                                          <div class="col-md-12">
+                                            <div class="form-group mb-0 position-relative">
+                                              <label class="mb-1">Repeat Until</label>
+                                              <input class="form-control date-picker pl-40" name="repeat_until_end_date" type="text" id="repeat_until_end_date" placeholder="" value="" disabled>
+                                              <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Student Pricing <small>Optional</small></label>
+                            <ul class="settinglist flex-column mt-0">
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_default" value="std_price_default" <%=data.student_pricing_option == 'std_price_default' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_default">Student Default</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_nocharge" value="std_price_no_charge" <%=data.student_pricing_option == 'std_price_no_charge' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_nocharge">No charge (<%= currency.symbol %> 0.00)</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_specify" value="student_price_specify" <%=data.student_pricing_option == 'student_price_specify' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_specify">Specify price per student</label>
+                                  <div class="open_group mt-2">
+                                    <div class="form-group position-relative">
+                                      <input type="text" name="per_std_lesson_price" id="per_std_specific_price" class="form-control pl-40" value="<%=data.per_std_lesson_price%>">
+                                      <span class="label-before"><%= currency.symbol %></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Public Description <small>Optional</small></label>
+                            <textarea name="public_note" id="event_public_note"><%=data.public_note%></textarea>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Private Description <small>Optional</small><small class="d-block mat-5">Visible only to you.</small></label>
+                            <textarea name="private_note" id="event_private_note"><%=data.private_note%></textarea>
+                          </div>
+                        </div>
+                        
+                        <div class="col-md-12 text-right pt-4 submission-buttons">
+
+                        <% if(data.will_repeat == true) { %>
+                          <button type="submit" name="update_event_option" value="this_one_and_future" class="btn theme-btn mb-2 mr-2 update-event" id="update-all-events">Update This & Future Events</button>
+                        <% } %>
+
+                        <button type="submit" name="update_event_option" value="this_one_only" class="btn theme-btn mb-2 update-event" id="update-single-event">Update This Event</button>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal fade common-modal" id="tutorLeaveModalEdit" tabindex="-1" role="dialog"
+  aria-labelledby="tutorLeaveModalEditLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="tutorLeaveModalEditLabel" style="display: flex; align-items: center;gap: 5px;">
+          <img src="/images/leave_notice.svg" alt="" style="width:17px;flex-shrink: 0;">
+          Tutor Leave Warning
+        </h3>
+        <button type="button" class="close p-0 m-0 opacity-100" data-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            </path>
+            <path d="M6 6L18 18" stroke="#4A4674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            </path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body stud_message_details" id="tutorLeaveModalBodyEdit">
+        <!-- Dynamic content will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <div class="btn-rightarea">
+          <button type="button" class="bus-outline-btn" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn theme-btn" id="proceedWithLeaveBtnEdit">Yes, Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.js"></script>
+
+<%-include('./partials/edit_event_script.ejs')%>
+
+<script>
+    $(function(){
+    $('#tags-dropdown button.dropdown-item').on('click', function(){
+        let type = $(this).attr('data-type');
+
+        if(type == "all-families"){
+            const allValues = $('#student_ids option').map(function () {
+                return $(this).val();
+            }).get();
+            $('#student_ids').val(allValues).trigger('change');
+
+        } else if(type == "family-tag"){
+            let familyIds = $(this).attr('data-families');
+            if(familyIds != ""){
+                const specificIds = familyIds.split(",");
+                $('#student_ids').val(specificIds).trigger('change');
+            }
+
+        } else if(type == "clear"){
+            $('#student_ids').val(null).trigger('change');
+        }
+    });
+});
+
+$(document).ready(function () {
+
+let minutes = $('#duration').val();
+
+if(minutes){
+    $('.duration-value').text(`(In Minutes) ${minutes}`);
+}
+
+$('#duration').on('input', function(){
+    let minutes = $(this).val();
+    $('.duration-value').text(minutes ? `(In Minutes) ${minutes}` : `(In Minutes)`);
+});
+
+});
+
+
+
+</script>
+
+<script>
+$(document).ready(function() {
+  // Check existing event for timezone warning on page load
+  // setTimeout(function() {
+  //   const tutorId = $('#tutor_id').val();
+  //   const studentIds = $('#student_ids').val() || [];
+  //   if (tutorId && studentIds.length > 0) {
+  //     performTimezoneCheck();
+  //   }
+  // }, 1000);
+  
+  // Override the update event submission to check for timezone warning
+  const originalUpdateHandler = $('.update-event');
+  
+  $(document).off('click', '.update-event').on('click', '.update-event', function(e) {
+    e.preventDefault();
+    
+    const hasFlag = $('#timezone_acknowledged_flag').length > 0;
+    
+    if (window.currentWarningData && !hasFlag) {
+      const warningData = window.currentWarningData;
+      Swal.fire({
+        title: '⚠️ Time Zone Warning',
+        html: `The tutor and student(s) are in different time zones.<br><br>
+              <strong>Tutor:</strong> ${escapeHtml(warningData.tutor.name)} (${escapeHtml(warningData.tutor.timezone)})<br>
+              <strong>Student(s) in different time zone:</strong><br>
+              ${warningData.students.map(s => `&nbsp;&nbsp;&nbsp;• ${escapeHtml(s.name)} (${escapeHtml(s.timezone)})<br>`).join('')}<br>
+              Do you still want to proceed?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Proceed',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#ffc107'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          addTimezoneFlagToForm();
+          // Trigger the original submission
+          const updateOption = $(this).val();
+          submitEditForm(updateOption);
+        }
+      });
+      return false;
+    }
+    
+    // Proceed with normal submission
+    const updateOption = $(this).val();
+    submitEditForm(updateOption);
+  });
+  
+  function submitEditForm(updateOption) {
+
+    const hasTimezoneDifference = window.currentWarningData ? true : false;
+    const hasFlag = $('#timezone_acknowledged_flag').length > 0;
+    
+    // Handle timezone flag based on difference
+    if (hasTimezoneDifference && hasFlag) {
+        // Keep the flag (already added by confirmation) - do nothing
+    } else if (hasTimezoneDifference && !hasFlag) {
+        // This shouldn't happen as modal would have shown, but add flag just in case
+        if (typeof addTimezoneFlagToForm === 'function') {
+            addTimezoneFlagToForm();
+        }
+    } else if (!hasTimezoneDifference) {
+        // No timezone difference - set flag to false
+        removeTimezoneFlag();
+        if ($('#timezone_acknowledged_flag_false').length === 0) {
+            $('#update-an-event').append('<input type="hidden" id="timezone_acknowledged_flag_false" name="timezone_warning_acknowledged" value="0">');
+        }
+    }
+    
+    let hasIgnoreConflictCheckbox = $('#conflict_area').length;
+    let isIgnoreConflictChecked = hasIgnoreConflictCheckbox == 1 && $('#ignore_conflict').prop('checked');
+    $(document).find("span.text-danger").remove();
+    
+    if (hasIgnoreConflictCheckbox == 1 && isIgnoreConflictChecked != undefined && !isIgnoreConflictChecked) {
+      $(document).find('[id=ignore_conflict]').next().after('<span class="help-block text-danger">Please check "Ignore Conflict" to proceed further.</span></br>');
+      return false;
+    }
+
+    $('.update-event').prop('disabled', true);
+
+    function formatSelectedOptions() {
+      let formattedDataArray = [];
+      let hasValidContent = false;
+      
+      $('input[name="selected_contents[]"]').each(function() {
+        const split = $(this).val().split('--');
+        if (split[0] && split[1]) {
+          formattedDataArray.push({
+            learning_content_id: split[0],
+            lesson_id: split[1],
+            is_default: true,
+            is_skipped: false,
+            status: 'N/A'
+          });
+          hasValidContent = true;
+        }
+      });
+      
+      return hasValidContent ? formattedDataArray : [];
+    }
+
+    let formattedDataArray = formatSelectedOptions();
+    let finalArray = [...formattedDataArray];
+
+    let durationMinutes = $('#duration').val();
+
+    function convertMinutesToHHMM(minutes){
+      minutes = parseInt(minutes) || 0;
+      let hours = Math.floor(minutes / 60);
+      let mins = minutes % 60;
+      hours = hours.toString().padStart(2,'0');
+      mins = mins.toString().padStart(2,'0');
+      return hours + ":" + mins;
+    }
+
+    let formattedDuration = durationMinutes ? convertMinutesToHHMM(durationMinutes) : '';
+    let form = $('#update-an-event');
+    let formData = new FormData(form[0]);
+    if(formattedDuration){
+      formData.set('duration', formattedDuration);
+    }
+    formData.append('courses', JSON.stringify(finalArray));
+
+    $(document).find('.error-msg-rec-event').html('');
+    let url = form.attr('action');
+    const selectedAttendees = $('#student_ids').find('option:selected');
+    const studentIds = selectedAttendees.map(function() {
+      return $(this).val();
+    }).get();
+
+    formData.append('student_ids', JSON.stringify(studentIds));
+    formData.append('update_option', updateOption);
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          window.location.href = response.redirectUrl;
+        }
+      },
+      error: function(response) {
+        if (response.status === 500) {
+          if (response.responseJSON.conflictMessage !== undefined && response.responseJSON.conflictMessage != '') {
+            $('#conflict_area').html(response.responseJSON.conflictMessage);
+            $('#total-conflict').html(response.responseJSON.totalConflicts);
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: response.responseJSON.message
+            });
+            setTimeout(() => {
+              if (response.responseJSON.redirectUrl === 'page-reload') {
+                window.location.reload();
+              } else {
+                window.location.href = response.responseJSON.redirectUrl;
+              }
+            }, 2000);
+          }
+        } else {
+          $.each(response.responseJSON.errors, function(field_name, error) {
+            if (error.param == 'recurring_type') {
+              $(document).find('.error-msg-rec-event').html('<span class="help-block text-danger">' + error.msg + '</span>');
+            } else {
+              $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+            }
+          });
+        }
+      },
+      complete: function() {
+        $('.update-event').prop('disabled', false);
+      }
+    });
+  }
+  
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+});
+</script>
+
+<script>
+$(document).ready(function () {
+  <% if (eventStatus === "past" || eventStatus === "ongoing") { %>
+
+    setTimeout(function () {
+      ['#tutor_id', '#substitute_tutor_id'].forEach(function (sel) {
+        const $el = $(sel);
+        const name = $el.attr('name');
+        const currentVal = $el.val();
+
+        if (currentVal && name) {
+          $('#update-an-event').append(
+            `<input type="hidden" name="${name}" value="${currentVal}" class="restricted-preserve">`
+          );
+        }
+
+        try { $el.select2('destroy'); } catch (e) {}
+        $el.prop('disabled', true).select2({ allowClear: false });
+        $el.next('.select2-container').css({
+          'pointer-events': 'none',
+          'opacity': '0.6'
+        });
+      });
+
+      const $students = $('#student_ids');
+      try { $students.select2('destroy'); } catch (e) {}
+      $students.prop('disabled', true).select2({ allowClear: false });
+      $students.next('.select2-container').css({
+        'pointer-events': 'none',
+        'opacity': '0.6'
+      });
+
+    }, 100);
+
+    (function () {
+      const $el = $('#add_substitute_tutor');
+      const isChecked = $el.is(':checked');
+      if (isChecked) {
+        $('#update-an-event').append(
+          `<input type="hidden" name="is_substitute_tutor" value="1" class="restricted-preserve">`
+        );
+      }
+      $el.prop('disabled', true).css('pointer-events', 'none');
+      $el.closest('.form-check').css('opacity', '0.55');
+    })();
+
+    const recurringFieldSelectors = [
+      '#will_repeat',
+      'input[name="recurring_type"]',
+      '#no_of_week',
+      '#no_of_fortnightly',
+      '#repeat_indefinitely',
+      '#repeat_until_end_date',
+    ];
+
+    recurringFieldSelectors.forEach(function (sel) {
+      $(sel).each(function () {
+        const $el = $(this);
+        const name = $el.attr('name');
+        const val  = $el.val();
+        const isChecked = $el.prop('type') === 'checkbox' || $el.prop('type') === 'radio'
+          ? $el.is(':checked')
+          : true;
+
+        if (isChecked && name) {
+          $('#update-an-event').append(
+            `<input type="hidden" name="${name}" value="${val}" class="restricted-preserve">`
+          );
+        }
+
+        $el.prop('disabled', true).css('pointer-events', 'none');
+      });
+    });
+
+    $('#will_repeat').closest('.form-check').css('opacity', '0.55');
+
+    $('#add_learn_content').prop('disabled', true).css('pointer-events', 'none');
+    $('#add_learn_content').closest('.form-check').css('opacity', '0.55');
+
+    ['#sc_grade', '#sc_topic', '#sc_sub_topic', '#sc_learning_content', '#sc_lessons'].forEach(function (sel) {
+      $(sel).prop('disabled', true).css('pointer-events', 'none');
+    });
+
+    $('#add_content').hide();
+
+    $('.clear-all').hide();
+    $('.remove_content').hide();
+
+
+    setTimeout(function () {
+      try { $('.lesson-content-sortable').sortable('destroy'); } catch (e) {}
+      $('.lesson-content-sortable').css({ 'cursor': 'default', 'user-select': 'none' });
+    }, 400);
+
+    $('#families').hide();
+
+    window.performTimezoneCheck = function () {};
+
+  <% } %>
+});
+</script>
+
+<!-- Include timezone warning script -->
+<script src="/src/js/timezone-warning.js"></script>

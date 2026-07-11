@@ -1,0 +1,77 @@
+<div class="tab-pane fade show active" id="pills-general" role="tabpanel" aria-labelledby="pills-general-tab">
+    <div class="row row-gap-30 mx-0">
+      <div class="col-12 px-0">
+        <div class="card tabcard">
+          <div class="card-body">
+            <h3 class="setting_title">Event Scheduling <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+            <form class="general" id="event-schedule">
+            <div class="settings">
+              <div class="row mx-0 row-gap-20">
+                <div class="col-12 px-0">
+                  <h6 class="setting_name">Scheduling Conflicts</h6>
+                  <div class="form-group form-check">
+                    <input type="checkbox" name="check_scheduling_conflict" class="form-check-input event-schedule-input-group" id="check_scheduling_conflict" <% if (businessSetting?.event_scheduling[0].check_scheduling_conflict == true) { %> checked <% } %> disabled>
+                    <label class="form-check-label" for="check_scheduling_conflict">Check for scheduling conflicts when adding/editing calendar events</label>
+                  </div>
+                </div>
+                <div class="col-12 px-0 text-right btngroup">
+                  <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                  <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 px-0">
+        <div class="card tabcard">
+          <div class="card-body">
+            <h3 class="setting_title">Contact Information <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+            <form class="general" id="contact-information">
+              <div class="settings">
+                <div class="row mx-0 row-gap-20">
+                  <div class="col-12 px-0">
+                    <h6 class="setting_name">Primary Contact Number</h6>
+                    <div class="form-group">
+                      <input 
+                        type="tel" 
+                        name="primary_number" 
+                        class="form-control" 
+                        id="primary_number" 
+                        placeholder="Enter contact number"
+                        value="<%= businessSetting?.primary_number || '' %>"
+                        minlength="5" 
+                        maxlength="15"
+                        disabled
+                      >
+                    </div>
+                  </div>
+                  <div class="col-12 px-0">
+                    <h6 class="setting_name">Primary Email</h6>
+                    <div class="form-group">
+                      <input 
+                        type="email" 
+                        name="primary_email" 
+                        class="form-control" 
+                        id="primary_email" 
+                        placeholder="Enter primary email"
+                        value="<%= businessSetting?.primary_email || '' %>"
+                        minlength="5" 
+                        maxlength="100"
+                        disabled
+                      >
+                    </div>
+                  </div>
+                  <div class="col-12 px-0 text-right btngroup">
+                    <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                    <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>

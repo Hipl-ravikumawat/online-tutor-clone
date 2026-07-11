@@ -1,0 +1,34 @@
+<div class="modal fade bussiness-setting-modal" id="systemEmail" tabindex="-1" role="dialog" aria-labelledby="systemEmailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="systemEmailLabel">Edit System Email Template</h3>
+        </div>
+        <form class="update-template" method="post" action="/business-settings/update-notification-template">
+          <div class="modal-body">
+            <div class="form-area">
+              <input type="hidden" name="template_id" value="" class="template-id">
+              <div class="form-group">
+                <label>Email Subject*</label>
+                <input type="text" value="" name="subject" class="subject">
+              </div>
+              <div class="form-group">
+                <label>Message*</label>
+                <textarea name="message" class="editorExplanation" id="" cols="30" rows="10"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <!-- <div class="btn-leftarea">
+              <button type="button" class="restore-btn">Restore Default Template</button>
+            </div> -->
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn hide-btnss">Cancel</button>
+              <!-- <button type="button" class="bus-outline-btn preview-btns">Preview</button> -->
+              <button type="submit" class="btn theme-btn hide-btnss">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

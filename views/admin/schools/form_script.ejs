@@ -1,0 +1,113 @@
+<!-- intlTelInput -->
+<script type="text/javascript" src="/vendors/intlTelInput/js/intlTelInput.js"></script>
+<script type="text/javascript" src="/vendors/intlTelInput/js/utils.js"></script>
+
+<script type="text/javascript">
+  /**
+   * School form script.
+   * @script start
+   */
+  $(document).ready(function () {
+    $("#status").select2({
+      allowClear: false,
+    });
+  });
+
+  var input = document.querySelector("#phone"),
+    errorMap = [
+      "Invalid number",     // 0
+      "Invalid country code", // 1
+      "Too short",          // 2
+      "Too long",           // 3
+      "Invalid number",     // 4
+    ],
+    result = document.querySelector("#error-msg");
+
+  window.addEventListener("load", function () {
+    errorMsg = document.querySelector("#error-msg");
+    function getIp(callback) {
+      fetch("https://ipinfo.io", {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+        .then((resp) => resp.json())
+        .catch(() => {
+          return {
+            country: "",
+          };
+        })
+        .then((resp) => callback(resp.country));
+    }
+
+    let iso_code = $("#iso_code").val();
+    let current_iso_code = iso_code ? iso_code : "AU";
+    var iti = window.intlTelInput(input, {
+      initialCountry: current_iso_code, 
+      separateDialCode: true,
+    });
+
+    $('#phone').val(defaultNumber); 
+    // Function to handle phone number validation
+    function handlePhoneValidation(buttonSelector) {
+      input.addEventListener("keyup", function () {
+        reset();
+        $(buttonSelector).prop("disabled", false);
+        if (input.value.trim()) {
+          // console.log(iti.isValidNumber(), 'iti.isValidNumber()');
+          if (iti.isValidNumber()) {
+            $(buttonSelector).prop("disabled", false);
+            $(input).addClass("is-valid");
+          } else {
+            $(buttonSelector).prop("disabled", true);
+            $(input).addClass("is-invalid");
+            var errorCode = iti.getValidationError();
+            errorMsg.innerHTML = errorCode > 4 ? 'Invalid number' : errorMap[errorCode];
+            $(errorMsg).show();
+          }
+        }
+      });
+    }
+
+    // Assign validation for buttons
+    if (iso_code) {
+      handlePhoneValidation("#updateSchoolBtn");
+    } else {
+      handlePhoneValidation("#storeSchoolBtn");
+    }
+
+    input.addEventListener("change", reset);
+    input.addEventListener("keyup", reset);
+
+    var reset = function () {
+      $(input).removeClass("is-invalid");
+      errorMsg.innerHTML = "";
+      $(errorMsg).hide();
+    };
+
+    // Additional keyup event listener (if needed for special cases)
+    input.addEventListener("keyup", function (e) {
+      e.preventDefault();
+      var num = iti.getNumber(),
+        valid = iti.isValidNumber();
+    }, false);
+
+    input.addEventListener("focus", function () {
+      result.textContent = "";
+    }, false);
+
+    // Store selected country data when the input loses focus
+    $(input).on("focusout", function (e, countryData) {
+      var intlNumber = iti.getNumber();
+      var countryData = iti.getSelectedCountryData();
+      var dialCode = countryData.dialCode;
+      var iso2 = countryData.iso2;
+      $("#dial_code").val(dialCode);
+      $("#iso_code").val(iso2);
+    });
+  });
+  /**
+   * School form script.
+   * @script end
+   */
+</script>

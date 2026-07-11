@@ -1,0 +1,147 @@
+<div class="right_col" role="main">
+  <div class="back-page">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="javascript:void(0)">Rewards</a>
+      </li>
+      <li class="breadcrumb-item active">Vouchers</li>
+    </ol>
+  </div>
+
+  <div class="bussniess_setting">
+    <div class="settings_content">
+      <div class="card tabcard">
+        <div class="card-body">
+          <div class="flex-panel">
+            <div class="setting_voucher">
+              <h2 class="setting_title">Voucher List</h2>
+              <h6 class="setting_title total-voucher">Total Vouchers: <span id="voucherCount">
+                  <%=voucherCount%>
+                </span></h6>
+            </div>
+            <a href="javascript:void(0)" class="theme-btn add-voucher-btn" data-toggle="tooltip" rel="tooltip"
+              data-placement="top" data-original-title="Add Voucher">+ Add Voucher</a>
+          </div>
+          <div class="voucher_card_list">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Voucher Add/Edit modal -->
+<%- include('./partials/voucher_form'); %>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      listVouchers(); // Call the function once after page load
+    });
+
+    function listVouchers(searchStr = "") {
+      $(".voucher_card_list").empty();
+      $.ajax({
+        type: "POST",
+        url: "/rewards/vouchers-dataTable",
+        dataType: "html",
+        data: {
+          searchStr: searchStr,
+        },
+        success: function (response) {
+          $(".voucher_card_list").html(response);
+        },
+        complete: function () {
+          $(".loader").hide();
+        },
+      });
+    }
+
+    $('.add-voucher-btn').click(function () {
+      $(".voucher-form").trigger("reset");
+      $('#addVoucher').modal('show');
+    });
+
+    $('.voucher-form').submit(function (e) {
+      e.preventDefault();
+      var formData = $('.voucher-form').serialize();
+      let url = $('.voucher-form').attr('action');
+      $('#saveVoucherBtn').prop('disabled', true);
+      $.ajax({
+        type: "post",
+        url: url,
+        dataType: "json",
+        data: formData,
+        success: function (response) {
+          if (response.success === true) {
+            window.location.reload();
+          }
+        },
+        error: function (response) {
+          $(document).find('.text-danger').remove();
+          if (response.responseJSON.errors) {
+            $.each(response.responseJSON.errors, function (index, error) {
+              if (error.param != '') {
+                $(document).find(`[name=${error.param}]`).after(`<span class="help-block text-danger">${error.msg}</span>`);
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: error.msg,
+                });
+              }
+            });
+          }
+
+          if (response.responseJSON.message) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: error.msg,
+            });
+          }
+        },
+        complete: function (response) {
+          $('#saveVoucherBtn').prop('disabled', false);
+        }
+      });
+    });
+
+    $(document).on('click', '.voucher_edit', function () {
+      $(".voucher-form").trigger("reset");
+      $('#addVoucher').modal('show');
+      const slug = $(this).data('slug');
+      $(document).find('.text-danger').remove();
+      $(".loader").show();
+      $.ajax({
+        type: "GET",
+        url: "/rewards/edit-voucher/" + slug,
+        success: function (response) {
+          if (response.success === true) {
+            $('#slug').val(response.voucher.slug);
+            $('#title').val(response.voucher.title);
+            $('#required_points').val(response.voucher.required_points);
+            $('#equivalent_amount').val(response.voucher.equivalent_amount);
+            $('.voucher-form').attr('action', '/rewards/update-voucher');
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          let errorMessage;
+          if (jqXHR.status === 404) {
+            errorMessage = "Voucher not found.";
+          } else if (jqXHR.status === 500) {
+            errorMessage = "Internal server error. Please try again later.";
+          } else {
+            errorMessage = "An unexpected error occurred: " + textStatus;
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: errorMessage,
+          });
+        },
+        complete: function () {
+          $(".loader").hide();
+        },
+      });
+    });
+  </script>

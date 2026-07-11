@@ -1,0 +1,59 @@
+<!-- challenge modal starts -->
+<div class="modal modal-design fade" id="challengeModal" tabindex="-1" data-backdrop="static" data-keyboard="false"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title title-text">Challenge Form</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form id="storeChallengeForm" action="/learning-content/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/challenges/store" method="post" autocomplete="off">
+
+        <div class="modal-body">
+          <input type="hidden" name="challenge_id" id="challenge_id" value="">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="form-label">Title<span class="text-red">*</span></label>
+                <input type="text" class="form-control" name="title" id="ch_title" placeholder="Enter Title" value="">
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="form-label">Duration<span class="text-red">*</span></label>
+                <input type="text" class="form-control timepicker" name="duration" id="ch_duration" placeholder="Enter duration"
+                  value="">
+              </div>
+            </div>
+  
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="form-label">Type<span class="text-red">*</span></label>
+                <select class="form-control" name="type" id="ch_type">
+                  <option value="multiplication">Multiplication</option>
+                </select> 
+              </div>
+            </div>
+            
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="form-label">Multiplication of <span class="text-red">*</span></label>
+                <input type="number" class="form-control" min="1" name="multiplication_no"  placeholder="Enter number" id="ch_multiplication_no" value="">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="theme-btn" id="storeChallengeBtn"><img src="/images/save.svg">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- challenge modal end -->

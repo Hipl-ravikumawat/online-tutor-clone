@@ -1,0 +1,99 @@
+
+<script type="text/javascript">
+  /**
+   * grade index page script.
+   * @script start
+   * */
+  $(document).ready(function () {
+    $(".select2").select2({ allowClear: false });
+    dataTable();
+
+    $(".filter").click(function () {
+      let grade_name = $("#grade-name").val();
+      let status = $("#status").val();
+      dataTable(grade_name, status);
+    });
+
+    $(".reset").click(function () {
+      $(".select2").val(null).trigger("change");
+      dataTable();
+    });
+  });
+
+  function dataTable(grade_name = "", status = "") {
+    $.fn.dataTable.moment("DD:MM:YYYY HH:mm a");
+    $("#gradeTable").dataTable().fnDestroy();
+    var gradeTable = $("#gradeTable").DataTable({
+      paging: true,
+      pageLength: 10,
+      language: {
+        searchPlaceholder: "Search",
+        processing: "<div><div></div><div></div><div></div><div></div></div>",
+      },
+      processing: true,
+      serverSide: true,
+      order: [[2, "desc"]],
+      ajax: {
+        url: "/grades/dataTable",
+        type: "POST",
+        data: {
+          id: grade_name,
+          status: status,
+        },
+      },
+      columns: [
+        { data: "name", name: "name" },
+        {
+          data: "status",
+          render: function (data, type, row) {
+            return ` <label class="checkbox-inline switch-btn">
+                        <input type="checkbox" name="status" class="record-status" data-toggle="toggle" data-on="Active"
+                            data-off="Deactive" data-onstyle="info" data-offstyle="danger" data-url="/grades/update-status"
+                            data-uid="${row._id}" id="toggle-trigger" ${
+              row.status ? "checked" : ""
+            }>
+                            <span class="slider-toggle"></span>  
+                        </label>`;
+          },
+        },
+        {
+          data: "created_at",
+          render: function (data, type, row) {
+            if (data !== null) {
+              var wrapper = moment(new Date(data));
+              return wrapper.format("DD MMM YYYY");
+            }
+          },
+        },
+        {
+          data: "",
+          render: function (data, type, row) {
+            return `<div class="d-flex align-items-center">
+                      <a class="" href="/grades/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                          title="Edit"><img src="/images/edit.svg" alt="icon"></a>
+    
+                      <a href="javascript:void(0)" class="ml-2"
+                          onclick="confirmBeforeDeletion('/grades/destroy/${row._id}')"><img src="/images/trash.svg"
+                          alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+                      </div>`;
+          },
+        },
+      ],
+      columnDefs: [
+        {
+          targets: [3] /* column index */,
+          orderable: false /* true or false */,
+        },
+      ],
+    });
+    gradeTable.ajax.reload( function() {
+      // Reinitialize tooltips after reload
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  }
+    /**
+   * grade index page script.
+   * @script end
+   * */
+</script>

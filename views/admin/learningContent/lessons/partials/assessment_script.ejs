@@ -1,0 +1,363 @@
+<script type="text/javascript">
+    let assessmentId = taskId;
+    let isAssessment = taskType;
+    let getLocalStorageData = "";
+    if (userRole == 3) {
+         // student
+        let checkFormSubmitted = JSON.parse(localStorage.getItem("FormSubmitted"));
+        if (checkFormSubmitted == true) {
+            Swal.fire({
+            text: "You have already submitted this assignment.",
+            icon: "info",
+            showConfirmButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            }).then((result) => {
+            window.location.href = "/assessments";
+            });
+        }
+    }
+
+    if (isAssessment === "assessment") {
+        const savedQuestion =  <%- JSON.stringify(assessmentDetails.savedQuestions || []) %>;
+        // const practicesQuestionArray = $(".sort-practices")
+        // .map(function () {
+        //     let practiceObject = {
+        //     questionId: this.dataset.uniqueid,
+        //     attachment: "",
+        //     type: this.dataset.type,
+        //     submittedAnswer: "",
+        //     isCorrect: "",
+        //     };
+        //     return practiceObject;
+        // })
+        // .get();
+        setLocalStoragePracticesQuestions(savedQuestion);
+    }
+
+    function setLocalStoragePracticesQuestions(Questions) {
+        localStorage.setItem("assessmentDetails", JSON.stringify(Questions));
+    }
+
+
+    let initialTime = $(".remainning-time").text();
+
+    // If only minutes (like "21"), convert to "21:00"
+    if (!initialTime.includes(":")) {
+        initialTime = initialTime + ":00";
+    }
+
+    let timer2 = initialTime;
+    let is_duration_applied = "<%= applyDurationOnAssessment  %>";
+    let interval = setInterval(function () {
+        let timer = timer2.split(":");
+        let minutes = parseInt(timer[0], 10);
+        let seconds = parseInt(timer[1], 10);
+        --seconds;
+
+        minutes = seconds < 0 ? --minutes : minutes;
+        if (minutes < 0) clearInterval(interval);
+        seconds = seconds < 0 ? 59 : seconds;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        $(".remainning-time").html(minutes + ":" + seconds);
+        timer2 = minutes + ":" + seconds;
+        if (timer2 == "0:00" && is_duration_applied === "true") {
+        clearInterval(interval);
+        let getPractice = JSON.parse(localStorage.getItem("assessmentDetails"));
+        if (getPractice == "") {
+            let assessmentDetails = [
+            {
+                lessonId: lessonId,
+                questionId: {},
+                submittedAnswer: {},
+            },
+            ];
+
+            localStorage.setItem(
+            "assessmentDetails",
+            JSON.stringify(assessmentDetails)
+            );
+        }
+        Swal.fire(
+            {
+            title: "Your Assessment is submitted successfully",
+            timer: 2000,
+            confirmButtonText: "Ok!",
+            },
+            function () {
+            window.location.href = "/assessments";
+            }
+        );
+        setTimeout(function () {
+            window.location.href = "/assessments";
+        }, 2000);
+        submitChallenge();
+        }
+    }, 1000);
+
+    $(document).on("click", ".submit_question", async function () {
+        $this = $(this).parents(".unassign-content");
+        let practiceArray = [];
+        let submittedAnswer = [];
+        let practiceId = $this.find(".practice_id").val();
+        let practiceType = $this.find(".practice_type").val();
+        let answer = "";
+        let attachment = "";
+        if (practiceType == "single_select") {
+            answer = $this.find(".custom-option:checked").val();
+            submittedAnswer.push(answer);
+        } else if (practiceType == "multi_select") {
+            var select_button_text = $this
+                .find(":checkbox:checked")
+                .toArray()
+                .map((item) => item.value);
+            submittedAnswer = select_button_text;
+        } else if (practiceType == "text") {
+            tinyMCE.triggerSave();
+            answer = $this.find(".editorExplanation").val();
+            let form = $("#textForm");
+            let formData = new FormData(form[0]);
+            formData.append('submit_attachment', this.new_attachments);
+            let fileData = formData.get('submit_attachment');
+            if(fileData.name){
+                attachment = await uploadTextQuestionAttachment(formData);
+            }
+            submittedAnswer.push(answer);
+        } else if (practiceType == "drag_and_drop") {
+            var textValues = $this
+                .find(".para-gap")
+                .map(function () {
+                return $(this).find(".task").text();
+                })
+                .get();
+            submittedAnswer = textValues;
+            $(".answer-submitted").show(1).delay(1000).hide(1);
+        }
+        let lessonContent = JSON.parse(localStorage.getItem("assessmentDetails"));
+        if (lessonContent != "") {
+        for (question of lessonContent) {
+            if (question.questionId == practiceId) {
+                question.submittedAnswer = submittedAnswer;
+                question.attachment = attachment;
+                break;
+            }
+        }
+            localStorage.setItem("assessmentDetails", JSON.stringify(lessonContent));
+        }
+        // console.log(submittedAnswer,'submittedAnswer')
+        const totalSortPractices = $('.sort-practices').length;
+        const currentMenuIndex = $('.sort-practices.active').data('position');
+        // console.log(totalSortPractices,'totalSortPractices',currentMenuIndex);
+        $(".unassign-next").trigger("click");
+        if(totalSortPractices === currentMenuIndex){
+            $('#submit-assessment').modal("show");
+        }
+    });
+
+
+    $(".quit_and_save").click(async function () {
+        $("#submit-assessment").modal('hide');
+        let question_content_type = $(".question_content_type").val();
+        getLocalStorageData = JSON.parse(localStorage.getItem("assessmentDetails"));
+        $(".full-result-tag").attr("data-type", question_content_type);
+        $(".full-result-tag").attr("data-lesson-id", lessonId);
+        Swal.fire({
+        html: "<p><b>Do you want to quit the assessment in middle?</b><br>Your given answers will be saved but your assessment will not be submitted.</p>",
+        icon: "warning",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+        }).then((result) => {
+        if (result.isConfirmed) {
+            saveAndQuitPractice(getLocalStorageData);
+        } else {
+            console.log("denied");
+        }
+        });
+    });
+
+
+    function saveAndQuitPractice(getLocalStorageData) {
+        $.ajax({
+            type: "POST",
+            url: `/assessments/save-assessment`,
+            data: {
+                getData: getLocalStorageData,
+                lesson_id: lessonId,
+                assessment_id: assessmentId,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    let message = response.message;
+                    successAlertMessage(message);
+                }
+            },
+        });
+    }
+
+
+    function submitChallenge() {
+        let assessmentDetail = JSON.parse(localStorage.getItem("assessmentDetails"));
+        let postData = null;
+        if (assessmentType == "challenges") {
+            let challengeAttempts = JSON.parse(localStorage.getItem("challengeAttempts")) ?? {};
+            postData = {
+                assessmentType: assessmentType,
+                assessmentId: taskId,
+                lessonId: lessonId,
+                challengeId: activeContentId,
+                challengeAttempts: challengeAttempts,
+            };
+        } 
+        else {
+            postData = {
+                assessmentDetail: assessmentDetail,
+                assessmentType: assessmentType,
+                assessmentId: assessmentId,
+                lessonId: lessonId,
+            };
+        }
+        $.ajax({
+            type: "POST",
+            url: "/assessments/submit-assessment",
+            data: postData,
+            dataType: "json",
+            success: function (response) {
+                window.location.href = "/assessments"
+            },
+            error: function (response) {
+                Swal.fire({
+                title: "Oops...",
+                text: response.message,
+                });
+            },
+            complete: function () {
+            },
+        });
+    }
+
+
+    function showResult(submitChallenge, question_content_type = "", lesson_id = "", challenge_id = "") {
+        Swal.fire({
+            text: "Do you want to submit this assessment?",
+            icon: "warning",
+            showDenyButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                submitChallenge();
+            }
+        });
+    }
+
+
+    // $(document).on("click", ".full-result-tag", function () {
+    //     // Cache frequently used elements
+    //     const answergrid = $(".answergrid");
+    //     const closeButton = $(".close");
+    //     const allQuestionInput = $(".all-question");
+    //     const correctSubmission = $(".correct-submission");
+    //     const incorrectSubmission = $(".incorrect-submission");
+    //     const pendingSubmission = $(".warning-submission");
+    //     const finalScore1Modal = $("#finalScore1");
+    //     const reviewAssessmentSubmissionModal = $("#reviewAssessmentSubmission");
+
+    //     // Clear list items efficiently
+    //     answergrid.empty(); // Prefer `empty()` over `remove()` for clearing elements
+
+    //     // Trigger close button click
+    //    closeButton.trigger("click");
+
+    //     // Parse questions and calculate statistics efficiently
+    //     const questionList = JSON.parse(allQuestionInput.val());
+    //     const questionCount = questionList.length;
+    //     let correct = 0;
+    //     console.log(questionList,'questionList');
+    //     // Construct list items and update statistics simultaneously
+    //     questionList.forEach((question, index) => {
+    //         const className = question.isCorrect ? "answer_qst" : question.isCorrect ===false ? "unanswer_qst" : "pending_qst";
+    //         correct += question.isCorrect ? 1 : 0;
+
+    //         answergrid.append(`<li><a class="${className}" href="javascript:void(0);">${index + 1}</a></li>`);
+    //     });
+
+    //     const pendingCount = $('.pending_qst').length;
+    //     const incorrect = questionCount - correct - pendingCount;
+    //     // Update UI elements
+    //     correctSubmission.text(correct);
+    //     incorrectSubmission.text(incorrect);
+    //     pendingSubmission.text(pendingCount);
+    //     finalScore1Modal.modal("hide");
+    //     reviewAssessmentSubmissionModal.modal("show");
+    // });
+
+    $('.end_homework').click(async function () {
+        $("#submit-assessment").modal('hide');
+        let question_content_type = $('.question_content_type').val();
+        let challenge_id = $('#challenge-id').val();
+        challenge_id  = (question_content_type == 'challenges') ? challenge_id:'';
+        getLocalStorageData  = JSON.parse(localStorage.getItem("assessmentDetails"));
+        $('.full-result-tag').attr('data-type', question_content_type);
+        $('.full-result-tag').attr('data-challenge-id', challenge_id);
+        showResult(submitChallenge,question_content_type);
+    });
+    
+    function successAlertMessage(message){
+        Swal.fire({
+            title: 'Success!',
+            html:`<p>${message}</p>`,
+            icon: 'success',
+            showDenyButton: false,
+            denyButtonText: `No`,
+            allowOutsideClick: false,
+        }).then((result) => {
+            window.location.href = "/assessments";
+        })
+    }
+
+    function uploadTextQuestionAttachment(formData) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: `/assessments/upload-attachment`,
+                dataType: "json",
+                data: formData,
+                processData: false, // Prevent jQuery from processing the formData object
+                contentType: false, // Prevent jQuery from setting the content type
+                success: function (response) {
+                    if (response.success) {
+                        const filename = response.file;
+                        resolve(filename);
+                    } else {
+                        reject(new Error("Upload failed")); // Reject the promise with an error
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    reject(new Error(`AJAX error: ${textStatus}, ${errorThrown}`)); // Reject on network errors
+                }
+            });
+        });
+    }
+    
+    function saveAndSubmitButton(){
+        const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "quit_and_save",
+            cancelButton: "end_homework "
+        },
+        buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        });
+    }
+</script>

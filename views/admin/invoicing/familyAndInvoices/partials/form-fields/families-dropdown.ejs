@@ -1,0 +1,20 @@
+<label for="<%= dropdownId %>" class="form-label <%= !showLabel ? 'd-none' : '' %>"><%= label || "Families" %><span class="required">*</span></label>
+
+<select  data-placeholder="Select Families" <%= (dropdownType == "multiple") ? "multiple" : "" %> name="<%= dropdownName %>" id="<%= dropdownId %>" class="form-control select2" style="width:100%">
+    <% if(dropdownType == "single") { %>
+        <option>Select...</option>
+    <% } %>
+    <% families.forEach(group=> {
+    <!-- const familyNames = group.families.map(f => f.name || '').join(", "); -->
+     let familyNames = group.familyNames;
+     if(familyNames == ""){
+        familyNames += group.studentName;
+     }else{
+        familyNames += ", "+group.studentName;
+     }
+    %>
+    <option value="<%= group._id %>" <%= (editRecord && editRecord?.student_id ? 'selected' : '') %>>
+        <%= familyNames %>
+    </option>
+    <% }) %>
+</select>

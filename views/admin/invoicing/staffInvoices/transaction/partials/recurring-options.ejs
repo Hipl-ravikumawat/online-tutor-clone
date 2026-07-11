@@ -1,0 +1,85 @@
+<% 
+  const recurringInfo = transaction?.recurring_info?.[0] || {};
+  const selectedRepeatDays = recurringInfo?.repeat_days || [];
+  // const repeatIndefinitely = recurringInfo?.repeat_indefinitely === true; 
+  const repeatUntil = recurringInfo?.repeat_until ? moment(recurringInfo.repeat_until).format('YYYY-MM-DD') : '';
+  const recurringMonthlyOn = recurringInfo?.recurring_montly_on || '';  
+%>
+
+
+
+
+<% if(transaction && transaction?.recurring) { %>
+  <div id="recurringOptions" class="rounded p-3 mt-3 bg-LightCream" style="display: block;">
+<% } else { %>
+  <div id="recurringOptions" class="rounded p-3 mt-3 bg-LightCream" style="display: block;">
+<% } %>
+  
+  <h3 class="title-text mb-3"><i class="fa fa-refresh"></i> Recurring Charge</h3>
+
+  <!-- Frequency -->
+  <label class="form-label">Frequency</label><br>
+  <div class="mb-2 repeat_frequency_wrap">
+    <% recurringFrequency.forEach(function(item) { 
+         const isChecked = (!transaction && item.val === 'daily') ||
+            (transaction && recurringInfo.frequency === item.val);
+    %>
+      <div class="radio_group form-check form-check-inline">
+        <input class="form-check-input repeat-frequency" type="radio" name="recurring_info[frequency]" value="<%= item.val || '' %>" id="<%= item.val || '' %>Freq" <%= isChecked ? 'checked' : '' %> />
+        <label class="radiolabel" for="<%= item.val || '' %>Freq"><%= item.label || '' %></label>
+      </div>
+    <% }) %>
+  </div>
+
+  <!-- Repeat On -->
+  <div id="repeat_on">
+    <label class="form-label w-100">Repeat On</label>
+    <% repeatDays.forEach(function(item, index) { 
+        let isChecked = false;
+        if(transaction && transaction?.recurring){
+            isChecked = selectedRepeatDays.includes(item.val);
+        }else if(!transaction){
+            isChecked = true;
+        }
+    %>
+      <div class="form-group form-check form-check-inline">
+        <input class="form-check-input repeat_on_checkbox" type="checkbox" value="<%= item.val || '' %>" id="<%= item.val || 'key'+index %>" name="recurring_info[repeat_days][]" <%= isChecked %> <%= isChecked ? 'checked' : '' %> />
+        <label class="form-check-label" for="<%= item.val || 'key'+index %>"><%= item.label || '' %></label>
+      </div>
+    <% }) %>
+  </div>
+
+  
+
+  <!-- Repeat Until -->
+  <div class="mb-3 mt-3 repeat_until_wrap">
+    <label for="repeat_until" class="form-label">Repeat until</label>
+    <input type="date" class="form-control" id="repeat_until" name="recurring_info[repeat_until]" 
+      min="<%= moment().format('YYYY-MM-DD') %>" value="<%= repeatUntil %>" />
+
+   <!-- ADD THIS WARNING DIV RIGHT HERE -->
+    <div id="repeatUntilWarning" class="alert alert-warning mt-2" style="display: none;">
+      <small><i class="fa fa-warning"></i> Date exceeds limit. Will end on <span id="maxAllowedDate"></span></small>
+      </div>
+  </div>
+
+  <!-- Monthly Options -->
+  <% if(recurringInfo.frequency == "monthly"){ %>
+    <div class="mb-3" id="monthlyRepeatOptions" style="display: block;">
+  <% }else{ %>
+    <div class="mb-3" id="monthlyRepeatOptions" style="display: none;">
+  <% } %>
+    <label for="repeat" class="form-label">Repeat</label><br>
+    <div class="radio_group form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="recurring_info[recurring_montly_on]" value="monthly_on_date"
+        id="monthly_on_date" <%= recurringMonthlyOn === 'monthly_on_date' ? 'checked' : '' %> />
+      <label class="radiolabel" for="monthly_on_date">Monthly on day <%= moment().format('D') %></label>
+    </div>
+    <div class="radio_group form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="recurring_info[recurring_montly_on]" value="monthly_on_day"
+        id="monthly_on_day" <%= recurringMonthlyOn === 'monthly_on_day' ? 'checked' : '' %> />
+      <label class="radiolabel" for="monthly_on_day">Monthly on the fourth <%= moment().format('dddd') %></label>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,36 @@
+        <div class="card userprofile position-relative">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <% if(loggedUserInfo.role === 1){ %>
+                  <a href="<%=user.role == '1' ?  '/profile' :'/tutors/edit/'+user.id%>" class="preprofile-edit" data-toggle="tooltip" data-placement="top" title="Profile Edit"><img src="/images/edit.svg" alt=""></a>
+                <% } %>
+                <div class="userimage"><img src="<%=user.profile_image !='' ? '/ProfileImage/'+user.profile_image:'/images/userprofile_img.png' %>" alt=""></div>
+                <h4 class="username"><%=user.title+'. '+user.first_name+' '+user.last_name%></h2>
+                <div class="student-status">
+                  <span class="sactive"><%=user.status == 1 ? 'Active' : 'InActive'%></span>
+                  <span class="sadult"><%=user.role == 2 ? 'Tutor' : user.role == 3 ? 'Student' : 'Admin' %></span>
+                  <% if (user.qualification && user.qualification.trim() !== '') { %>
+                    <span class="sadult"><%= user.qualification %></span>
+                  <% } %>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="content">
+                  <p><span><img src="/images/globe.svg" alt="Message"></span><%=user.time_zone%></p>
+
+                  <p><span><img src="/images/msg-icon.svg" alt="Message"></span><%=user.email%></p>
+                  
+                  <p><span><img src="/images/mobile-icon.svg" alt="Phone"></span><%="+"+user.dial_code+' '+user.phone%></p>
+                  
+                  <p><span><img src="/images/home-icon.svg" alt="Address"></span><%=user.address !='' ? user.address: 'N/A' %></p>
+
+                  <p><span><img src="/images/date.svg"  class="img-invert" alt="Calendar Color"></span>Calendar color is<span style="background-color: <%=user.calendar_color%>" class="calc_color"></span></p>
+
+                  <p><span><img src="/images/gender.svg" alt="Gender" class="img-invert"></span><%=user.gender == 1 ? 'Male' : 'Female' %></p>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>

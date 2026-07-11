@@ -1,0 +1,221 @@
+<div class="right_col" role="main">
+  <!-- assessment create page content starts-->
+  <div class="row main_row">
+    <div class="x_panel form_panel">
+      <div class="x_title">
+        <h2 class="title-text">Assign Homework </h2>
+      </div>
+      <div class="x_content">
+        <form id="storeAssessment" action="./store" method="post" class="form-horizontal form-label-left assessment-main-block">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="assessment">Homework Name<span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/assessment.svg" class="mCS_img_loaded"></span>
+                  <input type="text" name="name" class="form-control"  autocomplete="off" id="assessment_name" placeholder="Assessment Name">
+                </div>
+              </div>
+            </div>
+
+            <% if(loggedUserInfo.role == 1) { %>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-form-label label-align" for="tutor_id">Tutor <span class="required">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                    <select class="form-control select2" name="tutor_id" id="tutor" tabindex="-1" single>
+                      <option value="">Select Tutor</option>
+                      <% for(tutor of tutors) { %>
+                        <option value="<%=tutor.id%>">
+                          <%=tutor.first_name+' '+tutor.last_name %>
+                        </option>
+                        <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="student_id">Students <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" name="student_ids[]" id="student_id" tabindex="-1" data-placeholder="Select Students" multiple>
+                    <% for(student of students) { %>
+                      <option value="<%=student.id%>">
+                        <%=student.first_name+' '+student.last_name %>
+                      </option>
+                      <% } %>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="date">Date<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                  <input type="text" name="date" class="form-control" placeholder="Enter Date" id="datepicker">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="assessment_type">Task Type <span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" name="task_types" id="assessment_type" tabindex="-1" multiple>
+                    <option value="1">Practices</option>
+                    <option value="2">Challenges</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="apply_duration" value="1" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="apply_duration">
+                  Apply Duration
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row content_form" style="display: none;">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="select_lesson">Grade <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" data-placeholder="Select A Grade" id="sc_grade" tabindex="-1" single>
+                    <% for(grade of activeGrades) { %>
+                      <option value="<%=grade.id%>">
+                        <%=grade.name%>
+                      </option>
+                      <% } %>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="select_lesson">Topic <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" data-placeholder="Select A Topic" id="sc_topic" tabindex="-1" single>
+                    <% for(topic of activeTopics) { %>
+                      <option value="<%=topic.id%>">
+                        <%=topic.name%>
+                      </option>
+                      <% } %>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="select_lesson">Sub Topic<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" data-placeholder="Select Sub Topic" id="sc_sub_topic" tabindex="-1" single>
+                    <option value="">Select A Topic</option>
+                    <!-- <% for(topic of activeTopics) { %>
+                      <option value="<%=topic.id%>">
+                        <%=topic.name%>
+                      </option>
+                      <% } %> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="select_lesson">Learning Content <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" data-placeholder="Select Learning Content" id="assignedLearningContents" tabindex="-1" single>
+                    <option value="">Select Learning Content</option>
+                    <!-- <% for(learningContent of learningContents){ %>
+                      <option value="<%=learningContent._id%>">
+                        <%=learningContent.title%>
+                      </option>
+                      <% } %> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="select_lesson">Lessons<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2" data-placeholder="Select Lessons" id="assignedLessons" tabindex="-1"
+                    multiple>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="assessment_option">Content<span
+                    class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <select class="form-control select2 challenges" data-placeholder="Select Content" id="assessment_content"
+                    tabindex="-1" multiple>
+                    
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="d-block">&nbsp;</span>
+              </label>
+              <button type="button" class="content-submit theme-btn" id="add_content">Add Content</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mt-4">
+              <h2 class="title-text fn-16">Homework Content</h2>
+            </div>
+            <div class="col-sm-12">
+              <ul class="selectedcontent sortable select-assessment" id="select-assessment">
+              </ul>
+            </div>
+          </div>
+
+          <div class="ln_solid"></div>
+          <div class="text-right">
+            <button type="submit" id="storeAssessmentBtn" class="btn theme-btn" style="display: none;">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- assessment create page content end -->
+</div>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+  <%- include('./partials/create_script'); %>

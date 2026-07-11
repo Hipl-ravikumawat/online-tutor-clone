@@ -1,0 +1,97 @@
+<div class="modal fade common-modal" data-backdrop="static" id="StudentNotes" tabindex="-1" role="dialog" aria-labelledby="StudentNotesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="StudentNotesLabel">Group Notes</h3>
+      </div>
+      <!-- group notes form -->
+      <form class="modal-form-area common-form" id="store-event-group-notes" method="post" action="/attendance-notes/store-event-group-note" enctype="multipart/form-data">
+        <input type="hidden" name="event_id" value="<%= fetchedEvent?.id || fetchedEvent?._id || '' %>">
+        <input type="hidden" name="type" value="student_note" class="note-type">
+        <input type="hidden" name="note_id" value="" class="gp_note_id">
+        <div class="modal-body settings_content">
+          <div class="lesson_details pt-1">
+            <div class="form-group">
+              <label class="mb-1">
+                <div class="select-menu">
+                  <div class="select-btn">
+                    <span class="sBtn-text">Student Notes</span>
+                  </div>
+                  <small class="sub_select_text" data-type="student_note">Visible to this student & their parent(s)</small>
+                  <ul class="select-options">
+                    <li class="option">
+                      <span class="option-text">Student Notes</span>
+                      <small class="option-smalltext" data-type="student_note">Visible to this student & their parent(s)</small>
+                    </li>
+                    <li class="option">
+                      <span class="option-text">Parent Notes</span>
+                      <small class="option-smalltext" data-type="parent_note">Visible to this student's parent(s) only</small>
+                    </li>
+                    <li class="option">
+                      <span class="option-text">Private Notes</span>
+                      <small class="option-smalltext" data-type="tutor_note">Visible only to you</small>
+                    </li>
+                  </ul>
+                </div>
+              </label>
+              <div class="dropdown right-simdrop">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Templates</button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <h6>Shared Templates</h6>
+                    <ul>
+                      <% for(let template of templates) { %> 
+                      <li><a class="dropdown-item" href="javascript:void(0)" data-id="<%=template._id%>"><%=template.name%></a></li>
+                      <% } %> 
+                      </ul>
+                    <span class="edit_cate_dropbtn">
+                      <a href="/attendance-notes/note-templates" class="btn theme-btn">Edit Templates</a>
+                    </span>
+                </div>
+              </div>
+              <textarea class="event-note" name="event_note" id="event_note"></textarea>
+            </div>
+
+            <%- include('../partials/linked_group_attachments.ejs'); %>
+
+            <div class="form-group">
+              <label>Attachments a file</label>
+              <small>(Only .jpg, .png .mp4 .mp3 .pdf .docx .xlsx and .csv formats are allowed!)</small>
+              <div class="needsclick dropzone" id="Modalnotes-dropzone"></div>
+            </div>
+            <div class="form-group">
+              <label class="mb-2">Email Lesson Notes</label>
+              <ul class="settinglist mt-0">
+                  <li class="w-auto">
+                      <div class="form-check">
+                          <input type="checkbox" name="email_to_all_attendees" id="email_to_all_attendees" value="1" class="form-check-input">
+                          <label class="form-check-label fw-400" for="email_to_all_attendees">All student emails</label>
+                      </div>
+                  </li>
+                  <li class="w-auto">
+                      <div class="form-check">
+                          <input type="checkbox" name="email_to_all_parents" id="email_to_all_parents" value="1" class="form-check-input">
+                          <label class="form-check-label fw-400" for="email_to_all_parents">All parent emails</label>
+                      </div>
+                  </li>
+                  <li class="w-auto">
+                      <div class="form-check">
+                          <input type="checkbox" name="email_to_tutor_only" id="email_to_tutor_only" value="1" class="form-check-input">
+                          <label class="form-check-label fw-400" for="email_to_tutor_only">Myself Only</label>
+                      </div>
+                  </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="btn-leftarea">
+          </div>
+          <div class="btn-rightarea">
+            <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+            <button type="submit" class="btn theme-btn">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

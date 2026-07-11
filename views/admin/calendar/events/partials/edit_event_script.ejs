@@ -1,0 +1,985 @@
+<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+<script type="text/javascript">
+  /**
+  * edit event page script.
+  * @script start
+  * */
+
+  async function checkTutorLeaveAPI(eventData) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: "POST",
+        url: "/calendar/check-tutor-leave",
+        data: eventData,
+        dataType: "json",
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  function formatDisplayDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  async function checkAndDisplayLeaveWarningEdit() {
+    const tutorId = $("#tutor_id").val();
+    const substituteTutorId = $("#substitute_tutor_id").val();
+    const startDate = $("#start_date").val();
+    const willRepeat = $("#will_repeat").is(":checked");
+    const recurringType = $('input[name="recurring_type"]:checked').val();
+    const noOfWeek = $("#no_of_week").val();
+    const noOfFortnightly = $("#no_of_fortnightly").val();
+    const repeatIndefinitely = $("#repeat_indefinitely").is(":checked");
+    const repeatUntilDate = repeatIndefinitely ? null : $("#repeat_until_end_date").val();
+
+    if (!tutorId || !startDate) {
+      return;
+    }
+
+    try {
+      const leaveCheck = await checkTutorLeaveAPI({
+        tutor_id: tutorId,
+        substitute_tutor_id: substituteTutorId,
+        start_date: startDate,
+        is_recurring: willRepeat,
+        recurring_type: recurringType,
+        no_of_week: noOfWeek,
+        no_of_fortnightly: noOfFortnightly,
+        repeat_until_date: repeatUntilDate
+      });
+
+      if (leaveCheck.hasConflict) {
+        // Format conflict message for modal
+        let conflictHtml = '<div class="time_zone_warning">';
+        const mainConflicts = leaveCheck.conflicts.filter(c => c.tutor_type === 'main');
+        const subConflicts = leaveCheck.conflicts.filter(c => c.tutor_type === 'substitute');
+
+        if (mainConflicts.length > 0) {
+          conflictHtml += '<div class="main_stud_info">';
+          conflictHtml += '<h6>Tutor Leave Conflict:</h6>';
+          conflictHtml += '<ul class="stud_info">';
+          mainConflicts.forEach(c => {
+            const leaveRange = c.start_date === c.end_date
+              ? formatDisplayDate(c.date)
+              : `${formatDisplayDate(c.start_date)} to ${formatDisplayDate(c.end_date)}`;
+            conflictHtml += `<li><strong>${formatDisplayDate(c.date)}</strong> - Leave period: ${leaveRange}</li>`;
+            conflictHtml += `<li><strong>Reason:</strong> ${c.note} </li>`;
+          });
+          conflictHtml += '</ul>';
+          conflictHtml += '</div>';
+        }
+
+        if (subConflicts.length > 0) {
+          conflictHtml += '<div class="main_stud_info">';
+          conflictHtml += '<h6>Substitute Tutor Leave Conflict:</h6>';
+          conflictHtml += '<ul class="stud_info">';
+          subConflicts.forEach(c => {
+            const leaveRange = c.start_date === c.end_date
+              ? formatDisplayDate(c.date)
+              : `${formatDisplayDate(c.start_date)} to ${formatDisplayDate(c.end_date)}`;
+            conflictHtml += `<li><strong>${formatDisplayDate(c.date)}</strong> - Leave period: ${leaveRange} Reason: ${c.note}</li>`;
+          });
+          conflictHtml += '</ul>';
+          conflictHtml += '</div>';
+        }
+
+        conflictHtml += '<p class="mt-3 mb-0">Do you still want to proceed with creating this event?</p></div>';
+
+        // Show modal instead of SweetAlert
+        $('#tutorLeaveModalBodyEdit').html(conflictHtml);
+        $('#tutorLeaveModalEdit').modal('show');
+      }
+    } catch (error) {
+      console.error('Error checking leave:', error);
+    }
+  }
+
+  $(document).ready(function () {
+    $(".multiple-classes").select2({
+      placeholder: "Select Classes",
+      allowClear: false,
+    });
+
+    $(".single-select").select2({
+      allowClear: false,
+    });
+
+    $("#student_ids").select2({
+      placeholder: "Select Attendees",
+      allowClear: false
+    });
+
+    var today = new Date();
+    $('.date-picker').daterangepicker({
+      singleDatePicker: true,
+      showDropdowns: true,
+      minYear: today.getFullYear(),
+      maxYear: today.getFullYear() + 1,
+      locale: { format: 'DD MMM YYYY' }
+    });
+
+    let repeatUnTill = '<%=data.final_end_date%>';
+
+    repeatUnTill = formatDate(repeatUnTill, 'DD-MM-YYYY');
+    $('#repeat_until_end_date').val(repeatUnTill);
+
+    $('.time-picker').datetimepicker({
+      allowInputToggle: true, keepOpen: true, useCurrent: false,
+      format: 'hh:mm A',
+      stepping: 5
+    }).on('dp.show', function () { });
+
+    $('.time-picker').on('keydown', function (e) {
+      e.preventDefault();
+    });
+
+    // $('#duration').on('keydown', function (e) {
+    //   e.preventDefault();
+    // });
+
+    $("#tutor_id").on("change", function () {
+      getSubstituteTutors();
+    });
+
+    const $duration = $('#duration');
+    const $durationValue = $('.duration-value');
+
+    $duration.on('input', function () {
+      let minutes = $(this).val();
+
+      if (minutes) {
+        $durationValue.html(`(In Minutes) ${minutes}`);
+      } else {
+        $durationValue.html(`(In Minutes)`);
+      }
+    });
+
+    $("#tutor_id, #substitute_tutor_id, #start_date, #will_repeat, input[name='recurring_type'], #no_of_week, #no_of_fortnightly, #repeat_until_end_date, #repeat_indefinitely").on('change blur', function () {
+      setTimeout(function () {
+        checkAndDisplayLeaveWarningEdit();
+      }, 500);
+    });
+
+    $('#start_date').on('change', function () {
+      checkAndDisplayLeaveWarningEdit();
+    });
+
+    // Initial check if fields are pre-filled
+    if ($("#tutor_id").val() && $("#start_date").val()) {
+      setTimeout(function () {
+        checkAndDisplayLeaveWarningEdit();
+      }, 1000);
+    }
+
+    function submitEditForm(updateOption) {
+  let hasIgnoreConflictCheckbox = $('#conflict_area').length;
+  let isIgnoreConflictChecked = hasIgnoreConflictCheckbox == 1 && $('#ignore_conflict').prop('checked');
+  $(document).find("span.text-danger").remove();
+
+  if (hasIgnoreConflictCheckbox == 1 && isIgnoreConflictChecked != undefined && !isIgnoreConflictChecked) {
+    $(document).find('[id=ignore_conflict]').next().after('<span class="help-block text-danger">Please check "Ignore Conflict" to proceed further.</span></br>');
+    return false;
+  }
+
+  $('.update-event').prop('disabled', true);
+
+  // Function to format selected options
+  function formatSelectedOptions() {
+    let formattedDataArray = [];
+    let hasValidContent = false;
+
+    $('input[name="selected_contents[]"]').each(function () {
+      const split = $(this).val().split('--');
+      if (split[0] && split[1]) {
+        formattedDataArray.push({
+          learning_content_id: split[0],
+          lesson_id: split[1],
+          is_default: true,
+          is_skipped: false,
+          status: 'N/A'
+        });
+        hasValidContent = true;
+      }
+    });
+
+    return hasValidContent ? formattedDataArray : [];
+  }
+
+  // Format default and additional selected options
+  let formattedDataArray = formatSelectedOptions();
+  let finalArray = [...formattedDataArray];
+
+  let durationMinutes = $('#duration').val();
+
+  function convertMinutesToHHMM(minutes) {
+    minutes = parseInt(minutes) || 0;
+    let hours = Math.floor(minutes / 60);
+    let mins = minutes % 60;
+    hours = hours.toString().padStart(2, '0');
+    mins = mins.toString().padStart(2, '0');
+    return hours + ":" + mins;
+  }
+
+  let formattedDuration = durationMinutes ? convertMinutesToHHMM(durationMinutes) : '';
+  let form = $('#update-an-event');
+  let formData = new FormData(form[0]);
+
+  if (formattedDuration) {
+    formData.set('duration', formattedDuration);
+  }
+
+  formData.append('courses', JSON.stringify(finalArray));
+  $(document).find('.error-msg-rec-event').html('');
+
+  let url = form.attr('action');
+  const selectedAttendees = $('#student_ids').find('option:selected');
+  const studentIds = selectedAttendees.map(function () {
+    return $(this).val();
+  }).get();
+
+  formData.append('student_ids', JSON.stringify(studentIds));
+  formData.append('update_option', updateOption);
+
+  $.ajax({
+    type: "POST",
+    url: url,
+    dataType: "json",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function (response) {
+      if (response.success) {
+        window.location.href = response.redirectUrl;
+      }
+    },
+    error: function (response) {
+      // console.log(response, "response");
+      if (response.status === 500) {
+        if (response.responseJSON.conflictMessage !== undefined && response.responseJSON.conflictMessage != '') {
+          $('#conflict_area').html(response.responseJSON.conflictMessage);
+          $('#total-conflict').html(response.responseJSON.totalConflicts);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: response.responseJSON.message
+          });
+
+          setTimeout(() => {
+            if (response.responseJSON.redirectUrl === 'page-reload') {
+              window.location.reload();
+            } else {
+              window.location.href = response.responseJSON.redirectUrl;
+            }
+          }, 2000);
+        }
+      } else {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          if (error.param == 'recurring_type') {
+            $(document).find('.error-msg-rec-event').html('<span class="help-block text-danger">' + error.msg + '</span>');
+          } else {
+            $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+          }
+        });
+      }
+    },
+    complete: function () {
+      $('.update-event').prop('disabled', false);
+    }
+  });
+}
+    /*--------------submit form----------------------*/
+   $(document).on('click', '.update-event', async function (e) {
+  e.preventDefault();
+
+  const tutorId = $("#tutor_id").val();
+  const substituteTutorId = $("#substitute_tutor_id").val();
+  const startDate = $("#start_date").val();
+  const willRepeat = $("#will_repeat").is(":checked");
+  const recurringType = $('input[name="recurring_type"]:checked').val();
+  const noOfWeek = $("#no_of_week").val();
+  const noOfFortnightly = $("#no_of_fortnightly").val();
+  const repeatIndefinitely = $("#repeat_indefinitely").is(":checked");
+  const repeatUntilDate = repeatIndefinitely ? null : $("#repeat_until_end_date").val();
+
+  const leaveWarningAcknowledged = $("#leave_warning_acknowledged_field").val() === '1';
+
+  if (tutorId && !leaveWarningAcknowledged) {
+    try {
+      const leaveCheck = await checkTutorLeaveAPI({
+        tutor_id: tutorId,
+        substitute_tutor_id: substituteTutorId,
+        start_date: startDate,
+        is_recurring: willRepeat,
+        recurring_type: recurringType,
+        no_of_week: noOfWeek,
+        no_of_fortnightly: noOfFortnightly,
+        repeat_until_date: repeatUntilDate
+      });
+
+      if (leaveCheck.hasConflict) {
+        // Format conflict message for modal
+        let conflictHtml = '<div class="time_zone_warning">';
+        const mainConflicts = leaveCheck.conflicts.filter(c => c.tutor_type === 'main');
+        const subConflicts = leaveCheck.conflicts.filter(c => c.tutor_type === 'substitute');
+
+        if (mainConflicts.length > 0) {
+          conflictHtml += '<div class="main_stud_info">';
+          conflictHtml += '<h6>Main Tutor Leave Conflict:</h6>';
+          conflictHtml += '<ul class="stud_info">';
+          mainConflicts.forEach(c => {
+            const leaveRange = c.start_date === c.end_date
+              ? formatDisplayDate(c.date)
+              : `${formatDisplayDate(c.start_date)} to ${formatDisplayDate(c.end_date)}`;
+            conflictHtml += `<li><strong>${formatDisplayDate(c.date)}</strong> - Leave period: ${leaveRange} Reason: ${c.note}</li>`;
+          });
+          conflictHtml += '</ul>';
+          conflictHtml += '</div>';
+        }
+
+        if (subConflicts.length > 0) {
+          conflictHtml += '<div class="main_stud_info">';
+          conflictHtml += '<h6>Substitute Tutor Leave Conflict:</h6>';
+          conflictHtml += '<ul class="stud_info">';
+          subConflicts.forEach(c => {
+            const leaveRange = c.start_date === c.end_date
+              ? formatDisplayDate(c.date)
+              : `${formatDisplayDate(c.start_date)} to ${formatDisplayDate(c.end_date)}`;
+            conflictHtml += `<li><strong>${formatDisplayDate(c.date)}</strong> - Leave period: ${leaveRange} Reason: ${c.note}</li>`;
+          });
+          conflictHtml += '</ul>';
+          conflictHtml += '</div>';
+        }
+
+        conflictHtml += '<p class="mt-3 mb-0">Do you still want to proceed with creating this event?</p></div>';
+
+        // Store the update option value
+        const updateOptionValue = $(this).val();
+
+        // Show modal
+        $('#tutorLeaveModalBodyEdit').html(conflictHtml);
+        
+        // IMPORTANT: Remove existing handler and bind new one
+        
+
+        // Show the modal
+        $('#tutorLeaveModalEdit').modal('show');
+
+        $('.update-event').prop('disabled', false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error checking tutor leave:', error);
+    }
+  }
+
+  // Proceed with normal submission
+  const updateOption = $(this).val();
+  submitEditForm(updateOption);
+});
+$('#proceedWithLeaveBtnEdit').on('click', function() {
+          $('#tutorLeaveModalEdit').modal('hide');
+          // Add the acknowledgment flag
+          if ($('#leave_warning_acknowledged_field').length === 0) {
+            $('#update-an-event').append('<input type="hidden" id="leave_warning_acknowledged_field" name="leave_warning_acknowledged" value="1">');
+          }
+          // Trigger the submission
+          submitEditForm(updateOptionValue);
+        });
+
+    /*--------------submit form----------------------*/
+    // Function to show selected content preview and update content listing
+    function updateContentListing() {
+      $('.selected-content-preview').show();
+      let templateType = $(this).data('type');
+      let selectedOption = $(this).find("option:selected:last");
+      let optionText = selectedOption.text();
+      let learningContentName = selectedOption.attr('data-learning-content-title');
+      let optionId = selectedOption.val();
+
+      let attributesArray = getContentListingIds();
+      if (attributesArray.includes(optionId) === false && optionText !== '') {
+        appendToContentListing(optionId, learningContentName, optionText, templateType);
+      }
+    }
+
+    // Function to get all data-lesson-id attributes from content listing
+    function getContentListingIds() {
+      return $('.content-listing li').map(function () {
+        return $(this).attr('data-lesson-id');
+      }).get();
+    }
+
+    // Function to add weeks to a date
+    function addWeeksToDate(date, weeks) {
+      const newDate = new Date(date.getTime());
+      newDate.setDate(newDate.getDate() + weeks * 7);
+      return newDate;
+    }
+
+    // Function to add 14 days to a date
+    function addFortnightlyToDate(date, fortnightly) {
+      const newDate = new Date(date.getTime());
+      newDate.setDate(newDate.getDate() + fortnightly * 14);
+      return newDate;
+    }
+
+    // Function to remove deselected content preview and update content listing
+    $(".classes-content,.more-content").on("select2:unselecting", function (e) {
+      var lastDeselectedValue = e.params.args.data.id;
+      let attributesArray = getContentListingIds();
+      if (attributesArray.includes(lastDeselectedValue) === true) {
+        var matchingLI = $('ul.content-listing li[data-lesson-id=' + lastDeselectedValue + ']');
+        matchingLI.remove();
+      }
+    });
+
+    // Function to append a new item to the content listing
+    function appendToContentListing(optionId, learningContentName, optionText, templateType) {
+      $('.content-listing').append(`
+          <li data-lesson-id="${optionId}">
+              <div class="select_less_icon">
+                  <img src="/images/${templateType == 'default' ? 'classes2.svg' : 'more-files.svg'}" alt="" class="img-fluid">
+              </div>
+              <div class="select_less_content">
+                  <h5>${optionText} ${templateType == 'default' ? '<span class="default-course" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Default Lesson">D</span>' : ''} </h5>
+                  <p>${learningContentName}</p>
+              </div>
+              <div class="select_lessprev_close" data-id="${optionId}">
+                  <a href="javascript:void(0)">
+                      <img src="/images/close.svg" alt="">
+                  </a>
+              </div>
+          </li>
+      `);
+      $('[data-toggle="tooltip"]').tooltip('dispose');
+      $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    $(document).on("click change", ".dt-scheduling-conflict", function () {
+      $('#conflict_area').html("");
+    });
+
+    // Remove the specified value from the given selector
+    function removeValueFromSelector(selector, valueToRemove) {
+      let selectedValues = $(selector).val() || [];
+      selectedValues = selectedValues.filter(value => value !== valueToRemove);
+      $(selector).val(selectedValues).trigger('change');
+    }
+
+    // Remove selected value from content listing
+    function removeSelectedValue(valueToRemove) {
+      removeValueFromSelector('.classes-content', valueToRemove);
+      removeValueFromSelector('.more-content', valueToRemove);
+    }
+
+    $('.classes-content').change(updateContentListing);
+    $('.more-content').change(updateContentListing);
+
+    $(document).on('click', '.select_lessprev_close', function () {
+      let value = $(this).data('id');
+      $(this).parent().remove();
+      removeSelectedValue(value);
+    });
+
+    $(document).on('click', '.clear-all', function () {
+      $('.content-listing').html('');
+      $('.classes-content,.more-content').val(null).trigger('change');
+    });
+
+    $('.add-more-content').click(function () {
+      $('.more-content-section').show();
+    });
+
+    function getSubstituteTutors() {
+      $('#substitute_tutor_id').empty();
+      const selected_tutor_id = $("#tutor_id").val();
+      if (selected_tutor_id != '') {
+        $.ajax({
+          type: "POST",
+          url: '/calendar/render-substitute-tutors',
+          data: { main_tutor_id: selected_tutor_id, },
+          success: function (response) {
+            if (response.length > 0) {
+              let defaultOption = new Option("Select A Substitute Tutor", "", false, false);
+              $('#substitute_tutor_id').append(defaultOption);
+              response.forEach(tutor => {
+                const tutorName = `${tutor.first_name} ${tutor.last_name}`;
+                const newOption = new Option(tutorName, tutor._id, false, false);
+                $('#substitute_tutor_id').append(newOption);
+              });
+              $('#substitute_tutor_id').trigger('change');
+            } else {
+              $('#substitute_tutor_id').html('No substitute found.');
+            }
+          },
+          error: function () {
+            $('#substitute_tutor_id').html('<option>Error loading substitutes. Please try again later.</option>');
+          }
+        });
+      }
+    }
+
+    //Get eventDate from sessionStorage
+    let eventDate = getSessionStorage('eventDate');
+    if (eventDate !== null && eventDate !== undefined) {
+      // var formattedDate = formatDate(eventDate, 'YYYY-MM-DD');
+      // $("#start_date").val(formattedDate);
+      removeSessionStorage('eventDate');
+    }
+
+    const eventType = $("#will_repeat").attr('data-event-type');
+    const isParent = $("#will_repeat").attr('data-event-parent');
+    const updateThisButtonHtml = '<button type="submit" name="update_event_option" value="this_one_only" class="btn theme-btn mb-2 update-event" id="update-single-event">Update This Event</button>';
+
+    $(document).on('change', '#will_repeat', function (e) {
+      const willRepeat = $(this).is(":checked");
+      if (eventType === 'recurring' && !willRepeat) {
+        $(".submission-buttons #update-single-event").remove();
+      }
+      if (eventType === 'recurring' && willRepeat) {
+        $(".submission-buttons").append(updateThisButtonHtml);
+      }
+    });
+
+    const orgFrequencyType = "<%=data.recurring_info[0]?.recurring_type ?? 'none' %>";
+    const orgNoOfRecurrence = "<%=data.recurring_info[0]?.no_of_recurring ?? 0 %>";
+    const orgRepeatIndefinitely = "<%=data.recurring_info[0]?.repeat_indefinitely ?? false %>";
+
+    let newEventFrequency;
+    $(".event_frequency").on('change', function (e) {
+      newEventFrequency = $(this).val();
+      if (eventType !== 'single') {
+        if (orgFrequencyType !== newEventFrequency) {
+          $(".submission-buttons #update-single-event").remove();
+        } else {
+          $(".submission-buttons").append(updateThisButtonHtml);
+        }
+      }
+    });
+
+    $(".recurring_count").on('keyup change', function (e) {
+      let start_date = new Date($('#start_date').val());
+      const checkedRadio = $('.recurring_count[type="radio"]:checked');
+      const parentFormCheck = checkedRadio.closest('.form-check');
+      const numberInput = parentFormCheck.find('.recurring_count[type="number"]');
+      const numberInputValue = numberInput.val();
+      let interval = numberInputValue - 1;
+      const selectedVal = $('.event_frequency:checked').val();
+      let endDate;
+      if (selectedVal == "weekly") {
+        endDate = addWeeksToDate(start_date, interval);
+      }
+      else {
+        endDate = addFortnightlyToDate(start_date, interval);
+      }
+
+      let newDate = new Date(endDate);
+      newDate = formatDate(newDate, 'DD-MM-YYYY');
+      $('#repeat_until_end_date').val(newDate);
+      $('#repeat_until_end_date').prop('disabled', true)
+
+      newNoOfRecurrence = $(this).val();
+
+      let repeatInfiniteFlag = false;
+      if ($('#repeat_indefinitely').is(':checked')) {
+        repeatInfiniteFlag = true;
+      } else {
+        repeatInfiniteFlag = false;
+      }
+
+      if (eventType !== 'single') {
+        if ((orgNoOfRecurrence != parseInt(newNoOfRecurrence)) || (orgFrequencyType != newEventFrequency) || (orgRepeatIndefinitely !== repeatInfiniteFlag)) {
+          $(".submission-buttons #update-single-event").remove();
+        }
+
+        if (orgNoOfRecurrence == parseInt(newNoOfRecurrence) && orgFrequencyType == newEventFrequency) {
+          $(".submission-buttons").append(updateThisButtonHtml);
+        }
+      }
+    });
+
+    $('input[name="recurring_type"]').on('change', function () {
+      if ($('input[name="recurring_type"]:checked').length > 0) {
+        $('#recurringSettings').addClass('show_repeat_indefinitely');
+      } else {
+        $('#recurringSettings').removeClass('show_repeat_indefinitely');
+      }
+    });
+
+    $(document).ready(function () {
+      function updateClassBasedOnInput() {
+        let checkedInput = $('input[name="recurring_type"]:checked').closest('.radio_group').find('input[type="number"]');
+        let otherInputs = $('input[name="recurring_type"]:not(:checked)').closest('.radio_group').find('input[type="number"]');
+        let radioGroup = checkedInput.closest('.event-repeat-area');
+
+        otherInputs.val('');
+
+        let checkedValue = checkedInput.val();
+        if (checkedValue && checkedValue > 1) {
+          radioGroup.addClass('show_repeat_until');
+        } else {
+          radioGroup.removeClass('show_repeat_until');
+        }
+      }
+
+      $('#no_of_week, #no_of_fortnightly').on('input', function () {
+        updateClassBasedOnInput();
+      });
+
+      $('input[name="recurring_type"]').on('change', function () {
+        updateClassBasedOnInput();
+      });
+    });
+
+    $(document).ready(function () {
+      function updateClass() {
+        var checkbox = $('#repeat_indefinitely');
+        var container = checkbox.closest('.event-repeat-area');
+
+        if (checkbox.is(':checked')) {
+          container.removeClass('show_repeat_until');
+          container.removeClass(' hide_radio_input');
+          container.addClass(' indefinitely_event');
+        } else {
+          container.addClass(' show_repeat_until');
+          container.removeClass('indefinitely_event');
+        }
+      }
+
+      updateClass();
+      $('#repeat_indefinitely').on('change', function () {
+        updateClass();
+      });
+    });
+
+    // --------- This event repeats flow Start End -------
+
+    /**
+     * Filter content 
+     */
+    $(document).on('click', '.clear-all', function () {
+
+        $('.selectedcontent .sort-program').each(function () {
+
+            let slideScore = parseInt($(this).attr('data-slide-score')) || 0;
+
+            // Remove only score 0 contents
+            if (slideScore <= 0) {
+                $(this).remove();
+            }
+        });
+
+        // Re-index numbering
+        $('.selectedcontent .sort-program').each(function(index){
+            $(this).find('.list_number').text((index + 1) + '.');
+        });
+
+        // Update total count
+        $('.event_total').text($('.selectedcontent .sort-program').length);
+    });
+
+    function getSubTopics(topicId) {
+      $('#sc_sub_topic').empty();
+      $.ajax({
+        type: "POST",
+        url: '/sub-topics/render-subtopics',
+        data: { id: topicId, },
+        success: function (response) {
+          if (response.length > 0) {
+            const defaultOption = new Option("Select Sub Topic", "", false, false);
+            $('#sc_sub_topic').append(defaultOption);
+            response.forEach(res => {
+              const option = new Option(res.name, res._id, false, false);
+              $('#sc_sub_topic').append(option);
+            });
+            $('#sc_sub_topic').trigger('change');
+          } else {
+            $('#sc_sub_topic').html('No subtopics found.');
+          }
+        },
+        error: function () {
+          $('#sc_sub_topic').html('<option>Error loading subtopics. Please try again later.</option>');
+        }
+      });
+    }
+
+    $('#sc_topic').change(function () {
+      let topicId = $(this).val().trim();;
+      if (topicId !== '') {
+        getSubTopics(topicId);
+      }
+    });
+
+    function getLearningContents() {
+      let grade = $('#sc_grade').val().trim();
+      let topic = $('#sc_topic').val().trim();
+      let subTopic = $('#sc_sub_topic').val();
+      if (subTopic === "") {
+        subTopic = null;
+      }
+      $('#sc_learning_content').empty();
+      if (grade != '' && topic != '') {
+        $.ajax({
+          type: "POST",
+          url: '/learning-content/render-contents',
+          data: {
+            grade_id: grade,
+            topic_id: topic,
+            sub_topic_id: subTopic,
+          },
+          success: function (response) {
+            $('#sc_learning_content').empty();
+            if (response.length > 0) {
+              $("#sc_learning_content").select2({ placeholder: "Select Learning Content" });
+              let newOptions = new Option("Select Learning Content", "", false, false);
+              $('#sc_learning_content').append(newOptions);
+              response.forEach(res => {
+                newOption = new Option(res.title, res._id, false, false);
+                $('#sc_learning_content').append(newOption);
+              });
+              $('#sc_learning_content').trigger('change');
+            } else {
+              $('#sc_learning_content').html('No learning contents found.');
+            }
+          },
+          error: function () {
+            $('#sc_learning_content').html('<option>Error loading learning contents. Please try again later.</option>');
+          }
+        });
+      }
+    }
+
+    $(".filter-content").change(function () {
+      getLearningContents();
+    });
+
+
+    $("#sc_learning_content").change(function () {
+      let selectedLearningContent = $(this).val().trim();
+      let learningContentId = $('#sc_learning_content').val().trim();
+      if (selectedLearningContent !== '') {
+        $('#sc_lessons').empty();
+        $.ajax({
+          type: "POST",
+          url: '/learning-content/render-content-detail',
+          data: {
+            content_id: selectedLearningContent,
+          },
+          success: function (response) {
+            if (response.lesson_ids.length > 0) {
+              response.lesson_ids.forEach(function (lesson) {
+                var option = $("<option></option>");
+                option.val(lesson._id);
+                option.text(lesson.title);
+                option.attr('data-contentId', learningContentId);
+                option.attr('data-lessonId', lesson._id);
+                option.attr('data-lesson', lesson.title);
+                $('#sc_lessons').append(option);
+              });
+            } else {
+              $('#sc_lessons').html('No lessons found.');
+            }
+          },
+          error: function () {
+            $('#sc_lessons').html('<option>Error loading lessons. Please try again later.</option>');
+          }
+        });
+      }
+    });
+
+    $("#add_content").click(function () {
+      let fcGrade = $("#sc_grade").val();
+      let fcTopic = $("#sc_topic").val();
+      let fcLearningContentLength = $("#sc_learning_content").find('option:selected').length;
+      let fcLearningContent = $("#sc_learning_content").val();
+      let fcLessonsLength = $("#sc_lessons").find('option:selected').length;
+      let fcLessons = $("#sc_lessons").val();
+      let validationFlag = false;
+      let element;
+
+      if (fcGrade === '') {
+        validationFlag = true;
+        element = 'sc_grade';
+      }
+      else if (fcTopic === '') {
+        validationFlag = true;
+        element = 'sc_topic';
+      }
+      else if (fcLearningContent === undefined || fcLearningContent == '' || fcLearningContent == null) {
+        validationFlag = true;
+        element = 'learning_content';
+      }
+      else if (fcLessonsLength < 1) {
+        validationFlag = true;
+        element = 'lessons';
+      }
+
+      $('.error').remove();
+      if (validationFlag) {
+        $('#' + element).parent().closest('.form-group').append(`<span class="error" style="color:red;">This field required.</span>`);
+        $('#' + element).focus();
+        return false;
+      }
+
+      let fcGradeName = $("#sc_grade option:selected").text();
+      let fcTopicName = $("#sc_topic option:selected").text();
+      let fcSubTopicName = $("#sc_sub_topic option:selected").text();
+      let fcLearningContentName = $("#sc_learning_content option:selected").text();
+
+      if (fcGradeName !== 'Select Grade' && fcTopicName !== 'Select Topic' && fcLearningContentName !== 'Select Learning Content') {
+        let subTopicBreadcrumb = ''
+        if (fcSubTopicName && fcSubTopicName !== 'Select Sub Topic') {
+          subTopicBreadcrumb = '<li class="breadcrumb-item">' + fcSubTopicName + '</li>';
+        }
+
+        Swal.fire({
+          title: "Add Lesson",
+          text: "Do you want to add these lessons?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: `Add`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            let selectedContentLength = parseInt($('.selectedcontent > li').length);
+            if (selectedContentLength > 0) {
+              contentIndex = selectedContentLength + 1;
+            }
+            else {
+              contentIndex = 1;
+            }
+
+            for (lessonValue of fcLessons) {
+              let learningContentId = $("#sc_lessons option[value=" + lessonValue + "]").attr('data-contentId');
+              let lessonId = $("#sc_lessons option[value=" + lessonValue + "]").attr('data-lessonId');
+              let lessonName = $("#sc_lessons option[value=" + lessonValue + "]").attr('data-lesson');
+              let selectedContent = $("#sc_lessons option[value=" + lessonValue + "]").text();
+              let lessonContentType = $("#sc_lessons option[value=" + lessonValue + "]").attr('data-type');
+              let icon = '/images/lesson.svg';
+              let type = '';
+
+              if (lessonContentType === 'slide') {
+                icon = '/images/basic.svg';
+                type = 'slide';
+              }
+
+              if (lessonContentType === 'practice') {
+                icon = '/images/practice1.svg';
+                type = 'practice';
+              }
+
+              let breadcrumbSubTopic = '';
+
+              var checkLessonsExist = $('.lesson-items').map(function () {
+                return $(this).data("id");
+              }).get();
+
+              if (checkLessonsExist.indexOf(lessonId) === -1) {
+                $("#select-assessment").append(`<li class="sort-program" data-content-position="${contentIndex}"><div class="list_number">${contentIndex}.</div><div class="iconleft"><img src="${icon}" alt="img"></div><div class="content-detail-block lesson-items" data-id="${lessonId}"><h5>${lessonName}</h5><ol class="breadcrumb"><li class="breadcrumb-item 5">${fcGradeName}</li><li class="breadcrumb-item 1">${fcTopicName}</li>${subTopicBreadcrumb}<li class="breadcrumb-item 2">${fcLearningContentName}</li>${breadcrumbSubTopic}</ol></div><div class="action-right"><a class="remove_content" href="javascript:void(0);">&times;</a></div><input type="hidden" name=selected_contents[] value="${learningContentId}--${lessonId}"></li>`);
+              }
+              else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'This Lesson is already added',
+                })
+              }
+              contentIndex++;
+            }
+
+            $(".event_total").text($('#select-assessment > li').length);
+
+            if ($('#select-assessment > li').length >= 1) {
+              $('#store-an-even').show();
+              $('.store-an-event').prop('disabled', false);
+            }
+
+            $("#sc_grade").val(null).trigger("change");
+            $("#sc_topic").val(null).trigger("change");
+            $('#sc_sub_topic').empty();
+            $('#sc_learning_content').empty();
+            $('#sc_lessons').empty();
+            $("#sc_topic").select2({ placeholder: "Select Topic" });
+            $("#sc_sub_topic").select2({ placeholder: "Select Sub Topic" });
+            $("#sc_learning_content").select2({ placeholder: "Select Learning Content" });
+            $("#sc_lessons").select2({ placeholder: "Select Lessons" });
+          }
+        });
+      }
+    });
+
+    $('.selectedcontent').on('click', '.remove_content', function () {
+      Swal.fire({
+        html: '<p>Are you sure you want to remove this?</p>',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $(this).closest('li').fadeOut('fast', function () {
+            $(this).remove();
+            updateSequenceNumbers();
+          });
+        }
+      });
+
+      setTimeout(function () {
+        let list_length = $('.selectedcontent > li').length;
+        $(".event_total").text(list_length);
+        if (list_length === 0) {
+          $('#assignBtn').hide();
+        } else {
+          $('#assignBtn').show();
+        }
+      }, 1000);
+    });
+
+    // Function to update sequence numbers
+    function updateSequenceNumbers() {
+      $('.selectedcontent > li').each(function (index) {
+        $(this).find('.list_number').text(`${index + 1}.`); // Update as needed
+      });
+    }
+
+    $(".lesson-content-sortable").sortable({
+      swapThreshold: 1,
+      group: 'list',
+      animation: 200,
+      onChange: function (update, evt) {
+        var j = 1;
+        $(".sort-program").each(function () {
+          $(this).attr("data-content-position", j);
+          $(this).find('.list_number').text(j);
+          j++;
+        });
+      },
+      onSort: function (evt, ui) {
+      }
+    });
+
+
+
+  });
+  /**
+   * edit event page script.
+   * @script end
+   * */
+
+
+
+</script>

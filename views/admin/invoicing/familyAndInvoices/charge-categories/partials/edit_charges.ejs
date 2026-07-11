@@ -1,0 +1,70 @@
+<div class="modal fade common-modal change-family-modal" id="edit-charges" class="edit-location" tabindex="-1" role="dialog" aria-labelledby="changeFamilyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="changeFamilyLabel">Edit Category</h3>
+        </div>
+        <form method="post" action="/families-invoices/categories/update" class="modal-form-area common-form update-charge-form" id="update-charge-form">
+            <div class="modal-body">
+                <input type="hidden" name="charges_id" class="charges_id">
+                  <div class="common-form">
+                      <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="title" class="title" id="name">
+                            </div>
+                              <span class="text-danger error-name"></span>
+                        </div>
+                      </div>
+                  </div>
+            </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea">
+            </div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn">Cancel</button>
+              <button type="submit" class="btn theme-btn">Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  $("#update-charge-form").submit(function (e) {
+    e.preventDefault();
+     $(document).find("span.text-danger").remove();
+    const formData = {
+      _id: $(".charges_id").val(),
+      name: $(".title").val()
+    };
+
+    $.ajax({
+      url: "/families-invoices/categories/update",
+      type: "POST",
+      data: formData,
+      success: function (response) {
+        if (response.success) {
+          $("#edit-charges").modal("hide");
+          location.reload();
+          if (response.success == true) {
+          window.location.href = response.redirectUrl;
+        } 
+        } else {
+          alert(response.message || "Update failed.");
+        }
+      },
+      error: function (response) {
+          let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+        })
+      }
+    });
+  });
+    $('button[data-dismiss="modal"]').on('click', function () {
+    $('span.text-danger').remove();
+  });
+</script>

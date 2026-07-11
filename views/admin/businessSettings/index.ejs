@@ -1,0 +1,692 @@
+<div class="right_col" role="main">
+  <div class="bussniess_setting">
+    <h2 class="titleheading">Business Settings</h2>
+    <div class="row row-gap-30">
+      <div class="col-xl-12 col-lg-12">
+        <div class="row row-gap-30 mx-0">
+          <div class="col-12 px-0">
+            <div class="card setting_tab">
+              <div class="card-body">
+                <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active business-setting-tab" id="pills-general-tab" data-toggle="pill" href="#pills-general" role="tab" aria-controls="pills-general" aria-selected="true">General</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="pills-accounts-tab" data-toggle="pill" href="#pills-accounts" role="tab" aria-controls="pills-accounts" aria-selected="false">Accounts & Invoices</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="pills-sales-tax-tab" data-toggle="pill" href="#pills-sales-tax" role="tab" aria-controls="pills-sales-tax" aria-selected="false">Sales Tax</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link business-setting-tab" id="pills-email-tab" data-toggle="pill" href="#pills-email" role="tab" aria-controls="pills-email" aria-selected="false">Email & SMS</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link business-setting-tab" id="pills-policies-tab" data-toggle="pill" href="#pills-policies" role="tab" aria-controls="pills-policies" aria-selected="false">Policies</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 px-0">
+            <div class="tab-content settings_content" id="pills-tabContent">
+              <%- include('./general.ejs'); %>
+              <%- include('./account-and-invoice.ejs'); %>
+              <%- include('./sales-tax.ejs'); %>
+              <%- include('./email-and-sms.ejs'); %>
+              <%- include('./policies.ejs'); %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit System Email Template Modal -->
+<%- include('./modals/edit-email-modal.ejs'); %>
+
+<!-- Edit System SMS Template Modal -->
+<%- include('./modals/edit-sms-modal.ejs'); %>
+
+<!-- Add New Custom Email Template Modal -->
+<%- include('./modals/add-custom-email-modal.ejs'); %>
+
+<!-- Add New Custom sms Template Modal -->
+<%- include('./modals/add-custom-sms-modal.ejs'); %>
+
+<!-- Add New Sales tax Modal -->
+<%- include('./modals/add-sales-tax-modal.ejs'); %>
+
+<!-- Add New Sales tax Modal -->
+<%- include('./modals/edit-sales-tax-modal.ejs'); %>
+
+<script src="/vendors/tinymce/tinymce.min.js"></script>
+
+<script>
+  function openSalesTaxEditModal(id, name, rate) {
+    $('#salesTaxEdit').find('input[name=tax_id]').val(id);
+    $('#salesTaxEdit').find('input[name=tax_name]').val(name);
+    $('#salesTaxEdit').find('input[name=tax_rate]').val(rate);
+    $('#salesTaxEdit').modal('show');
+  }
+
+  function deleteSalesTax(url) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          method:'POST',
+          url:url,
+          data:{uniqueId:"<%=businessSetting?.id%>"},
+          success:function(response){
+              if(response.success){
+                window.location.reload();
+              }else{
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: data.message,
+                });
+              }
+          },
+          error: function (response) {
+              Swal.fire({
+                icon: "error",
+                title: 'Oops...',
+                text: response.responseJSON.message,
+              });
+          },
+          complete: function () {
+            console.log('ajax call completed');
+          }
+        })
+        
+        
+      }
+    })
+  }
+
+
+$(document).ready(function() {
+  $("input[name=balance_date_type]").on('change', function(){
+    let selectedVal = $("input[name=balance_date_type]:checked").val();
+    if(selectedVal == "day_of_month"){
+      $('#specific_day_box').show();
+      $('#specific_date_box').hide();
+      $('#specific_date_box').find('#specific_date').val('');
+    }else if(selectedVal == "specific_date"){
+      $('#specific_date_box').show();
+      $('#specific_day_box').hide();
+      $('#specific_day_box').find('#specific_day').val('');
+    }else{
+      $('#specific_date_box').hide();
+      $('#specific_day_box').hide();
+      $('#specific_date_box').find('#specific_date').val('');
+      $('#specific_day_box').find('#specific_day').val('');
+    }
+  });
+
+  $("input[name=balance_date_type]").trigger('change');
+
+  $(".select2_multiple_with_tags").select2({
+    width:'100%',
+    placeholder: "e.g. Cash",
+    allowClear: true,
+    tags: true,
+    tokenSeparators: [',']
+  });
+  
+  // Handle click event for edit setting elements
+  $(".editsetting").on("click", function() {
+    var tabcardParent = $(this).closest(".tabcard");
+    if (tabcardParent.length > 0) {
+      tabcardParent.toggleClass("active");
+
+      // Get all input fields within the tabcard
+      var inputFields = tabcardParent.find("input,select,textarea");
+
+      // Toggle disabled attribute on input fields
+      inputFields.prop("disabled", !tabcardParent.hasClass("active"));
+    }
+  });
+
+  // Handle click event for Cancel button
+  $(".cancel-btn").on("click", function() {
+    var tabcardParent = $(this).closest(".tabcard");
+    if (tabcardParent.length > 0) {
+      tabcardParent.removeClass("active");
+
+      // Get all input fields within the tabcard
+      var inputFields = tabcardParent.find("input,select,textarea");
+
+      // Disable all input fields
+      inputFields.prop("disabled", true);
+    }
+  });
+
+  // Handle click event for Save button
+  $(".save-btn").on("click", function() {
+    let tabcardParent = $(this).closest(".tabcard");
+
+    saveBusinessSettings($(this), function(success) {
+        if (success && tabcardParent.length > 0) {
+            tabcardParent.removeClass("active").addClass("change_value");
+            var inputFields = tabcardParent.find("input,select,textarea");
+            inputFields.prop("disabled", true);
+        }
+    });
+  });
+});
+
+$(function() {
+  $('input[name="balancedate"]').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    minYear: 1901,
+    maxYear: parseInt(moment().format('YYYY'),10)
+  });
+});
+  $('.edit').click(function(){
+})
+
+
+tinymce.init({
+    selector: '.editorExplanation',
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+    plugins: [
+        'advlist autolink lists link image charmap print preview anchor textcolor',
+        'searchreplace visualblocks code fullscreen',
+        'insertdatetime media table contextmenu paste code help wordcount,image code'
+    ],
+
+    mobile: {
+        theme: 'mobile'
+    },
+    toolbar: 'insert | customdropdown | undo redo  | code|  formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help|styleselect | fontsizeselect | underline ',
+    file_picker_types: 'file, image',
+
+    setup: function(editor) {
+      editor.on('Change Keyup', function () {
+          editor.save();
+      //tinyMCE.triggerSave() <-- also tried
+      });
+    
+      // Function to handle dropdown selection
+      function handleDropdownSelection(value) {
+        // Insert the selected option into the editor
+        editor.insertContent(value);
+      }
+
+      // Add custom dropdown to the toolbar
+      editor.addButton('customdropdown', {
+        type: 'menubutton',
+        image: '/images/option-tag.svg',
+        icon: false,
+        menu: [
+          {
+            text: 'Business Name',
+            onclick: function() {
+              handleDropdownSelection('%BusinessName%');
+            }
+          },
+          {
+            text: 'Invoice Amount',
+            onclick: function() {
+              handleDropdownSelection('%InvoiceAmount%');
+            }
+          },
+          {
+            text: 'Date',
+            onclick: function() {
+              handleDropdownSelection('%Date%');
+            }
+          },
+          {
+            text: 'Invoice Date',
+            onclick: function() {
+              handleDropdownSelection('%InvoiceDate%');
+            }
+          },
+          {
+            text: 'Comment',
+            onclick: function() {
+              handleDropdownSelection('%Comment%');
+            }
+          },
+          {
+            text: 'Invoice Due Date',
+            onclick: function() {
+              handleDropdownSelection('%InvoiceDueDate%');
+            }
+          },
+          {
+            text: 'Invoice Number',
+            onclick: function() {
+              handleDropdownSelection('%InvoiceNumber%');
+            }
+          },
+          {
+            text: 'Login URL',
+            onclick: function() {
+              handleDropdownSelection('%LoginURL%');
+            }
+          },
+          {
+            text: 'URL',
+            onclick: function() {
+              handleDropdownSelection('%URL%');
+            }
+          },
+          {
+            text: 'Reset Password URL',
+            onclick: function() {
+              handleDropdownSelection('%ResetPasswordURL%');
+            }
+          },
+          {
+            text: 'Parent Name',
+            onclick: function() {
+              handleDropdownSelection('%ParentName%');
+            }
+          },
+          {
+            text: 'Pay Invoice Online Link',
+            onclick: function() {
+              handleDropdownSelection('%PayInvoiceOnlineLink%');
+            }
+          },
+          {
+            text: 'Tutor Name',
+            onclick: function() {
+              handleDropdownSelection('%TutorName%');
+            }
+          },
+          {
+            text: 'Student Name',
+            onclick: function() {
+              handleDropdownSelection('%StudentName%');
+            }
+          },
+          {
+            text: 'User Name',
+            onclick: function() {
+              handleDropdownSelection('%UserName%');
+            }
+          },
+          // Add more options as needed
+        ]
+      });
+    }
+});
+
+$(function() {
+  $(".preview-btns").on("click", function(){
+    $(this).toggleClass("preview-active");
+    if($(this).hasClass("preview-active")){
+      $(this).text("Close");
+      tinymce.activeEditor.setMode('readonly');
+      $(this).parents(".modal-footer").prev(".modal-body").find("label+input").attr('disabled', true);
+      $(this).parents(".modal-footer").find(".btn-leftarea button, .btn-rightarea .hide-btnss").css("display", "none");
+    } else {
+      $(this).text("Preview");
+      tinymce.activeEditor.setMode('design');
+      $(this).parents(".modal-footer").prev(".modal-body").find("label+input").attr('disabled', false);
+      $(this).parents(".modal-footer").find(".btn-leftarea button, .btn-rightarea .hide-btnss").css("display", "inline-block");
+    }
+  });
+});
+
+
+// Event delegation for placeholder options
+$(document).on("click", '.sms-placeholder-options', function(){
+  let currentvalue = $(this).data('value');
+  insertTextAtCursor($('.sms-default-editor')[0], currentvalue);
+});
+
+// Event delegation for placeholder options
+$(document).on("click", '.cus-sms-placeholder-options', function(){
+  let currentvalue = $(this).data('value');
+  insertTextAtCursor($('.cus-sms-default-editor')[0], currentvalue);
+});
+
+$('.cus-sms-default-editor').on('input', function() {
+  let contentLength = this.value.length;
+  let remainingLength = 140 - contentLength;
+  $('.characters-len').text(contentLength);
+  $('.remaining-characters-len').text(Math.max(0, remainingLength));
+  $('.theme-btn.hide-btnss').prop('disabled', remainingLength < 0);
+});
+
+// Function to insert text at cursor position
+function insertTextAtCursor(textarea, text) {
+  let cursorPos = textarea.selectionStart;
+  let content = textarea.value;
+  let newText = content.substring(0, cursorPos) + text + content.substring(textarea.selectionEnd);
+  textarea.value = newText;
+  // Set the cursor position after insertion
+  textarea.setSelectionRange(cursorPos + text.length, cursorPos + text.length);
+}
+// Keyup event for textarea
+$(document).ready(function () {
+  function updateCharCount() {
+    let contentLength = $('.sms-default-editor').val().length;
+    let remainingLength = 140 - contentLength;
+    $('.characters-len').text(contentLength);
+    $('.remaining-characters-len').text(Math.max(0, remainingLength));
+    $('.theme-btn.hide-btnss').prop('disabled', remainingLength < 0);
+  }
+
+  // Run on input
+  $(document).on('input', '.sms-default-editor', function () {
+    updateCharCount();
+  });
+
+  // Run when modal opens
+  $('#systemSMS').on('shown.bs.modal', function () {
+    updateCharCount();
+  });
+});
+
+
+// Function to update the invoice preview
+function updateInvoicePreview() {
+    const format = $('#invoicenumbers').val();
+    const nextNum = $('#nextInvoiceNumbers').val();
+    
+    // Get current date components
+    const now = new Date();
+    const fullYear = now.getFullYear();
+    const shortYear = fullYear.toString().substring(2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    
+    // Determine padding based on the token used
+    const hasNNNN = format.includes('%NNNN%');
+    const sequenceLength = hasNNNN ? 4 : 2;
+    const sequence = nextNum.toString().padStart(sequenceLength, '0');
+    
+    // Replace tokens in the format
+    let preview = format
+        .replace(/%YYYY%/g, fullYear)
+        .replace(/%YY%/g, shortYear)
+        .replace(/%MM%/g, month)
+        .replace(/%DD%/g, day)
+        .replace(/%NNNN%/g, sequence)  // Handle 4-digit sequence first
+        .replace(/%NN%/g, sequence.substring(0, 2)); // Then handle 2-digit sequence
+    
+    // Update the preview display
+    $('#invoice_number_preview').text(preview);
+}
+
+updateInvoicePreview();
+$('#invoicenumbers, #nextInvoiceNumbers').on('input', function() {
+  updateInvoicePreview();
+});
+
+
+
+// $('.sms-placeholder-options').on("click", function(){
+//   let currentvalue = $(this).data('value');
+//   let $textarea = $(".sms-default-editor");
+//   let cursorPos = $textarea.prop("selectionStart");
+//   let text = $textarea.val();
+//   let newText = text.substring(0, cursorPos) + currentvalue + text.substring(cursorPos);
+//   $textarea.val(newText);
+//   let newCursorPos = cursorPos + currentvalue.length;
+//   $textarea[0].setSelectionRange(newCursorPos, newCursorPos);
+// });
+// $('.sms-default-editor').keyup(function(){
+//   let text = $(this).val();
+//   let contentLength = text.length;
+//   let remainingLength = 140 - contentLength;
+//   $('.characters-len').text(contentLength);
+//   $('.remaining-characters-len').text(remainingLength < 0 ? 0 : remainingLength);
+//   if(remainingLength < 0){
+//     $('.theme-btn.hide-btnss').attr('disabled',true);
+//   }
+// });
+
+$('.edit').click(function(){
+  let templateId = $(this).data('id');
+  let currentModal = $(this).data('target');
+  fetchTemplateData(templateId,currentModal);
+})
+
+$(".update-template").submit(function (e) {
+  e.preventDefault();
+  tinymce.triggerSave();
+  let form = $(this);
+  let url = form.attr('action');
+  let formData = form.serialize();
+  let isValid =  updateTemplateValidation(form);
+  setCurrentTab();
+
+  if(isValid){
+    updateTemplateData(url,formData);
+  }
+})
+
+$('.submit-custum').click(function(){
+  let form = $(this).closest('form');
+  let isValid = customTemplateValidation(form);
+  if(isValid){
+    setCurrentTab();
+    form.submit();
+  }
+});
+
+function saveBusinessSettings(element, callback){
+    let currentFrom = element.closest("form");
+    let currentTab = currentFrom.attr('class');
+    let currentSection = currentFrom.attr('id');
+    let formData = currentFrom.serialize();
+    let uniqueId= "<%=businessSetting?.id%>";
+
+    setCurrentTab();
+    // Append additional data to formData
+    formData += "&currentSection=" + encodeURIComponent(currentSection);
+    formData += "&currentTab=" + encodeURIComponent(currentTab);
+    formData += "&uniqueId=" + encodeURIComponent(uniqueId);
+
+    if(currentTab == 'notification'){
+      const businessEmail = $("#business-email").val();
+    var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    $('.email-error').remove();
+      if (!emailPattern.test(businessEmail)) {
+        $("#business-email").after('<p class="email-error" style="color:red;">Please Enter Valid Email</>');
+          return false;
+      } 
+    }
+
+    $.ajax({
+      method:'POST',
+      url:'./business-settings/modify',
+      data:formData,
+      success:function(response){
+          if(callback) callback(true);
+          window.location.reload();
+          // setTimeout(() => {
+          //   // window.location.reload();
+          // }, 1000);
+      },
+      error: function (response) {
+        $('.error').remove();
+          if(response.status === 422){ // validation errors from express-validator
+          const errors = response.responseJSON.errors;
+          errors.forEach(err => {
+              const fieldName = err.param;
+              const message = err.msg;
+
+              // Find input/select/textarea by name
+              const field = currentFrom.find(`[name="${fieldName}"]`);
+              
+              if(field.length > 0){
+                  field.after(`<p class="error" style="color:red;">${message}</p>`);
+              }
+          });
+          if(callback) callback(false); 
+      } else {
+          Swal.fire({
+            icon: "error",
+            title: 'Oops...',
+            text: response.responseJSON.message,
+          });
+           if(callback) callback(false);
+      }
+      },
+      complete: function () {
+        console.log('ajax call completed');
+      }
+    })
+  }
+
+function fetchTemplateData(id,targetElement){
+  $.ajax({
+    method:'POST',
+    url:'./business-settings/edit-notification-template',
+    data:{id:id},
+    success:function(response){
+      $('.template-id').val(response._id);
+      $('.subject').val(response.subject);
+      if(response.type === 'email'){
+        tinymce.each(tinymce.editors, function(editor) {
+            editor.setContent(response.message);
+        });
+      }else{
+        $('.sms-default-editor').val(response.message);
+      }
+    }
+  })
+}
+
+function updateTemplateData(url,formData){
+  $.ajax({
+    method:'POST',
+    url:url,
+    data:formData,
+    dataType:'json',
+    success:function(response){
+      if(response.success){
+        if(response.success){
+        location.reload();
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'success',
+            text: response.message,
+          });
+        }
+        // location.reload();
+      }
+    }
+  })
+}
+function openCustomModal(element){
+  const modal = $(`#${element}`);
+  $(`#${element}`).find('.error').remove();
+  // $(`#${element}`).find('form')[0].reset();
+  $(`#${element}`).modal('show');
+
+  modal.find('.characters-len').text(0);
+  modal.find('.remaining-characters-len').text(140);
+  modal.find('textarea').val('');
+}
+function updateTemplateValidation(element){
+  let editorId = element.find('.editorExplanation').attr('id');
+  let editor = tinymce.get(editorId);
+
+  // check validation for email template
+  let isValid = true;
+  $('.error').remove();
+  if(editor){    
+    let content = editor.getContent({format: "text"}).trim();
+    let subject = element.find('.subject').val().trim();
+
+    if(subject == ''){
+      isValid = false;
+      element.find('.subject').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+    if(content ==''){
+      isValid = false;
+      element.find('.editorExplanation').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+  }else{
+    let content = element.find('#message').val();
+    if(content ==''){
+      isValid = false;
+      element.find('#message').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+  }
+  return isValid;
+}
+
+function customTemplateValidation(element){
+  let editorId = element.find('.editorExplanation').attr('id');
+  let editor = tinymce.get(editorId);
+  let title =  element.find('.title').val().trim();
+
+  // check validation for email template
+  let isValid = true;
+  $('.error').remove();
+  if(editor){   
+    let content = editor.getContent({format: "text"}).trim();
+    let subject = element.find('.subject').val().trim();
+
+    if(title == ''){
+      isValid = false;
+      element.find('.title').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+    if(subject == ''){
+      isValid = false;
+      element.find('.subject').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+    if(content ==''){
+      isValid = false;
+      element.find('.editorExplanation').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+  }else{
+    let content = element.find('#message').val();
+    if(title == ''){
+      isValid = false;
+      element.find('.title').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+    if(content ==''){
+      isValid = false;
+      element.find('#message').after('<p class="error" style="color:red;">This field is required</p>');
+    }
+  }
+  return isValid;
+}
+</script>
+<script>
+  var colorPicker = document.getElementById('colorPicker');
+  var colorCodeSpan = document.getElementById('colorCode');
+  function updateColorCode() {
+    var selectedColor = colorPicker.value;
+    colorCodeSpan.textContent = selectedColor;
+  }
+  updateColorCode();
+  colorPicker.addEventListener('input', function() {
+    updateColorCode();
+  });
+
+function setCurrentTab(){
+  let currentTab = $('.business-setting-tab.active').attr('id');
+  sessionStorage.setItem('tabData', currentTab);
+}
+(function(){
+  const storedUser = sessionStorage.getItem('tabData');
+  let currentTab = storedUser;
+  if(currentTab !='' && currentTab != null){
+    $(`#${currentTab}`).trigger('click');
+  }
+})();
+</script>

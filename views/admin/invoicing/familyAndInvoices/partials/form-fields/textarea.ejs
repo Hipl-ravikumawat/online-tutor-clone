@@ -1,0 +1,8 @@
+<div class="form-group">
+    <% if (label) { %> 
+        <label class="form-label" for="<%= id %>">
+            <%= label %>
+        </label>
+    <% } %> 
+    <textarea class="form-control <%= className || '' %>" id="<%= id %>" name="<%= name %>" rows="<%= rows || 3 %>" <%=attrs || '' %> ><%= value || '' %></textarea>
+</div>

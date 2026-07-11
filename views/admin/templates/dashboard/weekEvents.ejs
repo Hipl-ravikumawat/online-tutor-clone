@@ -1,0 +1,41 @@
+  <!-- <h2 class="title-text mb-4">Here's What's Scheduled This Week!!</h2> -->
+  <h2 class="title-text mb-4">Here's What's Scheduled Today!!</h2>
+  <h6><%=calenderEvents.length %> Scheduled Event</h6>
+  <% if(calenderEvents.length > 0) { %>
+  <div class="row">
+    <div class="col-sm-12 show-events-dashboard">
+      <% for(eventData of calenderEvents){ %>
+      <div class="card-block mb-4 d-flex justify-content-between">
+        <div class="card-left">
+          <p class="lesson-date">
+            <i class="fa fa-calendar"></i> <%=moment(eventData.start_time).format('YYYY-MM-DD')%>
+          </p>
+          <p class="lesson-time"><%=moment.utc(eventData.start_time).tz(userTimeZone).format('hh:mm A')+' : '+ moment.utc(eventData.end_time).tz(userTimeZone).format('hh:mm A')%> </p>
+          <p class="lesson-assign mb-0">
+            Lesson with <%=eventData.tutor_id.first_name+' '+ eventData.tutor_id.last_name%>
+            <% if(eventData.is_substitute_tutor == true) { %>
+            <span class="lesson_staus dbg-red">substituted by <%=eventData.substitute_tutor_id.first_name+' '+ eventData.substitute_tutor_id.last_name%></span>
+            <% } %>
+          </p>
+        </div>
+
+        <div class="card-right">
+          <%
+          const currentDateTime = moment.tz(userTimeZone);
+          const startDateTime = moment.tz(eventData.start_time, userTimeZone);
+          const diffInHours = startDateTime.diff(currentDateTime, 'minutes');
+          %>
+          <% if(userRole == 2 && eventData.status == 'N/A' && diffInHours > 60){ %>
+           <a href="javascript:void(0)" title="Cancel Events" class="btn btn-danger w-100 cancel-events" data-event-id="<%=eventData.id%>">Cancel Event </a>
+          <% } else if(userRole == 2 && eventData.status == 'Requested_To_Cancel'){ %>
+            <span class="badge badge-info">Requested</span>
+          <% }  else if(eventData.status == 'Cancelled') { %> 
+            <span class="badge badge-danger">Cancelled</span>
+            <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+

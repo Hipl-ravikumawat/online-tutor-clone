@@ -1,0 +1,146 @@
+<script type="text/javascript">
+  /**
+   * policy index script.
+   * @script start
+   */
+  $(document).ready(function () {
+      dataTable();
+    $("#policy").select2({
+      allowClear: false,
+    });
+
+    $(".filter").click(function () {
+      let policyId = $("#policy").val();
+      dataTable(policyId, status);
+    });
+
+    $(".reset").click(function () {
+      $("#policy").val(null).trigger("change");
+      dataTable();
+    });
+  });
+  function dataTable(policyId = "") {
+    $("#policyTable").dataTable().fnDestroy();
+
+    var columnToHide = userRole === '2' ? 3 : 2;
+
+    var policyTable = $("#policyTable").DataTable({
+        paging: true,
+        pageLength: 10,
+        language: {
+            searchPlaceholder: "Search",
+            processing: "<div><div></div><div></div><div></div><div></div></div>",
+        },
+        processing: true,
+        serverSide: true,
+        order: [],
+        ajax: {
+            url: "/policies/dataTable",
+            type: "POST",
+            data: {
+                policyId: policyId,
+            },
+        },
+        columns: [
+            { data: "title", name: "title" },
+            {
+                data: "attachment",
+                render: function (data, type, row) {
+                    return `<a href="/Policies/${row.attachment}" target="_blank" class="badge badge-info d-inline-block">Read Document</a>`;
+                },
+            },
+            {
+                data: "marked_as_read",
+                render: function (data, type, row) {
+                  if(userRole == 2){
+                    const markedAsRead = row.marked_as_read;
+                    const isRead = markedAsRead.some(read => read.tutor_id === userId);
+                    if (isRead) {
+                        return `<label class="checkbox-inline switch-btn"><input type="checkbox"  class="record-read-status" data-toggle="toggle" data-on="Yes" data-onstyle="info" data-offstyle="danger" data-uid="${row._id}" checked id="toggle-trigger" disabled><span class="slider-toggle"></span></label>`;
+                    } else {
+                        return `<label class="checkbox-inline switch-btn"><input type="checkbox" name="mark_as_read" class="record-read-status" data-toggle="toggle"  data-off="No" data-onstyle="info" data-offstyle="danger" data-url="/policies/mark-as-read/${row._id}" data-uid="${row._id}" id="toggle-trigger"><span class="slider-toggle"></span></label>`;
+                    }
+                  }else{
+                    return '';
+                  }
+  
+                },
+            },
+            {
+                data: "",
+                render: function (data, type, row) {
+                  if(userRole == 1){
+                    return `<div class="d-flex align-items-center">
+                      <a class="" href="/policies/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                        title="Edit"><img src="/images/edit.svg" alt="icon"></a>
+
+                      <a href="/policies/policy-readers/${row.slug}" class="ml-2">
+                        <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Details"></a>
+                
+                      <a href="javascript:void(0)" class="ml-2"
+                        onclick="confirmBeforeDeletion('/policies/destroy/${row._id}')"><img src="/images/trash.svg"
+                          alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
+                    </div>`;
+                  }else{
+                    return '';
+                  }
+                },
+            },
+        ],
+        columnDefs: [
+            {
+                targets: [1, 2, 3], /* column index */
+                orderable: false, /* true or false */
+            },
+        ],
+    });
+
+    // Hide the column immediately after initializing the DataTable
+    policyTable.column(columnToHide).visible(false);
+
+    policyTable.ajax.reload(function () {
+        // Reinitialize tooltips after reload
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+}
+
+  $(document).on('change click', '.record-read-status', function (event) {
+    var action = $(this).attr("data-url");
+    var recordUid = $(this).attr("data-uid");
+    var status = $(this).prop('checked');
+    Swal.fire({
+      title: "Are you sure?",
+      text: "To acknowledge that you have reviewed the policy document, please mark it as read. Please note that this cannot be undone.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: `Mark as read`,
+    })
+      .then((result) => {
+        if (!result.isDismissed) {
+          $.ajax({
+            type: "GET",
+            url: action,
+            success: function (response) {
+              window.location.reload();
+            },
+            error: function (response) {
+              Swal.fire({
+                        title: 'Oops...',
+                        text: response.responseJSON.message,
+              });
+            },
+            complete: function () {
+            }
+          });
+        } else {
+          $(this).prop('checked', (status ? false : true));
+          return false;
+        }
+      });
+  });
+  /**
+   * policy index script.
+   * @script end
+   */
+</script>

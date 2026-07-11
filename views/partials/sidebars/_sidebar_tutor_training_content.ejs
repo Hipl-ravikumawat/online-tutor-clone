@@ -1,0 +1,142 @@
+    <!-- tutor training lesson sidebar -->
+    <div class="courses-sidebar" >
+      <a href="javascript:void()" onclick="window.history.back()" class="back-course">        
+        <img class="mr-2" src="/images/arrow-left.svg" alt="img"> Back
+      </a> 
+      <div class="course-title"><span class="icon"><img src="/images/folder-icon.svg" alt="img"></span>
+          <span><%=lesson.title%> </span>
+      </div>
+      <div class="accordion" id="lesson_accordion">
+        <% if(lessonContentStatics.assessment_type === 'slides' || lessonContentStatics.assessment_type === '') { %>
+        <div class="card">
+          <div class="card-header">
+            <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/lessons.svg" alt="img">
+              <span>Information Slides<small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i><%=lessonContentStatics.slide_duration%> Min</small></span>
+            </div>
+            <div class="right-icons">
+                <a href="javascript:void(0);" class="addIcon addSlides" data-id="" data-toggle="modal" data-backdrop="false" data-target="#slideModal"><img src="/images/add1.svg" alt="img"></a>
+                <a href="javascript:void(0);" class="slider-menu collapsed" data-type="slides" data-id=""
+                data-toggle="collapse" data-target="#lesson_slide-1" aria-expanded="false"
+                aria-controls="lesson_slide-1">
+                <img src="/images/arrowdown.svg" alt="img">
+                </a>
+            </div>
+          </div>
+          <div class="collapse content-collapse" id="lesson_slide-1" data-parent="#lesson_accordion">
+            <ul class="slide-action unassignlist-tab <%=loggedUserInfo.role == 1 ? 'slides-sortable':''%>">
+                <% let slideIndex=1; 
+                if(lesson && lesson.slide_ids){
+                 for(slide of lesson.slide_ids) {
+                  console.log(slide,'slide');
+                  if((lessonContentStatics.assessment_type === 'slides' &&  lessonContentStatics.assignSlideIdsArray.includes(slide.id) ) || lessonContentStatics.assessment_type === ''){
+                %>
+                <li class="sort-slides1 <%=slideIndex == 1 ?'active':'' %> <%=lessonContentStatics.is_read_slides.includes(slide.id) ? 'read':''%>"  data-position="<%=slideIndex%>" data-uniqueid="<%=slide.id%>">
+                    <a href="javascript:void(0);" class="slide-anchor" data-slide="">
+                        <%=slide.title%>
+                    </a>
+                    <% if(loggedUserInfo.role==1){ %>
+                    <div class="dropdown">
+                      <a class="dropIcon" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16" fill="none">
+                          <path
+                            d="M2 4.16664C3.10457 4.16664 4 3.23391 4 2.08332C4 0.932734 3.10457 0 2 0C0.89543 0 0 0.932734 0 2.08332C0 3.23391 0.89543 4.16664 2 4.16664Z"
+                            fill="#55597D" />
+                          <path
+                            d="M2 10.0831C3.10457 10.0831 4 9.15041 4 7.99982C4 6.84924 3.10457 5.9165 2 5.9165C0.89543 5.9165 0 6.84924 0 7.99982C0 9.15041 0.89543 10.0831 2 10.0831Z"
+                            fill="#55597D" />
+                          <path
+                            d="M2 16.0001C3.10457 16.0001 4 15.0674 4 13.9168C4 12.7662 3.10457 11.8335 2 11.8335C0.89543 11.8335 0 12.7662 0 13.9168C0 15.0674 0.89543 16.0001 2 16.0001Z"
+                            fill="#55597D" />
+                        </svg>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right">
+                        <a class="edit-slide" data-slideid="<%=slide.id%>"data-lessonid="">Edit</a>
+                        
+                        <a class="duplicate-slide" onclick="confirmBeforeDuplicate('slide','/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/slides/duplicate','<%=lesson.id %>','<%=slide.id%>')" data-slideid="<%=slide.id%>" data-lessonid="<%=lesson.id%>">Duplicate</a>
+                        <% if(learningContent.isLessonAssign ==0){ %> 
+                        <a class="delete-slide"
+                          onclick="confirmBeforeDeletion('/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/slides/destroy/<%=slide.id%>')"
+                          href="javascript:void(0)">Delete</a>
+                        <% } %>
+                      </div>
+                    </div>
+                    <% }%>
+                </li>
+                <%
+                slideIndex++ 
+                } } }
+                %>
+            </ul>
+          </div>
+        </div>
+        <% } if(lessonContentStatics.assessment_type === 'practices' || lessonContentStatics.assessment_type === '') { %>
+        <div class="card">
+          <div class="card-header">
+            <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/practice.svg" alt="img">
+              <span>Practices <small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i><%=lessonContentStatics.practice_duration%> Min</small></span>
+            </div>
+            <div class="right-icons">
+              <% if(loggedUserInfo.role==1){ %>
+              <a href="javascript:void(0);" class="addIcon shade2 addPractice" data-id="<%=lesson.id%>"
+                data-target="#practiceModal"><img src="/images/add2.svg" alt="img"></a>
+              <% } %>
+              <a href="javascript:void(0);" class="slider-menu collapsed" data-toggle="collapse" data-type="practices"
+                data-id="<%=lesson.id%>" data-target="#practice_slide" aria-controls="practice_slide">
+                <img src="/images/arrowdown.svg" alt="img">
+              </a>
+            </div>
+          </div>
+          <div id="practice_slide" class="collapse content-collapse" data-parent="#lesson_accordion">
+            <div class="card-body">
+              <ul class="slide-action <%=loggedUserInfo.role == 1 ? 'practices-sortable':''%>">
+                <% let practiceIndex=1; if(lesson && lesson.practice_ids){         
+                    for(practice of lesson.practice_ids) {
+                      if((lessonContentStatics.assessment_type === 'practices' &&  lessonContentStatics.assignPracticeIdsArray.includes(practice._id.toString()) ) || lessonContentStatics.assessment_type === ''){
+                %>
+                  <li class="sort-slides1 <%=practiceIndex == 1?'active':''%> sort-practices" data-type="<%=practice.question_type%>" data-uniqueid="<%=practice.id%>"
+                    data-position="<%=practiceIndex%>">
+                    <a href="javascript:void(0);" class="practice-anchor <%=practiceIndex == 1?'active':''%>"  data-slide="<%=practiceIndex%>">
+                      <%=practice.question_title%>
+                    </a>
+
+                    <% if(loggedUserInfo.role==1){ %>
+                    <div class="dropdown">
+                      <a class="dropIcon" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16" fill="none">
+                          <path
+                            d="M2 4.16664C3.10457 4.16664 4 3.23391 4 2.08332C4 0.932734 3.10457 0 2 0C0.89543 0 0 0.932734 0 2.08332C0 3.23391 0.89543 4.16664 2 4.16664Z"
+                            fill="#55597D" />
+                          <path
+                            d="M2 10.0831C3.10457 10.0831 4 9.15041 4 7.99982C4 6.84924 3.10457 5.9165 2 5.9165C0.89543 5.9165 0 6.84924 0 7.99982C0 9.15041 0.89543 10.0831 2 10.0831Z"
+                            fill="#55597D" />
+                          <path
+                            d="M2 16.0001C3.10457 16.0001 4 15.0674 4 13.9168C4 12.7662 3.10457 11.8335 2 11.8335C0.89543 11.8335 0 12.7662 0 13.9168C0 15.0674 0.89543 16.0001 2 16.0001Z"
+                            fill="#55597D" />
+                        </svg>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right">
+                        <a class="edit-practice" data-practiceid="<%=practice.id%>"
+                          data-lessonid="<%=lesson.id%>">Edit</a>
+                          
+                        <a class="duplicate-practices" onclick="confirmBeforeDuplicate('practice','/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/practices/duplicate','<%=lesson.id %>','<%=practice.id%>')">Duplicate</a>
+                        <% if(learningContent.isLessonAssign == 0){ %> 
+                          <a class="delete-slide"
+                            onclick="confirmBeforeDeletion('/tutor-training/<%=learningContent.slug%>/lessons/<%=lesson.slug%>/practices/destroy/<%=practice.id%>/1')"
+                            href="javascript:void(0)">Delete</a>
+                        <% } %> 
+
+                      </div>
+                    </div>
+                    <% } %>
+                  </li>
+                  <% practiceIndex++; } } }%>
+              </ul>
+            </div>
+        </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <!-- tutor training lesson sidebar -->

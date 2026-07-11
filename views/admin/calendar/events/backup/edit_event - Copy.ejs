@@ -1,0 +1,316 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.css">
+<div class="right_col" role="main">
+    <div class="bussniess_setting">
+      <h2 class="titleheading">Calender Events</h2>
+      <div class="settings_content">
+        <div class="row">
+          <div class="col-12">
+            <div class="card tabcard">
+              <div class="card-body">
+                <h3 class="setting_title">Edit An Event</h3>
+                <form id="update-an-event" method="POST" action="/calendar/update-event">
+                  <input type="hidden" name="event_id" value="<%=data._id.toString()%>">
+
+                  <div class="settings">
+                    <div class="attendance-pref common-form add-event-block">
+                      <div class="row row-gap-20">
+                        <div class="col-md-12 col-lg-6">
+                          <div class="form-group mb-0 attendess_select2">
+                            <label class="mb-1 w-100">Tutor</label>
+                            <div class="input-group mb-0">
+                              <select name="tutor_id" id="tutor_id" class="form-control w-100 single-select dt-scheduling-conflict" single>
+                                <option value="">Select A Tutor</option>
+                                <% for(tutor of tutors) { %>
+                                  <option value="<%=tutor.id%>" <%=data.tutor_id == tutor.id ? 'selected' : '' %>>
+                                    <%=tutor.first_name+' '+tutor.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>  
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="is_substitute_tutor" value="1" class="form-check-input dt-scheduling-conflict" id="add_substitute_tutor" <%=data.is_substitute_tutor == true ? 'checked' : '' %>>
+                              <label class="form-check-label" for="add_substitute_tutor">Add substitute tutor</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12 col-lg-6">
+                                  <div class="form-group mb-0 attendess_select2 add_substitute_block width-block">
+                                    <label class="mb-1">Add A Substitute Tutor</label>
+                                      <div class="input-group">
+                                        <select name="substitute_tutor_id" id="substitute_tutor_id" class="form-control w-100 single-select" single>
+                                          <option value="">Select A Substitute Tutor</option>
+                                          <% for(substitute_tutor of substitute_tutors) { %>
+                                            <option value="<%=substitute_tutor.id%>" <%=data.substitute_tutor_id == substitute_tutor.id ? 'selected' : '' %>>
+                                              <%=substitute_tutor.first_name+' '+substitute_tutor.last_name %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                      </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group attendess_select2">
+                            <label class="mb-1">Attendees</label>
+                            <div class="input-group">
+                              <select class="form-control dt-scheduling-conflict" id="student_ids" tabindex="-1" multiple>
+                                <% for(student of students) { %>
+                                  <option value="<%=student.id%>" <% if (data.student_ids.includes(student.id)) { %> selected <%
+                                  } %>>
+                                    <%=student.first_name+' '+student.last_name %>
+                                  </option>
+                                  <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group attendess_select2">
+                            <label class="mb-1">Classes</label>
+                            <div class="input-group">
+                              <select name="classes" id="classes" class="form-control multiple-classes classes-content" data-type="default" multiple>
+                                <% for(let program of programContent) { %>
+                                <optgroup label="<%=program.title%>">
+                                  <% for(let lesson of program.lessons) { %>
+                                  <option value="<%=lesson._id%>" <%=eventLessons.includes(lesson._id.toString()) ? 'selected' : ''%> data-learning-content-id="<%=program._id%>" data-learning-content-title="<%=program.title%>" ><%=lesson.title%></option>
+                                  <% } %>
+                                </optgroup>
+                                <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 selected-content-preview">
+                          <div class="more-content-section">
+                            <div class="form-group attendess_select2">
+                              <label class="mb-1">Add More Lessons</label>
+                              <div class="input-group">
+                                <select name="additional_lessons" class="form-control multiple-classes more-content" multiple>
+                                  <% for(let learningContent of learningContents){%>
+                                    <% for(let lesson of learningContent.lesson_ids) { %>
+                                      <option value="<%=lesson.id%>" data-learning-content-id="<%=learningContent._id%>" data-learning-content-title="<%=learningContent.title%>" <%=eventLessons.includes(lesson.id) ? 'selected' : ''%>><%=lesson.title%></option>
+                                    <% } %>
+                                  <% } %>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="mb-1">Event Lessons</label>
+                            <div class="selected_less_preview">
+                              <div class="text-right">
+                                <a href="javascript:void(0)" class="outline-btn clear-all">Clear All</a>
+                              </div>
+                             <ul class="content-listing">
+                                <% for(let eventContent of oldEventContents){ %>
+                                <li data-lesson-id="<%=eventContent.lesson_id.id%>">
+                                  <div class="select_less_icon">
+                                    <img src="/images/classes2.svg" alt="" class="img-fluid">
+                                  </div>
+                                  <div class="select_less_content">
+                                    <h5><%=eventContent.lesson_id.title%> <% if(eventContent.lesson_id.is_default == true) { %><span class="default-course" data-toggle="tooltip" rel="tooltip" data-placement="top" title="" data-original-title="Default Lesson">D</span><%}%></h5>
+                                    <p><%=eventContent.learning_content_id.title%></p>
+                                  </div>
+                                  <div class="select_lessprev_close" data-id="<%=eventContent.lesson_id.id%>">
+                                    <a href="javascript:void(0)"><img src="/images/close.svg" alt=""></a>
+                                  </div>
+                                </li>
+                                <% } %>
+                              </ul> 
+                            </div>
+                          </div>
+                          <div class="text-right">
+                            <span class="badge bg-success add-more-content">+ Add more content</span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Category</label>
+                            <select class="form-control single-select" name="event_category_id" id="event_category_id" tabindex="-1" single>
+                              <option value="">Select Event Category</option>
+                              <% for(category of eventCategories) { %>
+                                <option value="<%=category.id%>" <%=data.event_category_id == category.id ? 'selected' : '' %>>
+                                  <%=category.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Location</label>
+                            <select class="form-control single-select" name="event_location_id" id="event_location_id" tabindex="-1" single>
+                              <option value="">Select Event Location</option>
+                              <% for(location of eventLocations) { %>
+                                <option value="<%=location.id%>" <%=data.event_location_id == location.id ? 'selected' : '' %>>
+                                  <%=location.name%>
+                                </option>
+                                <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                              <label class="mb-1">Date</label>
+                              <input type="date" name="start_date" min="<%=moment().add(1, 'days').format('YYYY-MM-DD');%>" class="form-control pl-40 dt-scheduling-conflict recurring_count" id="start_date" autocomplete="off" value="<%=data.start_date != '' ? moment(data.start_date).format('YYYY-MM-DD') : moment().add(1, 'days').format('YYYY-MM-DD')%>"   <%=data.start_date%>>
+                              <span class="input-icon"><img src="/images/timer.svg" alt="calendar-icon"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group position-relative">
+                            <label class="mb-1">Time </label>
+                            <input class="form-control time-picker pl-40 dt-scheduling-conflict" name="start_time" type="text" id="start_time" placeholder="" autocomplete="off" value="<%=moment(data.start_time).tz(userTimeZone).format('hh:mm A');%>" />
+                            <span class="input-icon"><img src="/images/timer.svg" alt="clock-icon"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="mb-1">Duration</label>
+                            <input class="form-control dt-scheduling-conflict" name="duration" type="text" id="duration" value="" placeholder="">
+                            <span class="label-after duration-value">(In Minutes)</span>
+                          </div>
+                        </div>
+                        <div class="col-md-12 conflict_area" id="conflict_area"></div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input type="checkbox" name="will_repeat" value="1" class="form-check-input dt-scheduling-conflict" id="will_repeat" <%=data.will_repeat == true ? 'checked' : '' %> data-event-type="<%=data.will_repeat == true ? 'recurring' : 'single' %>" data-event-parent="<%=data.parent_event_id == null ? true : false %>">
+                              <label class="form-check-label" for="will_repeat">This event repeats</label>
+                              <div class="open_group row pl-0 mt-3">
+                                <div class="col-md-12">
+                                  <div class="event-repeat-area show_repeat_indefinitely show_repeat_until" id="recurringSettings">
+                                    <h2 class="title-text mb-3">Recurring Event</h2>
+                                    <div class="form-group event_occurrence">
+                                      <label>Frequency</label>
+                                      <ul class="settinglist flex-column mt-0">
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_weekly" value="weekly" <%=data.recurring_info[0]?.recurring_type == 'weekly' ? 'checked' : '' %>>
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_weekly">Weekly</label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control dt-scheduling-conflict recurring_count" name="no_of_week" type="number" id="no_of_week" placeholder="" value="<%=data.recurring_info[0]?.no_of_recurring%>" min="2" max="10">
+                                                <span class="label-after">Week(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <li>
+                                          <div class="form-check radio_group">
+                                            <input class="form-check-input event_frequency dt-scheduling-conflict recurring_count" type="radio" name="recurring_type" id="frequency_fortnightly" value="fortnightly" <%=data.recurring_info[0]?.recurring_type == 'fortnightly' ? 'checked' : '' %>>
+                                            <label class="radiolabel d-inline-block mb-0" for="frequency_fortnightly">Fortnightly </label>
+                                            <div class="open_group mt-2">
+                                              <div class="form-group mb-2">
+                                                <label class="mb-1">Every</label>
+                                                <input class="form-control recurring_count" name="no_of_fortnightly" type="number" id="no_of_fortnightly" placeholder="" value="<%=data.recurring_info[0]?.no_of_recurring%>" min="2" max="10">
+                                                <span class="label-after">Fortnight(s), The number must be at least 2</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      </ul>
+                                      <span class="error-msg-rec-event"></span>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                      <div class="form-check uncheck-dropshow">
+                                        <input type="checkbox" name="repeat_indefinitely" value="1" class="form-check-input recurring_count" id="repeat_indefinitely" <%=data.recurring_info[0]?.repeat_indefinitely == true ? 'checked' : '' %>>
+                                        <label class="form-check-label d-inline-block" for="repeat_indefinitely">Repeat indefinitely</label>
+                                        <div class="open_group row pl-0">
+                                          <div class="col-md-12">
+                                            <div class="form-group mb-0 position-relative">
+                                              <label class="mb-1">Repeat Until</label>
+                                              <input class="form-control date-picker pl-40" name="repeat_until_end_date" type="text" id="repeat_until_end_date" placeholder="" value="" disabled>
+                                              <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Student Pricing <small>Optional</small></label>
+                            <ul class="settinglist flex-column mt-0">
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_default" value="std_price_default" <%=data.student_pricing_option == 'std_price_default' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_default">Student Default</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_nocharge" value="std_price_no_charge" <%=data.student_pricing_option == 'std_price_no_charge' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_nocharge">No charge (₹ 0.00)</label>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="form-check radio_group">
+                                  <input class="form-check-input" type="radio" name="student_pricing_option" id="student_price_specify" value="student_price_specify" <%=data.student_pricing_option == 'student_price_specify' ? 'checked' : '' %>>
+                                  <label class="radiolabel" for="student_price_specify">Specify price per student</label>
+                                  <div class="open_group mt-2">
+                                    <div class="form-group position-relative">
+                                      <input type="text" name="per_std_lesson_price" id="per_std_specific_price" class="form-control pl-40" value="<%=data.per_std_lesson_price%>">
+                                      <span class="label-before"><img src="/images/rupee-square.svg" alt="rupees-icon"></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Public Description <small>Optional</small></label>
+                            <textarea name="public_note" id="event_public_note"><%=data.public_note%></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="mb-1">Private Description <small>Optional</small><small class="d-block mat-5">Visible only to you.</small></label>
+                            <textarea name="private_note" id="event_private_note"><%=data.private_note%></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12 text-right pt-4 submission-buttons">
+
+                        <% if(data.will_repeat == true) { %>
+                          <button type="submit" name="update_event_option" value="this_one_and_future" class="btn theme-btn mb-2 mr-2 update-event" id="update-all-events">Update This & Future Events</button>
+                        <% } %>
+
+                        <button type="submit" name="update_event_option" value="this_one_only" class="btn theme-btn mb-2 update-event" id="update-single-event">Update This Event</button>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.14.1/jquery.timepicker.min.js"></script>
+<script type="text/javascript">
+    $('#duration').timepicker({
+          timeFormat: 'H:i',
+          minTime: '00:30',
+          maxTime: '08:00',
+          step: 30,
+    });
+</script>
+<%-include('./partials/edit_event_script.ejs')%>
+

@@ -1,0 +1,36 @@
+<div class="modal fade bussiness-setting-modal" id="salesTaxEdit" tabindex="-1" role="dialog" aria-labelledby="salesTaxEditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="salesTaxEditLabel">Edit Sales Tax</h3>
+        </div>
+        <form method="post" action="/business-settings/update-sales-tax">
+            <input type="hidden" name="uniqueId" value="<%=businessSetting?.id%>" />
+            <input type="hidden" name="tax_id" value="" />
+            <div class="modal-body">
+                <div class="form-area">
+                    <div class="form-group">
+                        <label>Tax Name*</label>
+                        <input type="text" placeholder="Tax Name" name="tax_name" class="title tax_name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Tax Rate(%)*</label>
+                        <input type="number" placeholder="Tax Rate" name="tax_rate" class="title tax_rate" step="any" min="0" max="100" 
+                          oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" 
+                        />
+                    </div>
+                </div>
+            </div>
+          <div class="modal-footer">
+            <div class="btn-leftarea">
+              <!-- <button type="button" class="restore-btn">Restore Default Template</button> -->
+            </div>
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn hide-btnss">Cancel</button>
+              <button type="submit" class="btn theme-btn hide-btnss submit-custum">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

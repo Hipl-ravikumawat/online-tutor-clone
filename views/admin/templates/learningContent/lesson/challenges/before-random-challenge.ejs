@@ -1,0 +1,116 @@
+<div class="card-block">
+  <div class="challenges-screen">
+    <div class="py-3 text-center">
+      <a class="theme-btn2 play-btn" id="challenge-play-btn" href="javascript:void(0);"><i class="fa fa-play mr-1"></i> Play</a>
+      <p class="challenge-started" style="font-size: 14px;color: green;font-weight: 500;display:none;"> Your challenges is started </p>
+    </div>
+    <div class="challenges-answer-part">
+      <img src="/images/BG-Animation.gif" alt="img" class="w-100">
+      <div class="upper-content">
+        <div class="output">
+          
+          <div class="winner-banner" style="display:none;"><img src="/images/winner.gif" alt="img"
+              style="height: 148px;width: 320px;margin-top: 26px;"><span id="challenge-winner-text"></span></div>
+
+          <div class="challenge-preview-data">
+            <div class="d-flex">
+              <div class="question-list d-flex align-items-center">
+                <% let i=0; let duration; for (practice of allPractices) { duration=challenge.duration.split(':');
+                  duration=parseInt((duration[0]*60)) + parseInt(duration[1]); %>
+                  <% if(challenge.practice_ids.includes(practice._id)) { i++; %>
+                    <div class="challenge-questions <%if(i==1){%>qactive<%}%>" data-question-id="<%=practice._id%>"
+                      data-index="<%=i%>">
+                      <%=practice.question_title%>
+                    </div>
+
+                    <% } } %>
+              </div>
+
+              <div class="previous-operandd">=</div>
+              <div data-preview-answer id="typed-answer" class="current-operandd">?</div>
+            </div>
+          </div>
+        </div>
+        <div class="counter-section">
+          <input type="hidden" class="time-duration" value="<%=duration%>">
+          <div class="teacher-block">
+            <img class="img-animation  <%=duration%>" src="/images/Teacher-Animation.gif" alt="img">
+            <div class="ques-attempt">
+              <div class="quest-number teacher-number">
+                <!-- <div class="line_up"></div> -->
+              </div>
+              <div class="quest-count teacher-count">0</div>
+            </div>
+          </div>
+          <div class="counter-block">
+            <div id="countdown-timer"></div>
+          </div>
+          <div class="student-block">
+            <img class="img-animation" src="/images/Student-Animation.gif" alt="img">
+            <div class="ques-attempt">
+              <div class="quest-count user-count">0</div>
+              <div class="quest-number user-number">
+                <!-- <div class="line_up"></div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+    <div class="challenges-calc-part">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <div class="output" id="output-html">
+            <div class="previous-operand" id="output-previous-operand" data-previous-operand></div>
+            <div class="current-operand" id="output-current-operand" data-submitted-answer></div>
+
+            <input type="hidden" name="ch_lesson_id" id="ch-lesson-id" value="<%=lesson_id%>">
+            <input type="hidden" name="challenge_id" id="challenge-id" value="<%=challenge.id%>">
+            <input type="hidden" class="practice_type" value="<%=practice.question_type%>" name="practice_type">
+            <% for(questionId of challenge.practice_ids) { %>
+            <input type="hidden" name="ch_question_id" class="ch-question-id" id="ch-question-id" value="<%=questionId%>">
+            <% } %>
+            <input type="hidden" class="question_content_type" value="challenges">
+            <input type="hidden" name="ch_submitted_answer" id="ch-submitted-answer" value="">
+            
+          </div>
+          <div class="col-sm-12 col-md-6" style="padding: 20px;">
+            <div class="single-text answer-msg correct-answer-msg" style="display: none;">
+              <img src="/images/correct-answer-icon.svg" alt="icon">
+              <span>Congratulations <small>Correct Answer</small></span>
+            </div>
+            <div class="single-text answer-msg incorrect-answer-msg" style="display: none;">
+              <img src="/images/incorrect-answer-icon.svg" alt="icon">
+              <span>Wrong <small>Incorrect Answer</small></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <div class="calculator-grid">
+            <button class="numbers" data-number="1">1</button>
+            <button class="numbers" data-number="2">2</button>
+            <button class="numbers" data-number="3">3</button>
+            <button id="btn-all-clear" data-all-clear>AC</button>
+
+            <button class="numbers" data-number="4">4</button>
+            <button class="numbers" data-number="5">5</button>
+            <button class="numbers" data-number="6">6</button>
+            <button id="btn-delete" data-delete>DEL</button>
+
+            <button class="numbers" data-number="7">7</button>
+            <button class="numbers" data-number="8">8</button>
+            <button class="numbers" data-number="9">9</button>
+
+            <button id="btn-operation" data-operation>-</button>
+
+            <button class="numbers" data-number="0">0</button>
+            <button class="numbers" data-number=".">.</button>
+            <button class="done d-none">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 

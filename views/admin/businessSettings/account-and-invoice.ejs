@@ -1,0 +1,330 @@
+<div class="tab-pane fade" id="pills-accounts" role="tabpanel" aria-labelledby="pills-accounts-tab">
+  <div class="row row-gap-30 mx-0">
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <h3 class="setting_title">Family Account <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+          <div class="settings">
+            <form method="post" class="family-account" id="invoice-setting">
+              <div class="row mx-0 row-gap-20">
+                <div class="col-12 px-0">
+                  <h6 class="setting_name m-0">Payment Methods <span class="subtitle size-12">Use a semicolon or press the Enter key to separate entries</span></h6>
+                  <div class="prior-input mw-100">
+                    <select name="payment_mothods[]" class="select2_multiple_with_tags form-control" multiple="multiple" disabled>
+                      <% businessSetting?.family_contact_settings[0]?.payment_methods.forEach(function(payment_method) { 
+                        %>
+                        <option value="<%= payment_method.method %>" selected>
+                          <%= payment_method.method %> 
+                        </option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 px-0">
+                  <h6 class="setting_name">Default Balance Date</h6>
+                  <ul class="settinglist flex-column align-items-start">
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="balance_date_type" id="balancerate1" value="today" <%= (businessSetting?.family_contact_settings?.[0]?.balance_date_type === "today") ? 'checked' : '' %> disabled>
+                        <label class="radiolabel" for="balancerate1">Today</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="balance_date_type" id="balancerate2" value="end_of_month" <%= (businessSetting?.family_contact_settings?.[0]?.balance_date_type === "end_of_month") ? 'checked' : '' %> disabled>
+                        <label class="radiolabel" for="balancerate2">End of month</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="balance_date_type" id="balancerate3" value="day_of_month" <%= (businessSetting?.family_contact_settings?.[0]?.balance_date_type === "day_of_month") ? 'checked' : '' %> disabled>
+                        <label class="radiolabel" for="balancerate3">Day of month</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="balance_date_type" id="balancerate4" value="specific_date" <%= (businessSetting?.family_contact_settings?.[0]?.balance_date_type === "specific_date") ? 'checked' : '' %> disabled>
+                        <label class="radiolabel" for="balancerate4">Specific date</label>
+
+                      </div>
+                    </li>
+                    <li>
+                      <div class="col-12 px-0" id="specific_day_box" style="display: none;">
+                        <label class="form-check-label size-12 m-0" for="month">Select a day of the month between 1 and 31 </label>
+                        <div class="inputgroup">
+                          <input class="form-control" type="number" name="specific_day" id="specific_day" step="1" min="1" max="31" value="<%= businessSetting?.family_contact_settings?.[0]?.specific_day %>" disabled />
+                        </div>
+                      </div>
+
+                      <div class="col-12 px-0" id="specific_date_box" style="display: none;">
+                        <label class="form-check-label size-12 m-0" for="specific_date">Select a specific balance date </label>
+                        <div class="inputgroup iconfield">
+                          <input class="form-control" name="specific_date" type="date" id="specific_date" 
+                          value="<%= businessSetting?.family_contact_settings?.[0]?.specific_date 
+    ? businessSetting.family_contact_settings[0].specific_date.toISOString().split('T')[0] 
+    : '' %>" disabled />
+                          <!-- <span><img src="/images/calendar.svg" alt="icon"></span> -->
+                        </div>
+                      </div>
+                      
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-12 px-0 text-right btngroup">
+                  <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                  <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <h3 class="setting_title">Invoice Settings <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+          <div class="settings">
+            <form method="post" class="invoice" id="invoice-setting">
+              <div class="row mx-0 row-gap-20">
+                <div class="col-12 px-0">
+                  <h6 class="setting_name">Automatic Late Payment Fee</h6>
+                  <ul class="settinglist flex-column align-items-start">
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="payment_fee_type" id="invoicename1" value="1" disabled <%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].payment_fee_type =='1'? 'checked':'' %>>
+                        <label class="radiolabel" for="invoicename1">None</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="payment_fee_type" id="invoicename2" value="2" disabled <%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].payment_fee_type =='2'? 'checked':'' %>>
+                        <label class="radiolabel" for="invoicename2">Fixed amount ($)</label>
+                        <div class="open_group row mx-0 row-gap-20">
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="invoice_name">Enter a late fee amount <span class="inputgroup_value">$ 120.00</span></label>
+                            <div class="inputgroup iconfield">
+                              <input class="form-control" type="tel" id="invoicemonth" name="late_fee_amount" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].late_fee_amount%>"/>
+                              <span style="padding-top: 4px;"><%= currency %></span>
+                            </div>
+                          </div>
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="invoicemonth1">Enter the number of days after invoice due date to apply late fee <span class="inputgroup_value">30</span></label>
+                            <div class="inputgroup">
+                              <input class="form-control" type="number" min="1" step="1" id="invoicemonth1" name="number_of_days" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].number_of_days%>"/>
+                            </div>
+                          </div>
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="invoicemonth2">Select a category to use for automatic late fees (optional) <span class="inputgroup_value">Group Lesson</span></label>
+                            <div class="inputgroup">
+                              <input class="form-control" type="text" id="invoicemonth2" name="category" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].category%>"/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="payment_fee_type" id="invoicename3" value="3" disabled <%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].payment_fee_type =='3'? 'checked':'' %>>
+                        <label class="radiolabel" for="invoicename3">Percentage (%)</label>
+                        <div class="open_group row mx-0 row-gap-20">
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="feepercentage">Enter a late fee percentage <span class="inputgroup_value">$ 120.00</span></label>
+                            <div class="inputgroup iconfield icon-rblock">
+                              <input class="form-control" type="tel" id="feepercentage"  name="late_fee_percentage" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].late_fee_amount%>"/>
+                              <span><img src="/images/percen-square.svg" alt="icon"></span>
+                            </div>
+                          </div>
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="feepercentage1">Enter the number of days after invoice due date to apply late fee <span class="inputgroup_value">30</span></label>
+                            <div class="inputgroup">
+                              <input class="form-control" type="text" id="feepercentage1" name="percentage_number_of_days"  value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].number_of_days%>"/>
+                            </div>
+                          </div>
+                          <div class="col-12 px-0">
+                            <label class="form-check-label size-12 m-0" for="feepercentage2">Select a category to use for automatic late fees (optional) <span class="inputgroup_value">Group Lesson</span></label>
+                            <div class="inputgroup">
+                              <input class="form-control" type="text" id="feepercentage2" name="percentage_category"  value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].category%>"/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-12 px-0">
+                  <h6 class="setting_name">Notifications & Reminders</h6>
+                  <ul class="settinglist">
+                    <li class="w-100">
+                      <div class="form-group form-check">
+                        <input type="checkbox" name="scheduling[]" class="form-check-input" id="scheduling" value="1" disabled <%=businessSetting?.invoice_settings[0]?.notifications_reminders.includes('1') ? 'checked':''%>>
+                        <label class="form-check-label" for="scheduling">Send SMS invoice notifications and invoice reminders</label>
+                      </div>
+                    </li>
+                    <li class="w-100">
+                      <div class="form-group form-check">
+                        <input type="checkbox" name="scheduling[]" class="form-check-input" id="scheduling1" value="2"  disabled <%=businessSetting?.invoice_settings[0]?.notifications_reminders.includes('2') ? 'checked':''%>>
+                        <label class="form-check-label" for="scheduling1">Send an overdue invoice reminder</label>
+                        <div class="open_group row px-0 flex-row pt-4">
+                          <div class="col-12 col-md-6">
+                            <label class="size-12 m-0" for="overdueinvoicedate">Enter the number of days after invoice due date to send overdue reminder</label>
+                            <div class="inputgroup">
+                              <input class="form-control w-100" type="number" min="1" step="1" id="overdueinvoicedate" name="overdue_reminder_day" value="<%=businessSetting?.invoice_settings[0]?.overdue_reminder_day%>" disabled>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-12 px-0">
+                  <h6 class="setting_name m-0">Email Timeframe <span class="subtitle size-12 m-0">Set what time your auto-invoices & automatic invoice reminder emails will be sent</span></h6>
+                  <div class="prior-input mw-100">
+                    <select disabled name="email_time_frame">
+                      <option value="1">Between 12:00 AM and 1:00 AM</option>
+                      <option value="2">Between 1:00 AM and 2:00 AM</option>
+                      <option value="3">Between 2:00 AM and 3:00 AM</option>
+                      <option value="4">Between 3:00 AM and 4:00 AM</option>
+                      <option value="5">Between 4:00 AM and 5:00 AM</option>
+                      <option value="6">Between 5:00 AM and 6:00 AM</option>
+                      <option value="7">Between 6:00 AM and 7:00 AM</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 px-0 text-right btngroup">
+                  <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                  <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <h3 class="setting_title">Invoice Formatting <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+          <div class="settings">
+            <form method="post" class="invoice-formatting" id="invoice-setting">
+              <div class="row mx-0 row-gap-30">
+                <div class="col-sm-auto col-12 px-0">
+                  <div class="choosefile">
+                    <div class="form-group text-center">
+                      <label for="choosefile"><img src="/images/invoice-setting-logo.png" alt="logo"></label>
+                      <input type="file" class="form-control-file" id="choosefile" hidden disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="col px-0">
+                  <div class="row mx-0 row-gap-20">
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name m-0 flex-row">Invoice Name <span class="subtitle size-12">Optional</span></h6>
+                      <div class="prior-input mw-100">
+                        <input type="text" placeholder="Not specified" name="invoice_name" value="<%=businessSetting?.invoice_formatting[0]?.invoice_name%>" disabled>
+                      </div>
+                    </div>
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name">Invoice Number</h6>
+                      <ul class="settinglist">
+                        <li class="w-100">
+                          <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="invoicenumber" name="invoice_number" value="1" <%=businessSetting?.invoice_formatting[0]?.invoice_number[0].generate_invoice_number === true ? 'checked':'' %> disabled>
+                            <label class="form-check-label" for="invoicenumber">Generate invoice number</label>
+                            <div class="open_group row px-0 flex-row pt-3">
+                              <div class="col-12 col-md-6">
+                                <label class="size-12 m-0" for="invoicenumbers">Invoice Number Format</label>
+                                <div class="inputgroup">
+                                  <input class="form-control w-100" type="text" id="invoicenumbers" name="invoice_number_format" value="<%=businessSetting?.invoice_formatting[0]?.invoice_number[0].invoice_number_format ||'%YY%-%NNNN%' %>">
+                                  <p><strong>Preview</strong> <span id="invoice_number_preview">24-0001</span></p>
+                                </div>
+                              </div>
+                              <div class="col-12 col-md-6">
+                                <label class="size-12 m-0" for="nextInvoiceNumbers">Next Invoice Number</label>
+                                <div class="inputgroup">
+                                  <input class="form-control w-100" type="text" id="nextInvoiceNumbers" name="next_invoice_number" value="<%= businessSetting?.invoice_formatting[0]?.invoice_number[0].next_invoice_number %>">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name">Negative Invoices</h6>
+                      <ul class="settinglist">
+                        <li>
+                          <div class="form-check radio_group">
+                            <input class="form-check-input" type="radio" name="negative_invoice" id="negativeinvoicename1" value="1" disabled <%=businessSetting?.invoice_formatting[0]?.negative_invoices =='1' ? 'checked' :'' %>>
+                            <label class="radiolabel" for="negativeinvoicename1">Show as "$0.00 due"</label>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="form-check radio_group">
+                            <input class="form-check-input" type="radio" name="negative_invoice" id="negativeinvoicename2" value="2" disabled <%=businessSetting?.invoice_formatting[0]?.negative_invoices =='2' ? 'checked' :'' %>>
+                            <label class="radiolabel" for="negativeinvoicename2">Show as "Balance Remaining"</label>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name">Options</h6>
+                      <ul class="settinglist flex-column align-items-start">
+                        <li>
+                          <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="invoice_option1" name="invoice_option[]" value="1" disabled <%=businessSetting?.invoice_formatting[0]?.options.includes('1') ? 'checked':''%>>
+                            <label class="form-check-label" for="invoice_option1">Show location on invoice</label>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="invoice_option2" name="invoice_option[]" value="2" disabled <%=businessSetting?.invoice_formatting[0]?.options.includes('2') ? 'checked':''%>>
+                            <label class="form-check-label" for="invoice_option2">Group charges together by student for families with multiple students</label>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="invoice_option3" name="invoice_option[]" value="3" disabled <%=businessSetting?.invoice_formatting[0]?.options.includes('3') ? 'checked':''%>>
+                            <label class="form-check-label" for="invoice_option3">Include sales tax in line item amounts</label>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name flex-row m-0">Invoice Footer Text <span class="subtitle size-12">Optional</span></h6>
+                      <div class="prior-input mw-100">
+                        <textarea name="invoice_footer_text" class="" disabled><%-businessSetting?.invoice_formatting[0]?.invoice_footer_text%></textarea>
+                      </div>
+                    </div>
+                    <div class="col-12 px-0">
+                      <h6 class="setting_name m-0">Invoice Accent Color</h6>
+                      <div class="colorpicker-input">
+                        <label>
+                          <input type="color" id="colorPicker"  name="invoice_color" value="<%=businessSetting?.invoice_formatting[0]?.invoice_accent_color%>" disabled>
+                          <span id="colorCode"></span>
+                        </label>
+                      </div>
+                      <!-- <ul class="settinglist">
+                        <li>
+                          <div class="form-group form-check colorinput">
+                            <input type="color" class="form-check-input" id="invoicenumber"  value="#166269" disabled>
+                            <label class="form-check-label" for="invoicenumber">Generate invoice number</label>
+                          </div>
+                        </li>
+                      </ul> -->
+                    </div>
+                    <div class="col-12 px-0 text-right btngroup">
+                      <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                      <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,206 @@
+<div class="tab-pane fade show active" id="tutor-general" role="tabpanel" aria-labelledby="tutor-general-tab">
+  <div class="row row-gap-30 mx-0">
+    <!-- <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <h3 class="setting_title">Attendance Preferences</h3>
+          <div class="settings">
+            <div class="attendance-pref common-form">
+              <div class="row row-gap-20">
+                <div class="col-md-12">
+                  <h6 class="setting_name">Overdue Attendance</h6>
+                  <div class="form-group form-check">
+                    <input type="checkbox" name="" class="form-check-input" id="overdue-attendance" checked="" disabled="">
+                    <label class="form-check-label fw-400" for="overdue-attendance">Show overdue attendance on homepage</label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <h6 class="setting_name">Default Notes View</h6>
+                  <ul class="settinglist">
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="" id="tutStudent" value="" disabled="" checked="">
+                        <label class="radiolabel" for="tutStudent">Student</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="" id="tutParent" value="" disabled="">
+                        <label class="radiolabel" for="tutParent">Parent</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="" id="tutPrivate" value="" disabled="">
+                        <label class="radiolabel" for="tutPrivate">Private</label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-md-12">
+                  <h6 class="setting_name">Lesson Notes</h6>
+                  <div class="form-group form-check">
+                    <input type="checkbox" name="" class="form-check-input" id="automatic-atten" disabled="">
+                    <label class="form-check-label fw-400" for="automatic-atten">Automatically copy lesson notes when I take attendance</label>
+                  </div>
+                  <ul class="settinglist">
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="" id="reventEvent" value="" disabled="" checked="">
+                        <label class="radiolabel" for="reventEvent">Copy from most recent event</label>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="form-check radio_group">
+                        <input class="form-check-input" type="radio" name="" id="categoryOnly" value="" disabled="">
+                        <label class="radiolabel" for="categoryOnly">Copy from same category only</label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="col-12 px-0">
+      <div class="card tabcard">
+        <div class="card-body">
+          <h3 class="setting_title">Email Notification Preferences
+            <% if(loggedUserInfo.role==2){ %> <span class="editsetting"><img src="/images/edit.svg" alt=""></span>
+              <% } %>
+          </h3>
+          <!-- <div class="setting_title justify-content-between page-tabtitle p-0">
+                  <h3 class="m-0">Email Notification Preferences <span class="editsetting"><img src="/images/edit.svg" alt=""></span></h3>
+              </div> -->
+          <form class="general" id="event-schedule" method="post"
+            action="/tutor-preferences/email-notification-preference">
+            <input type="hidden" name="tutor_id" value="<%=user._id%>">
+            <input type="hidden" name="tutor_preference_id" value="<%=fetchTutorPreference[0]?._id%>">
+            <div class="settings">
+              <div class="row mx-0 row-gap-20">
+                <div class="col-12 px-0">
+                  <div class="form-group">
+                    <ul class="settinglist mt-0">
+                      <li class="w-100">
+                        <div class="form-check">
+                          <input type="checkbox" name="register_for_lesson" class="form-check-input" value="1"
+                            id="email_notification_regstu_portal"
+                            <%=fetchTutorPreference[0]?.email_notification_preferences[0]?.register_for_lesson===true
+                            ? 'checked' :''%>
+                          disabled>
+                          <label class="form-check-label" for="email_notification_regstu_portal">When one of their
+                            students registers for a lesson/event through the Student Portal</label>
+                        </div>
+                      </li>
+                      <li class="w-100">
+                        <div class="form-check">
+                          <input type="checkbox" name="cancel_for_lesson" class="form-check-input" value="1"
+                            id="email_notification_canstu_portal"
+                            <%=fetchTutorPreference[0]?.email_notification_preferences[0]?.cancel_for_lesson===true
+                            ? 'checked' :''%>
+                          disabled>
+                          <label class="form-check-label" for="email_notification_canstu_portal">When one of their
+                            students cancels a lesson/event through the Student Portal</label>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 px-0">
+                  <div class="form-group">
+                    <h6 class="setting_name">Email Daily Agenda</h6>
+                    <ul class="settinglist flex-column">
+                      <li>
+                        <div class="form-check radio_group">
+                          <input class="form-check-input" type="radio" name="email_daily_agenda"
+                            id="email_daily_agenda_yes" value="1" disabled
+                            <%=fetchTutorPreference[0]?.email_notification_preferences[0]?.email_daily_agenda=='1'
+                            ? 'checked' :''%>>
+                          <label class="radiolabel" for="email_daily_agenda_yes">Yes</label>
+                          <div class="open_group row mx-0 row-gap-20">
+                            <div class="col-12 px-0">
+                              <label class="size-12 m-0 d-inline-block" for="email_time">Select Time</label>
+                              <div class="inputgroup">
+                                <input class="form-control time-picker" name="start_time" type="text" id="tutEmailtime"
+                                  value="<%=fetchTutorPreference[0]?.email_notification_preferences[0]?.select_time%>"
+                                  placeholder="Select a time..." disabled />
+                              </div>
+                            </div>
+                            <div class="col-12 px-0">
+                              <ul class="settinglist mt-0">
+                                <li class="w-100">
+                                  <div class="form-check">
+                                    <input type="checkbox" name="send_email_daily_agenda" value="1"
+                                      class="form-check-input" id="daily_agenda_events"
+                                      <%=fetchTutorPreference[0]?.email_notification_preferences[0]?.send_email_daily_agenda===true
+                                      ? 'checked' :''%>
+                                    disabled>
+                                    <label class="form-check-label" for="daily_agenda_events">
+                                      Send daily agenda even when no events are scheduled</label>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="form-check radio_group">
+                          <input class="form-check-input" type="radio" name="email_daily_agenda"
+                            id="email_daily_agenda_no" value="0"
+                            <%=fetchTutorPreference[0]?.email_notification_preferences[0]?.email_daily_agenda=='0'
+                            ? 'checked' :''%>
+                          disabled>
+                          <label class="radiolabel" for="email_daily_agenda_no">No</label>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 px-0">
+                  <div class="form-group">
+                    <% if(loggedUserInfo.role==2){ %>
+                      <button class="btn cancel-btn theme-btn btn-disblock" disabled>Send Agenda Now</button>
+                      <% } %>
+                  </div>
+                </div>
+                <div class="col-12 px-0 text-right btngroup">
+                  <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                  <button type="submit" class="btn form-button save-btn theme-btn btn-store-email-pref">Save</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('.time-picker').datetimepicker({
+      allowInputToggle: true,
+      keepOpen: true,
+      useCurrent: false,
+      format: 'hh:mm A',
+      stepping: 30,
+      icons: { time: "fa fa-clock" }
+    }).on('dp.show', function () {
+      // code when the picker shows
+    });
+
+    $('.time-picker').on('keydown', function (e) {
+      e.preventDefault();
+    });
+
+    
+    $('.btn-store-email-pref').click(function () {
+      setCurrentTab();
+      $('#event-schedule').submit();
+    });
+  });
+
+</script>

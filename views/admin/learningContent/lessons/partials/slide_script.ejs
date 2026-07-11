@@ -1,0 +1,243 @@
+<script type="text/javascript">
+    /**
+     * @slides script starts.
+     */
+    $('#video').next(".dropify-clear").on('click', function () {
+        $('#is_video_removed').val(1);
+    });
+
+    $('#attachments').next(".dropify-clear").on('click', function () {
+        $('#is_attachment_removed').val(1);
+    });
+
+    $(document).on('click', '.addSlides', function () {
+        $('.dropify-clear').trigger('click');
+        $('.dropify-filename-inner').html('');
+        $("#update_data").val('');
+        $('#storeSlideForm')[0].reset();
+    });
+
+    $("#storeSlideForm").submit(function (e) {
+        e.preventDefault();
+        tinymce.triggerSave();
+        $('.text-danger').remove();
+        $('#storeSlideBtn').attr("disabled", true);
+        var form = $('#storeSlideForm');
+        var formData = new FormData(form[0]);
+        formData.append('learning_content_id', learningContentId);       
+        formData.append('lesson_id', lessonId);       
+        formData.append('video', this.new_attachments);
+        formData.append('attachments', this.new_attachments);
+        var url = $('#storeSlideForm').attr('action');
+        let slideTitle = formData.get("title");
+        let slideId = formData.get("slide_id");
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                $('.loader').show();
+            },
+            success: function (response) {
+                    $('.close').trigger('click');
+                    if(slideId !=''){
+                        setTimeout(() => {
+                            new Noty({
+                                theme: 'relax',
+                                text: response.message,
+                                type: 'success',
+                                layout: 'topRight',
+                                timeout: 1500
+                            }).show();
+                        }, 1000);
+                        $(".sort-slides1[data-uniqueid="+slideId+"]").find('.slide-anchor').text(slideTitle);
+                        renderSliderContent(lessonId, 'slides', slideId);
+                    }else{
+                        new Noty({
+                        theme: 'relax',
+                        text: response.message,
+                        type: 'success',
+                        layout: 'topRight',
+                        timeout: 1500
+                        }).show();
+                        location.reload();
+                    }
+            },
+            error: function (response) {
+                // console.log(response.responseJSON);
+                if (response.responseJSON.errors) {
+                    let errorMessages = '';
+                    $.each(response.responseJSON.errors, function (field_name, error) {
+                        $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                    });
+                }else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.responseJSON.message,
+                    });
+                }
+            },
+            complete: function () {
+                if(slideId !=''){
+                    setTimeout(() => {
+                        $('.loader').hide();
+                    }, 1000);
+                }else{
+                    $('.loader').hide();
+                }
+                $('#storeSlideBtn').attr("disabled", false);
+            }
+        })
+    });
+
+    $('.edit-slide').click(function () {
+        $('.dropify-clear').trigger('click');
+        $('.dropify-filename-inner').html('');
+        let slideId = $(this).attr("data-slideid");
+        let content_directory = $("#content_directory").val();
+        $.ajax({
+            type: "POST",
+            url: '/learning-content/' + learningContentSlug + '/lessons/' + lessonSlug + '/slides/edit',
+            data: {
+                lesson_id: lessonId,
+                slide_id: slideId,
+            },
+            beforeSend: function () {
+                $('.loader').show();
+            },
+            dataType: "json",
+            success: function (response) {
+                $("#title").val(response.data.title);
+                $("#duration").val(response.data.duration);
+                $("#video_url").val(response.data.video_url);
+                $("#lesson_id").val(lessonId);
+                $("#update_data").val(slideId);
+                $('#is_video_removed').val(0);
+                $('#is_attachment_removed').val(0);
+
+                if (typeof response.data.video === 'string' && response.data.video.trim() !== '') {
+                    let videoExtension = response.data.video.split('.').pop();
+                    resetPreview($('#video'), '', response.data.video, videoExtension);
+                }
+
+                if (typeof response.data.attachments[0] === 'string' && response.data.attachments[0].trim() !== '') {
+                    let attachmentExtension = response.data.attachments[0].split('.').pop();
+                    let path = '';
+                    if (attachmentExtension == 'png') {
+                        path = `/LearningContent/${response.data.content_directory}/${response.data.attachments[0]}`
+                    }
+                    resetPreview($('#attachments'), path, response.data.attachments[0], attachmentExtension);
+                }
+                tinymce.get('description').setContent(response.data.description);
+            },
+            error: function (response) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: response.responseJSON.message,
+                });
+            },
+            complete: function () {
+                $('.loader').hide();
+                $('#slideModal').show();
+            }
+        })
+    });
+
+    $(".slides-sortable").sortable({
+        swapThreshold: 1,
+        group: 'list',
+        animation: 200,
+        onChange: function (update, evt) {
+            var j = 1;
+            $(".sort-slides1").each(function () {
+                $(this).attr("data-slide-position", j);
+                $(this).find(".slide-anchor").attr("data-slide", j);
+                j++;
+            });
+        },
+        onSort: function (evt, ui) {
+            var positions = [];
+            $(".sort-slides1").each(function () {
+                positions.push([$(this).attr('data-uniqueid'), $(this).attr('data-slide-position')]);
+            });
+            $.ajax({
+                url: '/learning-content/' + learningContentSlug + '/lessons/' + lessonSlug + '/slides/update-position',
+                method: 'POST',
+                data: {
+                    positions: positions
+                },
+                dataType: "json",
+                beforeSend: function () {
+                },
+                success: function (response) {
+                    renderSliderContent(lessonId, 'slides', activeContentId);
+                },
+                error: function (response) {
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: response.responseJSON.message,
+                    });
+                },
+                complete: function () {
+                }
+            });
+        }
+    });
+
+    $(document).on('change', '.mark-complete',function(){
+        if(userRole !=2){
+            alert("Sorry you are not authorized to make these changes");
+            return false;
+        }
+
+        var href = location.href;
+        let eventId = href.split('/').pop();
+        let slideId = $(this).parent('.sort-slides1').data('uniqueid');
+        let isChecked = $(this).is(":checked");
+        if(isChecked){
+            $(this).parent('.sort-slides1').addClass("sortable-chosen");
+        }
+        else{
+            $(this).parent('.sort-slides1').removeClass("sortable-chosen");
+        }
+        $.ajax({
+            type: "POST",
+            url: '/calendar/slide-mark-as-complete/'+eventId,
+            dataType: "json",
+            data: {
+                'eventId':eventId,
+                'lessonId':lessonId,
+                'slideId':slideId,
+                'isChecked':isChecked,
+            },
+            success: function (response) {
+                new Noty({
+                    theme: "relax",
+                    text: response.message,
+                    type: "success",
+                    layout: "topRight",
+                    timeout: 1500,
+                }).show() 
+            },
+            error: function (response) {
+                new Noty({
+                    theme: "relax",
+                    text: response.responseJSON.message,
+                    type: "error",
+                    layout: "topRight",
+                    timeout: 1500,
+                }).show() 
+            },
+            complete: function () {
+            }
+        })
+    });
+    /**
+     * @slides script end.
+     */
+</script>

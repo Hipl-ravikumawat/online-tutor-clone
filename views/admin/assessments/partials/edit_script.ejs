@@ -1,0 +1,447 @@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $(".select2").select2({
+        allowClear: false,
+      });
+  
+      $("#datepicker").daterangepicker({ minDate: new Date(), locale: { format: ' DD MMM YYYY', } });
+      $('.timePicker').datetimepicker({
+        allowInputToggle: true, keepOpen: true, useCurrent: false,
+        format: "hh:mm A"
+      }).on('dp.show', function () { });
+
+      /* learning content events*/
+      $('#sc_grade').on('change', handleGradeChange);
+      $("#sc_topic").on('change',handleTopicChange);
+      $("#sc_sub_topic").on('change',handleSubTopicChange);
+    });
+
+    $("#program_type").change(function () {
+      let program_type = $(this).val();
+      $('.content_form').hide();
+      if (program_type != '') {
+        $('.content_form').show();
+      }
+    });
+     
+    $('#grade').change(function () {
+      students();
+    });
+  
+    function students(){
+        let grade = $('#grade').val();
+        $('#student_id').empty();
+        if (grade != '') {
+            $.ajax({
+            type: "POST",
+            url: '/assessments/filter-students',
+            data: {
+                grade_id: grade,
+            },
+            success: function (response) {
+                for(student of response){
+                let name = student.first_name+' '+student.last_name;
+                newOption = new Option(name, student._id, false, false);
+                $('#student_id').append(newOption).trigger('change');
+                }
+            },
+            });
+        }
+    }
+  
+    $("#assignedLearningContents").change(function () {
+      let selectedLearningContent = $(this).val();
+      $('#assignedLessons').empty();
+     let learningContentId = $('#assignedLearningContents').val();
+  
+      if (selectedLearningContent !== '') {
+        $.ajax({
+          type: "POST",
+          url: '/assessments/filter-lessons',
+          data: {
+            learningContent_id: selectedLearningContent,
+          },
+          success: function (response) {
+            if (response.length > 0) {
+  
+              for (lesson of response) {
+                var option = $("<option></option>");
+                option.val(lesson._id);
+                option.text(lesson.title);
+                $('#assignedLessons').append(option).trigger('change');
+              }
+            } else {
+              $('#assignedLessons').html('No lessons found.').trigger('change');
+            }
+          },
+        });
+      }else{
+      }
+    }).trigger('change');
+    
+    $('#assignedLessons').change(function(){
+      let programType = $('#program_type').val();
+      let learningContentId = $('#assignedLearningContents').val();
+      let lessonIds = $(this).val();
+      $('#program_content').val(null).trigger("change");
+      let practices = [];
+      let challenges = [];
+      if ((learningContentId != '' && lessonIds !== null) || programType != null) {
+        if(lessonIds == null){
+          return false;
+        }
+        $.ajax({
+          type: "POST",
+          url: '/learning-content/render-lesson-detail',
+          data: {
+            content_id: learningContentId,
+            lesson_ids: lessonIds,
+            program_type: programType,
+          },
+          success: function (response) {
+            if (response.length > 0) {
+              $('#program_content').empty();
+              for (lesson of response) {
+                if (lesson.practice_ids && lesson.practice_ids.length > 0) {
+                  for (practice of lesson.practice_ids) {
+                    practices.push({
+                      'id': practice._id, 'value': practice.question_title, 'lesson_id': lesson._id, 'lesson_name':
+                        lesson.title
+                    });
+                  }
+                }
+                if (lesson.challenge_ids && lesson.challenge_ids.length > 0) {
+                  for (challenge of lesson.challenge_ids) {
+                    challenges.push({
+                      'id': challenge._id, 'value': challenge.title, 'lesson_id': lesson._id, 'lesson_name':
+                        lesson.title
+                    });
+                  }
+                }
+              }
+            }
+  
+           // load option data on select2 field
+  
+            if (practices.length > 0 && (programType == null || programType.includes('1'))) {
+              var optgroup = $("<optgroup >");
+              optgroup.attr('label', "Practices");
+              for (practice of practices) {
+                var option = $("<option></option>");
+                option.val(practice.id);
+                option.text(practice.value);
+                optgroup.append(option);
+                option.attr('data-contentId', learningContentId);
+                option.attr('data-lessonId', practice.lesson_id);
+                option.attr('data-lesson', practice.lesson_name);
+                option.attr('data-type', 'practice');
+                $('#program_content').append(optgroup);
+              }
+            }
+  
+            if (challenges.length > 0 && ( programType == null || programType.includes('2'))) {
+              var optgroup = $('<optgroup>');
+              optgroup.attr('label', "Challenges");
+              for (data of challenges) {
+                var option = $("<option></option>");
+                option.val(data.id);
+                option.text(data.value);
+                option.attr('data-contentId', learningContentId);
+                option.attr('data-lessonId', data.lesson_id);
+                option.attr('data-lesson', data.lesson_name);
+                option.attr('data-type', 'challenges');
+                optgroup.append(option);
+                $('#program_content').append(optgroup);
+              }
+            }
+          },
+        });
+      }
+    });
+  
+    $("#add_content").click(function () {
+      let selectedProgramType = 'null';
+      let selectedProgramContent = 'null';
+  
+      selectedProgramContent = $("#program_content").val();
+      selectedProgramType = $("#program_type").val();
+  
+      // assessment fields
+      let assessmentTitle = $("#assessment_name").val();
+      let assessmentGrade = $("#grade").val();
+      let assessmentStudent = $("#student_id").val();
+      let assessmentDuration = $('#datepicker').val();
+  
+      // filter fields
+      let fcLessons = $("#assignedLessons").val();
+      let challenges = $("#program_content").val();
+      let validationFlag = false;
+      let element;
+      
+      if (assessmentTitle === '') {
+        validationFlag = true;
+        element = 'assessment_name';
+      } else if (assessmentGrade === '') {
+        validationFlag = true;
+        element = 'grade';
+      } else if (assessmentStudent === '' || assessmentStudent == null) {
+        validationFlag = true;
+        element = 'student_id';
+      } else if (assessmentDuration === '') {
+        validationFlag = true;
+        element = 'datepicker';
+      }
+      else if (fcLessons === '' || fcLessons == null) {
+        validationFlag = true;
+        element = 'assignedLessons';
+      }
+      else if (challenges === '' || challenges == null) {
+        validationFlag = true;
+        element = 'challenges';
+      }
+      $('.error').remove();
+      if (validationFlag) {
+        if(element =='challenges'){
+          $('.' + element).parent().closest('.form-group').append(`<span class="error" style="color:red;">This field required.</span>`);
+          $('.' + element).focus();
+        }else{
+          $('#' + element).parent().closest('.form-group').append(`<span class="error" style="color:red;">This field required.</span>`);
+          $('#' + element).focus();
+        }
+       
+        return false;
+      }
+  
+      // content field
+      let fcLearningContentName = $("#assignedLearningContents option:selected").text();
+      if (assessmentTitle !== '' && fcLearningContentName !== 'Select Learning Content' && selectedProgramType !== null &&
+        selectedProgramContent !== null) {
+        Swal.fire({
+          title: "Add Assessment",
+          text: "Do you want to add these content?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: `Add`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            for (assessmentValue of selectedProgramContent) {
+              let learningContentId = $("#program_content option[value=" + assessmentValue +
+                "]").attr('data-contentId');
+              let lessonId = $("#program_content option[value=" + assessmentValue +
+                "]").attr('data-lessonId');
+              let lessonName = $("#program_content option[value=" + assessmentValue +
+                "]").attr('data-lesson');
+              let selectedContent = $("#program_content option[value=" + assessmentValue + "]").text();
+              let assessmentType = $("#program_content option[value=" + assessmentValue + "]").attr('data-type');
+              let icon = '/images/lesson.svg';
+              let type = '';
+  
+              if (assessmentType === 'challenges') {
+                icon = '/images/basic.svg';
+                type = 'slide';
+              }
+  
+              if (assessmentType === 'practice') {
+                icon = '/images/practice1.svg';
+                type = 'practice';
+              }
+  
+              $(".select-assessment").append(`<li>
+                  <div class="iconleft"><img src="${icon}" alt="img"></div>
+                  <div class="content-detail-block">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item 3">${lessonName}</li>
+                      <li class="breadcrumb-item 4">${selectedContent}</li>
+                    </ol>
+                  </div>
+                  <div class="action-right"><a class="remove_content" href="javascript:void(0);">&times;</a>
+                  </div><input type="hidden" name=selected_contents[]
+                    value="${learningContentId}--${lessonId}--${assessmentType}--${assessmentValue}">
+                </li>`);
+            }
+  
+            if ($('.select-assessment > li').length >= 1) {
+              $('#storeAssessmentBtn').show();
+            }
+            $("#sc_grade").val(null).trigger("change");
+            $("#sc_topic").val(null).trigger("change");
+            $('#sc_sub_topic').empty();
+            $('#learning_content').empty();
+            $('#lessons').val(null).trigger("change");
+            $('#program_content').empty();
+          }
+        });
+      }
+    });
+    
+    $('.selectedcontent').on('click', '.remove_content', function () {
+      Swal.fire({
+        html: '<p>Are you sure want to delete this ?</p>',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          $(this).closest('li').fadeOut('slow', function () { $(this).remove(); });
+        } 
+      })
+  
+      let list_length = $('.selectedcontent > li').length;
+  
+      setTimeout(function() {
+        let list_length = $('.selectedcontent > li').length;
+        if ($('.selectedcontent > li').length == 0){
+          $('#assignBtn').hide();
+        }else {
+          $('#assignBtn').show();
+        }
+      }, 1000);
+    });
+   
+    $("#storeAssessment").submit(function (e) {
+      e.preventDefault();
+      var formData = $('#storeAssessment').serialize();
+      var url = $('#storeAssessment').attr('action');
+      $("#storeAssessmentBtn").prop('disabled', true);
+      $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: formData,
+        success: function (response) {
+          if (response.success == true) {
+            window.location = response.redirectUrl;
+          }
+        },
+        error: function (response) {
+          let errorMessages = '';
+          $.each(response.responseJSON.errors, function (field_name, error) {
+            if (error.param === 'name') {
+              $(document).find('[id=assessment_name]').after('<span class="help-block text-danger">' +
+                error.msg + '</span>');
+                $('#assessment_name').focus();
+            } else if (error.param === 'selected_contents') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please add content for this assessment',
+              })
+            } else {
+              $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' +
+                error.msg + '</span>');
+            }
+          })
+        },
+        complete: function () {
+          $("#storeAssessmentBtn").prop('disabled', false);
+        }
+      })
+    });
+
+    function handleGradeChange() {
+      const gradeId = $(this).val();
+      const topic = $('#sc_topic').val();
+      const subTopic = $('#sc_sub_topic').val();
+      if (gradeId && topic) {
+        fetchLearningContent(gradeId,topic,subTopic)
+      } else {
+        // clearSelectBox('#sc_topic', 'Select A Topic');
+        // clearSelectBox('#sc_sub_topic', 'Select A Sub Topic');
+      }
+    }
+
+    function handleTopicChange(){
+      const topic =  $(this).val();
+      const gradeId = $('#sc_grade').val();
+      const subTopic = $('#sc_sub_topic').val();
+      if (gradeId && topic) {
+        getSubTopics(topic);
+        fetchLearningContent(gradeId,topic,subTopic)
+      } else {
+        // clearSelectBox('#sc_topic', 'Select A Topic');
+        // clearSelectBox('#sc_sub_topic', 'Select A Sub Topic');
+      }
+    }
+
+    function handleSubTopicChange(){
+      const subTopic =  $(this).val();
+      const gradeId = $('#sc_grade').val();
+      const topic = $('#sc_topic').val();
+      if (gradeId && topic) {
+        fetchLearningContent(gradeId,topic,subTopic)
+      } else {
+        // clearSelectBox('#sc_topic', 'Select A Topic');
+        // clearSelectBox('#sc_sub_topic', 'Select A Sub Topic');
+      }
+    }
+
+    function getSubTopics(topicId) {
+      $('#sc_sub_topic').empty(); 
+      $.ajax({
+        type: "POST",
+        url: '/sub-topics/render-subtopics',
+        data: { id: topicId, },
+        success: function (response) {
+          if (response.length > 0) {
+            const defaultOption = new Option("Select Sub Topic", "", false, false);
+            $('#sc_sub_topic').append(defaultOption);
+            response.forEach(res => {
+              const option = new Option(res.name, res._id, false, false);
+              $('#sc_sub_topic').append(option);
+            });
+            $('#sc_sub_topic').trigger('change');
+          } else {
+          $('#sc_sub_topic').html('No subtopics found.');
+          }
+        },
+        error: function () {
+          $('#sc_sub_topic').html('<option>Error loading subtopics. Please try again later.</option>');
+        }
+      });
+    }
+
+    function clearSelectBox(selector, defaultText) {
+      const selectBox = $(selector);
+      selectBox.empty();
+      selectBox.append(`<option value="">${defaultText}</option>`);
+    }
+
+    function fetchLearningContent(grade="",topic="",subTopic=""){
+      // console.log(grade,"grade");
+      // console.log(topic,"topic");
+      // console.log(subTopic,"subTopic");
+      $.ajax({
+          type: "POST",
+          url: '/learning-content/render-contents',
+          data: {
+            grade_id: grade,
+            topic_id: topic,
+            sub_topic_id: subTopic,
+          },
+        success: function (response) {
+          $('#assignedLearningContents').empty();
+          $('#assignedLessons').empty();
+          $('#assessment_content').empty();
+
+          if (response.length > 0) {
+            $("#assignedLearningContents").select2({ placeholder: "Select Learning Content" });
+            let newOptions = new Option("Select Learning Content", "", false, false);
+            $('#assignedLearningContents').append(newOptions);
+            response.forEach(res => {
+                  newOption = new Option(res.title, res._id, false, false);
+                  $('#assignedLearningContents').append(newOption);
+            });
+            $('#assignedLearningContents').trigger('change');
+          } else {
+            $('#assignedLearningContents').html('No learning contents found.');
+          }
+        },
+        error: function () {
+          $('#assignedLearningContents').html('<option>Error loading learning contents. Please try again later.</option>');
+        }
+      });
+    }
+</script>

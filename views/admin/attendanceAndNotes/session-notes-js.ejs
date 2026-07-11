@@ -1,0 +1,339 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    console.log($('.note-type').val());
+    $(".select-btn").on("click", function(event) {
+        $(".select-menu").toggleClass("active");
+        event.stopPropagation();
+      });
+
+      $(".select-options .option").on("click", function() {
+        const selectedOption = $(this).find(".option-text").text();
+        const selectedOptionSmall = $(this).find(".option-smalltext").text();
+        const selectedOptionType = $(this).find(".option-smalltext").data('type');
+        $(".sBtn-text").text(selectedOption);
+        $(".sub_select_text").text(selectedOptionSmall);
+        $(".note-type").val(selectedOptionType);
+        $(".select-menu").removeClass("active");
+
+        updateNoteSectionAccordingToPreference();
+      });
+
+      $(document).on("click", function() {
+        $(".select-menu").removeClass("active");
+      });
+
+      $(".select-menu").on("click", function(event) {
+        event.stopPropagation();
+      });
+  });
+
+/* =====================================================
+   TEMPLATE INSERTION
+===================================================== */
+  $('.dropdown-item').click(function(){
+    let templateId = $(this).data('id');
+    $('.template-id').val(templateId);
+    $.ajax({
+        method:'POST',
+        url:'/attendance-notes/render-shared-template',
+        data:{
+            template_id:templateId,
+        },
+        success:function(response){
+            tinymce.get('event_note').setContent((response.template_note != null) ? response.template_note : '');
+            $("#addNotesTemplates").modal('show');
+        },
+    })
+  });
+/* =====================================================
+   ADD / EDIT GROUP NOTE MODAL
+===================================================== */
+  $(document).on('click','.add-group-note, .view-notes-btn', function(){
+    let noteId = $(this).data('id') || $(this).data('note-id') || '';
+
+    // Reset modal to default values
+    $('.gp_note_id').val('');
+    $('.note-type').val('student_note');
+
+    $('.sBtn-text').text('Student Notes');
+
+    $('.sub_select_text')
+        .text('Visible to this student & their parent(s)')
+        .attr('data-type', 'student_note');
+
+    $('#email_to_all_attendees').prop('checked', false);
+    $('#email_to_all_parents').prop('checked', false);
+    $('#email_to_tutor_only').prop('checked', false);
+
+    tinymce.get('event_note').setContent('');
+
+    if(noteId){
+      $.ajax({
+        type: "POST",
+        url: '/attendance-notes/edit-note-and-attachments',
+        data: {
+          noteId: noteId,
+        },
+        success: function (response) {
+
+          const tutorNoteElement = $(`.option-smalltext[data-type="${response.type}"]`);
+          const optionText = tutorNoteElement.closest('.option').find('.option-text').text();
+          const optionSmallText = tutorNoteElement.text();
+
+          tinymce.get('event_note').setContent((response[response.type] != null) ? response[response.type] : '');
+          $('.note-type').val(response.type);
+          $('#email_to_all_attendees').prop('checked',response.email_to_all_attendees);
+          $('#email_to_all_parents').prop('checked',response.email_to_all_parents);
+          $('#email_to_tutor_only').prop('checked',response.email_to_tutor_only);
+          $('.sBtn-text').text(optionText);
+          $('.sub_select_text').text(optionSmallText);
+          $('.sub_select_text').attr('data-type',response.type);
+        },
+      });
+    }
+    $("#StudentNotes").modal('show');
+  });
+/* =====================================================
+   DELETE ATTACHMENT
+===================================================== */
+  $('.delete-note-attachment').click(function(){
+    let attachmentId = $(this).data('attachment-id');
+    let notesId = $(this).data('id'); 
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: '/attendance-notes/delete-note-attachments',
+          data: {
+            attachmentId: attachmentId,
+            notesId: notesId,
+          },
+          success: function (response) {
+            if(response.success){
+              // Find the element with the specific data-attachment-id
+              var $attachmentElement = $(`[data-attachment-id="${attachmentId}"]`);
+
+              if ($attachmentElement.length) {
+                // Traverse up to the nearest parent div with the class 'form-group'
+                var $formGroupDiv = $attachmentElement.closest('.form-group');
+
+                // If the form-group div exists, remove it from the DOM
+                if ($formGroupDiv.length) {
+                  $formGroupDiv.remove();
+                }
+              }
+              new Noty({
+                  theme: 'relax',
+                  text: response.message,
+                  type: 'success',
+                  layout: 'topRight',
+                  timeout: 1500
+              }).show();
+              // window.location.reload();
+            }
+          },
+        });
+      }
+    })
+  });
+/* =====================================================
+   NOTE PREFERENCE UPDATE
+===================================================== */
+  function updateNoteSectionAccordingToPreference(){
+    let groupNoteId = $('.gp_note_id').val();
+    let noteType = $('.note-type').val();
+    if(groupNoteId ==='') return false;
+    $.ajax({
+      type: "POST",
+      url: '/attendance-notes/update-event-note-according-to-preference',
+      data: {
+        groupNoteId: groupNoteId,
+      },
+      success: function (response) {
+        tinymce.get('event_note').setContent((response[noteType] != null) ? response[noteType] : '');
+      },
+    });
+  }
+/* =====================================================
+   DROPZONE UPLOAD SYSTEM (SESSION NOTES SCOPE)
+===================================================== */
+  Dropzone.autoDiscover = false;
+  let CountFiles = 0;
+  let hasInvalidFile = false;
+  let privateAttachments = [];
+  const allowedExtensions = ['jpg', 'png', 'mp4', 'mp3', 'm4a', 'pdf', 'docx', 'xlsx'];
+  const mimeTypes = 'image/jpeg,image/png,video/mp4,audio/mpeg,audio/mp4,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+  $(".needsclick").each(function() {
+    $(this).dropzone({
+      paramName: "user_attachments",
+      url: "/tutor-preferences/dropzone-upload-attachments",
+      parallelUploads: 10,
+      uploadMultiple: true,
+      maxFilesize: 10, // MB
+      acceptedFiles: mimeTypes,
+      addRemoveLinks: true,
+      autoProcessQueue: true,
+      params: { folder: mediaFolder }, // Add your dynamic folder name here
+      success: function (file, response) {
+        privateAttachments.push(...response.attachments);
+      },
+      init: function () { 
+        this.on("addedfile", function(file) { 
+          const extension = file.name.split('.').pop().toLowerCase();
+          if (!allowedExtensions.includes(extension)) {
+            hasInvalidFile = true;
+            this.removeFile(file); // Remove invalid file
+          } else {
+            hasInvalidFile = false;
+          }
+          if (this.files.length) {
+            var _i, _len;
+            _len = this.files.length;
+            for (_i = 0; _i < _len - 1; _i++) { // -1 to exclude current file
+              if(this.files[_i].name === file.name || !allowedExtensions.includes(extension)){
+                console.log("first")
+                this.removeFile(file);
+              }
+            }
+          }
+        });
+      },
+      removedfile: function (file) {
+          file.previewElement.remove();
+          let targetObject;
+          $.each(privateAttachments, function(index, obj) {
+            if (obj.originalname == file.name) {
+              targetObject = obj;
+              return false; // Exit the loop after finding the object
+            }
+          });
+
+          $.ajax({
+            url: '/tutor-preferences/dropzone-remove-attachment', 
+            type: 'POST',
+            data: { 
+              user_id: userId, 
+              filename: targetObject.name,
+              destination: mediaFolder,
+             }, 
+            success: function(response) {
+              console.log('File removed from server:', response);
+            },
+            error: function(error) {
+              console.error('Error removing file:', error);
+            },
+            complete: function () {
+              privateAttachments = privateAttachments.filter(obj => obj.originalname !== file.name);
+            }
+          });
+      },
+    });
+  });
+/* =====================================================
+   TINYMCE EDITOR (SESSION NOTES ONLY)
+===================================================== */
+  tinymce.init({
+    selector: '.event-note',
+    height: 300,
+    resize: true,
+    menubar: true,
+    statusbar: true,
+    image_title: true,
+    automatic_uploads: true,
+    file_picker_types: 'image',
+    file_picker_callback: (cb, value, meta) => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            /*    
+            Note: Now we need to register the blob in TinyMCEs image blob
+            registry. In the next release this part hopefully won't be
+            necessary, as we are looking to handle it internally.
+            */
+            const id = 'blobid' + (new Date()).getTime();
+            const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+            const base64 = reader.result.split(',')[1];
+            const blobInfo = blobCache.create(id, file, base64);
+            blobCache.add(blobInfo);
+            /* call the callback and populate the Title field with the file name */
+            cb(blobInfo.blobUri(), { title: file.name });
+        });
+        reader.readAsDataURL(file);
+        });
+        input.click();
+    },
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+      plugins: [
+        'advlist autolink lists link image charmap print preview anchor textcolor searchreplace visualblocks code fullscreen insertdatetime media table contextmenu paste code help wordcount image code'
+      ],
+      mobile: { theme: 'mobile' },
+      toolbar: 'insert | table | undo redo  | code|  formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help|styleselect | fontsizeselect | underline ',
+      setup: function (editor) {
+
+          editor.on("init", function () {});
+          editor.on("change", function (e) {
+              let descriptionId = jQuery(this)[0].id;
+              tinymce.triggerSave();
+          });
+          editor.on("keyup", function () {
+              let descriptionId = jQuery(this)[0].id;
+              tinymce.triggerSave();
+          });
+      },
+  });
+/* =====================================================
+   FORM SUBMIT (SESSION NOTES)
+===================================================== */
+  $("#store-event-group-notes").submit(function(e) {
+      e.preventDefault();
+      tinymce.triggerSave();
+      $(document).find("span.text-danger").remove();
+
+      let url = $(this).attr('action');
+      let form = $(this)[0];
+      let formData = new FormData(form);
+
+      // ✅ Collect checked student IDs
+      let checkedValues = $('.checksingle:checked').map(function() {
+          return $(this).val();
+      }).get();
+
+      // ✅ Append as array (not JSON string)
+      console.log(checkedValues,"checkedValues");
+      checkedValues.forEach(function(id) {
+          formData.append('student_ids[]', id);
+      });
+
+      // ✅ Attachments still need JSON
+      formData.append('group_attachments', JSON.stringify(privateAttachments));
+
+      $.ajax({
+          method: 'POST',
+          url: url,
+          data: formData,
+          contentType: false,  // Important for FormData
+          processData: false,  // Important for FormData
+          success: function(response) {
+              location.reload();
+          },
+          error: function(response) {
+              $.each(response.responseJSON.errors, function(field_name, error) {
+                  $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+              });
+          }
+      });
+  });
+</script>

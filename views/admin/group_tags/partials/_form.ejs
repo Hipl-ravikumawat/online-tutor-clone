@@ -1,0 +1,45 @@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+        <label class="col-form-label label-align" for="name">Group Tag Name<span class="required">*</span>
+        </label>
+        <div class="input-group">
+            <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+            <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name" maxlength="100" value="<%= data?.name || '' %>" />
+        </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="color">Color<span class="required">*</span></label>
+            <select class="form-control" id="color" name="color" required>
+                <% tag_colors.forEach(option=> { %> 
+                <option value="<%= option.key %>"
+                    <%=(option.key==data?.color) ? 'selected' : '' %> style="background-color:<%= option.background_color %>; color:<%= option.color %>"> <%= option.label %>
+                </option>
+                <% }) %>
+            </select>
+        </div>
+    </div>
+    <% selectedStudentIds = data?.student_ids || []; %>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="students">Assigned Students</label>
+            <select class="form-control select2"  name="student_ids[]" multiple>
+                <% students.forEach(option=> { %> 
+                <option value="<%= option._id %>"
+                    <%=(selectedStudentIds.includes(option._id)) ? 'selected' : '' %>> <%= (option.first_name + ' ' + option.last_name) || '' %>
+                </option>
+                <% }) %>
+            </select>
+            <span id="student_ids"></span>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="color">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" value="<%= data?.description || '' %>"><%= data?.description || '' %></textarea>
+        </div>
+    </div>        
+</div>

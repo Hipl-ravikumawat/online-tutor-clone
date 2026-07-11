@@ -1,0 +1,1031 @@
+<script type="text/javascript">
+    /**
+     * event index page script.
+     * @script start
+     * */
+    let loggedUserRole = '<%=loggedUserInfo.role%>';
+    let loggedUserId = '<%=loggedUserInfo._id.toString()%>';
+    let loggedUserInfo = `<%-JSON.stringify(loggedUserInfo) %>`;
+    let businessPrimaryNumber = '<%= businessSetting?.primary_number || "N/A" %>';
+
+    function cancelEventConfirmation(eventId) {
+        Swal.fire({
+            html: "<p>Are you sure want to cancel this event ? <br> You won't be able to revert this! </p>",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, cancel it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: '/calendar/cancel-event',
+                    data: {
+                        eventId: eventId,
+                        status: 'Requested_To_Cancel',
+                        loggedUserInfo: loggedUserInfo,
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Request!",
+                                text: response.message,
+                                icon: "success"
+                            });
+                            calendar.refetchEvents();
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: response.message,
+                            });
+                        }
+                    },
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('.clone-event-time').datetimepicker({
+            allowInputToggle: true, keepOpen: true, useCurrent: false,
+            format: 'hh:mm A',
+            stepping: 5, // Set the minute step to 5 minutes  
+            widgetPositioning: {
+                horizontal: 'auto',  // or 'left' or 'right'
+                vertical: 'top'
+            }
+        }).on('dp.show', function () { });
+
+        $('.clone-event-time').on('keydown', function (e) {
+            e.preventDefault(); // Prevent any key presses in the input field
+        });
+
+        // Get the calendar element 
+        let calendarEl = $('#calendar')[0];
+        let todayDate = new Date();
+        let formattedTodayDate = formatDate(todayDate, 'DD MMM YYYY');
+
+        // Function to fetch events via AJAX
+        function fetchEvents(success, filter) {
+            $.ajax({
+                type: 'POST',
+                url: '/calendar/fetch-events',
+                data: filter,
+                success: function (response) {
+                    let events = response.data;
+                    // console.log('events',events.length);
+                    if (events.length == 0 && filter.applyFilter === true) {
+                        setTimeout(() => {
+                            new Noty({
+                                theme: "relax",
+                                text: "No Events Found !",
+                                type: "error",
+                                layout: "topRight",
+                                timeout: 1500,
+                            }).show();
+                        }, 1000);
+                    }
+                    success(events);
+                    if (filter !== null && events[0] && events[0].start != '') {
+                        const formattedDate = moment.utc(events[0].start).format('YYYY-MM-DD');
+                        // calendar.gotoDate(formattedDate);
+                    }
+                }
+            });
+        }
+
+        // Create FullCalendar instance
+        var calendar_view = "dayGridMonth"
+        if (window.innerWidth <= 992) {
+            calendar_view = "timeGridDay"
+        }
+        let calendarCurrentMonth = new Date().getMonth() + 1; // +1 because JavaScript months are 0-indexed
+        let calendarCurrentYear = new Date().getFullYear();
+
+        let previousStart = null;
+
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            firstDay: 1,
+            // initialDate: todayDate,   // allow past dates
+            slotEventOverlap: false,
+            dayMaxEventRows: 3,
+            eventLimit: true,
+            initialView: calendar_view,
+            views: {
+                timeGridWeek: { dayMaxEventRows: 3 },
+                dayGridMonth: { dayMaxEventRows: 3 },
+                timeGridDay: { dayMaxEventRows: 3 }
+            },
+            moreLinkClick: 'popover',
+
+            moreLinkText: function (num) {
+                return '+ ' + num + ' more';
+            },
+
+            // code commented to allow past dates
+            // selectConstraint: {
+            //    start: moment().subtract(1, 'days').format('YYYY-MM-DD') // Exclude past dates
+            // },
+
+            headerToolbar: {
+                left: 'prev today next', // Navigation buttons
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+
+            navLinks: true,
+            editable: false,
+            // Update the current month and year when calendar view changes
+            datesSet: function (info) {
+                const currentStart = new Date(info.start);
+
+                calendarCurrentMonth = moment(info.view.currentStart).month() + 1; // Month is 0-indexed
+                calendarCurrentYear = moment(info.view.currentStart).year();
+                // console.log(currentStart,"currentStart");
+                // console.log(previousStart,"previousStart");
+                if (previousStart && currentStart > previousStart) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/calendar/check-recurring-events',
+                        dataType: "json",
+                        data: {
+                            'month':calendarCurrentMonth,
+                            'year':calendarCurrentYear,
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Refresh calendar events
+                                calendar.refetchEvents();
+                            }                            
+                        },
+                        error: function (response) {
+                            console.log('error');
+                        },
+                        complete: function () {
+                            // console.log('complete');
+                        }
+                    });
+                } 
+
+                previousStart = currentStart;
+            },
+
+            // Fetch events for the current month and year
+            events: function (fetchInfo, successCallback) {
+                let selectedTutor = $("#search-by-tutor").val() || [];
+                let selectedSubstituteTutor = $("#search-by-substitute-tutor").val() || [];
+                let selectedStudents = $("#search-by-student").val() || [];
+                let selectedLocation = $("#search-by-location").val() || [];
+                let selectedCategory = $("#search-by-category").val() || [];
+
+                setTimeout(() => {
+                    if (selectedTutor.length > 0 || selectedStudents.length > 0 || selectedSubstituteTutor.length > 0 || selectedLocation.length > 0 || selectedCategory.length > 0) {
+                        let filters = {
+                            applyFilter: true,
+                            selectedTutor: selectedTutor,
+                            selectedStudents: selectedStudents,
+                            selectedSubstituteTutor: selectedSubstituteTutor,
+                            selectedLocation: selectedLocation,
+                            selectedCategory: selectedCategory,
+                            month: calendarCurrentMonth,
+                            year: calendarCurrentYear
+                        };
+                        fetchEvents(successCallback, filters);
+                    } else {
+                        let filters = {
+                            applyFilter: false,
+                            month: calendarCurrentMonth,
+                            year: calendarCurrentYear
+                        };
+                        fetchEvents(successCallback, filters);
+                    }
+                }, 0);
+            },
+
+            slotLabelFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+
+            eventDidMount: function (info) {
+                if (info.view.type === 'timeGridWeek' || info.view.type === 'timeGridDay') {
+                    setTimeout(function () {
+                        // handleMoreLink(info);
+                    }, 0);
+                }
+            },
+
+            eventContent: function (arg) {
+                let eventTitle = arg.event.title;
+                let totalAttendees = arg.event.extendedProps.totalAttendees;
+                let attendeesArray = arg.event.extendedProps.attendeesArray;
+                let eventTime = arg.event.extendedProps.timings;
+                let categoryColor = arg.event.extendedProps.categoryColor;
+                let categoryName = arg.event.extendedProps.categoryName;
+                let location = arg.event.extendedProps.location;
+                let eventStatus = arg.event.extendedProps.eventStatus;  // NEW: Get event status
+                let showTimezoneIcon = arg.event.extendedProps.timezoneWarningAcknowledged === true;
+                let showLeaveWarningIcon = arg.event.extendedProps.leaveWarningAcknowledged === true; 
+             
+                let attendees = '';
+                let statusIcon = '';
+                let leaveWarningIcon = '';
+                let timezoneIcon = showTimezoneIcon
+                ? `<span style="font-size: 12px;margin-right: 5px;" title="Different Timezone">⚠️</span>`
+                : '';
+
+                if (showLeaveWarningIcon) {
+                    leaveWarningIcon = `<span style="font-size: 12px;margin-right: 5px;" title="Tutor on Leave"><img src="/images/leave_notice.svg" alt="" style="width:14px;"></span>`;
+                }
+    
+                
+                if (eventStatus === 'Cancelled') {
+                    statusIcon = `<img src="/images/cancel-event.svg" style="width: 12px; height: 12px; margin-right: 5px; margin-top: -2px;" alt="Cancelled" title="Cancelled"/>`;
+                    
+                    if (totalAttendees.length == 1) {
+                        const student = totalAttendees[0];
+                        attendees = `${statusIcon} ${student.first_name} ${student.last_name}`;
+                    } else {
+                        attendees = `${statusIcon} Cancelled`;
+                    }
+                } 
+                else if (totalAttendees.length == 1) {
+                    const student = totalAttendees[0];
+                    const studentId = student._id.toString();
+                    const status = attendeesArray[studentId];
+                    
+                    if (status === 'present') {
+                        statusIcon = `<img src="/images/approve-check.svg" style="width: 14px; height: 14px; margin-right: 5px;" alt="Present" title="Present"/>`;
+                    } else if (status === 'absent') {
+                        statusIcon = `<img src="/images/approve-cancel.svg" style="width: 14px; height: 14px; margin-right: 5px;" alt="Absent" title="Absent"/>`;
+                    } else {
+                        statusIcon = `<img src="/images/faq-icon.svg" style="width: 14px; height: 14px; margin-right: 5px;" alt="Unrecorded" title="Unrecorded"/>`;
+                    }
+                    
+                    attendees = `${statusIcon} ${student.first_name} ${student.last_name}`;
+                } else {
+                    attendees = totalAttendees.length;
+                }
+                
+                return {
+                    html: `<div class="fc-content background-${categoryColor}">
+                                <div class="top_event_location">
+                                    <span class="fc-time">${eventTime}</span> 
+                                    <img style="width:12px;" src="${location.icons}"/>
+                                </div>
+                                <span class="fc-description" style="font-size:12px;">${categoryName}</span>
+                                ${showTimezoneIcon ? timezoneIcon : ''}
+                                ${leaveWarningIcon}
+                                <span class="fc-description" style="font-size:12px;">
+                                    ${attendees} ${(totalAttendees.length > 1 && eventStatus !== 'Cancelled') ? 'Students' : ''}
+                                </span>
+                            </div>`
+                };
+            },
+
+            dateClick: function (info) {
+                let clickedDate = info.date;
+                let today = new Date();
+                today.setHours(0, 0, 0, 0); // Normalize to start of the day
+                
+                // code commented to allow past dates
+                // if (loggedUserRole !== '1') return;
+                // if (clickedDate < today) return;
+
+                if (clickedDate < today && loggedUserRole !== '1') return; // code added to allow past dates
+
+                setSessionStorage('eventDate', clickedDate);
+                $('#eventDetails').hide();
+
+                let eventsOnDate = calendar.getEvents().filter(event => event.startStr.startsWith(info.dateStr));
+                let formatDates = formatDate(info.date, 'DD MMM YYYY');
+                let top = info.jsEvent.clientY + $(window).scrollTop();
+                //let left = info.jsEvent.clientX + $(window).scrollLeft() - 300;
+                let left = Math.max(20, info.jsEvent.clientX + $(window).scrollLeft() - 300);
+                let dateDetailsDiv = $('#dateDetails');
+                dateDetailsDiv.find('.count-events').text(`${eventsOnDate.length} Scheduled Event(s)`);
+                dateDetailsDiv.find('.title-text').text(formatDates);
+                dateDetailsDiv.css({
+                    top: top + "px",
+                    left: left + "px",
+                    display: "block"
+                });
+            },
+
+            eventClick: function (info) {
+                hideEventDetails();
+                populateEventDetails(info.event);
+                showEventDetails(info);
+                initializeTooltips();
+            }
+        });
+
+        $(window).resize(
+            function () {
+                if (window.innerWidth <= 992) {
+                    calendar.changeView('timeGridDay');
+                }
+            }
+        );
+
+        function updateTextContent(selector, text) {
+            $('#eventDetails').find(selector).text(text);
+        }
+
+        // Function to append list items to event details
+       function appendEventListItem(
+            selector,
+            imageSrc,
+            tooltipTitle,
+            tooltipPlacement,
+            link = '',
+            className = '',
+            isEnabled = true
+        ) {
+            const disabledClass = isEnabled ? '' : 'disabled-reward';
+            const hrefValue = link ? link : 'javascript:void(0)';
+
+            const listItem = `
+                <li>
+                    <a class="${className} ${disabledClass}" href="${hrefValue}"
+                        data-toggle="tooltip"
+                        data-placement="${tooltipPlacement}"
+                        title="${tooltipTitle}">
+                        <img src="${imageSrc}" alt="">
+                    </a>
+                </li>`;
+                
+            selector.append(listItem);
+        }
+
+        // Function to append action buttons to event details
+        function appendEventActionButton(selector, href, title, tooltipTitle, className, dataAttribute = '', isDisabled = false) {
+            // console.log(isDisabled,"isDisabled")
+            const actionButton = `<a href="${href === '' ? 'javascript:void(0)' : href}" title="${tooltipTitle}" class="${className}" ${dataAttribute} data-toggle="tooltip" rel="tooltip" data-placement="top" disabled="${isDisabled}">${title}</a>`;
+            selector.append(actionButton);
+        }
+
+        function populateEventDetails(eventData) {
+            const eventDetailsDiv = $('#eventDetails');
+            const eventStartDateTime = eventData.start;
+            const eventEndDateTime = eventData.end;
+            const eventLocations = eventData.extendedProps.location;
+            const eventTime = eventData.extendedProps.timings;
+            const totalAttendees = eventData.extendedProps.totalAttendees;
+            const attendeesArray = eventData.extendedProps.attendeesArray;
+            const currentUserTimeZone = eventData.extendedProps.loggedUserSpecificTimezone;
+            const eventDate = formatDate(eventStartDateTime, 'DD MMM YYYY');
+            const isSubstituteTutor = eventData.extendedProps.isSubstituteTutor;
+            const substituteTutorId = eventData.extendedProps.substituteTutorId;
+            const tutorId = eventData.extendedProps.tutorId;
+            const eventStatus = eventData.extendedProps.eventStatus;
+            const categoryName = eventData.extendedProps.categoryName;
+            const isMarkedAttendance = Object.values(attendeesArray).some((status) => {
+                if (status === "present") {
+                    return true;   // mark attendance true
+                } else if (status === "absent") {
+                    return false;  // mark attendance false
+                }
+                return false;
+            });
+
+            const isAllAttendanceMarked = Object.values(attendeesArray).every(status => status === "present" || status === "absent");
+            const timezoneWarningAcknowledged = eventData.extendedProps.timezoneWarningAcknowledged || false;
+            const leaveWarningAcknowledged = eventData.extendedProps.leaveWarningAcknowledged || false;
+
+            // Remove existing timezone warning if any
+            $('.timezone-warning-message').remove();
+             $('.leave-warning-message').remove();
+            
+            // Add timezone warning message if acknowledged
+            let timezoneWarningHtml = '';
+            if (timezoneWarningAcknowledged) {
+                timezoneWarningHtml = `<strong style="color: #856404;"></strong>`;
+            }
+
+            let leaveWarningHtml = '';
+            if (leaveWarningAcknowledged) {
+                leaveWarningHtml = `<strong style="color: #856404;"></strong>`;
+            }
+            
+            
+            /*----------------------------------------*/
+            
+            $('.event-ul').html('');
+            $('.event-action-btn').html('');
+            
+
+            eventDetailsDiv.find(".event-ul").attr({
+                'data-event-id': eventData.extendedProps.eventId,
+                'data-event-type': eventData.extendedProps.isRecurring,
+                'data-event-parent': eventData.extendedProps.isParent,
+                'data-event-date': eventDate,
+            });
+
+              if (timezoneWarningAcknowledged) {
+                    $('.event-section .date-header').after(timezoneWarningHtml);
+                }
+
+            eventDetailsDiv.find(".date-details ul").append(`<li class="d-flex flex-wrap align-items-center location-list pb-2"><span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Location"><img src="${eventLocations.icons}" alt="" style="width:17px;"></span><div class="event-addoptions"><p class="mb-0">${eventLocations.name}</p></div></li>`);
+
+            eventDetailsDiv.find(".date-details ul").append(`<li class="d-flex flex-wrap align-items-center location-list pb-2"><span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Category"><img src="/images/category.svg" alt="" style="width:17px;"></span><div class="event-addoptions"><p class="mb-0">${categoryName}</p></div></li>`);
+
+            if (!(eventStatus == 'Rejected' && loggedUserRole == '3')) {
+                eventDetailsDiv.find(".date-details ul").append(`<li class="d-flex flex-wrap align-items-center location-list pb-2"><span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Status"><img src="/images/request.svg" alt="" style="width:17px;"></span><div class="event-addoptions"><p class="mb-0">${eventStatus}</p></div></li>`);
+            }
+
+            if ((timezoneWarningAcknowledged == true)) {
+                eventDetailsDiv.find(".date-details ul").append(`<li class="d-flex flex-wrap align-items-center location-list pb-2"><span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Tutor Diffrent Time Zone"><img src="/images/warning_black.svg" alt="" style="width:17px;"></span><div class="event-addoptions"><p class="mb-0">Time Zone Notice</p></div></li>`);
+            }
+
+                if ((leaveWarningAcknowledged == true)) {
+                    eventDetailsDiv.find(".date-details ul").append(`<li class="d-flex flex-wrap align-items-center location-list pb-2"><span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Tutor on Leave"><img src="/images/leave_notice.svg" alt="" style="width:17px;"></span><div class="event-addoptions"><p class="mb-0">Tutor on Leave Notice</p></div></li>`);
+                }
+
+            // Generate HTML for attendees
+            const attendeesHTML = generateAttendeesHTML(totalAttendees, attendeesArray);
+            eventDetailsDiv.find(".student-attendance-list").html(attendeesHTML);
+
+            // Update event details
+            updateTextContent(".title-text", eventData.title);
+            updateTextContent(".event-time", eventTime);
+            updateTextContent(".event-date", eventDate);
+            updateTextContent(".attendees", `${eventData.extendedProps.totalAttendees.length} Attendees`);
+
+            
+            // Calculate time difference
+            const currentDateTime = moment.tz(currentUserTimeZone);
+            const startDateTime = moment.tz(eventStartDateTime, currentUserTimeZone);
+            const endDateTime = moment.tz(eventEndDateTime, currentUserTimeZone);
+            const checkHourDiff = calculateTimeDifference(startDateTime);
+
+            // console.log(checkHourDiff,'checkHourDiff');
+            // Check conditions and append elements accordingly
+            if (currentDateTime.isBefore(startDateTime)) {
+
+                if (((isSubstituteTutor && substituteTutorId === loggedUserId) 
+                    || (isSubstituteTutor === false && tutorId === loggedUserId))
+                    && eventStatus !== 'Cancelled') {
+
+                    const startLessonUrl = isMarkedAttendance 
+                        ? `/calendar/${eventData.extendedProps.eventId}/event-lessons` 
+                        : '';
+
+                    const startLessonTooltipTitle = isMarkedAttendance 
+                        ? "Start Lesson" 
+                        : "Please mark attendance first to start the lesson";
+
+                    appendEventActionButton(
+                        eventDetailsDiv.find(".event-action-btn"),
+                        `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`,
+                        "Take/Modify Attendance",
+                        "Take/Modify Attendance",
+                        "btn theme-btn w-100 mb-1 take-attendance"
+                    );
+
+                    // Start Lesson
+                    appendEventActionButton(
+                        eventDetailsDiv.find(".event-action-btn"),
+                        startLessonUrl,
+                        "Start Lesson",
+                        startLessonTooltipTitle,
+                        "btn btn-success w-100 mb-1 start-lesson",
+                        "",
+                        !isMarkedAttendance
+                    );
+                }
+                
+                
+                    if (loggedUserRole == '1') {
+                        if (eventStatus !== 'Cancelled') {
+                            appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-edit.png", "Edit", "top", `/calendar/edit-an-event/${eventData.extendedProps.eventId}`,"edit-event-anchor");
+                            // console.log(eventId,'eventId');
+                        }
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-email.png", "Email", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-comment.png", "Message", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-clone.png", "Clone", "top", "", "clone-event-anchor");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-delete.png", "Delete", "top", "", "delete-event-anchor");
+                        if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '',
+                                `<div class="d-flex align-items-center">
+                                    <img src="/images/cancel-event.svg" alt="Cancelled" style="width: 16px; margin-right: 5px;">
+                                    <span>This event is cancelled by Admin on tutor's request.</span>
+                                </div>`,
+                                "This event is cancelled by Admin on tutor's request.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`
+                            );                         
+                        } else {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance", "btn theme-btn w-100 take-attendance", "");
+                        }
+                    }
+
+                    if (loggedUserRole == '3') {
+                        if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "This event is cancelled by Admin on tutor's request.","This event is cancelled by Admin on tutor's request.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                        }
+                    }
+
+                    if ((isSubstituteTutor && substituteTutorId === loggedUserId) || (isSubstituteTutor === false && tutorId === loggedUserId)) {
+                        if (eventStatus === 'Requested_To_Cancel') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "The event cancellation is pending admin approval.",  "The event cancellation is pending admin approval.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                        } else if (eventStatus === 'Cancelled') {
+                            // appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '<img src="/images/close-icon.svg">', "This event is cancelled by Admin on tutor's request.","This event is cancelled by Admin on tutor's request.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                       appendEventActionButton(
+                            eventDetailsDiv.find(".event-action-btn"),
+                            '',
+                            `<div class="d-flex align-items-center"><img src="/images/cancel-event.svg" alt="Cancelled" style="width: 16px; margin-right: 5px;"><span>This event is cancelled by Admin on tutor's request.</span></div>`,
+                            "This event is cancelled by Admin on tutor's request.",
+                            "badge rounded-pill bg-light text-dark mb-2 text-sm",
+                            `data-event-id= ${eventData.extendedProps.eventId}`
+                        );
+                        } else if (eventStatus === 'Rejected') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "The event cancellation request has been rejected.", "The event cancellation request has been rejected.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id="${eventData.extendedProps.eventId}"`);
+                        }
+                        else {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "Cancel This Event", "Cancel This Event", "btn btn-danger w-100 cancel-events", `data-event-id="${eventData.extendedProps.eventId}" data-event-start="${eventStartDateTime.toISOString()}"`);
+                        }
+                    }
+            } else {
+                if (currentDateTime.isAfter(endDateTime)) {
+                    if (loggedUserRole == '1') {
+                        if (eventStatus !== 'Cancelled') {
+                            appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-edit.png", "Edit", "top", `/calendar/edit-an-event/${eventData.extendedProps.eventId}`,"edit-event-anchor");
+                        }
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-clone.png", "Clone", "top", "", "clone-event-anchor");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-email.png", "Email", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-comment.png", "Message", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-delete.png", "Delete", "top", "", "delete-event-anchor");
+                          if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', 
+                                `<div class="d-flex align-items-center">
+                                    <img src="/images/cancel-event.svg" alt="Cancelled" style="width: 16px; margin-right: 5px;">
+                                    <span>This event is cancelled by Admin on tutor's request.</span>
+                                </div>`, 
+                                "This event is cancelled by Admin on tutor's request.", 
+                                "badge rounded-pill bg-light text-dark mb-2 text-sm", 
+                                `data-event-id= ${eventData.extendedProps.eventId}`
+                            );
+                         }else{
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance", "btn theme-btn w-100 take-attendance", "");
+                        }
+                    }
+                    if (loggedUserRole == '3') {
+                        if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "This event is cancelled by Admin on tutor's request.",  "This event is cancelled by Admin on tutor's request.","badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                        }
+                    }
+                    if ((isSubstituteTutor && substituteTutorId === loggedUserId) || (isSubstituteTutor === false && tutorId === loggedUserId)) {
+
+                        if (eventStatus === 'Requested_To_Cancel') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "The event cancellation is pending admin approval.",  "The event cancellation is pending admin approval.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "btn theme-btn w-100 take-attendance", "");
+                        } else if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "This event is cancelled by Admin on tutor's request.", "This event is cancelled by Admin on tutor's request.","badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+
+                        } else if (eventStatus === 'Rejected') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "The event cancellation request has been rejected.", "The event cancellation request has been rejected.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance", "btn theme-btn w-100 take-attendance", "");
+                        } else {
+                            const assignPointsUrl = isAllAttendanceMarked  
+                                ? `/rewards/assign-points/${eventData.extendedProps.eventId}` 
+                                : '';
+
+                            const assignPointsTooltip = isAllAttendanceMarked  
+                                ? "Assign Points" 
+                                : "Please mark attendance first to assign points";
+                            appendEventListItem(
+                                eventDetailsDiv.find(".event-ul"),
+                                "images/rewards-student.svg",
+                                isAllAttendanceMarked ? "Assign Points" : "Please mark attendance first to assign points",
+                                "top",
+                                "",
+                                "rewards-student-icon",
+                                isAllAttendanceMarked
+                            );
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance", "btn theme-btn w-100 take-attendance", "");
+                            appendEventActionButton(
+                                eventDetailsDiv.find(".event-action-btn"),
+                                assignPointsUrl,
+                                "Assign Points",
+                                assignPointsTooltip,
+                                "btn theme-btn w-100 mt-2 assign-points-btn",
+                                "",
+                                !isMarkedAttendance
+                            );
+
+                            if (eventData._def?.hasEnd) {
+                                appendEventActionButton(
+                                    eventDetailsDiv.find(".event-action-btn"),
+                                    `/calendar/${eventData.extendedProps.eventId}/event-lessons`,
+                                    "View Program",
+                                    "Go to Program",
+                                    "btn theme-btn w-100 mt-2 program_btn",
+                                    ""
+                                );
+                            }
+                        }
+                    }
+                } else {
+                    if (loggedUserRole == '1') {
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-email.png", "Email", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-comment.png", "Message", "top", "");
+                        appendEventListItem(eventDetailsDiv.find(".event-ul"), "images/cal-clone.png", "Clone", "top", "", "clone-event-anchor");
+                        if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "This event is cancelled by Admin on tutor's request.", "This event is cancelled by Admin on tutor's request.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                        }
+                    }
+                    if ((isSubstituteTutor && substituteTutorId === loggedUserId) || (isSubstituteTutor === false && tutorId === loggedUserId)) {
+
+                        const startLessonUrl = isMarkedAttendance ?  `/calendar/${eventData.extendedProps.eventId}/event-lessons` : '';
+                        const startLessonTooltipTitle =  isMarkedAttendance ? "Start Lesson":"Please mark attendance first to start the lesson"
+                        if (eventStatus === 'Requested_To_Cancel') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "Your cancellation request is in Pending", "Your cancellation request is in Pending", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), startLessonUrl, "Start Lesson", startLessonTooltipTitle,  "btn btn-success w-100 mb-1 start-lesson" ,"", !isMarkedAttendance);
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "btn theme-btn w-100 take-attendance");
+
+                        } else if (eventStatus === 'Cancelled') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "Your cancellation request has been approved.", "Your cancellation request has been approved.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+                        } else if (eventStatus === 'Rejected') {
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), '', "Your cancellation request has been cancelled.","Your cancellation request has been cancelled.", "badge rounded-pill bg-light text-dark mb-2 text-sm", `data-event-id= ${eventData.extendedProps.eventId}`);
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), startLessonUrl, "Start Lesson",startLessonTooltipTitle, "btn btn-success w-100 mb-1 start-lesson","", !isMarkedAttendance);
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance", "btn theme-btn w-100 take-attendance");
+                        }
+                        else if (eventStatus === 'N/A') {
+                            const assignPointsUrl = isAllAttendanceMarked  
+                                ? `/rewards/assign-points/${eventData.extendedProps.eventId}` 
+                                : '';
+
+                            const assignPointsTooltip = isAllAttendanceMarked  
+                                ? "Assign Points" 
+                                : "Please mark attendance first to assign points";
+                            appendEventListItem(
+                                eventDetailsDiv.find(".event-ul"),
+                                "images/rewards-student.svg",
+                                isAllAttendanceMarked ? "Assign Points" : "Please mark attendance first",
+                                "top",
+                                "",
+                                "rewards-student-icon",
+                                isAllAttendanceMarked
+                            );
+
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), `/attendance-notes/take-attendance/${eventData.extendedProps.eventId}`, "Take/Modify Attendance", "Take/Modify Attendance",  "btn theme-btn w-100 mb-1 take-attendance");
+                            appendEventActionButton(eventDetailsDiv.find(".event-action-btn"), startLessonUrl, "Start Lesson",  startLessonTooltipTitle, "btn btn-success w-100 mb-1 start-lesson", "",!isMarkedAttendance);
+                            appendEventActionButton(
+                                eventDetailsDiv.find(".event-action-btn"),
+                                assignPointsUrl,
+                                "Assign Points",
+                                assignPointsTooltip,
+                                "btn theme-btn w-100 assign-points-btn",
+                                "",
+                                !isMarkedAttendance
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        function hideEventDetails() {
+            $('#dateDetails').hide();
+            $('.location-list').remove();
+        }
+
+        function calculateTimeDifference(eventStartDateTime) {
+            const givenDateTime = new Date(eventStartDateTime);
+            const currentDateTime = new Date();
+            const diffMilliseconds = givenDateTime - currentDateTime;
+            return diffMilliseconds / (1000 * 60);
+        }
+
+        function generateAttendeesHTML(totalAttendees, attendeesArray) {
+            let html = '';
+            for (let totalAttendee of totalAttendees) {
+                let status = attendeesArray[totalAttendee._id.toString()];
+                let tooltipText = 'Unrecorded';
+                let icons = '/images/faq-icon.svg';
+                if (status === 'absent') {
+                    tooltipText = 'Absent';
+                    icons = '/images/approve-cancel.svg';
+                } else if (status === 'present') {
+                    tooltipText = 'Present';
+                    icons = '/images/approve-check.svg';
+                }
+                html += `<li><span class="attendees_status" data-toggle="tooltip" rel="tooltip" data-placement="top" title="${tooltipText}" data-original-title="Unrecorded"><img src="${icons}"" alt=""></span><span class="stud-name"><a href="/student-preferences/${totalAttendee?._id}">${totalAttendee?.last_name}, ${totalAttendee?.first_name}</a></span></li>`;
+            }
+            return html;
+        }
+
+        function showEventDetails(info) {
+            const top = info.jsEvent.clientY + $(window).scrollTop();
+            //const left = info.jsEvent.clientX + $(window).scrollLeft() - 300;
+            let left = Math.max(20, info.jsEvent.clientX + $(window).scrollLeft() - 300);
+            const eventDetailsDiv = $('#eventDetails');
+            eventDetailsDiv.css({
+                top: top + "px",
+                left: left + "px",
+                display: "block"
+            });
+        }
+
+        function initializeTooltips() {
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        }
+
+        // Render the calendar
+        calendar.render();
+
+        $(document).mouseup(function (event) {
+            var $pol = $('#eventDetails,#dateDetails');
+            if (!$pol.is(event.target) && $pol.has(event.target).length === 0) {
+                $pol.hide();
+            }
+        });
+
+        // Close button click event.
+        $(".evdata-close").click(function () {
+            $('#dateDetails,#eventDetails').hide();
+        });
+
+        $(document).on('click', '.clone-event-anchor', function () {
+            const eventId = $(".event-ul").attr('data-event-id');
+            let tempDate = $(".event-ul").attr('data-event-date');
+            const eventInitiateDate = formatDate(tempDate, 'YYYY-MM-DD');
+            $("#event_id_to_clone").val(eventId);
+            $("#start_date").val(eventInitiateDate);
+            $("#cloneEventModal").modal('show');
+        });
+
+        $(document).on('click', '#clone-event-cancel-btn', function () {
+            $('#clone-an-event').get(0).reset();
+        });
+
+        $("#clone-an-event").submit(function (e) {
+            e.preventDefault();
+            let hasIgnoreConflictCheckbox = $('#conflict_area').length;
+            let isIgnoreConflictChecked = hasIgnoreConflictCheckbox == 1 && $('#ignore_conflict').prop('checked');
+            // console.log(hasIgnoreConflictCheckbox, 'checkbox1', isIgnoreConflictChecked);
+            $(document).find("span.text-danger").remove();
+            if (hasIgnoreConflictCheckbox == 1 && isIgnoreConflictChecked != undefined && !isIgnoreConflictChecked) {
+                $(document).find('[id=ignore_conflict]').next().after('<span class="help-block text-danger">Please check "Ignore Conflict" to proceed further.</span>');
+                return false;
+            }
+            $("#clone-event-save-btn").prop('disabled', true);
+            let form = $('#clone-an-event');
+            let formData = new FormData(form[0]);
+            let url = form.attr('action');
+            $(document).find("#conflict_area").html('');
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: "json",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // Uncomment the line below to reload the page on success
+                        window.location.reload();
+                    }
+                },
+                error: function (response) {
+                    if (response.status === 500) {
+                        if (response.responseJSON.conflictMessage !== undefined && response.responseJSON.conflictMessage != '') {
+                            $('#conflict_area').html(response.responseJSON.conflictMessage);
+                            $('#total-conflict').html(response.responseJSON.totalConflicts);
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: response.responseJSON.message
+                            });
+
+                            // Reload the page after a brief delay 
+                            setTimeout(() => {
+                                if (response.responseJSON.redirectUrl === 'page-reload') {
+                                    window.location.reload();
+                                } else {
+                                    window.location.href = response.responseJSON.redirectUrl;
+                                }
+                            }, 2000); // Adjust delay as needed (in milliseconds)
+                        }
+                    } else {
+                        let errorMessages = '';
+                        $.each(response.responseJSON.errors, function (field_name, error) {
+                            $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' + error.msg + '</span>');
+                        });
+                    }
+                },
+                complete: function () {
+                    $("#clone-event-save-btn").prop('disabled', false);
+                }
+            });
+        });
+
+       $(document).on('click', '.rewards-student-icon', function (e) {
+            if ($(this).hasClass('disabled-reward')) {
+                e.preventDefault();
+                return false;
+            }
+
+            const eventId = $(".event-ul").attr('data-event-id');
+            window.location = `/rewards/assign-points/${eventId}`;
+        });
+
+        $(document).on('click', '.delete-event-anchor', function () {
+            const eventId = $(".event-ul").attr('data-event-id');
+            const eventType = $(".event-ul").attr('data-event-type');
+            const isParent = $(".event-ul").attr('data-event-parent');
+            const isSingleEvent = eventType === 'single';
+            $("#event_id_to_delete").val(eventId);
+            $("#event_type").val(eventType);
+            $('.delete-event-btn').html('');
+            // console.log(isSingleEvent,"isSingleEvent");
+            if (isSingleEvent) {
+                $(".delete-event-btn").append(`<button type="submit" name="delete_option" value="this_one" class="btn theme-btn delete-events mb-2 mr-2" id="delete-single-event-btn">Delete This Event</button>`);
+            } else {
+                if (isParent == 'true') {
+                    $(".delete-event-btn").append(`<button type="submit" name="delete_option" value="all" class="btn theme-btn delete-events mb-2 mr-2" id="delete-all-events-btn">Delete This & Future Events</button>`);
+                } else {
+                    $(".delete-event-btn").append(`<button type="submit" name="delete_option" value="this_one" class="btn theme-btn delete-events mb-2  mr-2" id="delete-single-event-btn">Delete This Event</button>`);
+                    $(".delete-event-btn").append(`<button type="submit" name="delete_option" value="all" class="btn theme-btn delete-events mb-2 mr-2" id="delete-all-events-btn">Delete This & Future Events</button>`);
+                }
+            }
+            $("#deleteEventModal").modal('show');
+        });
+
+        $(document).on('click', '.delete-events', function (e) {
+            e.preventDefault();
+            $(document).find("span.text-danger").remove();
+            let form = $('#delete-an-event');
+            let formData = new FormData(form[0]);
+            let url = form.attr('action');
+            const deleteOption = $(this).val();
+            formData.append('delete_option', deleteOption);
+            $(this).prop('disabled', true);
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: "json",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        window.location.reload();
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: response.message,
+                    });
+                    setTimeout(() => {
+                        if (response.responseJSON.redirectUrl === 'page-reload') {
+                            window.location.reload();
+                        } else {
+                            window.location.href = response.responseJSON.redirectUrl;
+                        }
+                    }, 2000);
+                },
+                complete: function () {
+                    $(this).prop('disabled', false);
+                }
+            });
+        });
+
+        $('.cal_search_dropdown').on('click', function (event) {
+            event.stopPropagation();
+        });
+
+        $("#search-by-student,#search-by-tutor,#search-by-substitute-tutor").select2({
+            placeholder: "Type or select...",
+            allowClear: false,
+        });
+
+        $("#search-by-location,#search-by-category").select2({
+            allowClear: false,
+        });
+
+        $('.filter-events').click(function () {
+            calendar.refetchEvents();
+        });
+
+        $('.reset-events').click(function () {
+            calendar.gotoDate(todayDate);
+            $('#search-by-student,#search-by-tutor,#search-by-substitute-tutor,#search-by-location,#search-by-category').val(null).trigger('change');
+            calendar.refetchEvents();
+        });
+
+        $(document).on('click', '.cancel-events', function () {
+            let eventId = $(this).data('event-id');
+            let eventStart = $(this).data('event-start');
+            let isTutor = loggedUserRole === '2';
+            let showWholeDayCheckbox = false;
+            if (eventStart) {
+                let startTime = new Date(eventStart);
+                let diffMinutes = (startTime - new Date()) / (1000 * 60);
+                if (isTutor && diffMinutes < 24 * 60) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Cannot request cancellation',
+                        text: `please call the admin on the number (${businessPrimaryNumber}).`,
+                    });
+                    return;
+                }
+                showWholeDayCheckbox = isTutor && diffMinutes >= 24 * 60;
+            }
+            $("#eventId").val(eventId);
+            $("#cancelWholeDay").prop('checked', false);
+            $("#cancel-whole-day-section").toggle(showWholeDayCheckbox);
+            $("#cancelEventReason").modal('show');
+        });
+
+        $("#cancel-an-event").submit(function (e) {
+            e.preventDefault();
+            let eventId = $("#eventId").val();
+            let cancelNoteForTutor = $("#cancel-note-for-tutor").val();
+            let cancelWholeDay = $("#cancelWholeDay").is(':checked') ? 1 : 0;
+            $('.error').remove();
+            if (cancelNoteForTutor.trim() === '') {
+                $("#cancel-note-for-tutor").after('<span class="error" style="color:red;">This field is required</span>');
+                return false;
+            }
+            $('.loader').show();
+            $("#cancelEventReason").modal('hide');
+
+            $.ajax({
+                type: "POST",
+                url: '/calendar/cancel-this-event',
+                data: {
+                    eventId: eventId,
+                    status: 'Requested_To_Cancel',
+                    cancelNoteForTutor: cancelNoteForTutor,
+                    cancelWholeDay: cancelWholeDay,
+                    loggedUserInfo: loggedUserInfo,
+                },
+                success: function (response) {
+                    Swal.fire({
+                        title: "Requested To Cancel!",
+                        text: response.message,
+                        icon: "success"
+                    });
+                    calendar.refetchEvents();
+                    $("#cancel-note-for-tutor").val("");
+                    $("#cancelWholeDay").prop('checked', false);
+                    $("#cancelEventReason").modal('hide');
+                    setTimeout(() => {
+                        if (response.redirectUrl === 'page-reload') {
+                            window.location.reload();
+                        } else {
+                            window.location.href = response.redirectUrl;
+                        }
+                    }, 20000000);
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops..,",
+                        text: response.message || response.responseJSON?.message || 'Something went wrong!',
+                    });
+                },
+                complete: function () {
+                    $('.loader').hide();
+                }
+            })
+        })
+
+
+        $('#calendarGroupTag .dropdown-toggle').on("click", function(e) {
+            $(this).next('.dropdown-menu').toggle('show');
+            // e.stopPropagation();
+            e.preventDefault();
+        });
+    });
+
+    $(document).on("change click", ".dt-scheduling-conflict", function () {
+        $('#conflict_area').html("");
+    });
+
+    $(document).on('click', '.edit-event-anchor', function (e) {
+        e.preventDefault();
+        const editUrl = $(this).attr('href');
+        if (editUrl && editUrl !== 'javascript:void(0)') {
+            window.location.href = editUrl;
+        }
+    });
+
+    /**
+     * event index page script.
+     * @script end
+     * */
+</script>

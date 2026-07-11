@@ -1,0 +1,342 @@
+<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".select2").select2({ allowClear: false });
+    $("#students").select2({ placeholder: "Select Students"});
+    $("#datepicker").daterangepicker({ minDate: new Date(), locale: { format: ' DD MMM YYYY', } });
+    $('.timePicker').datetimepicker({
+      allowInputToggle: true, keepOpen: true, useCurrent: false,
+      format: "hh:mm A"
+    }).on('dp.show', function () { });
+  });
+
+  /**
+   *  getSubTopics.
+   **/
+  function getSubTopics(topicId) {
+    $('#sc_sub_topic').empty(); $.ajax({
+      type: "POST",
+      url: '/sub-topics/render-subtopics',
+      data: { id: topicId, },
+      success: function
+        (response) {
+        if (response.length > 0) {
+          var newOption = new Option("Select Sub Topic", "", false, false);
+          $('#sc_sub_topic').append(newOption).trigger('change');
+          for (res of response) {
+            newOption = new Option(res.name, res._id, false, false);
+            $('#sc_sub_topic').append(newOption).trigger('change');
+          }
+        } else {
+          $('#sc_sub_topic').html('No subtopics found.').trigger('change');
+        }
+      },
+    });
+  }
+
+  $('#sc_topic').change(function () {
+    let topicId = $(this).val();
+    if (topicId !== '') {
+      getSubTopics(topicId);
+    }
+  });
+
+  /**
+  * getLearningContents.
+  * */
+  function getLearningContents() {
+    let grade = $('#sc_grade').val();
+    let topic = $('#sc_topic').val();
+    let subTopic = $('#sc_sub_topic').val();
+
+    if (grade != '' && topic != '') {
+      $('#learning_content').empty();
+
+      $.ajax({
+        type: "POST",
+        url: '/learning-content/render-contents',
+        data: {
+          grade_id: grade,
+          topic_id: topic,
+          sub_topic_id: subTopic,
+        },
+        success: function (response) {
+          if (response.length > 0) {
+            $('#learning_content').empty();
+            $("#learning_content").select2({ placeholder: "Select Learning Content"});
+            var newOption = new Option("Select Learning Content", "", false, false);
+            $('#learning_content').append(newOption).trigger('change');
+            for (res of response) {
+              newOption = new Option(res.title, res._id, false, false);
+              $('#learning_content').append(newOption).trigger('change');
+            }
+          } else {
+            $('#learning_content').html('No learningContents found.').trigger('change');
+          }
+        },
+      });
+    }
+  }
+
+  $(".filter-content").change(function () {
+    getLearningContents();
+  });
+
+  /**
+  * get lessons according to the selected leaning content. 
+  * */
+  $("#learning_content").change(function () {
+    let selectedLearningContent = $(this).val();
+    $('#lessons').empty();
+   let learningContentId = $('#learning_content').val();
+
+    if (selectedLearningContent !== '') {
+      $.ajax({
+        type: "POST",
+        url: '/learning-content/render-content-detail',
+        data: {
+          content_id: selectedLearningContent,
+        },
+        success: function (response) {
+          if (response.lesson_ids.length > 0) {
+            $('#lessons').empty();
+            for (lesson of response.lesson_ids) {
+              var option = $("<option></option>");
+              option.val(lesson._id);
+              option.text(lesson.title);
+              option.attr('data-contentId', learningContentId);
+              option.attr('data-lessonId', lesson._id);
+              option.attr('data-lesson', lesson.title);
+              $('#lessons').append(option).trigger('change');
+            }
+          } else {
+            $('#lessons').html('No lessons found.').trigger('change');
+          }
+        },
+      });
+    }else{
+    }
+  });
+
+  /**
+   * add content for program..
+   * */
+  $("#add_content").click(function () {
+    // program fields
+    let programTitle = $("#program_name").val();
+    let programGrade = $("#grade").val();
+
+    // filter fields
+    let fcGrade = $("#sc_grade").val();
+    let fcTopic = $("#sc_topic").val();
+    let fcLearningContent = $("#learning_content").val();
+    let fcLessonsLength = $("#lessons").find('option:selected').length;
+    let fcLessons = $("#lessons").val();
+    let validationFlag = false;
+    let element;
+
+    if (programTitle === '') {
+      validationFlag = true;
+      element = 'program_name';
+    } else if (programGrade === '') {
+      validationFlag = true;
+      element = 'grade';
+    } else if (fcGrade === '') {
+      validationFlag = true;
+      element = 'sc_grade';
+    } else if (fcTopic === '') {
+      validationFlag = true;
+      element = 'sc_topic';
+    } else if (fcLearningContent === '' || fcLearningContent == null) {
+      validationFlag = true;
+      element = 'learning_content';
+    }
+    else if (fcLessonsLength < 1) {
+      validationFlag = true;
+      element = 'lessons';
+    }
+
+    $('.error').remove();
+    if (validationFlag) {
+      $('#' + element).parent().closest('.form-group').append(`<span class="error" style="color:red;">This field required.</span>`);
+      $('#' + element).focus();
+      return false;
+    }
+
+    // content field
+    let fcGradeName = $("#sc_grade option:selected").text();
+    let fcTopicName = $("#sc_topic option:selected").text();
+    let fcSubTopicName = $("#sc_sub_topic option:selected").text();
+    let fcLearningContentName = $("#learning_content option:selected").text();
+
+    if (programTitle !== '' && fcGradeName !== 'Select Grade' && fcTopicName !== 'Select Topic' && fcLearningContentName !== 'Select Learning Content') {
+      let subTopicBreadcrumb = ''
+      if (fcSubTopicName && fcSubTopicName !== 'Select Sub Topic') {
+        subTopicBreadcrumb = '<li class="breadcrumb-item">' + fcSubTopicName + '</li>';
+      }
+
+      Swal.fire({
+        title: "Add Program",
+        text: "Do you want to add these content?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: `Add`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let selectedContentLength = parseInt($('.selectedcontent > li').length);
+          if(selectedContentLength > 0){
+            contentIndex = selectedContentLength + 1 ;
+          }else{
+            contentIndex = 1;
+          }
+
+          for (programValue of fcLessons) {
+            let learningContentId = $("#lessons option[value=" + programValue +"]").attr('data-contentId');
+            let lessonId = $("#lessons option[value=" + programValue +"]").attr('data-lessonId');
+            let lessonName = $("#lessons option[value=" + programValue +"]").attr('data-lesson');
+            let selectedContent = $("#lessons option[value=" + programValue + "]").text();
+            let programType = $("#lessons option[value=" + programValue + "]").attr('data-type');
+            let icon = '/images/lesson.svg';
+            let type = '';
+
+            if (programType === 'slide') {
+              icon = '/images/basic.svg';
+              type = 'slide';
+            }
+
+            if (programType === 'practice') {
+              icon = '/images/practice1.svg';
+              type = 'practice';
+            }
+
+            let breadcrumbSubTopic = '';
+            if(lessonName){
+              breadcrumbSubTopic = `<li class="breadcrumb-item 3 lesson-items" data-id="${lessonId}">${lessonName}</li>`;
+            }
+            // to avoid duplicate lesson 
+            var checkLessonsExist = $('.lesson-items').map(function() {
+            return $(this).data("id");
+            }).get();
+           
+            if(checkLessonsExist.indexOf(lessonId) === -1){
+              $("#select-assessment").append(`<li class="sort-program" data-content-position="${contentIndex}" ><div class="iconleft"><img src="${icon}" alt="img"></div><div class="content-detail-block"><ol class="breadcrumb"><li class="breadcrumb-item 5">${fcGradeName}</li><li class="breadcrumb-item 1">${fcTopicName}</li>${subTopicBreadcrumb}<li class="breadcrumb-item 2">${fcLearningContentName}</li>${breadcrumbSubTopic}</ol></div><div class="action-right"><a class="remove_content" href="javascript:void(0);">&times;</a></div><input type="hidden" name=selected_contents[] value="${learningContentId}--${lessonId}"></li>`);
+            }else{
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'This Content is already added',
+              })
+            }
+            contentIndex++;
+          }
+
+          if ($('#select-assessment > li').length >= 1) {
+              $('#storeProgramBtn').show();
+          }
+          $("#sc_grade").val(null).trigger("change");
+          $("#sc_topic").val(null).trigger("change");
+          $('#sc_sub_topic').empty();
+          $('#learning_content').empty();
+          $('#lessons').empty();
+          $('#program_content').empty();
+          $("#sc_topic").select2({ placeholder: "Select Topic"});
+          $("#sc_sub_topic").select2({ placeholder: "Select Sub Topic"});
+          $("#learning_content").select2({ placeholder: "Select Learning Content"});
+          $("#lessons").select2({ placeholder: "Select Lessons"});
+        }
+      });
+    }
+  });
+
+
+  /**
+   * remove a content from program.
+   * */
+  $('.selectedcontent').on('click', '.remove_content', function () {
+    Swal.fire({
+      html: '<p>Are you sure want to delete this ?</p>',
+      icon: 'warning',
+      showDenyButton: true,
+      confirmButtonText: 'Yes',
+      denyButtonText: `No`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        $(this).closest('li').fadeOut('slow', function () { $(this).remove(); });
+      } 
+    })
+    let list_length = $('.selectedcontent > li').length;
+    setTimeout(function () {
+      let list_length = $('.selectedcontent > li').length;
+      if ($('.selectedcontent > li').length == 0) {
+        $('#assignBtn').hide();
+      } else {
+        $('#assignBtn').show();
+      }
+    }, 1000);
+
+  });
+
+  /**
+  * store program in to db.
+  */
+  $("#storeProgram").submit(function (e) {
+    e.preventDefault();
+    var formData = $('#storeProgram').serialize();
+    var url = $('#storeProgram').attr('action');
+    $("#storeProgramBtn").prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: url,
+      dataType: "json",
+      data: formData,
+      success: function (response) {
+        if (response.success == true) {
+          window.location = response.redirectUrl;
+        }
+      },
+      error: function (response) {
+        let errorMessages = '';
+        $.each(response.responseJSON.errors, function (field_name, error) {
+          if (error.param === 'name') {
+            $(document).find('[id=program_name]').after('<span class="help-block text-danger">' +
+              error.msg + '</span>');
+          } else if (error.param === 'selected_contents') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please add content for this class',
+            })
+          } else {
+            $(document).find('[id=' + error.param + ']').after('<span class="help-block text-danger">' +
+              error.msg + '</span>');
+          }
+        })
+      },
+      complete: function () {
+        $("#storeProgramBtn").prop('disabled', false);
+      }
+    })
+  });
+
+
+  /**
+   * sortable content
+  */
+  $(".program-sortable").sortable({
+      swapThreshold: 1,
+      group: 'list',
+      animation: 200,
+      onChange: function (update, evt) {
+          var j = 1;
+          $(".sort-program").each(function () {
+              $(this).attr("data-content-position", j);
+              j++;
+          });
+      },
+      onSort: function (evt, ui) {
+      }
+  });
+</script>

@@ -1,0 +1,51 @@
+<div class="modal fade bussiness-setting-modal" id="systemSMS" tabindex="-1" role="dialog" aria-labelledby="systemSMSLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="systemSMSLabel">Edit System SMS Template</h3>
+        </div>
+        <form class="update-template" method="post" action="/business-settings/update-notification-template">
+          <div class="modal-body">
+            <div class="form-area">
+              <input type="hidden" name="template_id" value="" class="template-id">
+              <div class="form-group">
+                <label>SMS Subject</label>
+                <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                    Placeholders
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%BusinessName%">Business Name</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%InvoiceDate%">Invoice Date</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%InvoiceDueDate%">Invoice Due Date</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%InvoiceNumber%">Invoice Number</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%LoginURL%">Login URL</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%ParentName%">Parent Name</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%PayInvoiceOnlineLink%">Pay Invoice Online Link</a>
+                    <a class="dropdown-item cus-sms-placeholder-options" href="javascript:void(0)" data-value="%TutorName%">Tutor Name</a>
+                    <a class="dropdown-item cus-sms-placeholder-options" href="javascript:void(0)" data-value="%StudentName%">Student Name</a>
+                    <a class="dropdown-item sms-placeholder-options" href="javascript:void(0)" data-value="%UserName%">User Name</a>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Message*</label>
+                <small>Current message length: <span class="characters-len">0</span> characters. You have <span class="remaining-characters-len">140</span> of 140 characters remaining.</small>
+                <textarea class="sms-default-editor" id="message" cols="30" rows="10" name="message"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <!-- <div class="btn-leftarea">
+              <button type="button" class="restore-btn">Restore Default Template</button>
+            </div> -->
+            <div class="btn-rightarea">
+              <button type="button" data-dismiss="modal" class="bus-outline-btn hide-btnss">Cancel</button>
+              <!-- <button type="button" class="bus-outline-btn preview-btns">Preview</button> -->
+              <button type="submit" class="btn theme-btn hide-btnss">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

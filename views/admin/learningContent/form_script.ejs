@@ -1,0 +1,45 @@
+<!-- dropIfy-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"></script>
+
+<%- include('./../../partials/_load_subTopics'); %>
+
+<script type="text/javascript">
+  /**
+   * learningContent form script.
+   * @script start
+   */
+  $(document).ready(function () {
+    $("body").tooltip({ selector: "[data-toggle=tooltip]" });
+
+    $(".select2").select2({
+      allowClear: false,
+    });
+
+    $(".dropify").dropify();
+
+    $(".dropify-clear").on("click", function () {
+      $("#is_image_removed").val("1");
+      $(".dropify").attr("required", true);
+    });
+
+    $("#thumbnail").dropify({
+      tpl: {
+        message:
+          '<div class="dropify-message"><span class="file-icon" /><p>Drag & Drop here size should be</p><p>The max file size is 2MB. </p><a class="d-inline-block mt-2 mb-3 theme-btn" href="javasript:void(0);">Select File</a><h6 class="mb-0 fn-12 text-dblue">Supported formats : JPG, JPEG, PNG</h6></div>',
+      },
+    });
+
+    $(document).on("click", ".dropify-clear", function () {
+      $("#is_image_removed").val(1);
+    });
+  });
+
+  $("#topic_id").change(function () {
+    let topicId = $(this).val();
+    loadSubTopic(topicId);
+  });
+  /**
+   * learningContent form script.
+   * @script end
+   */
+</script>

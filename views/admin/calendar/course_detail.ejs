@@ -1,0 +1,182 @@
+<style>
+  /* Pagination Styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .pagination .page-link {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #007bff;
+    transition: background-color 0.3s ease;
+  }
+  .pagination .page-link:hover {
+    background-color: #f1f1f1;
+  }
+  .pagination .active {
+    background-color: #f68f45;
+    color: white;
+    border-color: #f68f45;
+    pointer-events: none;
+  }
+  .pagination .page-link:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="card-block">
+        <div class="detailed-report-area">
+          <div class="back_btn mb-4">
+            <a href="javascript:void(0)" onclick="window.history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
+                    <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Back
+            </a>
+          </div>
+        </div>
+        <div class="add_lesson_form d-flex justify-content-between align-items-center">
+          <h2 class="title-text mb-0" id="event-title">Event Title</h2>
+          <span class="event_status" id="lesson-percentage"></span>
+        </div>
+        <div class="lesson_name py-4">
+          <h3 class="title-text mb-0"><span id="lesson-title"></span><span class="total-count">Total Slide : <span id="total-slide-count"></span></h3>
+          <div class="lesson_name_right">
+            <div class="date_select" id="slideSelectDate" >
+              <span class="datecal-icons"><img src="/images/datecal-icons.svg" alt=""></span>
+            </div>
+            <div class="date_select" id="resetSelectDate" >
+              <span class="datecal-icons"><img src="/images/reset.svg" alt=""></span>
+            </div>
+            <!-- <div class="dropdown">
+              <button type="button" class="btn" data-toggle="dropdown" aria-expanded="false">
+                <img src="/images/menu-dot.svg" alt="Menu">
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a href="#" title="View Lesson">View Lesson</a>
+                <a href="#" title="Delete Lesson">Delete Lesson</a>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="slide_details">
+          <ul class="slide_detail_list">
+          </ul>
+        </div>
+          <ul class="pagination mb-0 justify-content-end">
+            <input type="hidden" name="offset" id="offset" value="0">
+            <li><span class="showing-item">Showing <span id="CurrentPageNumber">1</span> of <span
+                        id="totalRecords">2</span>
+            </li>
+            <li class="page-item previous-btn">
+                <a class="page-link paging" data-type="prev"><i class="fa fa-angle-left"></i></a>
+            </li>
+            <li class="page-item current"><a class="page-link">1</a></li>
+            <li class="page-item next-btn">
+                <a class="page-link paging" data-type="next"><i class="fa fa-angle-right"></i></a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script type="text/javascript">
+
+$(".paging").click(handlePagingClick);
+
+  $(document).ready(function(){
+    fetchDataTable();
+  })
+
+ $(function() {
+  $('#slideSelectDate').daterangepicker({
+    opens: 'right',
+    autoUpdateInput: false, // Prevent automatic update of the input
+    locale: {
+      format: 'DD-MM-YYYY', // Set the date format
+      cancelLabel: 'Clear' // Label for the cancel button
+    }
+  });
+
+  // Event handler for apply button in the date range picker
+  $('#slideSelectDate').on('apply.daterangepicker', function(ev, picker) {
+    let startDate = new Date(picker.startDate);
+    let endDate = new Date(picker.endDate);
+    let object = {startDate:startDate, endDate: endDate};
+    fetchDataTable(object);
+  });
+});
+$('#resetSelectDate').click(function(){
+  fetchDataTable();
+
+})
+let currentOffset = 0;
+function fetchDataTable(search = "", currentPage = 1, showEntries = 5, offset = currentOffset ) {
+  let startDate = 
+  $('.slide_list').remove();
+
+  const urlArray = window.location.href.split('/');
+  const eventId = urlArray[4];
+  const lessonId = urlArray[6];
+  $.ajax({
+    type: "POST",
+    url: "/calendar/course-details/listing",
+    data: {
+      eventId,
+      lessonId,
+      slidePerPage: showEntries,
+      currentPage,
+      offset,
+      search,
+    },
+    success: function (response) {
+      const res = JSON.parse(response);
+      $(".slide_detail_list").html(res.html);
+      $(".current a").html(res.currentPage);
+      $("#totalRecords").html(res.totalNoOfPages == 0 ? 1 : res.totalNoOfPages);
+
+      $("#lesson-percentage").text(res.slideScore+'%');
+      $("#total-slide-count").text(res.totalSlides);
+      $("#lesson-title").text(res.lessonName);
+     
+    },
+  });
+}
+
+function handlePagingClick() {
+  const currentPage = parseInt($(".current a").html());
+  const totalPage = parseInt($("#totalRecords").text());
+  const offset = parseInt($("#offset").val(), 10);
+  const showEntries = 5;
+  const type = $(this).data("type");
+  const search = $("#search").val();
+  
+  let page_no;
+  if (type === "next") {
+    page_no = currentPage === totalPage ? totalPage : currentPage + 1;
+    currentOffset = showEntries + offset;
+  } else if (type === "prev") {
+    currentOffset = offset - showEntries;
+    page_no = currentPage === 1 ? 1 : currentPage - 1;
+  }
+
+  $("#offset").val(currentOffset);
+  $("#CurrentPageNumber").html(page_no);
+  fetchDataTable( search, page_no, showEntries, currentOffset );
+}
+
+
+</script>
