@@ -715,6 +715,7 @@ ul {
     padding: 8px 15px;
     margin-bottom: 0;
     transition: all 0.3s ease-in;
+    border-radius: 10px;
 }
 
 .nav.side-menu>li>a .icon {
@@ -891,6 +892,14 @@ ul {
     border: none;
 }
 
+.right_col>#calendar{
+    background-color: #fff;
+    padding: 70px 24px 24px;
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
+    border-radius: 20px;
+    margin-top: 0;
+}
+
 /* Sidebar */
 
 /* Footer */
@@ -900,7 +909,6 @@ footer {
     /* position: relative; */
     position: fixed;
     bottom: 0;
-    width: 100%;
 }
 
 .main_container {
@@ -955,14 +963,14 @@ body .container.body::after{
 
 .card-block {
     background: #fff;
-    border-radius: 5px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 24px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
 }
 
 h3.title-text {
     color: var(--dblue);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0 0 10px;
     text-transform: capitalize;
@@ -1003,8 +1011,8 @@ span.total-count {
     border-radius: 8px;
     height: 40px !important;
     color: var(--dblue);
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 400;
 }
 .input-group .select2-container {
     width: 100% !important;
@@ -1034,8 +1042,7 @@ span.total-count {
     line-height: 40px;
     padding: 0 15px;
     color: var(--dblue);
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -1186,72 +1193,88 @@ span.total-count {
     display: flex;
     align-items: center;
     background: #fff;
-    border-radius: 5px;
-    padding: 20px 40px;
-    margin-left: 26px;
-    margin-bottom: 30px;
+    border-radius: 20px;
+    padding: 24px 24px 24px 90px;
+    margin-bottom: 20px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
+    min-height: 90px;
+    overflow: hidden;
 }
 
 .stcard-box span {
     background: #fff;
     border: 2px solid #ddd;
-    width: 50px;
-    height: 50px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 22px;
     font-weight: bold;
     color: var(--dblue);
-    margin-left: -66px;
+    margin-left: -15px;
     margin-right: 10px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 90px;
+    height: calc(100% + 40px);
+    font-size: 18px;
+    padding: 24px 24px 24px 26px;
 }
-
+.hidden-bg{
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    width: 70px;
+    opacity: 0.05;
+}
 .stcard-box span.shade1 {
     border-color: #1CCE66;
     background: #D4FFE6;
     box-shadow: 6px 6px 14px rgba(28, 206, 102, 0.25);
 }
-
 .stcard-box span.shade2 {
     border-color: #FFCB12;
     background: #FFEDAE;
     box-shadow: 6px 6px 14px rgba(255, 203, 18, 0.25);
 }
-
 .stcard-box span.shade3 {
     border-color: #FF6363;
     background: #FFE2E2;
     box-shadow: 6px 6px 14px rgba(255, 99, 99, 0.25);
 }
-
 .stcard-box span.shade4 {
     border-color: #9E63FF;
     background: #EDE5FB;
     box-shadow: 6px 6px 14px rgba(158, 99, 255, 0.25);
 }
-
 .stcard-box span.shade5 {
     border-color: #43a6eb;
     background: #43a6eb45;
     box-shadow: 6px 6px 14px rgba(67, 166, 235, 0.25);
 }
-
 .stcard-box span.shade6 {
     border-color: #ff63f7;
     background: #ff63f74f;
     box-shadow: 6px 6px 14px rgba(255, 99, 247, 0.25);
 }
-
+.filter_top{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f3f5f5;
+}
+.filter-col-btn{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+}
 .course-pagination {
     display: flex;
     align-items: center;
     justify-content: flex-end;
 }
-
 .input-group.input-search {
     max-width: 350px;
 }
@@ -1467,8 +1490,8 @@ span.total-count {
 .form-wizard .wizard-fieldset {
     display: none;
     background: #fff;
-    border-radius: 5px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 24px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
 }
 
@@ -2715,23 +2738,21 @@ span.total-count {
 
 .x_panel {
     background: #fff;
-    border-radius: 5px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 24px;
     border: none;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
 }
 
-.x_panel.form_panel {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-    padding: 50px;
+/* .x_panel.form_panel {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
     border: none;
     position: relative;
-    box-shadow: 10px 10px 30px rgba(0, 29, 61, 0.04);
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
     z-index: 9;
-    backdrop-filter: blur(30px);
-    --webkit-backdrop-filter: blur(30px);
-}
+} */
 
 .x_panel .x_title {
     display: flex;
@@ -2792,7 +2813,7 @@ span.total-count {
 
 .x_content div.dataTables_wrapper .dt-buttons .buttons-collection {
     background: var(--lightgray) url(../../images/droparrow.svg) no-repeat center right 10px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--dblue);
     border-radius: 5px;
     padding: 6px 30px 6px 10px;
@@ -2808,7 +2829,7 @@ span.total-count {
 }
 
 .dt-button-collection.dropdown-menu .dt-button a {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     color: var(--dblue);
     padding: 5px;
@@ -2823,7 +2844,7 @@ span.total-count {
 }
 
 .x_content div.dataTables_wrapper div.dataTables_length label select {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--dblue);
     background: var(--lightgray) url(../../images/droparrow.svg) no-repeat center right 10px;
     border-radius: 5px;
@@ -2833,6 +2854,7 @@ span.total-count {
     -webkit-appearance: none;
     -moz-appearance: none;
     width: 60px;
+    padding: 5px 10px;
 }
 
 .x_content div.dataTables_wrapper div.dataTables_filter {
@@ -2854,6 +2876,8 @@ span.total-count {
     margin-left: 5px;
     border: none;
     position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .x_content div.dataTables_wrapper div.dataTables_filter input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
@@ -3165,7 +3189,7 @@ span.total-count {
     background: #fff;
     border: 1px solid #c5dae5;
     border-radius: 0 5px 5px 0;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--dblue);
 }
 .form_panel .x_content span.select2-selection.select2-selection--multiple{
@@ -5485,10 +5509,10 @@ span.total-count {
         height: 70px;
         font-size: 14px;
     }
-    .filter-col .theme-btn {
+    /* .filter-col .theme-btn {
         font-size: 12px;
         padding: 8px 18px;
-    }
+    } */
 }
 
 @media(max-width:1199px) {
@@ -5556,10 +5580,10 @@ span.total-count {
     .challenges-screen .challenges-calc-part .calculator-grid button {
         font-size: 14px;
     }
-    .filter-col .theme-btn {
+    /* .filter-col .theme-btn {
         font-size: 11px;
         padding: 8px 12px;
-    }
+    } */
     .filter-row {
         gap: 15px;
     }
@@ -5567,9 +5591,9 @@ span.total-count {
 
 
 @media(max-width:991px) {
-    h3.title-text {
+    /* h3.title-text {
         font-size: 14px;
-    }
+    } */
 
     .course-list .course-description .course-detail {
         width: 100%;
@@ -5578,23 +5602,18 @@ span.total-count {
         width: 180px;
         margin-right: 10px;
     }
-
-
     .main_row:before {
         left: -80px;
         width: 200px;
         height: 200px;
     }
-
     .main_row:after {
         width: 200px;
         height: 200px;
     }
-
     .form_panel .x_content span.help-block {
         font-size: 11px;
     }
-
     .add_option_form .btn-group {
         margin: 10px 0;
     }
@@ -5612,11 +5631,10 @@ span.total-count {
     .login-blocks .auth-left{
         display: none;
     }
-
-    /* Login CSS */
-
-
-
+    /* .filter-col .select2-container{
+        width: auto !important;
+    } */
+    
     /* Challenges Screen */
     .challenges-answer-part {
         max-width: 70%;
@@ -5709,169 +5727,137 @@ span.total-count {
     .top_nav .navbar-right li .input-group input {
         min-width: 250px;
     }
-
     .filter-row {
         flex-direction: column;
     }
-
     .course-pagination {
         flex-direction: column;
     }
-
-
-
     .course-list .course-description .course-detail {
         width: 100%;
         flex-wrap: wrap;
     }
-
     .course-list .course-description .course-detail .detail-col {
         width: 30%;
         margin-bottom: 5px;
     }
-
     .course-list .course-description .top-dis {
         text-align: left;
     }
-
     .form-wizard .form-wizard-steps li {
         width: 35%;
     }
-
     .right_col .form-wizard .accordion .chp-add-section .card-body .nav-pills {
         gap: 10px;
     }
-
     .right_col .form-wizard .accordion .chp-add-section .card-body .nav-item .nav-link {
         font-size: 12px;
         padding: 8px;
     }
-
     .right_col .form-wizard .accordion .chp-add-section .card-body .nav-item .nav-link img {
         margin-right: 3px !important;
     }
-
-
     .x_content table thead th {
         font-size: 12px;
     }
-
     .x_content table tbody td {
         font-size: 11px;
     }
-
     .x_content div.dataTables_wrapper .dt-buttons {
         width: auto;
     }
-
     .x_panel.form_panel {
         padding: 20px;
     }
-
     .practice-card {
         padding: 10px;
     }
-
     .practice-card .nav-pills {
         padding: 5px 0;
         margin: 0 0 15px;
     }
-
     .practice-card .nav-pills li {
         margin: 0 5px;
     }
-
     .practice-card .nav-pills li a {
         font-size: 10px;
         padding: 8px 10px;
     }
-
     .practice-card .nav-pills li a img {
         display: block;
         margin: 0 auto 5px;
     }
-
     .add_option_form {
         padding: 25px 20px 20px;
     }
-
     .add_option_form .close_btn {
         right: 5px;
         top: 5px;
     }
-
     .add_option_form .btn-group {
         margin: 10px 0;
     }
-
     .add_option_form .btn-group .option-check-btn {
         margin: 0 3px;
     }
-
     .add_option_form .btn-group .option-check-btn .check-label {
         padding: 4px 10px;
         font-size: 12px;
         cursor: pointer;
     }
-
     .add_option_block .form-btn .theme-btn {
         padding: 8px 20px;
     }
-
     .add_option_block .form-btn .theme-btn2 {
         padding: 8px 30px;
     }
-
     .yes_no_toggle {
         font-size: 12px;
     }
-
     .yes_no_toggle .toggle.btn {
         min-height: 20px;
         min-width: 45px;
     }
-
     .yes_no_toggle .toggle.btn label {
         font-size: 8px;
         padding: 3px 20px 3px 5px;
     }
-
     .yes_no_toggle .toggle.btn .btn.btn-danger {
         padding: 4px 5px 4px 20px;
     }
-
     .yes_no_toggle .toggle.btn .toggle-handle {
         width: 12px;
         height: 12px;
         top: 4px;
         right: 6px;
     }
-
     .yes_no_toggle .toggle.btn.btn-danger.off .toggle-group .toggle-handle {
         left: 14px;
     }
-
     .que-block .image-question li {
         flex: 1 1 48%;
     }
-
     .answer-msg {
         margin: -20px auto 5px;
     }
-
     .answer-msg.single-text {
         margin: 10px auto 0;
     }
-
     .que-block .explanation {
         flex-direction: column;
         align-items: flex-start;
     }
-
     .que-block .explanation p {
         padding: 0;
         margin: 5px 0 0 !important;
         border: none;
+    }
+
+    .filter-row>li.filter-col-btn{
+        max-width: 100%;
+    }
+    .filter-col-btn .theme-btn{
+        flex: 1;
     }
 
 
@@ -5911,17 +5897,14 @@ span.total-count {
     /* Login CSS */
 
     /* Challenges Screen */
-
     .challenges-answer-part {
         max-width: 100%;
     }
 
     /* Challenges Screen */
-
     .right_col .slideshow .item h1 {
         font-size: 20px;
     }
-
     .que-block .quest-imagelarge img {
         width: 50%;
         margin: 0 auto;
@@ -5965,9 +5948,9 @@ span.total-count {
         font-size: 10px;
     }
 
-    .card-block {
+    /* .card-block {
         padding: 15px;
-    }
+    } */
 
     .card-block .pagination .page-link.prev,
     .card-block .pagination .page-link.next {
@@ -6843,7 +6826,7 @@ h2.title-text {
 }
 
 .select2-container .select2-search--inline .select2-search__field {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 input[type=time]::-webkit-datetime-edit-ampm-field {
@@ -7858,8 +7841,8 @@ div.dataTables_processing>div:last-child>div {
 
 .right_col .back-page{
     background: #fff;
-    border-radius: 5px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 24px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
     margin-bottom: 22px;
 }
@@ -8557,11 +8540,6 @@ div.dataTables_processing>div:last-child>div {
     padding-top: 10px;
     padding-bottom: 10px;
 }
-.stcard-box span{
-    width: 70px;
-    height: 70px;
-    font-size: 18px;
-}
 .detailed-report-area .back_btn{
     margin-bottom: 30px;
 }
@@ -9097,7 +9075,7 @@ div.dataTables_processing>div:last-child>div {
         max-height: 350px;
     }
     #sidebar-menu{
-        max-height: calc(100vh - 200px);
+        max-height: calc(100vh - 120px);
     }
     .detailed-report-summary .image-question li{
         flex: 1 1 22%;
@@ -9116,6 +9094,9 @@ div.dataTables_processing>div:last-child>div {
     }
     .challenges-screen .challenges-answer-part .challenge-preview-data{
         font-size: 45px;
+    }
+    footer{
+        width: 100%;
     }
 }
 
@@ -9346,9 +9327,8 @@ span.index-number.opt-incorrect {
 /* ----------------Bussniess Setting Css ------------- */
 /* userprofile css start */
 .bussniess_setting .titleheading {
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 600;
-    line-height: 37.5px;
     text-align: left;
     color: var(--dblue);
     margin: 0px 0px 20px;
@@ -9361,7 +9341,7 @@ span.index-number.opt-incorrect {
     border-radius: 10px;
 }
 .bussniess_setting .card .card-body {
-    padding: 25px;
+    padding: 24px;
 }
 .bussniess_setting .userprofile {
     border: none;
@@ -9468,9 +9448,9 @@ span.index-number.opt-incorrect {
 
 /* tab setting css start */
 .settings_content .tabcard .setting_title{
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    line-height: 30px; 
+    line-height: 22px; 
     color: var(--dblue);
     margin: 0px;
     display: flex;
@@ -11648,8 +11628,14 @@ select.form-control[multiple] optgroup{
     color: var(--dblue);
 }
 .cal-top-btarea{
-    margin-bottom: -100px;
-    padding-top: 60px;
+    margin-bottom: -52px;
+    justify-content: flex-end;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.cal-top-btarea>.both-btnli:first-child{
+    order: 1;
+    margin-left: auto;
 }
 .fc-toolbar-chunk .fc-button-group .fc-button{
     background-color: var(--secondary);
@@ -11660,9 +11646,9 @@ select.form-control[multiple] optgroup{
     background-color: #b72c20;
     border-color: var(--secondary-light);
 }
-.fc-header-toolbar .fc-toolbar-chunk:first-child{
+/* .fc-header-toolbar .fc-toolbar-chunk:first-child{
     margin-top: -100px;
-}
+} */
 .fc-header-toolbar .fc-toolbar-chunk:first-child .fc-prev-button,
 .fc-header-toolbar .fc-toolbar-chunk:first-child .fc-next-button{
     background-color: var(--secondary);
@@ -12832,8 +12818,8 @@ span.duration-label {
     justify-content: space-between;
     -webkit-justify-content: space-between;
     gap: 10px;
-    border-bottom: 1px solid rgba(210, 214, 227, 1);
-    padding-bottom: 20px;
+    /* border-bottom: 1px solid rgba(210, 214, 227, 1);
+    padding-bottom: 20px; */
     margin-bottom: 20px;
 }
 .voucher_card_list{
@@ -13224,7 +13210,7 @@ span.duration-label {
     position: absolute;
     left: 50%;
     top: 50%;
-    background-color: rgba(244, 120, 23, 1);
+    background-color: var(--secondary);
     border-radius: 50%;
     width: 12px;
     height: 12px;
@@ -13338,6 +13324,18 @@ span.duration-label {
 .py-10px{
     padding-top: 10px !important;
     padding-bottom: 10px !important;
+}
+.size-22,
+.size-22.title-text{
+    font-size: 22px !important;
+}
+.card_style{
+    border: none;
+    border-radius: 20px;
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
+}
+.card_style>.card-body{
+    padding: 24px;
 }
 .table_dropdown .dropdown-toggle{
     border: none;
@@ -14583,10 +14581,10 @@ span.duration-label {
     .stuattach-bbtn>*{
         padding: 10px 6px;
     }
-    .cal-top-btarea{
+    /* .cal-top-btarea{
         margin: 0 0 20px;
         padding-top: 0;
-    }
+    } */
     .fc-toolbar-chunk .fc-toolbar-title{
         margin-left: 0;
     }
@@ -14648,11 +14646,11 @@ span.duration-label {
     .x_content div.dataTables_wrapper div.dataTables_filter{
         margin-top: 0;
     }
-    .cal-top-btarea{
+    /* .cal-top-btarea{
         margin: 0 0 20px;
         justify-content: center;
         -webkit-justify-content: center;
-    }
+    } */
     .lesson_name,
     .slide_inner_list{
         flex-wrap: wrap;
@@ -14793,14 +14791,7 @@ span.duration-label {
     .nav-sm ul.nav.child_menu li.current-page:before{
         background: var(--secondary);
     }
-    .x_panel .x_title{
-        justify-content: flex-start;
-        gap: 10px;
-    }
-    .x_panel .x_title h2{
-        width: 100%;
-        margin-bottom: 0;
-    }
+    
     .x_panel .x_title .right-btns{
         margin-left: inherit;
         flex-wrap: wrap;
@@ -14985,6 +14976,15 @@ span.duration-label {
         max-width: 100%;
         justify-content: space-between;
     }
+
+    .x_panel .x_title{
+        justify-content: flex-start;
+        gap: 10px;
+    }
+    .x_panel .x_title h2{
+        width: 100%;
+        margin-bottom: 0;
+    }
 }
 @media screen and (max-width:576px) {
     .settings_content .tabcard .choosefile{
@@ -15063,10 +15063,16 @@ span.duration-label {
         flex-wrap: wrap;
         -webkit-flex-wrap: wrap;
         gap: 7px;
+        padding: 0;
+        margin: 0 0 20px;
+    }
+    .right_col>#calendar{
+        padding-top: 24px;
     }
     .cal-top-btarea>li{
         flex: 0 0 100%;
         -webkit-flex: 0 0 100%;
+        position: relative;
     }
     .cal-top-btarea .dropdown .dropdown-toggle{
         margin-right: 0;
@@ -15177,6 +15183,17 @@ span.duration-label {
         top: 8px;
         width: 24px;
         height: 24px;
+    }
+    .x_content div.dataTables_wrapper div.dataTables_length label select,
+    .x_panel .x_title .right-btns{
+        width: 100%;
+    }
+
+    .x_panel .x_title .right-btns>*,
+    .x_panel .x_title .right-btns .dropdown-toggle,
+    .x_panel .x_title .right-btns .theme-btn{
+        width: 100%;
+        margin: 0 !important;
     }
 }
 

@@ -1902,6 +1902,24 @@ ul.challenge-summry .challenge-summry-list span {
     .item {
         display: block
     }
+    .main_container .top_nav{
+        padding-right: 0 !important;
+        margin-top: 0 !important;
+    }
+    .nav_menu{
+        border-radius: 0 0 20px 20px !important;
+        box-shadow: none !important;
+    }
+    .nav-sm .main_container .nav_menu{
+        border-radius: 0 0 20px 0 !important;
+    }
+    .nav-sm .main_container .top_nav{
+        margin-left: 85px !important;
+    }
+    .nav_title{
+        padding: 12px 10px 13px !important;
+        background-color: #fff;
+    }
 }
 
 @media (max-width: 1200px) {
@@ -2556,7 +2574,7 @@ footer {
 }
 
 .nav-sm footer {
-    margin-left: 70px
+    margin-left: 85px
 }
 
 .footer_fixed footer {
@@ -3485,7 +3503,11 @@ span.right {
 
 @media (min-width: 992px) {
     footer {
-        margin-left: 230px
+        margin-left: 260px;
+        width: calc(100% - 260px);
+    }
+    .nav-sm footer{
+        width: calc(100% - 85px);
     }
 }
 

@@ -8,6 +8,7 @@
           <%=studentObject.total%>
         </span>
         <h3 class="title-text mb-0">Total</h3>
+        <img src="/images/favicon-32x32.png" class="hidden-bg" />
       </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-3">
@@ -16,6 +17,7 @@
           <%=studentObject.active%>
         </span>
         <h3 class="title-text mb-0">Active</h3>
+        <img src="/images/favicon-32x32.png" class="hidden-bg" />
       </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-3">
@@ -24,6 +26,7 @@
           <%=studentObject.trial || 0%>
         </span>
         <h3 class="title-text mb-0">Trial</h3>
+        <img src="/images/favicon-32x32.png" class="hidden-bg" />
       </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-3">
@@ -32,60 +35,57 @@
           <%=studentObject.deactive%>
         </span>
         <h3 class="title-text mb-0">Deactive</h3>
+        <img src="/images/favicon-32x32.png" class="hidden-bg" />
       </div>
     </div>
-  </div>
-  
-  <!-- Optional Waiting card row -->
-  <div class="row mt-3">
     <div class="col-sm-12 col-md-6 col-lg-3">
       <div class="stcard-box">
         <span class="shade4">
           <%=studentObject.waiting || 0%>
         </span>
         <h3 class="title-text mb-0">Waiting</h3>
+        <img src="/images/favicon-32x32.png" class="hidden-bg" />
       </div>
     </div>
-  </div>
-  
-  <div class="card-block mb-30">
-    <h2 class="title-text">Filter Students</h2>
-    <ul class="filter-row">
-        <li class="filter-col">
-          <select class="selectlink form-control select2" id="grade">
-            <option value="">Select Grade</option>
-            <% for(grades of grade) { %>
-              <option value="<%=grades.id%>"><%=grades.name%></option>
-            <% } %>
-          </select>
-        </li>
-        <li class="filter-col">
-          <select class="selectlink form-control select2" id="student">
-            <option value="">Select Student</option>
-            <% for(student of students) { %>
-              <option value="<%=student.id%>">
-                <%=student.first_name+' '+student.last_name%></option>
-              <% } %>
-            </select>
-        </li>
-        <li class="filter-col">
-            <select class="selectlink form-control select2" id="status">
-              <option value="">Select Status</option>
-              <option value="1">Active</option>
-              <option value="2">Trial</option>
-              <option value="3">Waiting</option>
-              <option value="0">Deactive</option>
-            </select>
-        </li>
-        <li class="filter-col">
-          <button class="btn theme-btn filter">Filter</button>
-          <button class="btn theme-btn reset">Reset</button>
-        </li>
-    </ul>
   </div>
   <div class="row">
     <div class="col-md-12 col-sm-12">
       <div class="x_panel">
+        <div class="filter_top">
+          <h2 class="title-text">Filter Students</h2>
+          <ul class="filter-row">
+            <li class="filter-col">
+              <select class="selectlink form-control select2" id="grade">
+                <option value="">Select Grade</option>
+                <% for(grades of grade) { %>
+                  <option value="<%=grades.id%>"><%=grades.name%></option>
+                <% } %>
+              </select>
+            </li>
+            <li class="filter-col">
+              <select class="selectlink form-control select2" id="student">
+                <option value="">Select Student</option>
+                <% for(student of students) { %>
+                  <option value="<%=student.id%>">
+                    <%=student.first_name+' '+student.last_name%></option>
+                  <% } %>
+                </select>
+            </li>
+            <li class="filter-col">
+                <select class="selectlink form-control select2" id="status">
+                  <option value="">Select Status</option>
+                  <option value="1">Active</option>
+                  <option value="2">Trial</option>
+                  <option value="3">Waiting</option>
+                  <option value="0">Deactive</option>
+                </select>
+            </li>
+            <li class="filter-col filter-col-btn">
+              <button class="btn theme-btn filter">Filter</button>
+              <button class="btn theme-btn reset">Reset</button>
+            </li>
+          </ul>
+        </div>
         <div class="x_title">
           <h2 class="title-text">Students List</h2>
           <ul class="right-btns">
@@ -121,7 +121,6 @@
             </li>
             <% } %>
           </ul>
-          <div class="clearfix"></div>
         </div>
         <div class="x_content">
           <div class="row">

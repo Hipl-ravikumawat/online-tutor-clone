@@ -5,59 +5,62 @@
         <div class="stcard-box">
             <span class="shade5"><%=tutorObject.total%></span>
             <h3 class="title-text mb-0">Total</h3>
+            <img src="/images/favicon-32x32.png" class="hidden-bg" />
         </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
             <span class="shade1"><%=tutorObject.active%></span>
             <h3 class="title-text mb-0">Active</h3>
+            <img src="/images/favicon-32x32.png" class="hidden-bg" />
         </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
             <span class="shade3"><%=tutorObject.deactive%></span>
             <h3 class="title-text mb-0">Deactive</h3>
+            <img src="/images/favicon-32x32.png" class="hidden-bg" />
         </div>
     </div>
-  </div>
-  <div class="card-block mb-30">
-    <h3 class="title-text">Filter Tutors</h3>
-    <ul class="filter-row">
-      <li class="filter-col">
-        <select class="form-control select2" id="tutor-name" tabindex="-1" single>
-          <option value="">Select Tutor</option>
-          <% for(tutor of data) { %>
-            <option value="<%=tutor.id%>">
-              <%=tutor.first_name+' '+tutor.last_name %>
-            </option>
-            <% } %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control" id="tutor-subjects" tabindex="-1" multiple>
-            <% for(sub of subject) { %>
-            <option value="<%=sub.id%>">
-              <%=sub.name %>
-            </option>
-            <% } %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control select2" id="status" tabindex="-1" single>
-          <option value="">Select Status</option>
-          <option value="1">Active</option>
-          <option value="0">Deactive</option>
-        </select>
-      </li>
-      <li class="filter-col">
-        <button class="btn theme-btn filter">Filter</button>
-        <button class="btn theme-btn reset">Reset</button>
-      </li>
-    </ul>
   </div>
   <div class="row">
     <div class="col-md-12 col-sm-12">
       <div class="x_panel">
+        <div class="filter_top">
+          <h3 class="title-text">Filter Tutors</h3>
+          <ul class="filter-row">
+            <li class="filter-col">
+              <select class="form-control select2" id="tutor-name" tabindex="-1" single>
+                <option value="">Select Tutor</option>
+                <% for(tutor of data) { %>
+                  <option value="<%=tutor.id%>">
+                    <%=tutor.first_name+' '+tutor.last_name %>
+                  </option>
+                  <% } %>
+              </select>
+            </li>
+            <li class="filter-col">
+              <select class="form-control" id="tutor-subjects" tabindex="-1" multiple>
+                  <% for(sub of subject) { %>
+                  <option value="<%=sub.id%>">
+                    <%=sub.name %>
+                  </option>
+                  <% } %>
+              </select>
+            </li>
+            <li class="filter-col">
+              <select class="form-control select2" id="status" tabindex="-1" single>
+                <option value="">Select Status</option>
+                <option value="1">Active</option>
+                <option value="0">Deactive</option>
+              </select>
+            </li>
+            <li class="filter-col filter-col-btn">
+              <button class="btn theme-btn filter">Filter</button>
+              <button class="btn theme-btn reset">Reset</button>
+            </li>
+          </ul>
+        </div>
         <div class="x_title">
           <h2 class="title-text">Tutors List</h2>
           <ul class="right-btns">
@@ -91,7 +94,6 @@
                 title="Add Tutor">+ Add Tutor</a>
             </li>
           </ul>
-          <div class="clearfix"></div>
         </div>
         <div class="x_content">
           <div class="card-box table-responsive allselect-table">
