@@ -11,7 +11,7 @@
   .top-controls{
     display: flex;
     justify-content: flex-end;
-    margin-bottom: -48px;
+    margin-bottom: -40px;
     width: max-content;
     margin-left: auto;
     position: relative;
@@ -25,7 +25,7 @@
     height: 40px;
     padding: 0 15px;
     color: var(--dblue);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     min-width: 270px;
   }
@@ -36,7 +36,7 @@
     padding: 8px 20px 8px 12px;
     border: none;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     min-width: 126px;
     appearance: none;
@@ -116,7 +116,7 @@
     min-height: 0;
     overflow-x: auto;
     overflow-y: auto;
-    padding: 10px 10px 0 10px; /* keep the padding inside the scroll */
+    padding: 0;
   }
 
 
@@ -158,6 +158,7 @@
     padding: 8px;
     border-radius: 5px;
     margin-bottom: 14px;
+    font-size: 14px;
   }
   #userList{
     padding: 0 25px 14px;
@@ -443,7 +444,7 @@
 </style>
 
 <div class="right_col" role="main">
-  <div class="layout">
+  <div class="layout max-w-1440">
     <div class="main">
       <div class="card-block">
         <div class="top-controls">
@@ -532,11 +533,10 @@
               margin-bottom: 14px;
               justify-content: space-between;
             ">
-        <h5>Tutors</h5>
-
-        <label class="user-item mb-2">
+        <h5 class="mb-0">Tutors</h5>
+        <label class="user-item mb-0">
           <input type="checkbox" id="selectAllTutors">
-          <span><strong>Select All</strong></span>
+          <span>Select All</span>
         </label>
       </div>
         <input 
@@ -550,9 +550,7 @@
       </div>
     </div>
   </div>
-
   <div id="tooltip" class="tooltip"></div>
-  
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>

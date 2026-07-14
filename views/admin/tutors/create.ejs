@@ -1,6 +1,5 @@
 <div class="right_col" role="main">
-  <!-- tutor page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
         <h2 class="title-text">Add Tutor</h2>
@@ -9,9 +8,8 @@
         <form id="createTutor" action="./store" method="post" class="form-horizontal form-label-left tutor_form"
           enctype="multipart/form-data" autocomplete="off">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="register_number">Registration No.
@@ -23,8 +21,6 @@
                     </div>
                   </div>
                 </div>  
-                <br>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
@@ -39,7 +35,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="first_name">First Name<span class="required" >*</span>
@@ -86,7 +81,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="email">Email<span class="required">*</span>
@@ -97,7 +91,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label col-md-3 col-sm-3 label-align" for="password">Password<span
@@ -112,7 +105,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
@@ -153,7 +145,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span>
@@ -170,9 +161,6 @@
                     </div>
                   </div>
                 </div>
-
-                
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="start_date">Start Date
@@ -183,7 +171,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="end_date">End Date
@@ -194,7 +181,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="address">Address</span>
@@ -205,7 +191,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="note">Note</span>
@@ -216,13 +201,12 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span>
                       <select class="form-control" name="status" id="status" tabindex="-1" single>
                         <option value="1">Activate</option>
                         <option value="0">Deactivate</option>
@@ -230,24 +214,17 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="col-md-6"></div>
-
-                
-
-                
-
                 <div class="col-md-6"  id="pay-rate-wrap">
-                      <div class="form-group">
-                        <label class="col-form-label label-align">Pay Rate</span>
-                        </label>
-                        <div class="form-group">
-                            <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" style="display: none;" /> -->
-                            <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" />
-                        </div>
-                      </div>
+                  <div class="form-group">
+                    <label class="col-form-label label-align">Pay Rate</span>
+                    </label>
+                    <div class="form-group">
+                        <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" style="display: none;" /> -->
+                        <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" />
                     </div>
-                    <div class="col-md-6">
+                  </div>
+                </div>
+                <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="payroll_type">Payroll</span>
                     </label>
@@ -266,12 +243,10 @@
                     </div>
                   </div>
                 </div>
-
-                
               </div>
             </div>
 
-              <div class="col-md-4">
+              <div class="col-md-12">
                 <div class="form-group drop-file">
                   <label class="col-form-label label-align" for="profile_image">Profile
                     Image
@@ -293,7 +268,6 @@
       </div>
     </div>
   </div>
-  <!-- tutor page content end -->
 </div>
 
 <%- include('./form_script'); %>

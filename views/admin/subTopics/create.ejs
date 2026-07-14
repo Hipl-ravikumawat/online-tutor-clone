@@ -1,9 +1,8 @@
 <div class="right_col" role="main">
-  <!-- create subtopic page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text">Add Sub Topic</h2>
+        <h2 class="title-text mb-0">Add Sub Topic</h2>
       </div>
       <div class="x_content">
         <form id="createSubTopic" action="./store" method="post" class="form-horizontal form-label-left">
@@ -46,7 +45,7 @@
                 <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                 </label>
                 <div class="input-group flex-nowrap">
-                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span>
                   <select class="form-control" name="status" id="status" tabindex="-1" single>
                     <option value="1">Activate</option>
                     <option value="0">Deactivate</option>
@@ -65,7 +64,6 @@
       </div>
     </div>
   </div>
-  <!-- create subtopic page content end -->
 </div>
 
 <%- include('./form_script'); %>

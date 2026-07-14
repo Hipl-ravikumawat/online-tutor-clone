@@ -1,15 +1,14 @@
 <div class="right_col" role="main">
-  <!-- create topic page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text">Add Topic</h2>
+        <h2 class="title-text mb-0">Add Topic</h2>
       </div>
       <div class="x_content">
         <form id="createTopic" action="./store" method="post" class="form-horizontal form-label-left"
           enctype="multipart/form-data">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
                 <div class="col-sm-12">
                   <div class="form-group">
@@ -34,7 +33,7 @@
                     <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                     </label>
                     <div class="input-group flex-nowrap">
-                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span>
                       <select class="form-control" name="status" id="status" tabindex="-1" single>
                         <option value="1">Activate</option>
                         <option value="0">Deactivate</option>
@@ -44,7 +43,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
               <div class="form-group drop-file">
                 <label class="col-form-label label-align" for="topic_image">Featured
                   Image
@@ -64,7 +63,6 @@
       </div>
     </div>
   </div>
-  <!-- create topic page content end -->
 </div>
 
 <%- include('./form_script'); %>
