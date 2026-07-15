@@ -13,7 +13,7 @@
                 <label class="col-form-label label-align" for="topic_id">Main Topic<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/categories.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/categories.svg" class="mCS_img_loaded"></span> -->
                   <select class="select2_single form-control" name="topic_id" id="topic_id" tabindex="-1" single>
                     <option value="">Select Main Topic</option>
                     <% let i=0; for(topic of data) { %>
@@ -30,23 +30,17 @@
                 <label class="col-form-label label-align" for="name">Sub Topic Name<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/subcategory.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/subcategory.svg" class="mCS_img_loaded"></span> -->
                   <input type="text" name="name" class="form-control" placeholder="Enter Sub Topic Name.." id="name" maxlength="150">
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="col-form-label label-align" for="note">Note</span></label>
-                <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.." id="note"></textarea>
-              </div>
-            </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="form-group">
                 <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                 </label>
                 <div class="input-group flex-nowrap">
-                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span> -->
                   <select class="form-control" name="status" id="status" tabindex="-1" single>
                     <option value="1">Activate</option>
                     <option value="0">Deactivate</option>
@@ -54,13 +48,17 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label class="col-form-label label-align" for="note">Note</span></label>
+                <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.." id="note"></textarea>
+              </div>
+            </div>
           </div>
-
           <div class="ln_solid"></div>
           <div class="text-right">
             <button type="submit" id="storeSubTopicBtn" class="btn theme-btn form-button">Save</button>
           </div>
-
         </form>
       </div>
     </div>

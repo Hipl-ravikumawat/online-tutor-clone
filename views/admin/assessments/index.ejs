@@ -1,12 +1,41 @@
 <div class="right_col" role="main">
-  <!-- assessment index page content starts -->
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-3">
-      <div class="stcard-box">
-        <span class="shade5">
-          <%=assessmentObject.total%>
-        </span>
-        <h3 class="title-text mb-0">Total</h3>
+  <div class="max-w-1440">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="stcard-box">
+          <span class="shade5">
+            <%=assessmentObject.total%>
+          </span>
+          <h3 class="title-text mb-0">Total</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="stcard-box">
+          <span class="shade1">
+            <%=assessmentObject.completed%>
+          </span>                 
+          <h3 class="title-text mb-0">Completed</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="stcard-box">
+          <span class="shade2">
+            <%=assessmentObject.pending%>
+          </span>
+          <h3 class="title-text mb-0">Pending</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="stcard-box">
+          <span class="shade3">
+            <%=assessmentObject.not_completed%>
+          </span>
+          <h3 class="title-text mb-0">Not Completed</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-3">
