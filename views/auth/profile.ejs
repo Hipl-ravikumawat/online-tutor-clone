@@ -1,15 +1,15 @@
 <div class="right_col" role="main">
   <!-- profile page content starts -->
-  <div class="row main_row max-w-1440">
+  <div class="row main_row">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text mb-0">User Profile</h2>
+        <h2 class="title-text">User Profile</h2>
       </div>
       <div class="x_content">
         <form id="updateProfile" action="/updateProfile" method="post"
           class="form-horizontal form-label-left tutor_form" enctype="multipart/form-data" autocomplete="off">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
               <div class="row">
                 <input type="hidden" name="user_id" value="<%=loggedUserInfo._id.toString() %>">
                 <input type="hidden" name="role" value="<%=loggedUserInfo.role%>">
@@ -119,7 +119,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="password">Password<span
-                        class="required">* </span><span style="font-size: 12px;display: inline-block;font-weight: 400;">Leave blank If you don`t want to update password</span>
+                        class="required">* </span><span style="font-size: 8px;display: inline-block;">Leave blank If you don`t want to update password</span>
                     </label>
                     
                     <div class="input-group">
@@ -135,7 +135,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-4">
               <div class="form-group drop-file">
                 <label class="col-form-label label-align" for="profile_image">Profile Image</label>
                 <div class="input-group">

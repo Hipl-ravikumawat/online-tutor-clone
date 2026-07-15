@@ -8,9 +8,8 @@
             <form method="post" class="family-account" id="invoice-setting">
               <div class="row mx-0 row-gap-20">
                 <div class="col-12 px-0">
-                  <h6 class="setting_name m-0">Payment Methods</h6>
-                  <span class="subtitle size-12">Use a semicolon or press the Enter key to separate entries</span>
-                  <div class="prior-input mw-100 mt-2">
+                  <h6 class="setting_name m-0">Payment Methods <span class="subtitle size-12">Use a semicolon or press the Enter key to separate entries</span></h6>
+                  <div class="prior-input mw-100">
                     <select name="payment_mothods[]" class="select2_multiple_with_tags form-control" multiple="multiple" disabled>
                       <% businessSetting?.family_contact_settings[0]?.payment_methods.forEach(function(payment_method) { 
                         %>
@@ -50,15 +49,15 @@
                       </div>
                     </li>
                     <li>
-                      <div class="col-12 px-0 nt-2" id="specific_day_box" style="display: none;">
-                        <label class="form-check-label mb-2 color-primary fw-500" for="month">Select a day of the month between 1 and 31 </label>
+                      <div class="col-12 px-0" id="specific_day_box" style="display: none;">
+                        <label class="form-check-label size-12 m-0" for="month">Select a day of the month between 1 and 31 </label>
                         <div class="inputgroup">
                           <input class="form-control" type="number" name="specific_day" id="specific_day" step="1" min="1" max="31" value="<%= businessSetting?.family_contact_settings?.[0]?.specific_day %>" disabled />
                         </div>
                       </div>
 
-                      <div class="col-12 px-0 mt-2" id="specific_date_box" style="display: none;">
-                        <label class="form-check-label mb-2 color-primary fw-500" for="specific_date">Select a specific balance date </label>
+                      <div class="col-12 px-0" id="specific_date_box" style="display: none;">
+                        <label class="form-check-label size-12 m-0" for="specific_date">Select a specific balance date </label>
                         <div class="inputgroup iconfield">
                           <input class="form-control" name="specific_date" type="date" id="specific_date" 
                           value="<%= businessSetting?.family_contact_settings?.[0]?.specific_date 
@@ -101,22 +100,22 @@
                       <div class="form-check radio_group">
                         <input class="form-check-input" type="radio" name="payment_fee_type" id="invoicename2" value="2" disabled <%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].payment_fee_type =='2'? 'checked':'' %>>
                         <label class="radiolabel" for="invoicename2">Fixed amount ($)</label>
-                        <div class="open_group row mx-0 row-gap-20 nt-2">
+                        <div class="open_group row mx-0 row-gap-20">
                           <div class="col-12 px-0">
-                            <label class="form-check-label mb-2 fw-500 color-primary" for="invoice_name">Enter a late fee amount <span class="inputgroup_value">$ 120.00</span></label>
+                            <label class="form-check-label size-12 m-0" for="invoice_name">Enter a late fee amount <span class="inputgroup_value">$ 120.00</span></label>
                             <div class="inputgroup iconfield">
                               <input class="form-control" type="tel" id="invoicemonth" name="late_fee_amount" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].late_fee_amount%>"/>
                               <span style="padding-top: 4px;"><%= currency %></span>
                             </div>
                           </div>
                           <div class="col-12 px-0">
-                            <label class="form-check-label mb-2 fw-500 color-primary" for="invoicemonth1">Enter the number of days after invoice due date to apply late fee <span class="inputgroup_value">30</span></label>
+                            <label class="form-check-label size-12 m-0" for="invoicemonth1">Enter the number of days after invoice due date to apply late fee <span class="inputgroup_value">30</span></label>
                             <div class="inputgroup">
                               <input class="form-control" type="number" min="1" step="1" id="invoicemonth1" name="number_of_days" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].number_of_days%>"/>
                             </div>
                           </div>
                           <div class="col-12 px-0">
-                            <label class="form-check-label mb-2 fw-500 color-primary" for="invoicemonth2">Select a category to use for automatic late fees (optional) <span class="inputgroup_value">Group Lesson</span></label>
+                            <label class="form-check-label size-12 m-0" for="invoicemonth2">Select a category to use for automatic late fees (optional) <span class="inputgroup_value">Group Lesson</span></label>
                             <div class="inputgroup">
                               <input class="form-control" type="text" id="invoicemonth2" name="category" value="<%=businessSetting?.invoice_settings[0]?.automatic_late_payment_fee[0].category%>"/>
                             </div>
@@ -179,9 +178,8 @@
                   </ul>
                 </div>
                 <div class="col-12 px-0">
-                  <h6 class="setting_name m-0">Email Timeframe </h6>
-                  <span class="subtitle size-12">Set what time your auto-invoices & automatic invoice reminder emails will be sent</span>
-                  <div class="prior-input mw-100 mt-2">
+                  <h6 class="setting_name m-0">Email Timeframe <span class="subtitle size-12 m-0">Set what time your auto-invoices & automatic invoice reminder emails will be sent</span></h6>
+                  <div class="prior-input mw-100">
                     <select disabled name="email_time_frame">
                       <option value="1">Between 12:00 AM and 1:00 AM</option>
                       <option value="2">Between 1:00 AM and 2:00 AM</option>
@@ -221,7 +219,7 @@
                 <div class="col px-0">
                   <div class="row mx-0 row-gap-20">
                     <div class="col-12 px-0">
-                      <h6 class="setting_name flex-row">Invoice Name <span class="subtitle size-12">Optional</span></h6>
+                      <h6 class="setting_name m-0 flex-row">Invoice Name <span class="subtitle size-12">Optional</span></h6>
                       <div class="prior-input mw-100">
                         <input type="text" placeholder="Not specified" name="invoice_name" value="<%=businessSetting?.invoice_formatting[0]?.invoice_name%>" disabled>
                       </div>
@@ -293,13 +291,13 @@
                       </ul>
                     </div>
                     <div class="col-12 px-0">
-                      <h6 class="setting_name flex-row">Invoice Footer Text <span class="subtitle size-12">Optional</span></h6>
+                      <h6 class="setting_name flex-row m-0">Invoice Footer Text <span class="subtitle size-12">Optional</span></h6>
                       <div class="prior-input mw-100">
                         <textarea name="invoice_footer_text" class="" disabled><%-businessSetting?.invoice_formatting[0]?.invoice_footer_text%></textarea>
                       </div>
                     </div>
                     <div class="col-12 px-0">
-                      <h6 class="setting_name">Invoice Accent Color</h6>
+                      <h6 class="setting_name m-0">Invoice Accent Color</h6>
                       <div class="colorpicker-input">
                         <label>
                           <input type="color" id="colorPicker"  name="invoice_color" value="<%=businessSetting?.invoice_formatting[0]?.invoice_accent_color%>" disabled>

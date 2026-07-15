@@ -1,425 +1,333 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css"/>
 
 <div class="right_col" role="main">
-  <div class="max-w-1440">
-    <h2 class="main_title mb-4">
-      Welcome back, <%= loggedUserInfo?.first_name+' '+loggedUserInfo?.last_name %>
-    </h2>
+  <h2 class="title-text mb-4">
+    Welcome back, <%= loggedUserInfo?.first_name+' '+loggedUserInfo?.last_name %>
+  </h2>
 
-    <% if(loggedUserInfo.role === 1) { %>
-    <div class="admin-cards main_dash_cards mb-5">
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/tutor-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Active Tutors</h3>
-            <p><%=staticesData?.tutors !== undefined ? staticesData?.tutors : 0
-            %></p>
-          </div>
-        </div>
-        <img src="/images/tutor-orange.svg" alt="" class="dash-back-icon">
+  <% if(loggedUserInfo.role === 1) { %>
+  <div class="admin-cards main_dash_cards mb-5">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/tutor-orange.svg" alt=""></span>
+        <p><%=staticesData?.tutors !== undefined ? staticesData?.tutors : 0
+          %></p>
+        <h3 class="title-text mb-0">Active Tutors</h3>
         <a href="./tutors" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/student-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Active Students</h3>
-            <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
-              %></p>
-          </div>
-        </div>
-        <img src="/images/student-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/student-orange.svg" alt=""></span>
+        <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
+          %></p>
+        <h3 class="title-text mb-0">Active Students</h3>
         <a href="./students" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/courses-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Active Learning Contents</h3>
-            <p><%=staticesData?.learningContents !== undefined ?
-              staticesData?.learningContents : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/courses-orange.svg" alt=""></span>
+        <p><%=staticesData?.learningContents !== undefined ?
+          staticesData?.learningContents : 0 %></p>
+        <h3 class="title-text mb-0">Active Learning Contents</h3>
         <a href="./learning-content" class="see-more-btn">See details</a>
       </div>
+    </div>
 
-      <% /* %>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/assessment-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Classes</h3>
-            <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
-              %></p>
-          </div>
-        </div>
-        <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/assessment-orange.svg" alt=""></span>
+        <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+          %></p>
+        <h3 class="title-text mb-0">Classes</h3>
         <a href="./programs" class="see-more-btn">See details</a>
       </div>
-      <% */%> 
+    </div>
+    <% */%> 
 
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/categories-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Homework</h3>
-            <p><%=staticesData?.assessments !== undefined ?
-              staticesData?.assessments : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/categories-orange.svg" alt="" class="dash-back-icon">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/categories-orange.svg" alt=""></span>
+        <p><%=staticesData?.assessments !== undefined ?
+          staticesData?.assessments : 0 %></p>
+        <h3 class="title-text mb-0">Homework</h3>
         <a href="./assessments" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/training-assessment-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Staff Assessments</h3>
-            <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
-          </div>
-        </div>
-        <img src="/images/training-assessment-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/training-assessment-orange.svg" alt=""></span>
+        <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
+        <h3 class="title-text mb-0">Staff Assessments</h3>
         <a href="./tutor-training-assessments" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/invoice-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Payments received this month</h3>
-            <p><%= staticesData?.totalPayments || 0 %></p>
-          </div>
-        </div>
-        <img src="/images/invoice-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/invoice-orange.svg" alt=""></span>
+        <p><%= staticesData?.totalPayments || 0 %></p>
+        <h3 class="title-text mb-0">Payments received this month</h3>
         <a href="./families-invoices" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/revenue-orange.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Projected revenue this month</h3>
-            <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
-          </div>
-        </div>
-        <img src="/images/revenue-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/revenue-orange.svg" alt=""></span>
+        <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
+        <h3 class="title-text mb-0">Projected revenue this month</h3>
         <a href="./families-invoices" class="see-more-btn">See details</a>
       </div>
+    </div>
 
-      <div class="dashboard-box pending-leave-box position-relative">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span>
-              <img src="/images/pending-leave-requests.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Pending Leave Requests</h3>
-            <p><%= staticesData?.pendingLeaveRequests || 0 %></p>
-          </div>
-        </div>
-        <img src="/images/pending-leave-requests.svg" alt="" class="dash-back-icon">
+    <div class="dashboard-box pending-leave-box position-relative">
+      <div class="dash-leftblock">
+        <span>
+          <img src="/images/pending-leave-requests.svg" alt="">
+        </span>
+        <p><%= staticesData?.pendingLeaveRequests || 0 %></p>
+        <h3 class="title-text mb-0">Pending Leave Requests</h3>
         <a href="javascript:void(0)" class="see-more-btn pending-leave-toggle" data-toggle="modal" data-target="#pendingLeaves">
           See details
         </a>
       </div>
+    </div>
 
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span><img src="/images/cancellation-event-requests.svg" alt=""></span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Cancellation Event Requests</h3>
-            <p><%= staticesData?.pendingCancellationRequests || 0 %></p>
-          </div>
-        </div>
-        <img src="/images/cancellation-event-requests.svg" alt="" class="dash-back-icon">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span><img src="/images/cancellation-event-requests.svg" alt=""></span>
+        <p><%= staticesData?.pendingCancellationRequests || 0 %></p>
+        <h3 class="title-text mb-0">Cancellation Event Requests</h3>
         <a href="./calendar/cancelled-events" class="see-more-btn">See details</a>
       </div>
-      
     </div>
-    <% } %> <% if(loggedUserInfo.role === 2) { %>
-    <div class="tutor-cards main_dash_cards mb-5">
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-DarkSlateBlue">
-              <img src="/images/student-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Students</h3>
-            <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
-              %></p>
-          </div>
-        </div>
-        <img src="/images/student-orange.svg" alt="" class="dash-back-icon">
+    
+  </div>
+  <% } %> <% if(loggedUserInfo.role === 2) { %>
+  <div class="tutor-cards main_dash_cards mb-5">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-DarkSlateBlue">
+          <img src="/images/student-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.students !== undefined ? staticesData?.students : 0
+          %></p>
+        <h3 class="title-text mb-0">Students</h3>
         <a href="./students" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-RoyalBlue">
-              <img src="/images/courses-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Learning Contents</h3>
-            <p><%=staticesData?.learningContents !== undefined ?
-              staticesData?.learningContents : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-RoyalBlue">
+          <img src="/images/courses-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.learningContents !== undefined ?
+          staticesData?.learningContents : 0 %></p>
+        <h3 class="title-text mb-0">Learning Contents</h3>
         <a href="./learning-content" class="see-more-btn">See details</a>
       </div>
-        
-      <% /* %>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-LightOrange">
-              <img src="/images/assessment-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Classes</h3>
-            <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
-              %></p>
-          </div>
-        </div>
-        <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+    </div>
+      
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-LightOrange">
+          <img src="/images/assessment-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+          %></p>
+        <h3 class="title-text mb-0">Classes</h3>
         <a href="./programs" class="see-more-btn">See details</a>
       </div>
-      <% */ %>
-      
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-DarkSlateGray">
-              <img src="/images/policy_icon_orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Unread Policies</h3>
-            <p><%=staticesData?.unreadPolicies !== undefined ?
-              staticesData?.unreadPolicies : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/policy_icon_orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <% */ %>
+    
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-DarkSlateGray">
+          <img src="/images/policy_icon_orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.unreadPolicies !== undefined ?
+          staticesData?.unreadPolicies : 0 %></p>
+        <h3 class="title-text mb-0">Unread Policies</h3>
         <a href="./policies" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-SaddleBrown">
-              <img src="/images/training-assessment-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Staff Assessments</h3>
-            <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
-          </div>
-        </div>
-        <img src="/images/training-assessment-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-SaddleBrown">
+          <img src="/images/training-assessment-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.attachedTutorTrainingAssessmentIds ?? 0 %></p>
+        <h3 class="title-text mb-0">Staff Assessments</h3>
         <a href="./tutor-training-assessments" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-CadetBlue">
-              <img src="/images/invoice-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Payments received this month</h3>
-            <p><%= staticesData?.totalPayments || 0 %></p>
-          </div>
-        </div>
-        <img src="/images/invoice-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-CadetBlue">
+          <img src="/images/invoice-orange.svg" alt="">
+        </span>
+        <p><%= staticesData?.totalPayments || 0 %></p>
+        <h3 class="title-text mb-0">Payments received this month</h3>
         <a href="./families-invoices#Transactions" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-CadetBlue">
-              <img src="/images/revenue-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Projected revenue this month</h3>
-            <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
-          </div>
-        </div>
-        <img src="/images/revenue-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-CadetBlue">
+          <img src="/images/revenue-orange.svg" alt="">
+        </span>
+        <p><%= currency.symbol %><%= Number(staticesData?.revenue || 0).toFixed(2) %></p>
+        <h3 class="title-text mb-0">Projected revenue this month</h3>
         <a href="./families-invoices" class="see-more-btn">See details</a>
       </div>
     </div>
-    <% } %> <% if(loggedUserInfo.role === 3) { %>
-    <div class="student-cards main_dash_cards">
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-DarkSlateBlue">
-              <img src="/images/courses-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Learning Contents</h3>
-            <p><%=staticesData?.learningContents !== undefined ?
-              staticesData?.learningContents : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/courses-orange.svg" alt="" class="dash-back-icon">
+  </div>
+  <% } %> <% if(loggedUserInfo.role === 3) { %>
+  <div class="student-cards main_dash_cards">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-DarkSlateBlue">
+          <img src="/images/courses-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.learningContents !== undefined ?
+          staticesData?.learningContents : 0 %></p>
+        <h3 class="title-text mb-0">Learning Contents</h3>
         <a href="./learning-content" class="see-more-btn">See details</a>
       </div>
+    </div>
 
-      <% /* %>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-RoyalBlue">
-              <img src="/images/assessment-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Classes</h3>
-            <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
-              %></p>
-          </div>
-        </div>
-        <img src="/images/assessment-orange.svg" alt="" class="dash-back-icon">
+    <% /* %>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-RoyalBlue">
+          <img src="/images/assessment-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.programs !== undefined ? staticesData?.programs : 0
+          %></p>
+        <h3 class="title-text mb-0">Classes</h3>
         <a href="./programs" class="see-more-btn">See details</a>
       </div>
-      <% */ %>
+    </div>
+    <% */ %>
 
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-LightOrange">
-              <img src="/images/categories-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Assessments</h3>
-            <p><%=staticesData?.assessments !== undefined ?
-              staticesData?.assessments : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/categories-orange.svg" alt="" class="dash-back-icon">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-LightOrange">
+          <img src="/images/categories-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.assessments !== undefined ?
+          staticesData?.assessments : 0 %></p>
+        <h3 class="title-text mb-0">Assessments</h3>
         <a href="./assessments" class="see-more-btn">See details</a>
       </div>
-      <div class="dashboard-box">
-        <div class="dash-leftblock">
-          <div class="dash_inner_icon">
-            <span class="bg-shoftGreen">
-              <img src="/images/rewards-point-orange.svg" alt="">
-            </span>
-          </div>
-          <div class="dash_inner_content">
-            <h3 class="title-text mb-0">Total Reward Points</h3>
-            <p><%=staticesData?.pointsBalance !== undefined ?
-              staticesData?.pointsBalance : 0 %></p>
-          </div>
-        </div>
-        <img src="/images/rewards-point-orange.svg" alt="" class="dash-back-icon">
+    </div>
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-shoftGreen">
+          <img src="/images/rewards-point-orange.svg" alt="">
+        </span>
+        <p><%=staticesData?.pointsBalance !== undefined ?
+          staticesData?.pointsBalance : 0 %></p>
+        <h3 class="title-text mb-0">Total Reward Points</h3>
         <a href="./rewards/points-history" class="see-more-btn">See details</a>
       </div>
     </div>
-    <% if(stdAssessmentArray.length > 0) { %>
-    <div class="card-block mt-4 mb-5">
-      <div class="tutors_area">
-        <h2 class="title-text mb-3">Alert</h2>
-        <div class="alert-list">
-          <ul>
-            <% for(remainingAssessment of stdAssessmentArray){ %>
-            <li>
-              <div class="alert-details">
-                <p><strong>takeout. Hurry up! </strong>Complete Your Task to get more Rewards points.</p>
-                <p><strong>Last Date : </strong><%=remainingAssessment.assessmentDate%></p>
-              </div>
-              <a href="./assessments" class="theme-btn add-voucher-btn">Complete Assessment</a>
-            </li>
-            <% } %>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <% } %>
-    <% } %>
-
-    <% if (loggedUserInfo.role !== 2) { %>
-    <div class="week-agenda"></div>
-    <% } %>
-
-    <% if (loggedUserInfo.role === 2) { %>
-    <div class="bussniess_setting">
-      <div class="card">
-        <div class="card-body scheduled_event_box date_dropdown">
-          <div class="date_dropdown_block">
-            <h2 class="title-text">
-              <div class="contents" id="tutor-display-date"></div>
-              <div class="position-relative">
-                <span class="owed_date_family" style="cursor: pointer;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
-                    <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </span>
-                <input type="text" id="tutor-date-input" class="hidden_input_area" />
-              </div>
-              Agenda
-            </h2>
-            <div class="sche_event_right">
-              <div class="sche_event_right_inner">
-                <button class="sche_arrow prev-day">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
-                    <path d="M15.2925 5.70498C14.9025 5.31498 14.2725 5.31498 13.8825 5.70498L8.2925 11.295C7.9025 11.685 7.9025 12.315 8.2925 12.705L13.8825 18.295C14.2725 18.685 14.9025 18.685 15.2925 18.295C15.6825 17.905 15.6825 17.275 15.2925 16.885L10.4125 11.995L15.2925 7.11498C15.6825 6.72498 15.6725 6.08498 15.2925 5.70498Z" fill="#cd4236"></path> 
-                  </svg>
-                </button>
-                <span class="sche_day">Today</span>
-                <button class="sche_arrow next-day">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
-                    <path d="M8.71251 5.71075C8.32251 6.10075 8.32251 6.73075 8.71251 7.12075L13.5925 12.0008L8.71251 16.8808C8.32251 17.2708 8.32251 17.9008 8.71251 18.2908C9.10251 18.6808 9.73251 18.6808 10.1225 18.2908L15.7125 12.7008C16.1025 12.3108 16.1025 11.6808 15.7125 11.2908L10.1225 5.70075C9.74251 5.32075 9.10251 5.32075 8.71251 5.71075Z" fill="#cd4236"></path> 
-                  </svg>
-                </button>
-              </div>
-  
-              <!-- <div class="both-btnli">
-                <div class="dropdown">
-                  <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Sort" class="mr-2">Options</button>
-                  <div class="dropdown-menu dropdown-menu-right">
-                    <button type="button" class="dropdown-item">Complete Attendance</button>
-                    <button type="button" class="dropdown-item">Hide all details</button>
-                    <button type="button" class="dropdown-item">Show Family Balances</button>
-                  </div>
-                </div>
-              </div> -->
-            </div>
-          </div>
-          <div class="scheduled_event_card">
-          
-          </div>
-        </div>
-      </div>
-    </div>
-    <% } %>
   </div>
+  <% if(stdAssessmentArray.length > 0) { %>
+  <div class="card-block mt-4 mb-5">
+    <div class="tutors_area">
+      <h2 class="title-text mb-3">Alert</h2>
+      <div class="alert-list">
+        <ul>
+          <% for(remainingAssessment of stdAssessmentArray){ %>
+          <li>
+            <div class="alert-details">
+              <p><strong>takeout. Hurry up! </strong>Complete Your Task to get more Rewards points.</p>
+              <p><strong>Last Date : </strong><%=remainingAssessment.assessmentDate%></p>
+            </div>
+            <a href="./assessments" class="theme-btn add-voucher-btn">Complete Assessment</a>
+          </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <% } %>
+
+  <% if(loggedUserInfo.role === 4) { %>
+  <div class="main_dash_cards mb-5">
+    <div class="dashboard-box">
+      <div class="dash-leftblock">
+        <span class="bg-RoyalBlue"><img src="/images/courses-orange.svg" alt=""></span>
+        <p><%= staticesData?.learningContents ?? 0 %></p>
+        <h3 class="title-text mb-0">Active Learning Contents</h3>
+        <a href="/learning-content" class="see-more-btn">See details</a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (loggedUserInfo.role === 1 || loggedUserInfo.role === 3) { %>
+  <div class="week-agenda"></div>
+  <% } %>
+
+  <% if (loggedUserInfo.role === 2) { %>
+  <div class="bussniess_setting">
+    <div class="card">
+      <div class="card-body scheduled_event_box date_dropdown">
+        <div class="date_dropdown_block">
+          <h2 class="title-text">
+            <div class="contents" id="tutor-display-date"></div>
+            <div class="position-relative">
+              <span class="owed_date_family" style="cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
+                  <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <input type="text" id="tutor-date-input" class="hidden_input_area" />
+            </div>
+            Agenda
+          </h2>
+          <div class="sche_event_right">
+            <div class="sche_event_right_inner">
+              <button class="sche_arrow prev-day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                  <path d="M15.2925 5.70498C14.9025 5.31498 14.2725 5.31498 13.8825 5.70498L8.2925 11.295C7.9025 11.685 7.9025 12.315 8.2925 12.705L13.8825 18.295C14.2725 18.685 14.9025 18.685 15.2925 18.295C15.6825 17.905 15.6825 17.275 15.2925 16.885L10.4125 11.995L15.2925 7.11498C15.6825 6.72498 15.6725 6.08498 15.2925 5.70498Z" fill="#f00"></path> 
+                </svg>
+              </button>
+              <span class="sche_day">Today</span>
+              <button class="sche_arrow next-day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                  <path d="M8.71251 5.71075C8.32251 6.10075 8.32251 6.73075 8.71251 7.12075L13.5925 12.0008L8.71251 16.8808C8.32251 17.2708 8.32251 17.9008 8.71251 18.2908C9.10251 18.6808 9.73251 18.6808 10.1225 18.2908L15.7125 12.7008C16.1025 12.3108 16.1025 11.6808 15.7125 11.2908L10.1225 5.70075C9.74251 5.32075 9.10251 5.32075 8.71251 5.71075Z" fill="#f00"></path> 
+                </svg>
+              </button>
+            </div>
+ 
+            <!-- <div class="both-btnli">
+              <div class="dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Sort" class="mr-2">Options</button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <button type="button" class="dropdown-item">Complete Attendance</button>
+                  <button type="button" class="dropdown-item">Hide all details</button>
+                  <button type="button" class="dropdown-item">Show Family Balances</button>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="scheduled_event_card">
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  
 </div>
 
 <%- include('../attendanceAndNotes/modals/session-notes', { fetchedEvent: {},templates: templates }) %>
