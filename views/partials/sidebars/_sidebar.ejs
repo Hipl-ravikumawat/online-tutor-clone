@@ -5,7 +5,7 @@
       </div>
       <div class="clearfix"></div>
       <!-- menu profile quick info -->
-      <!-- <div class="profile clearfix <%= typeof sidebarType !== 'undefined' ? (sidebarType !== '' ? 'd-none' : '') : '' %> ">
+      <div class="profile clearfix <%= typeof sidebarType !== 'undefined' ? (sidebarType !== '' ? 'd-none' : '') : '' %> ">
         <div class="profile_pic">
           <img src="<%=loggedUserInfo.profile_image !='' && fs.existsSync('assets/ProfileImage/'+loggedUserInfo.profile_image) ? '/ProfileImage/'+loggedUserInfo.profile_image:'/images/noImage.jpg'%>" alt="profile_image" class="img-circle profile_img">
         </div>
@@ -26,7 +26,7 @@
             <% } %>
           </span>
         </div>
-      </div> -->
+      </div>
 
       <!-- sidebar menu -->
       <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">

@@ -1,251 +1,249 @@
-<div class="right_col mt-sm-4" role="main">
-  <div class="max-w-1440 main_calendar">
-    <ul class="d-flex cal-top-btarea">
-      <% if(loggedUserInfo.role ==1){ %>
-      <li class="both-btnli">
-        <div class="dropdown">
-          <button class="bus-outline-btn dropdown-toggle " type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/plus.svg" alt="Add" class="mr-2">Add Event</button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="./calendar/add-new-event">Add New Event</a>
-          </div>
-        </div>
-      </li>
-      <li class="both-btnli">
-        <div class="dropdown">
-          <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="/calendar/preferences">Categories & Locations</a>
-            <a class="dropdown-item" href="/attendance-notes/note-templates">Lesson Note Templates</a>
-          </div>
-        </div>
-      </li>
-      <% } %>
-      <li class="both-btnli">
-        <div class="dropdown">
-          <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/search.svg" alt="Search" class="mr-2">Search</button>
-          <div class="dropdown-menu cal_search_dropdown">
-            <form>
-              <% if(loggedUserInfo.role !=3){ %>
-              <div class="calc_search form-group px-2">
-                <div class="calc_search d-flex align-items-center justify-content-between">
-                  <label for="families">By Students </label>  
-                
-                  <% if(groupTags.length> 0){ %>
-                    <div class="dropdown label_dropdown" id="calendarGroupTag">
-                      <button class="btn dropdown-toggle groupTagLabel" type="button" data-toggle="dropdown" aria-expanded="false">
-                        Group Tags
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                          <rect width="20" height="20" rx="5" fill="white"></rect>
-                          <path d="M14 8L10.7071 11.6745C10.3182 12.1085 9.68182 12.1085 9.29293 11.6745L6 8" stroke="#201B53"
-                            stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round">
-                          </path>
-                        </svg>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-right" id="tags-dropdown">
-                        <button type="button" class="dropdown-item" data-type="all-families">All Families</button>
-                        <% groupTags.map((tag)=> {
-                          let taggedFamilies = tag.student_ids.map((entry) => {
-                          return entry._id;
-                          });
-                          %>
-                          <hr style="margin: 0;" />
-                          <button type="button" class="dropdown-item" data-type="family-tag" data-families="<%= taggedFamilies %>">
-                            <%= tag.name %> (<%= tag.student_ids.length %>)
-                          </button>
-                          <% }); %>
-                            <button type="button" class="dropdown-item" data-type="clear">Clear Selection</button>
-                      </div>
-                    </div>
-                    <% } %>
-                    
-                  </div>
-                <select class="form-control" id="search-by-student" tabindex="-1" multiple>
-                  <% for(let student of students){ %>
-                    <option value="<%=student._id%>"><%=student.first_name+" "+student.last_name%> </option>
-                  <% } %>
-                </select>
-              </div>
-              <% } %>
-              <% if(loggedUserInfo.role !=2){ %>
-              <div class="calc_search form-group px-2">
-                <label>By Tutor</label>
-                <select class="form-control" id="search-by-tutor" tabindex="-1" multiple>
-                  <% for(let tutor of tutors){ %>
-                    <option value="<%=tutor._id%>"><%=tutor.first_name+" "+tutor.last_name%> </option>
-                  <% } %>
-                </select>
-              </div>
-              <% } %>
-              <% if(loggedUserInfo.role !=3){ %>
-              <div class="calc_search form-group px-2">
-                <label>By Substitute Tutor</label>
-                <select class="form-control" id="search-by-substitute-tutor" tabindex="-1" multiple>
-                  <% for(let tutor of tutors){ %>
-                    <option value="<%=tutor._id%>"><%=tutor.first_name+" "+tutor.last_name%> </option>
-                  <% } %>
-                </select>
-              </div>
-              <% } %>
-              <% if(loggedUserInfo.role !=3){ %>
-              <div class="calc_search form-group px-2">
-                <label>By Location</label>
-                <select class="form-control" id="search-by-location" placeholder="Type or select..." tabindex="-1" single>
-                  <option value="">Select any location</option>
-                  <% for(let location of eventLocations){ %>
-                    <option value="<%=location._id%>"><%=location.name%> </option>
-                  <% } %>
-                </select>
-              </div>
-              <% } %>
-              <% if(loggedUserInfo.role !=3){ %>
-              <div class="calc_search form-group px-2">
-                <label>By Category</label>
-                <select class="form-control" id="search-by-category" placeholder="Type or select..." tabindex="-1" single>
-                  <option value="">Select any category</option>
-                  <% for(let category of eventCategories){ %>
-                    <option value="<%=category._id%>"><%=category.name%> </option>
-                  <% } %>
-                </select>
-              </div>
-              <% } %>
-
-              <div class="calc_search form-group px-4">
-                <button type="button" class="btn theme-btn filter-events">Search</button>
-                <button type="button" class="btn theme-btn reset-events">Clear</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div id="calendar"></div>
-    
+<div class="right_col" role="main">
+  <ul class="d-flex cal-top-btarea">
     <% if(loggedUserInfo.role ==1){ %>
-    <div id="dateDetails" class="effect-module">
-      <div class="date-header">
-        <div class="date-headscript text-right">
+    <li class="both-btnli">
+      <div class="dropdown">
+        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/plus.svg" alt="Add" class="mr-2">Add Event</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="./calendar/add-new-event">Add New Event</a>
+        </div>
+      </div>
+    </li>
+    <li class="both-btnli">
+      <div class="dropdown">
+        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/calendar/preferences">Categories & Locations</a>
+          <a class="dropdown-item" href="/attendance-notes/note-templates">Lesson Note Templates</a>
+        </div>
+      </div>
+    </li>
+    <% } %>
+    <li class="both-btnli">
+      <div class="dropdown">
+        <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/search.svg" alt="Search" class="mr-2">Search</button>
+        <div class="dropdown-menu cal_search_dropdown">
+          <form>
+            <% if(loggedUserInfo.role !=3){ %>
+            <div class="calc_search form-group px-2">
+              <div class="calc_search d-flex align-items-center justify-content-between">
+                <label for="families">By Students </label>  
+               
+                <% if(groupTags.length> 0){ %>
+                  <div class="dropdown label_dropdown" id="calendarGroupTag">
+                    <button class="btn dropdown-toggle groupTagLabel" type="button" data-toggle="dropdown" aria-expanded="false">
+                      Group Tags
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect width="20" height="20" rx="5" fill="white"></rect>
+                        <path d="M14 8L10.7071 11.6745C10.3182 12.1085 9.68182 12.1085 9.29293 11.6745L6 8" stroke="#201B53"
+                          stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round">
+                        </path>
+                      </svg>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" id="tags-dropdown">
+                      <button type="button" class="dropdown-item" data-type="all-families">All Families</button>
+                      <% groupTags.map((tag)=> {
+                        let taggedFamilies = tag.student_ids.map((entry) => {
+                        return entry._id;
+                        });
+                        %>
+                        <hr style="margin: 0;" />
+                        <button type="button" class="dropdown-item" data-type="family-tag" data-families="<%= taggedFamilies %>">
+                          <%= tag.name %> (<%= tag.student_ids.length %>)
+                        </button>
+                        <% }); %>
+                          <button type="button" class="dropdown-item" data-type="clear">Clear Selection</button>
+                    </div>
+                  </div>
+                  <% } %>
+                  
+                 </div>
+              <select class="form-control" id="search-by-student" tabindex="-1" multiple>
+                <% for(let student of students){ %>
+                  <option value="<%=student._id%>"><%=student.first_name+" "+student.last_name%> </option>
+                <% } %>
+              </select>
+            </div>
+            <% } %>
+            <% if(loggedUserInfo.role !=2){ %>
+            <div class="calc_search form-group px-2">
+              <label>By Tutor</label>
+              <select class="form-control" id="search-by-tutor" tabindex="-1" multiple>
+                <% for(let tutor of tutors){ %>
+                  <option value="<%=tutor._id%>"><%=tutor.first_name+" "+tutor.last_name%> </option>
+                <% } %>
+              </select>
+            </div>
+            <% } %>
+            <% if(loggedUserInfo.role !=3){ %>
+            <div class="calc_search form-group px-2">
+              <label>By Substitute Tutor</label>
+              <select class="form-control" id="search-by-substitute-tutor" tabindex="-1" multiple>
+                <% for(let tutor of tutors){ %>
+                  <option value="<%=tutor._id%>"><%=tutor.first_name+" "+tutor.last_name%> </option>
+                <% } %>
+              </select>
+            </div>
+            <% } %>
+            <% if(loggedUserInfo.role !=3){ %>
+            <div class="calc_search form-group px-2">
+              <label>By Location</label>
+              <select class="form-control" id="search-by-location" placeholder="Type or select..." tabindex="-1" single>
+                <option value="">Select any location</option>
+                <% for(let location of eventLocations){ %>
+                  <option value="<%=location._id%>"><%=location.name%> </option>
+                <% } %>
+              </select>
+            </div>
+            <% } %>
+            <% if(loggedUserInfo.role !=3){ %>
+            <div class="calc_search form-group px-2">
+              <label>By Category</label>
+              <select class="form-control" id="search-by-category" placeholder="Type or select..." tabindex="-1" single>
+                <option value="">Select any category</option>
+                <% for(let category of eventCategories){ %>
+                  <option value="<%=category._id%>"><%=category.name%> </option>
+                <% } %>
+              </select>
+            </div>
+            <% } %>
+
+            <div class="calc_search form-group px-4">
+              <button type="button" class="btn theme-btn filter-events">Search</button>
+              <button type="button" class="btn theme-btn reset-events">Clear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div id="calendar"></div>
+  
+<% if(loggedUserInfo.role ==1){ %>
+  <div id="dateDetails" class="effect-module">
+    <div class="date-header">
+      <div class="date-headscript text-right">
+        <a href="javascript:void(0)" class="evdata-close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <g clip-path="url(#clip0_358_78)">
+            <path d="M0.634884 13.0001C0.509322 13.0001 0.386574 12.9629 0.282165 12.8931C0.177757 12.8234 0.0963792 12.7243 0.0483256 12.6082C0.000271912 12.4922 -0.0122988 12.3646 0.0122036 12.2414C0.036706 12.1183 0.0971806 12.0052 0.185978 11.9164L11.9164 0.185943C12.0355 0.0668857 12.197 0 12.3654 0C12.5337 0 12.6952 0.0668857 12.8143 0.185943C12.9333 0.305 13.0002 0.466477 13.0002 0.634849C13.0002 0.803222 12.9333 0.964698 12.8143 1.08376L1.08379 12.8142C1.02489 12.8732 0.954917 12.92 0.87788 12.9519C0.800843 12.9838 0.718263 13.0002 0.634884 13.0001Z" fill="black"/>
+            <path d="M12.3653 13.0001C12.2819 13.0002 12.1994 12.9838 12.1223 12.9519C12.0453 12.92 11.9753 12.8732 11.9164 12.8142L0.185943 1.08376C0.0668857 0.964698 0 0.803222 0 0.634849C0 0.466477 0.0668857 0.305 0.185943 0.185943C0.305 0.0668857 0.466477 0 0.634849 0C0.803222 0 0.964698 0.0668857 1.08376 0.185943L12.8142 11.9164C12.903 12.0052 12.9635 12.1183 12.988 12.2414C13.0125 12.3646 12.9999 12.4922 12.9519 12.6082C12.9038 12.7243 12.8224 12.8234 12.718 12.8931C12.6136 12.9629 12.4909 13.0001 12.3653 13.0001Z" fill="black"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_358_78">
+            <rect width="13" height="13" fill="white"/>
+            </clipPath>
+            </defs>
+          </svg>
+        </a>
+      </div>
+      <h2 class="title-text">09 May 2024</h2>
+      <p class="mb-0 count-events">0 Scheduled Event(s)</p>
+    </div>
+    <div class="date-details">
+      <ul>
+        <!-- <li>
+          <a href="jacascript:void(0);">
+            <span class="icons"><img src="images/add-lessons.svg" alt=""></span>
+            <div class="event-addoptions">
+              <h6>Quick-Add Lesson</h6>
+              <p class="mb-0">Create a new lesson with your default category, length, and price.</p>
+            </div>
+          </a>
+        </li> -->
+        <li>
+          <a href="/calendar/add-new-event">
+            <span class="icons"><img src="images/add-events.svg" alt=""></span>
+            <div class="event-addoptions">
+              <h6>New Event</h6>
+              <p class="mb-0">Create a new event with students.</p>
+            </div>
+          </a>
+        </li>
+        <!-- <li>
+          <a href="jacascript:void(0);">
+            <span class="icons"><img src="images/add-tutoring-event.svg" alt=""></span>
+            <div class="event-addoptions">
+              <h6>New Non-Tutoring Event</h6>
+              <p class="mb-0">Create a new event that doesn't require students.</p>
+            </div>
+          </a>
+        </li> -->
+      </ul>
+    </div>
+  </div>
+  <% } %>
+  
+  <div id="eventDetails" class="effect-module">
+      <div class="event-section">
+            <div class="date-header">
+        <div class="date-headscript d-flex justify-content-between align-items-center pb-2">
+          <ul class="event-ul" >
+            <li class="edit-event" >
+              <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit">
+                <img src="images/cal-edit.png" alt="">
+              </a>
+            </li>
+            <li>
+              <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Email">
+                <img src="images/cal-email.png" alt="">
+              </a>
+            </li>
+            <li>
+              <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Message">
+                <img src="images/cal-comment.png" alt="">
+              </a>
+            </li>
+            <li class="clone-event">
+              <a href="jacascript:void(0);" class="clone-event-anchor" data-toggle="modal" data-target="#cloneEventModal" rel="tooltip" data-placement="top" title="Clone">
+                <img src="images/cal-clone.png" alt="">
+              </a>
+            </li>
+            <li class="delete-event">
+              <a href="jacascript:void(0);" class="delete-event-anchor" data-toggle="modal" data-target="#deleteEventModal" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete" >
+                <img src="images/cal-delete.png" alt="">
+              </a>
+            </li>
+            <li class="rewards-student">
+              <a href="/rewards/assign-points" class="rewards-student-icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Assign Points" >
+                <img src="images/rewards-student.svg" alt="">
+              </a>
+            </li>
+          </ul>
           <a href="javascript:void(0)" class="evdata-close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <g clip-path="url(#clip0_358_78)">
-              <path d="M0.634884 13.0001C0.509322 13.0001 0.386574 12.9629 0.282165 12.8931C0.177757 12.8234 0.0963792 12.7243 0.0483256 12.6082C0.000271912 12.4922 -0.0122988 12.3646 0.0122036 12.2414C0.036706 12.1183 0.0971806 12.0052 0.185978 11.9164L11.9164 0.185943C12.0355 0.0668857 12.197 0 12.3654 0C12.5337 0 12.6952 0.0668857 12.8143 0.185943C12.9333 0.305 13.0002 0.466477 13.0002 0.634849C13.0002 0.803222 12.9333 0.964698 12.8143 1.08376L1.08379 12.8142C1.02489 12.8732 0.954917 12.92 0.87788 12.9519C0.800843 12.9838 0.718263 13.0002 0.634884 13.0001Z" fill="black"/>
-              <path d="M12.3653 13.0001C12.2819 13.0002 12.1994 12.9838 12.1223 12.9519C12.0453 12.92 11.9753 12.8732 11.9164 12.8142L0.185943 1.08376C0.0668857 0.964698 0 0.803222 0 0.634849C0 0.466477 0.0668857 0.305 0.185943 0.185943C0.305 0.0668857 0.466477 0 0.634849 0C0.803222 0 0.964698 0.0668857 1.08376 0.185943L12.8142 11.9164C12.903 12.0052 12.9635 12.1183 12.988 12.2414C13.0125 12.3646 12.9999 12.4922 12.9519 12.6082C12.9038 12.7243 12.8224 12.8234 12.718 12.8931C12.6136 12.9629 12.4909 13.0001 12.3653 13.0001Z" fill="black"/>
-              </g>
-              <defs>
-              <clipPath id="clip0_358_78">
-              <rect width="13" height="13" fill="white"/>
-              </clipPath>
-              </defs>
-            </svg>
+            <img src="images/cal-close.png" alt="">
           </a>
         </div>
-        <h2 class="title-text">09 May 2024</h2>
-        <p class="mb-0 count-events">0 Scheduled Event(s)</p>
-      </div>
-      <div class="date-details">
-        <ul>
-          <!-- <li>
-            <a href="jacascript:void(0);">
-              <span class="icons"><img src="images/add-lessons.svg" alt=""></span>
+        <h2 class="title-text mb-0">Lesson with </h2>
+        <div class="date-details">
+          <ul>
+            <li class="d-flex flex-wrap align-items-center pb-2">
+              <span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Date">
+                <img src="/images/add-tutoring-event.svg" alt=""></span>
               <div class="event-addoptions">
-                <h6>Quick-Add Lesson</h6>
-                <p class="mb-0">Create a new lesson with your default category, length, and price.</p>
+                <p class="mb-0 event-date">DD MM YYY</p>
               </div>
-            </a>
-          </li> -->
-          <li>
-            <a href="/calendar/add-new-event">
-              <span class="icons"><img src="images/add-events.svg" alt=""></span>
+            </li> 
+            <li class="d-flex flex-wrap align-items-center pb-2">
+              <span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Time"><img src="/images/timer.svg" alt=""></span>
               <div class="event-addoptions">
-                <h6>New Event</h6>
-                <p class="mb-0">Create a new event with students.</p>
+                <p class="mb-0 event-time">00:00 - 00:00</p>
               </div>
-            </a>
-          </li>
-          <!-- <li>
-            <a href="jacascript:void(0);">
-              <span class="icons"><img src="images/add-tutoring-event.svg" alt=""></span>
-              <div class="event-addoptions">
-                <h6>New Non-Tutoring Event</h6>
-                <p class="mb-0">Create a new event that doesn't require students.</p>
-              </div>
-            </a>
-          </li> -->
-        </ul>
-      </div>
-    </div>
-    <% } %>
-    
-    <div id="eventDetails" class="effect-module">
-        <div class="event-section">
-              <div class="date-header">
-          <div class="date-headscript d-flex justify-content-between align-items-center pb-2">
-            <ul class="event-ul" >
-              <li class="edit-event" >
-                <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit">
-                  <img src="images/cal-edit.png" alt="">
-                </a>
-              </li>
-              <li>
-                <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Email">
-                  <img src="images/cal-email.png" alt="">
-                </a>
-              </li>
-              <li>
-                <a href="jacascript:void(0);" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Message">
-                  <img src="images/cal-comment.png" alt="">
-                </a>
-              </li>
-              <li class="clone-event">
-                <a href="jacascript:void(0);" class="clone-event-anchor" data-toggle="modal" data-target="#cloneEventModal" rel="tooltip" data-placement="top" title="Clone">
-                  <img src="images/cal-clone.png" alt="">
-                </a>
-              </li>
-              <li class="delete-event">
-                <a href="jacascript:void(0);" class="delete-event-anchor" data-toggle="modal" data-target="#deleteEventModal" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete" >
-                  <img src="images/cal-delete.png" alt="">
-                </a>
-              </li>
-              <li class="rewards-student">
-                <a href="/rewards/assign-points" class="rewards-student-icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Assign Points" >
-                  <img src="images/rewards-student.svg" alt="">
-                </a>
-              </li>
-            </ul>
-            <a href="javascript:void(0)" class="evdata-close">
-              <img src="images/cal-close.png" alt="">
-            </a>
-          </div>
-          <h2 class="title-text mb-0">Lesson with </h2>
-          <div class="date-details">
-            <ul>
-              <li class="d-flex flex-wrap align-items-center pb-2">
-                <span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Date">
-                  <img src="/images/add-tutoring-event.svg" alt=""></span>
-                <div class="event-addoptions">
-                  <p class="mb-0 event-date">DD MM YYY</p>
-                </div>
-              </li> 
-              <li class="d-flex flex-wrap align-items-center pb-2">
-                <span class="icons" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Time"><img src="/images/timer.svg" alt=""></span>
-                <div class="event-addoptions">
-                  <p class="mb-0 event-time">00:00 - 00:00</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-      </div>
-      <% if(loggedUserInfo.role !=3){ %>
-      <div class="event-details py-2 px-lg-3">
-        <h6 class="attendees">2 Attendees</h6>
-        <ul class="mb-lg-3 student-attendance-list">
-          <li><span class="attendees_status" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Present"><img src="images/approve-check.svg" alt=""></span><span class="stud-name"><a href="jacascript:void(0);">Pandey, Amit</a></span></li>
-          <li><span class="attendees_status" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Absent"><img src="images/approve-cancel.svg" alt=""></span><span class="stud-name"><a href="jacascript:void(0);">Pandey, Amit</a></span></li>
-        </ul>
-        <div class="event-action-btn"></div>
-      </div>
-      <% } %>
+            </li>
+          </ul>
         </div>
     </div>
+    <% if(loggedUserInfo.role !=3){ %>
+    <div class="event-details py-2 px-lg-3">
+      <h6 class="attendees">2 Attendees</h6>
+      <ul class="mb-lg-3 student-attendance-list">
+        <li><span class="attendees_status" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Present"><img src="images/approve-check.svg" alt=""></span><span class="stud-name"><a href="jacascript:void(0);">Pandey, Amit</a></span></li>
+        <li><span class="attendees_status" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Absent"><img src="images/approve-cancel.svg" alt=""></span><span class="stud-name"><a href="jacascript:void(0);">Pandey, Amit</a></span></li>
+      </ul>
+      <div class="event-action-btn"></div>
+    </div>
+    <% } %>
+      </div>
   </div>
 </div>
 

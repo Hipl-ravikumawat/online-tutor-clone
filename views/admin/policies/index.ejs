@@ -1,74 +1,73 @@
 <div class="right_col" role="main">
-  <div class="max-w-1440">
-    <div class="row">
-      <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="stcard-box">
-          <span class="shade5"><%=policyObj?.total ?? '0' %></span>
-          <h3 class="title-text mb-0">Total</h3>
-        </div>
+  <!-- policy index page content starts -->
+  <div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+      <div class="stcard-box">
+        <span class="shade5"><%=policyObj?.total ?? '0' %></span>
+        <h3 class="title-text mb-0">Total</h3>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12 col-sm-12">
-        <div class="x_panel">
-          <div class="filter_top">
-            <h2 class="title-text">Filter Policies</h2> 
-            <ul class="filter-row">
-              <li class="filter-col">
-                <select class="form-control" id="policy" tabindex="-1" single>
-                  <option value="">Select Policy</option>
-                  <% for(policy of policies) { %>
-                    <option value="<%=policy.id%>">
-                      <%=policy.title%>
-                    </option>
-                    <% } %>
-                </select>
-              </li>
-              <li class="filter-col filter-col-btn">
-                <button class="btn theme-btn filter">Filter</button>
-                <button class="btn theme-btn reset">Reset</button>
-              </li>
-            </ul>
-          </div>
-          <div class="x_title">
-            <h2 class="title-text mb-0">Policy List</h2>
-            <ul class="right-btns">
-              <% if(loggedUserInfo.role == 1) { %>
-              <li>
-                <a
-                  href="/policies/create"
-                  class="btn theme-btn"
-                  data-toggle="tooltip"
-                  rel="tooltip"
-                  data-placement="top"
-                  title="Add Policy"
-                  >+ Add Policy</a
+  </div>
+  <div class="card-block mb-30">
+    <h2 class="title-text">Filter Policies</h2> 
+    <ul class="filter-row">
+      <li class="filter-col">
+        <select class="form-control" id="policy" tabindex="-1" single>
+          <option value="">Select Policy</option>
+          <% for(policy of policies) { %>
+            <option value="<%=policy.id%>">
+              <%=policy.title%>
+            </option>
+            <% } %>
+        </select>
+      </li>
+      <li class="filter-col">
+        <button class="btn theme-btn filter">Filter</button>
+        <button class="btn theme-btn reset">Reset</button>
+      </li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text">Policy List</h2>
+          <ul class="right-btns">
+            <% if(loggedUserInfo.role == 1) { %>
+            <li>
+              <a
+                href="/policies/create"
+                class="btn theme-btn"
+                data-toggle="tooltip"
+                rel="tooltip"
+                data-placement="top"
+                title="Add Policy"
+                >+ Add Policy</a
+              >
+            </li>
+            <% } %>
+          </ul>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive">
+                <table
+                  id="policyTable"
+                  class="table table-striped table-bordered dt-responsive nowrap"
+                  cellspacing="0"
+                  width="100%"
                 >
-              </li>
-              <% } %>
-            </ul>
-          </div>
-          <div class="x_content">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="card-box table-responsive">
-                  <table
-                    id="policyTable"
-                    class="table table-striped table-bordered dt-responsive nowrap"
-                    cellspacing="0"
-                    width="100%"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th>Attachment</th>
-                        <th>Marked As Read</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Attachment</th>
+                      <th>Marked As Read</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -76,6 +75,7 @@
       </div>
     </div>
   </div>
+  <!-- policy index page content end -->
 </div>
 
 

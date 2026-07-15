@@ -1084,9 +1084,7 @@
 
 .nav-sm .container.body .col-md-3.left_col.menu_fixed {
     position: fixed;
-    height: 100%;
-    top: 0;
-    border-radius: 0 20px 20px 0;
+    height: 100%
 }
 
 .nav-sm .container.body .col-md-3.left_col .mCSB_container,
@@ -1100,12 +1098,12 @@
 
 .nav-sm .container.body .right_col {
     padding: 10px 20px;
-    margin-left: 85px;
+    margin-left: 70px;
     z-index: 2
 }
 
 .nav-sm .navbar.nav_title {
-    width: 85px
+    width: 70px
 }
 
 .nav-sm .navbar.nav_title a span {
@@ -1124,9 +1122,9 @@
 }
 
 .nav-sm .main_container .top_nav {
-    display: flex;
-    margin-left: 105px;
-    z-index: 2;
+    display: block;
+    margin-left: 70px;
+    z-index: 2
 }
 
 .nav-sm .nav.side-menu li a {
@@ -1183,8 +1181,7 @@
 
 
 .menu_section {
-    margin-bottom: 35px;
-    padding: 0 10px;
+    margin-bottom: 35px
 }
 
 .menu_section h3 {
@@ -1200,35 +1197,31 @@
 }
 
 .menu_section>ul {
-    margin-top: 0px;
+    margin-top: 10px;
     display: block
 }
-/* 
+
 .profile_pic {
     width: 35%;
     float: left
-} */
+}
 
 .img-circle.profile_img {
-    /* width: 70%; */
+    width: 70%;
     background: #fff;
-    margin-left: 15px;
+    margin-left: 15%;
     z-index: 1000;
     position: inherit;
-    margin-top: 10px;
+    margin-top: 20px;
     border: 1px solid rgba(52, 73, 94, 0.44);
     padding: 4px
 }
-.profile_pic .img-circle.profile_img{
-    margin-top: 0;
-    border-radius: 10px;
-}
 
-/* .profile_info {
-    padding: 20px 10px 10px;
+.profile_info {
+    padding: 25px 10px 10px;
     width: 65%;
     float: left
-} */
+}
 
 .profile_info span {
     font-size: 13px;
@@ -1850,7 +1843,7 @@ ul.challenge-summry .challenge-summry-list span {
 
 .nav-md .container.body .col-md-3.left_col {
     min-height: 100%;
-    width: 260px;
+    width: 230px;
     padding: 0;
     position: absolute;
     display: -webkit-box;
@@ -1861,25 +1854,24 @@ ul.challenge-summry .challenge-summry-list span {
 
 .nav-md .container.body .col-md-3.left_col.menu_fixed {
     height: 100%;
-    position: fixed;
-    top: 0;
-    border-radius: 0 20px 20px 0;
+    position: fixed
 }
 
-/* body .container.body .right_col {
+body .container.body .right_col {
     background: #F7F7F7
-} */
+}
 
 .nav-md .container.body .right_col {
     padding: 10px 20px 0;
-    margin-left: 260px
+    margin-left: 230px
 }
 
 .nav_title {
-    width: 260px;
+    width: 230px;
     float: left;
+    background: #2A3F54;
     border-radius: 0;
-    /* height: 57px; */
+    height: 57px;
     padding: 0px
 }
 
@@ -1901,24 +1893,6 @@ ul.challenge-summry .challenge-summry-list span {
     }
     .item {
         display: block
-    }
-    .main_container .top_nav{
-        padding-right: 0 !important;
-        margin-top: 0 !important;
-    }
-    .nav_menu{
-        border-radius: 0 0 20px 20px !important;
-        box-shadow: none !important;
-    }
-    .nav-sm .main_container .nav_menu{
-        border-radius: 0 0 20px 0 !important;
-    }
-    .nav-sm .main_container .top_nav{
-        margin-left: 85px !important;
-    }
-    .nav_title{
-        padding: 12px 10px 13px !important;
-        background-color: #fff;
     }
 }
 
@@ -2054,7 +2028,7 @@ ul.challenge-summry .challenge-summry-list span {
 }
 
 body {
-    color: var(--primary-light);
+    color: #73879C;
     /* background: #2A3F54; */
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     font-size: 13px;
@@ -2063,11 +2037,8 @@ body {
 }
 
 .main_container .top_nav {
-    display: flex;
-    margin-left: 280px;
-    padding-right: 20px;
-    margin-top: 20px;
-    border-radius: 20px;
+    display: block;
+    margin-left: 230px
 }
 
 .no-padding {
@@ -2243,7 +2214,7 @@ h3,
 }
 
 a {
-    color: var(--primary);
+    color: #5A738E;
     text-decoration: none
 }
 
@@ -2459,8 +2430,9 @@ a:focus {
     margin-left: 0 !important;
     line-height: 59px;
     display: block;
-    /* height: 55px; */
+    height: 55px;
     margin: 0;
+    padding-left: 10px
 }
 
 .site_title:hover,
@@ -2574,7 +2546,7 @@ footer {
 }
 
 .nav-sm footer {
-    margin-left: 85px
+    margin-left: 70px
 }
 
 .footer_fixed footer {
@@ -3503,11 +3475,7 @@ span.right {
 
 @media (min-width: 992px) {
     footer {
-        margin-left: 260px;
-        width: calc(100% - 260px);
-    }
-    .nav-sm footer{
-        width: calc(100% - 85px);
+        margin-left: 230px
     }
 }
 
@@ -4038,11 +4006,11 @@ button,
 }
 
 .ln_solid {
-    /* border-top: 1px solid #e5e5e5; */
+    border-top: 1px solid #e5e5e5;
     color: #ffffff;
-    background-color: var(--border-color);
+    background-color: #ffffff;
     height: 1px;
-    margin: 0 0 20px;
+    margin: 20px 0
 }
 
 span.section {
@@ -6996,8 +6964,8 @@ li.ui-timepicker-am.ui-timepicker-selected, li.ui-timepicker-am.ui-timepicker-se
     left: 0;
 }
 .dataTable input[type="checkbox"]:checked::before {
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    background-color: var(--dorange);
+    border-color: var(--dorange);
 }
 .dataTable input[type="checkbox"]::after {
     left: 5px;
@@ -7036,7 +7004,7 @@ input:-webkit-autofill:active{
     -webkit-background-clip: text;
     -webkit-text-fill-color:  var(--dblue);
     transition: background-color 5000s ease-in-out 0s;
-    /* box-shadow: inset 0 0 20px 20px #23232329; */
+    box-shadow: inset 0 0 20px 20px #23232329;
 }
 .badge {
     padding: 5px 10px;
@@ -7366,7 +7334,7 @@ input:-webkit-autofill:active{
     background-color: #F8FAFB;
 }
 .invoices-modal .steps li.active, .invoices-modal .steps li.complete{
-    color: var(--secondary);
+    color: var(--dorange);
 }
 .invoices-modal .modal-content .modal-body {
     padding-block: 20px;
@@ -7485,7 +7453,7 @@ input:-webkit-autofill:active{
     line-height: 24px !important;
 }
 .ex_panel_left p a{
-    color: var(--secondary);
+    color: var(--dorange);
     font-weight: 600;
 }
 .ex_panel_left p a:hover{

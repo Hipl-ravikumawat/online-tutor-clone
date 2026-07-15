@@ -1,8 +1,9 @@
 <div class="right_col" role="main">
-  <div class="row main_row max-w-1440">
+  <!-- create grade page content starts -->
+  <div class="row main_row">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text mb-0">Add Grade</h2>
+        <h2 class="title-text">Add Grade</h2>
       </div>
       <div class="x_content">
         <form id="storeGrade" action="./store" method="post" class="form-horizontal form-label-left">
@@ -22,7 +23,7 @@
                 <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                 </label>
                 <div class="input-group flex-nowrap">
-                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span>
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
                   <select class="form-control" name="status" id="status" tabindex="-1" single>
                     <option value="1">Activate</option>
                     <option value="0">Deactivate</option>
@@ -40,6 +41,7 @@
       </div>
     </div>
   </div>
+  <!-- create grade page content end -->
 </div>
 
 <%- include('./form_script'); %>

@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group position-relative">
+            <div class="form-group">
                 <label class="form-label" for="payment_refund_date">Date<span class="required">*</span></label>
                 <input 
                 type="text" 
@@ -135,16 +135,18 @@
 <% } else { %>
 <div id="charges-discount-form" style="display:none;">
 <% } %>
-    <div class="form-group">
-        <label class="form-label" for="charge_tutor_id">Staff<span class="required">*</span></label>
-        <select class="form-control select2" name="charge_tutor_id" id="charge_tutor_id">
-            <option value="">Select</option>
-            <% staffs.forEach(staff => { %>
-                <option value="<%= staff._id || staff.id %>" <%= ((tutorId == staff._id || tutorId == staff.id) || (transaction && transaction?.tutor_id == staff._id)) ? 'selected' : '' %>>
-                <%= (staff.first_name) + " " + (staff.last_name) %>
-                </option>
-            <% }); %>
-        </select>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="charge_tutor_id">Staff<span class="required">*</span></label>
+            <select class="form-control select2" name="charge_tutor_id" id="charge_tutor_id">
+                <option value="">Select</option>
+                <% staffs.forEach(staff => { %>
+                    <option value="<%= staff._id || staff.id %>" <%= ((tutorId == staff._id || tutorId == staff.id) || (transaction && transaction?.tutor_id == staff._id)) ? 'selected' : '' %>>
+                    <%= (staff.first_name) + " " + (staff.last_name) %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
     </div>
 
     <!-- <div class="mb-3">
@@ -165,7 +167,7 @@
 
     <div class="row">
         <div class="col-md-6 mb-3">
-            <div class="form-group mb-0 position-relative">
+            <div class="form-group mb-0">
                 <label for="charges_discount_date" class="form-label">Date<span class="required">*</span></label>
                 <input 
                 type="text" 

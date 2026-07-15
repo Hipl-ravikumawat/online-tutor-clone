@@ -200,7 +200,7 @@ async function seedDatabase() {
     title: 'Demo Attendance and Cancellation Policy', status: 1, marked_as_read: [],
   }, stats);
   await findOrCreate(BusinessSetting, { primary_email: 'admin@demo.local' }, {
-    name: 'HIPL Learning Hub Demo', primary_number: 290000000, primary_email: 'admin@demo.local',
+    name: 'Pioneers Learning Hub Demo', primary_number: 290000000, primary_email: 'admin@demo.local',
     notification_settings: [{ send_birthday_email: true }], event_scheduling: [{ check_scheduling_conflict: true }],
     cancellation_policy: [{ allow_event_cancellation: true, prior_cancellation_time: 24,
       notify_on_cancellation: true, policy_text: 'Please provide at least 24 hours notice.' }],

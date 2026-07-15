@@ -1,148 +1,148 @@
 
 <div class="right_col" role="main">
-  <div class="max-w-1440">
-    <div class="row">
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <div class="stcard-box">
-          <span class="shade5">
-            <%=studentObject.total%>
-          </span>
-          <h3 class="title-text mb-0">Total</h3>
-          <img src="/images/favicon-32x32.png" class="hidden-bg" />
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <div class="stcard-box">
-          <span class="shade1">
-            <%=studentObject.active%>
-          </span>
-          <h3 class="title-text mb-0">Active</h3>
-          <img src="/images/favicon-32x32.png" class="hidden-bg" />
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <div class="stcard-box">
-          <span class="shade2">
-            <%=studentObject.trial || 0%>
-          </span>
-          <h3 class="title-text mb-0">Trial</h3>
-          <img src="/images/favicon-32x32.png" class="hidden-bg" />
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <div class="stcard-box">
-          <span class="shade3">
-            <%=studentObject.deactive%>
-          </span>
-          <h3 class="title-text mb-0">Deactive</h3>
-          <img src="/images/favicon-32x32.png" class="hidden-bg" />
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <div class="stcard-box">
-          <span class="shade4">
-            <%=studentObject.waiting || 0%>
-          </span>
-          <h3 class="title-text mb-0">Waiting</h3>
-          <img src="/images/favicon-32x32.png" class="hidden-bg" />
-        </div>
+  <!-- student index page content starts -->
+  <div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade5">
+          <%=studentObject.total%>
+        </span>
+        <h3 class="title-text mb-0">Total</h3>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12 col-sm-12">
-        <div class="x_panel">
-          <div class="filter_top">
-            <h2 class="title-text">Filter Students</h2>
-            <ul class="filter-row">
-              <li class="filter-col">
-                <select class="selectlink form-control select2" id="grade">
-                  <option value="">Select Grade</option>
-                  <% for(grades of grade) { %>
-                    <option value="<%=grades.id%>"><%=grades.name%></option>
-                  <% } %>
-                </select>
-              </li>
-              <li class="filter-col">
-                <select class="selectlink form-control select2" id="student">
-                  <option value="">Select Student</option>
-                  <% for(student of students) { %>
-                    <option value="<%=student.id%>">
-                      <%=student.first_name+' '+student.last_name%></option>
-                    <% } %>
-                  </select>
-              </li>
-              <li class="filter-col">
-                  <select class="selectlink form-control select2" id="status">
-                    <option value="">Select Status</option>
-                    <option value="1">Active</option>
-                    <option value="2">Trial</option>
-                    <option value="3">Waiting</option>
-                    <option value="0">Deactive</option>
-                  </select>
-              </li>
-              <li class="filter-col filter-col-btn">
-                <button class="btn theme-btn filter">Filter</button>
-                <button class="btn theme-btn reset">Reset</button>
-              </li>
-            </ul>
-          </div>
-          <div class="x_title">
-            <h2 class="title-text mb-0">Students List</h2>
-            <ul class="right-btns">
-              <li class="both-btnli">
-                <div class="dropdown">
-                  <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/msg-icon.svg" alt="Email" class="mr-2">Messaging</button>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">New Email</a>
-                    <a class="dropdown-item" href="#">Email Selected Students</a>
-                    <a class="dropdown-item" href="#">Email Selected Parents</a>
-                    <a class="dropdown-item" href="#">Email Selected Students & Parents</a>
-                    <a class="dropdown-item" href="#">Send Student Login Email</a>
-                    <a class="dropdown-item" href="#">Send Parent Login Email</a>
-                  </div>
-                </div>
-              </li>
-              <li class="both-btnli">
-                <div class="dropdown">
-                  <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Assign to a Group</a>
-                    <a class="dropdown-item" href="#">Update Tutors</a>
-                    <a class="dropdown-item" href="#">Update Prices</a>
-                    <a class="dropdown-item" href="#">Edit Make-Up Credits</a>
-                    <a class="dropdown-item" href="#">SMS & Email Reminders</a>
-                    <a class="dropdown-item" href="#">Apply Default Prices</a>
-                  </div>
-                </div>
-              </li>
-              <% if(loggedUserInfo.role == 1) { %>
-              <li><a href="./students/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
-                  title="Add Student">+ Add Student</a>
-              </li>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade1">
+          <%=studentObject.active%>
+        </span>
+        <h3 class="title-text mb-0">Active</h3>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade2">
+          <%=studentObject.trial || 0%>
+        </span>
+        <h3 class="title-text mb-0">Trial</h3>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade3">
+          <%=studentObject.deactive%>
+        </span>
+        <h3 class="title-text mb-0">Deactive</h3>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Optional Waiting card row -->
+  <div class="row mt-3">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="stcard-box">
+        <span class="shade4">
+          <%=studentObject.waiting || 0%>
+        </span>
+        <h3 class="title-text mb-0">Waiting</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-block mb-30">
+    <h2 class="title-text">Filter Students</h2>
+    <ul class="filter-row">
+        <li class="filter-col">
+          <select class="selectlink form-control select2" id="grade">
+            <option value="">Select Grade</option>
+            <% for(grades of grade) { %>
+              <option value="<%=grades.id%>"><%=grades.name%></option>
+            <% } %>
+          </select>
+        </li>
+        <li class="filter-col">
+          <select class="selectlink form-control select2" id="student">
+            <option value="">Select Student</option>
+            <% for(student of students) { %>
+              <option value="<%=student.id%>">
+                <%=student.first_name+' '+student.last_name%></option>
               <% } %>
-            </ul>
-          </div>
-          <div class="x_content">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="card-box table-responsive allselect-table">
-                  <table id="studentTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                        <th style="text-align: center"><input type="checkbox" id="select_all" /></th>
-                          <th>Name</th>
-                          <th>Username</th>
-                          <th>Email</th>
-                          <th>Contact No.</th>
-                          <th style="width: 80px;max-width: 80px;text-wrap: auto;">Total Reward Points</th>
-                          <th>Grade</th>
-                          <th style="width: 110px;max-width: 110px; min-width: 110px;">Status</th>
-                          <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
+            </select>
+        </li>
+        <li class="filter-col">
+            <select class="selectlink form-control select2" id="status">
+              <option value="">Select Status</option>
+              <option value="1">Active</option>
+              <option value="2">Trial</option>
+              <option value="3">Waiting</option>
+              <option value="0">Deactive</option>
+            </select>
+        </li>
+        <li class="filter-col">
+          <button class="btn theme-btn filter">Filter</button>
+          <button class="btn theme-btn reset">Reset</button>
+        </li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2 class="title-text">Students List</h2>
+          <ul class="right-btns">
+            <li class="both-btnli">
+              <div class="dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/msg-icon.svg" alt="Email" class="mr-2">Messaging</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#">New Email</a>
+                  <a class="dropdown-item" href="#">Email Selected Students</a>
+                  <a class="dropdown-item" href="#">Email Selected Parents</a>
+                  <a class="dropdown-item" href="#">Email Selected Students & Parents</a>
+                  <a class="dropdown-item" href="#">Send Student Login Email</a>
+                  <a class="dropdown-item" href="#">Send Parent Login Email</a>
                 </div>
+              </div>
+            </li>
+            <li class="both-btnli">
+              <div class="dropdown">
+                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#">Assign to a Group</a>
+                  <a class="dropdown-item" href="#">Update Tutors</a>
+                  <a class="dropdown-item" href="#">Update Prices</a>
+                  <a class="dropdown-item" href="#">Edit Make-Up Credits</a>
+                  <a class="dropdown-item" href="#">SMS & Email Reminders</a>
+                  <a class="dropdown-item" href="#">Apply Default Prices</a>
+                </div>
+              </div>
+            </li>
+            <% if(loggedUserInfo.role == 1) { %>
+            <li><a href="./students/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                title="Add Student">+ Add Student</a>
+            </li>
+            <% } %>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card-box table-responsive allselect-table">
+                <table id="studentTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                      <tr>
+                       <th style="text-align: center"><input type="checkbox" id="select_all" /></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Contact No.</th>
+                        <th style="width: 80px;max-width: 80px;text-wrap: auto;">Total Reward Points</th>
+                        <th>Grade</th>
+                        <th style="width: 110px;max-width: 110px; min-width: 110px;">Status</th>
+                        <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -150,6 +150,7 @@
       </div>
     </div>
   </div>
+  <!-- student index page content end -->
 </div>
 
 <%- include('./index_script'); %>
