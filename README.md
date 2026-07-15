@@ -1,11 +1,8 @@
 
-# Pioneers Tutoring
+# Learning Management System
 
 We are going to make a portal in which the tutor will have interactions with students as well as parents. On this portal, online classes and notes will also be given to the students.
 The student will be taught in different ways. Many types of games are also included in this which will help the students to study. This is for a particular organization and only the admin can add tutor and students in it.  test
-
-## Url 
-https://pioneers-Tutoring.com
 
 ## Technology Stacks
 Frontend: Bootstrap, HTML, CSS, Javascript, EJS Template
@@ -39,6 +36,3 @@ Run `npm run schema:mysql` to synchronize and regenerate `database/schema.sql`.
 
 ## HIPL
 https://www.helpfulinsightsolution.com
-
-## Rakesh Jonwal
-## Amit Pandey
