@@ -1,14 +1,13 @@
 <div class="right_col" role="main">
-  <!-- student page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text">Add Student</h2>
+        <h2 class="title-text mb-0">Add Student</h2>
       </div>
       <div class="x_content">
         <form id="createStudent" action="./store" method="post" class="form-horizontal form-label-left">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -48,7 +47,9 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="phone">Contact No</label>
+                    <label class="col-form-label label-align" for="phone">Contact No.
+                      
+                    </label>
                     <div class="phone-group">
                       <input type="hidden" name="dial_code" id="dial_code">
                       <input type="hidden" name="iso_code" id="iso_code">
@@ -196,21 +197,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-form-labellabel-align" for="status">Status<span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span> -->
-                      <select class="form-control select2" name="status" id="status">
-                         <option value="1">Activate</option>
-                         <option value="2">Trial</option>
-                         <option value="3">Waiting</option>
-                         <option value="0">Deactivate</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="start_date">Start Date
@@ -234,11 +221,26 @@
                   </div>
                 </div>
 
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-labellabel-align" for="status">Status<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span> -->
+                      <select class="form-control select2" name="status" id="status">
+                         <option value="1">Activate</option>
+                         <option value="2">Trial</option>
+                         <option value="3">Waiting</option>
+                         <option value="0">Deactivate</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="col-md-12">
                   <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="title-text mb-0">Assign Tutor</h2>
-                    <button type="button" id="toggleTutorSection" class="btn gray-btn form-button">Assign
-                      Tutor</button>
+                    <button type="button" id="toggleTutorSection" class="btn gray-btn form-button">Assign Tutor</button>
                     <button type="button" id="collapseTutorSection" class="btn btn-danger gray-btn dele_btn d-none">Delete</button>
                   </div>
                 </div>
@@ -250,8 +252,7 @@
                     <!-- Tutors -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label class="col-form-label label-align" for="tutor_id">Tutors <span
-                            class="required">*</span></label>
+                        <label class="col-form-label label-align" for="tutor_id">Tutors <span class="required">*</span></label>
                         <div class="input-group">
                           <!-- <span class="input-group-text"><img src="/images/student.svg" /></span> -->
                           <select class="form-control select2" name="tutor_id" id="tutor_id">
@@ -269,8 +270,7 @@
                     <!-- Category -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label class="col-form-label label-align" for="default_lesson_category">Category <span
-                            class="required">*</span></label>
+                        <label class="col-form-label label-align" for="default_lesson_category">Category <span class="required">*</span></label>
                         <div class="input-group">
                           <!-- <span class="input-group-text"><img src="/images/student.svg" /></span> -->
                           <select class="form-control select2" name="default_lesson_category" id="default_lesson_category">
@@ -288,12 +288,10 @@
                     <!-- Duration -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label class="col-form-label label-align" for="default_duration">Default Duration <span
-                            class="required">*</span></label>
+                        <label class="col-form-label label-align" for="default_duration">Default Duration <span class="required">*</span></label>
                         <div class="input-group">
                           <!-- <span class="input-group-text"><img src="/images/classes.svg" /></span> -->
-                          <input type="text" name="default_duration" class="form-control"
-                            placeholder="Enter duration..." id="default_duration" />
+                          <input type="text" name="default_duration" class="form-control" placeholder="Enter duration..." id="default_duration" />
                         </div>
                       </div>
                     </div>
@@ -301,8 +299,7 @@
                     <!-- Price -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label class="col-form-label label-align" for="default_price">Price <span
-                            class="required">*</span></label>
+                        <label class="col-form-label label-align" for="default_price">Price <span class="required">*</span></label>
                         <div class="input-group">
                           <!-- <span class="input-group-text"><img src="/images/classes.svg" /></span> -->
                           <input type="text" name="default_price" class="form-control" placeholder="Enter price"
@@ -313,7 +310,7 @@
 
                     <!-- Billing -->
                     <div class="col-md-12">
-                      <div class="form-group pb-2">
+                      <div class="form-group">
                         <label class="col-form-label label-align">Default Billing</label>
                         <ul class="settinglist mt-0">
                           <% const billing=[ { id: 'no_calendar_generated_charges' ,
@@ -357,7 +354,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
               <div class="form-group drop-file">
                 <label class="col-form-label label-align" for="profile_image">Profile Image</label>
                 <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto">
@@ -372,7 +369,6 @@
       </div>
     </div>
   </div>
-  <!-- student page content end -->
 </div>
 
 <%- include('./form_script'); %>

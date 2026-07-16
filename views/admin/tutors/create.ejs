@@ -1,6 +1,5 @@
 <div class="right_col" role="main">
-  <!-- tutor page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
         <h2 class="title-text mb-0">Add Tutor</h2>
@@ -9,13 +8,11 @@
         <form id="createTutor" action="./store" method="post" class="form-horizontal form-label-left tutor_form"
           enctype="multipart/form-data" autocomplete="off">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="register_number">Registration No.
-                    </label>
+                    <label class="col-form-label label-align" for="register_number">Registration No</label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="register_number" class="form-control" placeholder="Registration No..."
@@ -23,12 +20,9 @@
                     </div>
                   </div>
                 </div>  
-                <br>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="title" id="title" tabindex="-1" single>
@@ -39,37 +33,30 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="first_name">First Name<span class="required" >*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="first_name">First Name<span class="required" >*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
-                      <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.."
-                        id="first_name" maxlength="50">
+                      <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.." id="first_name" maxlength="50">
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
-                      <input type="text" maxlength="50" name="last_name" class="form-control" placeholder="Enter Last Name.."
-                        id="last_name">
+                      <input type="text" maxlength="50" name="last_name" class="form-control" placeholder="Enter Last Name.." id="last_name">
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="first_name">Qualification
-                    </label>
+                    <label class="col-form-label label-align" for="first_name">Qualification</label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
-                      <input type="text" name="qualification" class="form-control" placeholder="Enter Qualification"
-                        id="qualification" maxlength="50">
+                      <input type="text" name="qualification" class="form-control" placeholder="Enter Qualification" id="qualification" maxlength="50">
                     </div>
                   </div>
                 </div>
@@ -86,23 +73,18 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="email">Email<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="email">Email<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="email" class="form-control" placeholder="Enter Email.." id="email" autocomplete="off">
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="password">Password<span
-                        class="required">*</span>
-                    </label>
+                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="password">Password<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span> -->
                       <input type="password" name="password" class="form-control" placeholder="Enter Password.."
@@ -112,7 +94,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
@@ -140,8 +121,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="calendar_color">Calendar Color
-                    </label>
+                    <label class="col-form-label label-align" for="calendar_color">Calendar Color</label>
                     <div class="colorpicker-input">
                       <div class="input-group">
                         <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
@@ -153,11 +133,9 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="subject_ids" id="subject_ids" tabindex="-1" multiple>
@@ -170,57 +148,43 @@
                     </div>
                   </div>
                 </div>
-
-                
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="start_date">Start Date
-                    </label>
+                    <label class="col-form-label label-align" for="start_date">Start Date</label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                       <input type="date" name="start_date" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="start_date">
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="end_date">End Date
-                    </label>
+                    <label class="col-form-label label-align" for="end_date">End Date</label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                       <input type="date" name="end_date" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="end_date">
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="address">Address</span>
-                    </label>
+                    <label class="col-form-label label-align" for="address">Address</span></label>
                     <div class="form-group">
-                      <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
-                        id="address"></textarea>
+                      <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.." id="address"></textarea>
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="note">Note</span>
-                    </label>
+                    <label class="col-form-label label-align" for="note">Note</span></label>
                     <div class="form-group">
-                      <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
-                        id="note"></textarea>
+                      <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.." id="note"></textarea>
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded filter_revert"></span> -->
                       <select class="form-control" name="status" id="status" tabindex="-1" single>
@@ -230,27 +194,18 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="col-md-6"></div>
-
-                
-
-                
-
                 <div class="col-md-6"  id="pay-rate-wrap">
-                      <div class="form-group">
-                        <label class="col-form-label label-align">Pay Rate</span>
-                        </label>
-                        <div class="form-group">
-                            <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" style="display: none;" /> -->
-                            <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="payroll_type">Payroll</span>
-                    </label>
+                    <label class="col-form-label label-align">Pay Rate</span></label>
+                    <div class="form-group">
+                        <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" style="display: none;" /> -->
+                        <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="payroll_type">Payroll</span></label>
                     <div class="form-group">
                       <% for(let payrollType of tutorPayrollTypes){ %>
                         <div class="form-check">
@@ -266,16 +221,12 @@
                     </div>
                   </div>
                 </div>
-
-                
               </div>
             </div>
 
-              <div class="col-md-4">
+              <div class="col-md-12">
                 <div class="form-group drop-file">
-                  <label class="col-form-label label-align" for="profile_image">Profile
-                    Image
-                  </label>
+                  <label class="col-form-label label-align" for="profile_image">Profile Image</label>
                   <div class="input-group">
                     <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto"
                       data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M">
@@ -283,17 +234,15 @@
                 </div>
               </div>
 
-              </div>
+            </div>
           <div class="ln_solid"></div>
           <div class="text-right">
             <button type="submit" id="storeTutorBtn" class="btn form-button theme-btn">Save</button>
           </div>
         </form>
-
       </div>
     </div>
   </div>
-  <!-- tutor page content end -->
 </div>
 
 <%- include('./form_script'); %>

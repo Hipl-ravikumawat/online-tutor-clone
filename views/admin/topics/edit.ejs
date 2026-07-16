@@ -1,4 +1,5 @@
 <div class="right_col" role="main">
+  <!-- edit topic page content starts -->
   <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
@@ -11,10 +12,9 @@
           <div class="row">
             <div class="col-md-12">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-sm-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="name">Topic Name<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="name">Topic Name<span class="required">*</span></label>
                     <div class="input-group">
                       <!-- <span class="input-group-text"><img src="/images/categories.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="name" class="form-control" placeholder="Enter Topic Name.."
@@ -22,10 +22,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-sm-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span></label>
                     <div class="input-group flex-nowrap">
                       <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="status" id="status" tabindex="-1" single>
@@ -35,43 +34,39 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-sm-12">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="note">Note</span>
-                    </label>
-                    <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
-                      id="note"><%=data.note %></textarea>
+                    <label class="col-form-label label-align" for="note">Note</span></label>
+                    <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.." id="note"><%=data.note %></textarea>
                   </div>
                 </div>
               </div>
             </div>
             <div class="col-md-12">
-              <div class="form-group drop-file">
-                <label class="col-form-label label-align" for="topic_image">Featured
-                  Image
-                </label>
-                <input type="file" name="topic_image" id="topic_image" class="form-control dropify h-auto" <% if
+              <div class="form-group">
+                <label class="col-form-label label-align" for="topic_image">Featured Image</label>
+                <div class="drop-file">
+                  <input type="file" name="topic_image" id="topic_image" class="form-control dropify h-auto" <% if
                   (data.topic_image !='' && fs.existsSync("assets/TopicImage/"+data.topic_image)) { %>
                 data-default-file="/TopicImage/<%=data.topic_image%>" <% }%>
                     data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
                     <% if (data.topic_image !='' && fs.existsSync("assets/TopicImage/"+data.topic_image)) { %>
                       value=" <%=data.topic_image %>" <% } else { %> value="" <% } %> >
+                </div>
               </div>
               <input type="hidden" name="is_remove" id="is_image_removed" value="0">
             </div>
           </div>
 
-
-
           <div class="ln_solid"></div>
           <div class="text-right">
             <button type="submit" id="updateTopicBtn" class="btn theme-btn form-button">Update</button>
           </div>
-
         </form>
       </div>
     </div>
   </div>
+  <!-- edit topic page content end -->
 </div>
 
 <%- include('./form_script'); %>

@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group">
+            <div class="form-group position-relative">
                 <label class="form-label" for="payment_refund_date">Date<span class="required">*</span></label>
                 <input 
                 type="text" 
@@ -34,15 +34,15 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-            <label class="form-label" for="payment_method">Payment Method</label>
-            <select name="payment_method" id="payment_method" class="form-control">
-                <option value="">Select</option>
-                <% paymentMethods.forEach(method=> { %>
-                <option value="<%= method._id || method.id %>" <%= (transaction && transaction?.payment_method == method._id) ? 'selected' : '' %>>
-                   <%= (method.method || method.name).charAt(0).toUpperCase() + (method.method || method.name).slice(1) %>
-                </option>
-                <% }); %>
-            </select>
+                <label class="form-label" for="payment_method">Payment Method</label>
+                <select name="payment_method" id="payment_method" class="form-control">
+                    <option value="">Select</option>
+                    <% paymentMethods.forEach(method=> { %>
+                    <option value="<%= method._id || method.id %>" <%= (transaction && transaction?.payment_method == method._id) ? 'selected' : '' %>>
+                    <%= (method.method || method.name).charAt(0).toUpperCase() + (method.method || method.name).slice(1) %>
+                    </option>
+                    <% }); %>
+                </select>
             </div>
         </div>
         <div class="col-md-6 mb-3">
@@ -97,34 +97,6 @@
             </div>
         <% } %>
 
-        <!-- <% if(!transaction){ %>
-            <div class="col-md-6">
-                <div id="send-sms-wrapper">
-                    <div class="form-group form-check mt-2 mb-3">
-                        <input class="form-check-input mt-1" type="checkbox" id="sendSMSReceipt" name="send_sms"
-                            value="1" />
-                        <label class="form-check-label" for="sendSMSReceipt">Send SMS Receipt</label>
-                    </div>
-        
-                    <div id="smsDetails" style="display: none;" class="mb-4">
-                        <div class="mb-4">
-                            <label class="form-label">Recipient</label>
-                            <select class="form-control" id="smsRecipient" name="sms_recipient">
-                                <option value="">Select</option>
-                            </select>
-                            <% if(transaction){ %>
-                                <input type="hidden" name="sms_recipient_id" id="sms_recipient_id"
-                                    value="<%= transaction.sms_recipient_id || '' %>" />
-                                <% } %>
-                        </div>
-                        <p class="small text-muted">The payment SMS template will be used for this receipt.
-                            <a href="/business-settings" class="open_template">Open Templates</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <% } %> -->
-
     </div>
 </div>
 
@@ -159,7 +131,7 @@
 
     <div class="row">
         <div class="col-md-6 mb-3">
-            <div class="form-group mb-0">
+            <div class="form-group mb-0 position-relative">
                 <label for="charges_discount_date" class="form-label">Date<span class="required">*</span></label>
                 <input 
                 type="text" 

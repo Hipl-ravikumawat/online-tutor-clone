@@ -1,122 +1,124 @@
 <div class="right_col" role="main">
-  <!-- tutor index page content starts -->
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="stcard-box">
-            <span class="shade5"><%=tutorObject.total%></span>
-            <h3 class="title-text mb-0">Total</h3>
-        </div>
+  <div class="max-w-1440">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+          <div class="stcard-box">
+              <span class="shade5"><%=tutorObject.total%></span>
+              <h3 class="title-text mb-0">Total</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg" />
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+          <div class="stcard-box">
+              <span class="shade1"><%=tutorObject.active%></span>
+              <h3 class="title-text mb-0">Active</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg" />
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+          <div class="stcard-box">
+              <span class="shade3"><%=tutorObject.deactive%></span>
+              <h3 class="title-text mb-0">Deactive</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg" />
+          </div>
+      </div>
     </div>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="stcard-box">
-            <span class="shade1"><%=tutorObject.active%></span>
-            <h3 class="title-text mb-0">Active</h3>
-        </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="stcard-box">
-            <span class="shade3"><%=tutorObject.deactive%></span>
-            <h3 class="title-text mb-0">Deactive</h3>
-        </div>
-    </div>
-  </div>
-  <div class="card-block mb-30">
-    <h3 class="title-text">Filter Tutors</h3>
-    <ul class="filter-row">
-      <li class="filter-col">
-        <select class="form-control select2" id="tutor-name" tabindex="-1" single>
-          <option value="">Select Tutor</option>
-          <% for(tutor of data) { %>
-            <option value="<%=tutor.id%>">
-              <%=tutor.first_name+' '+tutor.last_name %>
-            </option>
-            <% } %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control" id="tutor-subjects" tabindex="-1" multiple>
-            <% for(sub of subject) { %>
-            <option value="<%=sub.id%>">
-              <%=sub.name %>
-            </option>
-            <% } %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control select2" id="status" tabindex="-1" single>
-          <option value="">Select Status</option>
-          <option value="1">Active</option>
-          <option value="0">Deactive</option>
-        </select>
-      </li>
-      <li class="filter-col">
-        <button class="btn theme-btn filter">Filter</button>
-        <button class="btn theme-btn reset">Reset</button>
-      </li>
-    </ul>
-  </div>
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
-      <div class="x_panel">
-        <div class="x_title">
-          <h2 class="title-text">Tutors List</h2>
-          <ul class="right-btns">
-            <li class="both-btnli">
-              <div class="dropdown">
-                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/msg-icon.svg" alt="Email" class="mr-2">Messaging</button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">New Email</a>
-                  <a class="dropdown-item" href="#">Email Selected Students</a>
-                  <a class="dropdown-item" href="#">Email Selected Parents</a>
-                  <a class="dropdown-item" href="#">Email Selected Students & Parents</a>
-                  <a class="dropdown-item" href="#">Send Student Login Email</a>
-                  <a class="dropdown-item" href="#">Send Parent Login Email</a>
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="filter_top">
+            <h3 class="title-text">Filter Tutors</h3>
+            <ul class="filter-row">
+              <li class="filter-col">
+                <select class="form-control select2" id="tutor-name" tabindex="-1" single>
+                  <option value="">Select Tutor</option>
+                  <% for(tutor of data) { %>
+                    <option value="<%=tutor.id%>">
+                      <%=tutor.first_name+' '+tutor.last_name %>
+                    </option>
+                    <% } %>
+                </select>
+              </li>
+              <li class="filter-col">
+                <select class="form-control" id="tutor-subjects" tabindex="-1" multiple>
+                    <% for(sub of subject) { %>
+                    <option value="<%=sub.id%>">
+                      <%=sub.name %>
+                    </option>
+                    <% } %>
+                </select>
+              </li>
+              <li class="filter-col">
+                <select class="form-control select2" id="status" tabindex="-1" single>
+                  <option value="">Select Status</option>
+                  <option value="1">Active</option>
+                  <option value="0">Deactive</option>
+                </select>
+              </li>
+              <li class="filter-col filter-col-btn">
+                <button class="btn theme-btn filter">Filter</button>
+                <button class="btn theme-btn reset">Reset</button>
+              </li>
+            </ul>
+          </div>
+          <div class="x_title">
+            <h2 class="title-text mb-0">Tutors List</h2>
+            <ul class="right-btns">
+              <li class="both-btnli">
+                <div class="dropdown">
+                  <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/msg-icon.svg" alt="Email" class="mr-2">Messaging</button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">New Email</a>
+                    <a class="dropdown-item" href="#">Email Selected Students</a>
+                    <a class="dropdown-item" href="#">Email Selected Parents</a>
+                    <a class="dropdown-item" href="#">Email Selected Students & Parents</a>
+                    <a class="dropdown-item" href="#">Send Student Login Email</a>
+                    <a class="dropdown-item" href="#">Send Parent Login Email</a>
+                  </div>
                 </div>
-              </div>
-            </li>
-            <li class="both-btnli">
-              <div class="dropdown">
-                <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">Assign to a Group</a>
-                  <a class="dropdown-item" href="#">Update Tutors</a>
-                  <a class="dropdown-item" href="#">Update Prices</a>
-                  <a class="dropdown-item" href="#">Edit Make-Up Credits</a>
-                  <a class="dropdown-item" href="#">SMS & Email Reminders</a>
-                  <a class="dropdown-item" href="#">Apply Default Prices</a>
+              </li>
+              <li class="both-btnli">
+                <div class="dropdown">
+                  <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/setting-icon.svg" alt="Setting" class="mr-2">Options</button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Assign to a Group</a>
+                    <a class="dropdown-item" href="#">Update Tutors</a>
+                    <a class="dropdown-item" href="#">Update Prices</a>
+                    <a class="dropdown-item" href="#">Edit Make-Up Credits</a>
+                    <a class="dropdown-item" href="#">SMS & Email Reminders</a>
+                    <a class="dropdown-item" href="#">Apply Default Prices</a>
+                  </div>
                 </div>
-              </div>
-            </li>
-            <li> <a href="./tutors/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
-                title="Add Tutor">+ Add Tutor</a>
-            </li>
-          </ul>
-          <div class="clearfix"></div>
-        </div>
-        <div class="x_content">
-          <div class="card-box table-responsive allselect-table">
-            <table id="tutorTable" class="table table-striped table-bordered dt-responsive nowrap"
-              cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th style="text-align: center"><input type="checkbox" id="select_all" /></th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Contact No.</th>
-                  <th>Subjects</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
+              </li>
+              <li> <a href="./tutors/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top"
+                  title="Add Tutor">+ Add Tutor</a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="card-box table-responsive allselect-table">
+              <table id="tutorTable" class="table table-striped table-bordered dt-responsive nowrap"
+                cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th style="text-align: center"><input type="checkbox" id="select_all" /></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Contact No.</th>
+                    <th>Subjects</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-    <!-- tutor index page content end -->
 </div>
 
 <%- include('./index_script'); %>

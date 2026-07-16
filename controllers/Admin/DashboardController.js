@@ -252,7 +252,7 @@ async function dashboard(req, res) {
 
       let stdAssessmentArray = [];
       for (let assessment of studentAssessments) {
-        for (let std_assessment of assessment.student_assessment_ids || []) {
+        for (let std_assessment of assessment.student_assessment_ids) {
           let assessmentData = std_assessment._doc ? std_assessment._doc : std_assessment;
           let newStdAssessment = { ...assessmentData, assessmentDate: assessment.date };
           stdAssessmentArray.push(newStdAssessment);
@@ -284,16 +284,6 @@ async function dashboard(req, res) {
         templates: eventNoteTemplates,
       });
     }
-
-    if (user_detail.role == 4) {
-      const activeLearningContents = await LearningContent.countDocuments({ status: 1, isDeleted: false });
-      return res.render("../views/admin/dashboard/dashboard", {
-        staticesData: { learningContents: activeLearningContents },
-        templates: [],
-      });
-    }
-
-    return res.status(403).render("../views/errorPages/_error-403", { layout: false });
   } catch (error) {
     console.error(error);
     return res.status(500).json({

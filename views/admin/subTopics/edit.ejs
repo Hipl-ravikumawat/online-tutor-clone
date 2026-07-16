@@ -1,4 +1,5 @@
 <div class="right_col" role="main">
+  <!-- edit subTopic page content starts -->
   <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
@@ -11,8 +12,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label class="col-form-label label-align" for="topic_id">Main Topic<span class="required">*</span>
-                </label>
+                <label class="col-form-label label-align" for="topic_id">Main Topic<span class="required">*</span></label>
                 <div class="input-group flex-nowrap">
                   <!-- <span class="input-group-text"><img src="/images/categories.svg" class="mCS_img_loaded"></span> -->
                   <select class="select2_single form-control" name="topic_id" id="topic_id" tabindex="-1" single>
@@ -28,8 +28,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label class="col-form-label label-align" for="name">Sub Topic Name<span class="required">*</span>
-                </label>
+                <label class="col-form-label label-align" for="name">Sub Topic Name<span class="required">*</span></label>
                 <div class="input-group">
                   <!-- <span class="input-group-text"><img src="/images/subcategory.svg" class="mCS_img_loaded"></span> -->
                   <input type="text" name="name" class="form-control" placeholder="Enter Sub Topic Name.."
@@ -37,10 +36,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12>
               <div class="form-group">
-                <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                </label>
+                <label class="col-form-label label-align" for="status">Status<span class="required">*</span></label>
                 <div class="input-group flex-nowrap">
                   <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control" name="status" id="status" tabindex="-1" single>
@@ -52,13 +50,13 @@
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label class="col-form-label label-align" for="note">Note</span>
-                </label>
+                <label class="col-form-label label-align" for="note">Note</span></label>
                 <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
                   id="note"><%=data.note %></textarea>
               </div>
             </div>
           </div>
+
           <div class="ln_solid"></div>
           <div class="text-right">
             <button type="submit" id="updateSubTopicBtn" class="btn theme-btn form-button">Update</button>
@@ -67,6 +65,7 @@
       </div>
     </div>
   </div>
+  <!-- edit subTopic page content end -->
 </div>
 
 <%- include('./form_script'); %>

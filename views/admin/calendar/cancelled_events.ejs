@@ -1,53 +1,54 @@
 <div class="right_col" role="main">
-    <div class="card-block mb-30">
-        <h3 class="title-text">Filter Events</h3>
-        <ul class="filter-row canceled_filter_row">
-            <li class="filter-col">
-                <select class="form-control select2 filter-option"  id="tutor" tabindex="-1" single data-placeholder="Select Tutor">
-                    <option value="">Select A Tutor</option>
-                    <% for(tutor of tutors) { %>
-                        <option value="<%=tutor.id%>">
-                        <%=tutor.first_name+' '+tutor.last_name %>
-                        </option>
-                    <% } %>            
-                </select>
-            </li>
-            <li class="filter-col size-12">
-                <input type="text" class="form-control filter-option" name="date_range" id="dateRangeBlock">
-            </li>
-            <li class="filter-col">
-              <button class="btn theme-btn filter">Filter</button>
-              <button class="btn theme-btn reset" disabled>Reset</button>
-            </li>
-        </ul>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="x_panel">
-                <div class="x_title mb-2 d-flex justify-content-between align-items-center">
-                  <h2 class="title-text">Cancelled Events</h2>
-                  <div class="button-group">
-                    <button type="button" class="btn theme-btn approve-selected-events mr-2" disabled>Approve Selected</button>
-                    <button type="button" class="btn theme-btn reject-selected-events" disabled>Reject Selected</button>
-                  </div>
-                </div>
-                <div class="x_content">
-                    <div class="card-box table-responsive allselect-table">
-                      <table id="cancelEventTable" class="table table-striped table-bordered dt-responsive nowrap"
-                        cellspacing="0" width="100%">
-                        <thead>
-                          <tr>
-                            <th><input type="checkbox" id="selectAllCancelEvents"></th>
-                            <th>Tutor</th>
-                            <th>Reason</th>
-                            <th>Event Date/Time</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table>
+    <div class="max-w-1440">
+        <div class="row">
+            <div class="col-12">
+                <div class="x_panel">
+                    <div class="filter_top">
+                        <h3 class="title-text">Filter Events</h3>
+                        <ul class="filter-row canceled_filter_row">
+                            <li class="filter-col">
+                                <select class="form-control select2 filter-option"  id="tutor" tabindex="-1" single data-placeholder="Select Tutor">
+                                    <option value="">Select A Tutor</option>
+                                    <% for(tutor of tutors) { %>
+                                        <option value="<%=tutor.id%>">
+                                        <%=tutor.first_name+' '+tutor.last_name %>
+                                        </option>
+                                    <% } %>            
+                                </select>
+                            </li>
+                            <li class="filter-col size-12">
+                                <input type="text" class="form-control filter-option" name="date_range" id="dateRangeBlock">
+                            </li>
+                            <li class="filter-col filter-col-btn">
+                                <button class="btn theme-btn filter">Filter</button>
+                                <button class="btn theme-btn reset" disabled>Reset</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="x_title d-flex justify-content-between align-items-center">
+                    <h2 class="title-text mb-0">Cancelled Events</h2>
+                    <div class="button-group both_btn_group">
+                        <button type="button" class="btn theme-btn approve-selected-events mr-2" disabled>Approve Selected</button>
+                        <button type="button" class="btn theme-btn reject-selected-events" disabled>Reject Selected</button>
+                    </div>
+                    </div>
+                    <div class="x_content">
+                        <div class="card-box table-responsive allselect-table">
+                        <table id="cancelEventTable" class="table table-striped table-bordered dt-responsive nowrap"
+                            cellspacing="0" width="100%">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCancelEvents"></th>
+                                <th>Tutor</th>
+                                <th>Reason</th>
+                                <th>Event Date/Time</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
             </div>
