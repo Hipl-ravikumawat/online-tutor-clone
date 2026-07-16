@@ -7,6 +7,7 @@
             <%=trainingAssessmentObject.total%>
           </span>
           <h3 class="title-text mb-0">Total</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
       </div>
       <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
@@ -15,6 +16,7 @@
             <%=trainingAssessmentObject.completed%>
           </span>
           <h3 class="title-text mb-0">Completed</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
       </div>
       <% if(userRole != 3) { %>
@@ -24,6 +26,7 @@
             <%=trainingAssessmentObject.pending%>
           </span>
           <h3 class="title-text mb-0">Pending</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
       </div>
       <% } %>
@@ -33,6 +36,7 @@
             <%=trainingAssessmentObject.not_completed%>
           </span>
           <h3 class="title-text mb-0">Not Completed</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
       </div>
     </div>

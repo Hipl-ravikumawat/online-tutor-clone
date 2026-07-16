@@ -13,7 +13,7 @@
                   <label class="col-form-label label-align" for="assessment">Assessment Name<span class="required">*</span>
                   </label>
                   <div class="input-group">
-                    <span class="input-group-text"><img src="/images/assessment.svg" class="mCS_img_loaded"></span>
+                    <!-- <span class="input-group-text"><img src="/images/assessment.svg" class="mCS_img_loaded"></span> -->
                     <input type="text" name="name" class="form-control" id="content_name" placeholder="Assessment Name" maxlength="200">
                   </div>
                 </div>
@@ -23,7 +23,7 @@
                   <label class="col-form-label label-align" for="tutor_id">Tutors <span class="required">*</span>
                   </label>
                   <div class="input-group">
-                    <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                    <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                     <select class="form-control select2" name="tutor_ids[]" id="tutor_ids" data-placeholder="Select Tutor" tabindex="-1" multiple>
                         <option value="">Select A Tutor</option>
                       <% for(tutor of tutors) { %>
@@ -35,67 +35,67 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12 mt-4">
-                <h2 class="title-text fn-16">Staff Courses For Assessment</h2>
+              <div class="col-md-12">
+                <h2 class="title-text mb-20 devider-border">Staff Courses For Assessment</h2>
               </div>
-              <div class="col-md-12 content_form" >  
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="topic">Topic <span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2 filter-content" id="sc_topic" tabindex="-1" single>
-                        <option value="">Select A Topic</option>
-                        <% for(topic of topics) { %>
-                          <option value="<%=topic.id%>"><%=topic.name%></option>
-                        <% } %>
-                      </select>
+              <div class="col-md-12 content_form" >
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="topic">Topic <span class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <!-- <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span> -->
+                        <select class="form-control select2 filter-content" id="sc_topic" tabindex="-1" single>
+                          <option value="">Select A Topic</option>
+                          <% for(topic of topics) { %>
+                            <option value="<%=topic.id%>"><%=topic.name%></option>
+                          <% } %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>      
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="sub_topic">Sub Topic</label>
+                      <div class="input-group">
+                        <!-- <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span> -->
+                        <select class="form-control select2 filter-content" id="sc_sub_topic" tabindex="-1" single>
+                          <option value="">Select A Sub Topic</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="training_content">Staff Course <span
+                          class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
+                        <select class="form-control select2" id="training_content" tabindex="-1" single>
+                          <option value="">Select A Content</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>      
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="sub_topic">Sub Topic</label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2 filter-content" id="sc_sub_topic" tabindex="-1" single>
-                        <option value="">Select A Sub Topic</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>  
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="training_content">Staff Course <span
-                        class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2" id="training_content" tabindex="-1" single>
-                        <option value="">Select A Content</option>
-                      </select>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="training_lessons">Lessons <span class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
+                        <select class="form-control select2" data-placeholder="Select Lessons"
+                          id="lessons" tabindex="-1" multiple>
+                          <option value="">Select Lessons</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="training_lessons">Lessons <span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2" data-placeholder="Select Lessons"
-                        id="lessons" tabindex="-1" multiple>
-                        <option value="">Select Lessons</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <label class="d-block">&nbsp;</span>
-                  </label>
-                  <button type="button" class="content-submit theme-btn" id="add_content">Add Course</button>
-                </div>
+              </div>
+              <div class="col-md-12">
+                <button type="button" class="content-submit theme-btn" id="add_content">Add Course</button>
               </div>
             </div>
             

@@ -1,91 +1,95 @@
 <div class="right_col" role="main">
-  <!-- school index page content starts -->
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade5">
-          <%= data.schoolObject.length > 0 ? data.schoolObject[0].totalSchool : '0' %>
-        </span>
-        <h3 class="title-text mb-0">Total</h3>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade1">
-          <%= data.schoolObject.length > 0 ? data.schoolObject[0].activeSchool : '0' %>
-        </span>
-        <h3 class="title-text mb-0">Active</h3>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade3">
-          <%= data.schoolObject.length > 0 ? data.schoolObject[0].deactiveSchool : '0' %>
-        </span>
-        <h3 class="title-text mb-0">Deactive</h3>
-      </div>
-    </div>
-  </div>
-  <div class="card-block mb-30">
-    <h2 class="title-text">Filter Schools</h2>
-    <ul class="filter-row">
-      <li class="filter-col">
-        <select class="form-control select2" id="school" tabindex="-1" single>
-          <option value="">Select School</option>
-          <% if(data.schoolObject.length > 0) { 
-            for(school of data.schoolObject[0].schools) { 
-          %>
-            <option value="<%=school._id%>">
-              <%=school.name%>
-            </option>
-            <% 
-            }
-          }
-          %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control select2" id="status">
-          <option value="">Select Status</option>
-          <option value="1">Active</option>
-          <option value="0">Deactive</option>
-        </select>
-      </li>
-      <li class="filter-col">
-        <button class="btn theme-btn filter">Filter</button>
-        <button class="btn theme-btn reset">Reset</button>
-      </li>
-    </ul>
-  </div>
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
-      <div class="x_panel">
-        <div class="x_title">
-          <h2 class="title-text">Schools List</h2>
-          <ul class="right-btns">
-            <li> <a href="./schools/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip"
-                data-placement="top" title="Add School">+ Add School</a>
-            </li>
-          </ul>
+  <div class="max-w-1440">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade5">
+            <%= data.schoolObject.length > 0 ? data.schoolObject[0].totalSchool : '0' %>
+          </span>
+          <h3 class="title-text mb-0">Total</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
-        <div class="x_content">
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="card-box table-responsive">
-                <table id="schoolTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
-                  width="100%">
-                  <thead>
-                    <tr>
-                      <th>School Name</th>
-                      <th>Email</th>
-                      <th>Contact No.</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade1">
+            <%= data.schoolObject.length > 0 ? data.schoolObject[0].activeSchool : '0' %>
+          </span>
+          <h3 class="title-text mb-0">Active</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade3">
+            <%= data.schoolObject.length > 0 ? data.schoolObject[0].deactiveSchool : '0' %>
+          </span>
+          <h3 class="title-text mb-0">Deactive</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="filter_top">
+            <h2 class="title-text">Filter Schools</h2>
+            <ul class="filter-row">
+              <li class="filter-col">
+                <select class="form-control select2" id="school" tabindex="-1" single>
+                  <option value="">Select School</option>
+                  <% if(data.schoolObject.length > 0) { 
+                    for(school of data.schoolObject[0].schools) { 
+                  %>
+                    <option value="<%=school._id%>">
+                      <%=school.name%>
+                    </option>
+                    <% 
+                    }
+                  }
+                  %>
+                </select>
+              </li>
+              <li class="filter-col">
+                <select class="form-control select2" id="status">
+                  <option value="">Select Status</option>
+                  <option value="1">Active</option>
+                  <option value="0">Deactive</option>
+                </select>
+              </li>
+              <li class="filter-col filter-col-btn">
+                <button class="btn theme-btn filter">Filter</button>
+                <button class="btn theme-btn reset">Reset</button>
+              </li>
+            </ul>
+          </div>
+          <div class="x_title">
+            <h2 class="title-text mb-0">Schools List</h2>
+            <ul class="right-btns">
+              <li> <a href="./schools/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip"
+                  data-placement="top" title="Add School">+ Add School</a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                  <table id="schoolTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+                    width="100%">
+                    <thead>
+                      <tr>
+                        <th>School Name</th>
+                        <th>Email</th>
+                        <th>Contact No.</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -93,6 +97,5 @@
       </div>
     </div>
   </div>
-  <!-- school index page content end -->
 </div>
 <%- include('./index_script'); %>

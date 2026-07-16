@@ -1,11 +1,12 @@
 <div class="right_col" role="main">
     <div class="form-wizard max-w-1440">
-      <form id="createContent" action="./store" class="form-design" method="post" enctype="multipart/form-data"
+      <a class="back-link" href="/tutor-training"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
+      <form id="createContent" action="./store" class="form-design mt-3" method="post" enctype="multipart/form-data"
         autocomplete="off">
         <fieldset class="wizard-fieldset show">
           <div class="d-flex align-items-center justify-content-between mb-30">
             <h3 class="title-text mb-0">Basic Information</h3>
-            <a class="back-link" href="/tutor-training"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
+            
           </div>
   
           <div class="row">
@@ -58,7 +59,7 @@
             </div>
   
             <div class="col-sm-12">
-              <div class="drop-file">
+              <div class="drop-file form-group">
                 <label class="form-label">Upload Thumbnail</label>
                 <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
                   data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="2M">
@@ -67,7 +68,7 @@
             </div>
   
           </div>
-  
+          <div class="ln_solid"></div>
           <div class="form-group mb-0 mt-4 clearfix">
             <button class="form-wizard-submit theme-btn float-right" id="createContentBtn">Save</button>
           </div>

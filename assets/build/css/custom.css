@@ -3301,8 +3301,9 @@ ul.msg_list li a .message {
     top: 100%;
     z-index: 9998;
     border: 1px solid #D9DEE4;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0
+    border-radius: 10px;
+    margin: 0;
+    overflow: hidden;
 }
 
 .dropdown-menu>li>a {
@@ -5882,7 +5883,8 @@ div[data-role="editor-toolbar"] {
 }
 
 .dropdown-menu a {
-    cursor: pointer
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .select2-container--default .select2-selection--single,
@@ -6992,7 +6994,7 @@ li.ui-timepicker-am.ui-timepicker-selected, li.ui-timepicker-am.ui-timepicker-se
     border-radius: 4px;
     border: 1px solid #C7D6DD;
     background-color: transparent;
-    top: -10px;
+    top: -13px;
     left: 0;
 }
 .dataTable input[type="checkbox"]:checked::before {
@@ -7001,7 +7003,7 @@ li.ui-timepicker-am.ui-timepicker-selected, li.ui-timepicker-am.ui-timepicker-se
 }
 .dataTable input[type="checkbox"]::after {
     left: 5px;
-    top: 50%;
+    top: calc(50% - 4px);
     background: white;
     width: 2px;
     height: 2px;

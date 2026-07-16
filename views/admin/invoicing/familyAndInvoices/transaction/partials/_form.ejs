@@ -106,26 +106,26 @@
 <% } else { %>
 <div id="charges-discount-form" style="display:none;">
 <% } %>
-    <div class="mb-3 select2-default-height">  
+    <div class="form-group select2-default-height">  
         <% if (transaction) { %>
             <%- include('../../partials/form-fields/families-dropdown',{ dropdownName:"student_id",dropdownId:"student_id", dropdownType:"single", families: families, selected: studentId, showLabel: true, label: "Student",editRecord:transaction }); %>  
         <% }else{ %>                   
             <%- include('../../partials/form-fields/families-dropdown',{ dropdownName: "families[]", dropdownId:"families", dropdownType:"multiple", families: families, selected: studentId, showLabel:true, label:"Families",editRecord:transaction }); %>
         <% } %>                   
     </div>
-    <div class="mb-3">
-        <label class="form-label">Charge Type<span class="required">*</span></label><br>
-        
-        <div class="radio_group form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="charge_type" id="oncePerFamily" value="family"
-            <%= (!transaction || transaction?.charge_type == "family") ? 'checked' : '' %> />
-            <label class="radiolabel" for="oncePerFamily">Once per family</label>
-        </div>
-
-        <div class="radio_group form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="charge_type" id="oncePerStudent" value="student"
-            <%= (transaction?.charge_type == "student") ? 'checked' : '' %> />
-            <label class="radiolabel" for="oncePerStudent">Once per student</label>
+    <div class="form-group">
+        <label class="form-label">Charge Type<span class="required">*</span></label>
+        <div class="inline_radiobox">
+            <div class="radio_group form-check form-check-inline m-0">
+                <input class="form-check-input" type="radio" name="charge_type" id="oncePerFamily" value="family"
+                <%= (!transaction || transaction?.charge_type == "family") ? 'checked' : '' %> />
+                <label class="radiolabel" for="oncePerFamily">Once per family</label>
+            </div>
+            <div class="radio_group form-check form-check-inline m-0">
+                <input class="form-check-input" type="radio" name="charge_type" id="oncePerStudent" value="student"
+                <%= (transaction?.charge_type == "student") ? 'checked' : '' %> />
+                <label class="radiolabel" for="oncePerStudent">Once per student</label>
+            </div>
         </div>
     </div>
 
@@ -151,7 +151,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group form-check mt-2 mb-2">
+    <div class="form-group form-check mb-2">
         <input class="form-check-input" type="checkbox" value="1" id="recurring" name="recurring" <%= (transaction && transaction?.recurring) ? 'checked' : '' %> />
         <label class="form-check-label" for="recurring">This is a recurring charge</label>
     </div>
@@ -159,12 +159,12 @@
     <!-- recurring options -->
     <%- include('recurring-options',{ recurringFrequency: recurringFrequency, repeatDays: repeatDays, transaction }); %>
 
-    <div class="row mt-3">
+    <div class="row mt-4">
         <div class="col-md-6">
             <% const selectedTaxes = transaction?.charge_taxes?.map(t => t._id?.toString?.()) || []; %>
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label">Applicable Taxes</label><br>
-                <div id="taxContainer">
+                <div id="taxContainer" class="mt-md-2">
                     <% taxes.forEach((tax, index)=> { 
                         const isChecked = selectedTaxes.includes(tax._id.toString());   
                     %>
@@ -180,13 +180,13 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group mb-3">
+            <div class="form-group mb-4">
                 <!-- charge categories -->
                 <%- include('charge-category-dropdown',{ chargeCategories: chargeCategories, transaction }); %>
             </div>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-4">
         <label for="note" class="form-label">Description <span class="text-muted small">(Optional)</span></label>
         <textarea class="form-control" name="charges_discount_description" rows="3" placeholder="Enter text" value="<%= transaction?.note || '' %>"><%= transaction?.note || '' %></textarea>
     </div>
