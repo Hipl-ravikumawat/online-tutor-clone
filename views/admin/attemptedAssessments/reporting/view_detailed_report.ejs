@@ -1,4 +1,5 @@
 <div class="right_col" role="main">
+  <div class="max-w-1440">
     <div class="row">
       <div class="col-sm-12 col-md-6 col-lg-3">
           <div class="stcard-box">
@@ -6,6 +7,7 @@
                  <%=topCount.totalAssessment%>
               </span>
               <h3 class="title-text mb-0">Total</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg">
           </div>
       </div>
       <div class="col-sm-12 col-md-6 col-lg-3">
@@ -14,6 +16,7 @@
                 <%=topCount.completedAssessment%>
               </span>
               <h3 class="title-text mb-0">Completed</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg">
           </div>
       </div>
       <div class="col-sm-12 col-md-6 col-lg-3">
@@ -22,55 +25,56 @@
                 <%=topCount.notCompleted%>
               </span>
               <h3 class="title-text mb-0">Not Completed</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg">
           </div>
       </div>
       <div class="col-sm-12 col-md-6 col-lg-3">
           <div class="stcard-box">
               <span class="shade4"><%=topCount.overallScore%>%</span>
               <h3 class="title-text mb-0">Average Score</h3>
+              <img src="/images/favicon-32x32.png" class="hidden-bg">
           </div>
       </div>
     </div>
-    <!-- single assessment report page content starts -->
     <div class="row">
       <div class="col-md-12 col-sm-12">
-        <div class="card-block mb-30">
-          <h3 class="title-text">Filters</h3>
-          <ul class="filter-row">
-            <li class="filter-col">
-              <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Student">
-                <option value="">Select Student</option>
-                <% for(student of students) { %>
-                  <option value="<%=student.id%>">
-                    <%=student.first_name+" "+student.last_name%>
-                  </option>
-                  <% } %>
-              </select>
-            </li>
-            <li class="filter-col">
-              <select class="form-control select2" id="status" tabindex="-1" data-placeholder="Select Status">
-                <option value="">Select status</option>
-                  <option value="N/A">N/A</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Completed">Completed</option>
-              </select>
-            </li>
-            <li class="filter-col percent-filter" style="display: none;">
-              <select class="form-control select2" id="percentage" tabindex="-1" data-placeholder="Select percentage">
-                <option value="">Select percentage</option>
-                  <option value="0-50">0-50 %</option>
-                  <option value="51-80">51-80 %</option>
-                  <option value="81-100">81-100 %</option>
-              </select>
-            </li>
-            <li class="filter-col">
-              <button class="btn theme-btn filter">Filter</button>
-              <button class="btn theme-btn reset">Reset</button>
-            </li>
-          </ul>
-        </div>
         <div class="x_panel detailed-report-area">
-          <div class="mb-30">
+          <div class="filter_top">
+            <h3 class="title-text">Filters</h3>
+            <ul class="filter-row">
+              <li class="filter-col">
+                <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Student">
+                  <option value="">Select Student</option>
+                  <% for(student of students) { %>
+                    <option value="<%=student.id%>">
+                      <%=student.first_name+" "+student.last_name%>
+                    </option>
+                    <% } %>
+                </select>
+              </li>
+              <li class="filter-col">
+                <select class="form-control select2" id="status" tabindex="-1" data-placeholder="Select Status">
+                  <option value="">Select status</option>
+                    <option value="N/A">N/A</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Completed">Completed</option>
+                </select>
+              </li>
+              <li class="filter-col percent-filter" style="display: none;">
+                <select class="form-control select2" id="percentage" tabindex="-1" data-placeholder="Select percentage">
+                  <option value="">Select percentage</option>
+                    <option value="0-50">0-50 %</option>
+                    <option value="51-80">51-80 %</option>
+                    <option value="81-100">81-100 %</option>
+                </select>
+              </li>
+              <li class="filter-col filter-col-btn">
+                <button class="btn theme-btn filter">Filter</button>
+                <button class="btn theme-btn reset">Reset</button>
+              </li>
+            </ul>
+          </div>
+          <div class="x_title">
             <h3 class="title-text mb-0"><%=assessmentDetail.name%></h3>
           </div>
           <div class="x_content">
@@ -98,8 +102,8 @@
         </div>
       </div>
     </div>
-    <!-- single assessment report page content end -->
   </div>
+</div>
 <script type="text/javascript">
   /**
    * attempted assessment complete detailed report page script.

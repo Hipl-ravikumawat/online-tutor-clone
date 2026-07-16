@@ -1,37 +1,32 @@
 <div class="right_col" role="main">
   <!-- tutor page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text">Edit Tutor</h2>
+        <h2 class="title-text mb-0">Edit Tutor</h2>
       </div>
       <div class="x_content">
         <form id="updateTutor" action="/tutors/update" method="post" class="form-horizontal form-label-left"
           enctype="multipart/form-data">
           <input type="hidden" name="tutor_id" value="<%=data.id %>">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="register_number">Registration No.
-                    </label>
+                    <label class="col-form-label label-align" for="register_number">Registration No</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="register_number" class="form-control" placeholder="Registration No..."
                          value="<%=data.register_number %>">
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="title">Title<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="title" id="title" tabindex="-1" single>
                         <option value="Mr" <%=data.title=='Mr' ? 'selected' : '' %>>Mr</option>
                         <option value="Ms" <%=data.title=='Ms' ? 'selected' : '' %>>Ms</option>
@@ -43,10 +38,9 @@
                 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="first_name">First Name<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="first_name">First Name<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" maxlength="50" name="first_name" class="form-control" placeholder="Enter First Name.."
                         id="first_name" value="<%=data.first_name %>">
                     </div>
@@ -55,10 +49,9 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="last_name" class="form-control" placeholder="Enter Last Name.."
                         id="last_name" value="<%=data.last_name %>" maxlength="50">
                     </div>
@@ -66,10 +59,9 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="first_name">Qualification
-                    </label>
+                    <label class="col-form-label label-align" for="first_name">Qualification</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="qualification" class="form-control" placeholder="Enter Qualification"
                         id="qualification" maxlength="50" value="<%=data.qualification %>">
                     </div>
@@ -93,10 +85,9 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="email">Email Address<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="email">Email Address<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="email" class="form-control" placeholder="Enter Email Name.." id="email"
                         value="<%=data.email %>">
                     </div>
@@ -107,7 +98,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="password">Password <span style="font-size: 8px;display: inline-block;">Leave blank If you don`t want to update password</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span> -->
                       <input type="password" name="password" class="form-control" placeholder="Update Password.."
                         id="password" value="">
                       <span toggle="#password"
@@ -120,7 +111,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="gender">
                         <option value="1" <%=data.gender=='1' ? 'selected' : '' %>>Male</option>
                         <option value="0" <%=data.gender=='0' ? 'selected' : '' %>>Female</option>
@@ -133,7 +124,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Time Zone<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="time_zone" id="time_zone">
                         <% for(let timeZone of timeZones) { %> 
                           <option value="<%=timeZone.tzid%>" <%=data.time_zone==timeZone.tzid ? 'selected' : '' %>><%=timeZone.name%></option>
@@ -144,11 +135,10 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="calendar_color">Calendar Color
-                    </label>
+                    <label class="col-form-label label-align" for="calendar_color">Calendar Color</label>
                     <div class="colorpicker-input">
                       <div class="input-group">
-                        <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                        <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                         <label class="form-control pb-0">
                           <input type="color" id="colorPicker" name="calendar_color" value="<%=data.calendar_color%>"/>
                           <span id="colorCode"><%=data.calendar_color%></span>
@@ -160,10 +150,9 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="subject_ids">Subjects<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="subject_ids[]" id="subject_ids" multiple>
                         <option value="">Please Select Subjects </option>
                         <% let i=0; for(subject of subjects) { %>
@@ -176,12 +165,49 @@
                   </div>
                 </div>
 
+                
+
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                    </label>
+                    <label class="col-form-label label-align" for="start_date">Start Date</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
+                      <input type="date" name="start_date" value="<%=moment(data.start_date).format('YYYY-MM-D');%>" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="start_date">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="end_date">End Date</label>
+                    <div class="input-group">
+                      <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
+                      <input type="date" name="end_date" value="<%=moment(data.end_date).format('YYYY-MM-D');%>" min="<%=moment().format('YYYY-MM-D');%>" class="form-control " id="end_date">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="address">Address</span></label>
+                    <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
+                      id="address"><%=data.address %></textarea>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="note">Note</span></label>
+                    <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
+                      id="note"><%=data.note %></textarea>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span></label>
+                    <div class="input-group">
+                      <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control" name="status" id="status" tabindex="-1" single>
                         <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
                         <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
@@ -190,52 +216,21 @@
                   </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" id="pay-rate-wrap">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="start_date">Start Date
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
-                      <input type="date" name="start_date" value="<%=moment(data.start_date).format('YYYY-MM-D');%>" min="<%=moment().format('YYYY-MM-D');%>" class="form-control" id="start_date">
+                    <label class="col-form-label label-align">Pay Rate</span></label>
+                    <div class="form-group">
+                        <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" value="<%= data.payroll?.[0]?.pay_rate_revenue_percentage ?? 0 %>" style="display: none;" /> -->
+                        <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" value="<%= data.payroll?.[0]?.pay_rate_hourly_rate ?? 0 %>" />
                     </div>
                   </div>
                 </div>
-
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="end_date">End Date
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
-                      <input type="date" name="end_date" value="<%=moment(data.end_date).format('YYYY-MM-D');%>" min="<%=moment().format('YYYY-MM-D');%>" class="form-control " id="end_date">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="address">Address</span>
-                    </label>
-                    <textarea name="address" rows="5" class="form-control" placeholder="Enter Address.."
-                      id="address"><%=data.address %></textarea>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="note">Note</span>
-                    </label>
-                    <textarea name="note" rows="5" class="form-control" placeholder="Enter Note.."
-                      id="note"><%=data.note %></textarea>
-                  </div>
-                </div>
-                </div>
+              </div>
 
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label class="col-form-label label-align" for="payroll_type">Payroll</span>
-                      </label>
+                      <label class="col-form-label label-align" for="payroll_type">Payroll</span></label>
                       <div class="form-group">
                         <% 
                           let selectedPayroll = data.payroll?.[0]?.type ?? "hourly_rate";
@@ -253,53 +248,11 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-md-12" id="pay-rate-wrap">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="col-form-label label-align">Pay Rate</span>
-                          </label>
-                          <div class="form-group">
-                              <!-- <input type="number" name="payroll[pay_rate_revenue_percentage]" class="form-control revenue_percentage_inp" placeholder="% of Revenue" value="<%= data.payroll?.[0]?.pay_rate_revenue_percentage ?? 0 %>" style="display: none;" /> -->
-                              <input type="number" name="payroll[pay_rate_hourly_rate]" class="form-control hourly_rate_inp" placeholder="Per Hour" value="<%= data.payroll?.[0]?.pay_rate_hourly_rate ?? 0 %>" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="col-form-label label-align">Make-Up Credits </span>
-                          </label>
-                          <div class="form-check">
-                            <input type="radio" name="payroll[payroll_credit_type]" class="form-check-input payroll_credit_type"
-                            value="credit_issue_on_issued"
-                            id="credit_issue_on_issued"
-                            <%= (data.payroll?.[0]?.payroll_credit_type == "credit_issue_on_issued" || !data.payroll?.[0]?.payroll_credit_type)  ? "checked" : ""  %> />
-                            <label class="form-check-label" for="credit_issue_on_issued">Pay when a make-up credit is issued</label>
-                          </div>
-
-                          <div class="form-check">
-                            <input type="radio" name="payroll[payroll_credit_type]" class="form-check-input payroll_credit_type"
-                            value="credit_issue_on_used"
-                            id="credit_issue_on_used"
-                            <%= data.payroll?.[0]?.payroll_credit_type == "credit_issue_on_used" ? "checked" : ""  %>  />
-                            <label class="form-check-label" for="credit_issue_on_used">Pay when a make-up credit is used</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div> -->
-                  </div>
-
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
               <div class="form-group drop-file">
-                <label class="col-form-label label-align" for="profile_image">Profile
-                  Image
-                </label>
+                <label class="col-form-label label-align" for="profile_image">Profile Image</label>
                 <div class="input-group">
                   <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto" <% if
                     (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>

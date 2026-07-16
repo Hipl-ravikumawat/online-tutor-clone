@@ -5,12 +5,12 @@
         <label class="col-form-label label-align" for="name">Group Tag Name<span class="required">*</span>
         </label>
         <div class="input-group">
-            <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+            <!-- <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span> -->
             <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name" maxlength="100" value="<%= data?.name || '' %>" />
         </div>
         </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="form-group">
             <label class="form-label" for="color">Color<span class="required">*</span></label>
             <select class="form-control" id="color" name="color" required>
@@ -23,7 +23,7 @@
         </div>
     </div>
     <% selectedStudentIds = data?.student_ids || []; %>
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="form-group">
             <label class="form-label" for="students">Assigned Students</label>
             <select class="form-control select2"  name="student_ids[]" multiple>

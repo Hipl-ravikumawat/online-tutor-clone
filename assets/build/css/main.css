@@ -35,13 +35,11 @@ button,
 .btn:focus {
     box-shadow: none !important;
 }
-
 ul {
     padding: 0;
     margin: 0;
     list-style: none;
 }
-
 .theme-btn {
     background: var(--secondary);
     display: inline-block;
@@ -57,12 +55,33 @@ ul {
     outline: none;
     transition: all 0.3s ease-in;
 }
-
 .theme-btn:hover {
     background: var(--primary);
     color: #fff;
 }
-
+.gray-btn,
+.dele_btn{
+    background: var(--lightBlue);
+    display: inline-block;
+    color: var(--white);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    text-transform: capitalize;
+    padding: 9px 12px;
+    margin: 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease-in;
+}
+.dele_btn{
+    background-color: var(--secondary);
+}
+.gray-btn:hover,
+.dele_btn:hover{
+    color: var(--white);
+}
 .btn-transparent {
     background: transparent;
     color: #db2838;
@@ -1474,7 +1493,7 @@ span.total-count {
     display: none;
     background: #fff;
     border-radius: 20px;
-    padding: 24px;
+    padding: 30px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
 }
 
@@ -1575,28 +1594,33 @@ span.total-count {
     background-position: calc(100% - 12px) center;
 }
 .right_col .form-wizard .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 .right_col .form-wizard .form-design .form-label {
     font-size: 14px;
     font-weight: 500;
     color: var(--dblue);
+    margin-bottom: 6px;
 }
 .right_col .form-wizard .form-design .form-control {
-    background: var(--lightgray);
-    height: 40px;
-    border-radius: 5px;
+    background: var(--inputBg);
+    height: 44px;
+    border-radius: 8px;
     border: none;
     font-size: 14px;
     font-weight: 400;
     color: var(--dblue);
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .right_col .form-wizard .form-design textarea.form-control {
-    height: 60px;
+    height: 100px;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 .right_col .form-wizard .form-design .drop-file {
-    background: var(--lightgray);
-    border-radius: 5px;
+    background: var(--inputBg);
+    border-radius: 8px;
     padding: 30px 50px;
     text-align: center;
 }
@@ -1611,80 +1635,14 @@ span.total-count {
     color: var(--primary) !important;
 }
 
-/* .x_content .drop-file {
-    text-align: center;
-}
-
-.right_col .dropzone {
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-}
-
-.right_col .dropzone .dz-preview.dz-file-preview .dz-image {
-    border-radius: 5px;
-    background: var(--lightgray);
-    z-index: 1;
-}
-
-.right_col .dropzone .dz-preview.dz-file-preview .dz-details {
-    z-index: 2;
-}
-
-.right_col .dropzone .dz-preview .dz-progress {
-    z-index: 3;
-    margin-top: 35px;
-    height: 10px;
-}
-
-.right_col .dropzone .dz-preview .dz-progress .dz-upload {
-    background: var(--dblue);
-}
-
-.right_col .dropzone .drop-icon {
-    position: relative;
-}
-
-.right_col .dropzone .drop-icon:before {
-    content: '\e800';
-    font-family: "dropify";
-    color: #4A4674;
-    font-weight: 900;
-    font-size: 50px;
-}
-
-.right_col .dropzone .dz-remove {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 4;
-    font-size: 0;
-}
-
-.right_col .dropzone .dz-remove:after {
-    font-family: 'FontAwesome';
-    content: "";
-    background: var(--lightgray) url(../../images/close.svg) no-repeat center center / 15px;
-    border: 2px solid var(--border-color);
-    position: absolute;
-    right: -5px;
-    top: -5px;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    transition: all 0.3s ease-in;
-}
-
-.right_col .dropzone .dz-remove:hover:after {
-    border: 2px solid var(--red);
-} */
-
 .right_col .form-wizard .form-design .drop-file .dropify-wrapper,
 .x_content .drop-file .dropify-wrapper {
-    border: 2px dashed #4A4674;
-    border-radius: 10px;
+    border: none;
+    border-radius: 0;
     height: 250px;
     max-width: 500px;
     margin: 0 auto;
+    background: transparent;
 }
 
 .right_col .form-wizard .dropify-wrapper .dropify-message span.file-icon:before,
@@ -3200,7 +3158,7 @@ span.total-count {
     /* box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 9%); */
     background: var(--inputBg);
     border: none;
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px;
     font-size: 14px;
     color: var(--dblue);
 }
@@ -3209,6 +3167,10 @@ span.total-count {
 }
 .form_panel .x_content textarea.form-control {
     border-radius: 8px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 .form_panel .x_content .iti.iti--allow-dropdown {
     border-radius: 8px;
@@ -3292,10 +3254,12 @@ span.total-count {
 }
 
 .form_panel .x_content .input-group .form-control {
-    border-radius: 0px 8px 8px 0px;
+    border-radius: 8px;
     color: var(--dblue);
     border: none !important;
     background-color: var(--inputBg) !important;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .form-control:disabled, .form-control[readonly]{
     background-color: var(--inputBg) !important;
@@ -3371,18 +3335,22 @@ span.total-count {
 }
 .form_panel .select2-container .select2-search--inline .select2-search__field {
     margin-top: 0px;
-    padding: 10px;
+    padding: 7px 0 6px;
     width: 100% !important;
 }
 .form_panel .select2-container--default .select2-selection--single,
 .form_panel .select2-container--default .select2-selection--multiple {
     min-height: 44px;
-    border-radius: 0 8px 8px 0;
-    /* border: 1px solid #c5dae5; */
+    border-radius: 8px;
     background: var(--inputBg);
 }
 .form_panel .select2-container--default .select2-selection--single{
     overflow: hidden;
+}
+.inline_radiobox{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
 }
 .form_panel .select2-container--default .select2-selection--single .select2-selection__rendered{
     white-space: normal;
@@ -6045,9 +6013,9 @@ span.total-count {
         margin-bottom: 20px;
     }
 
-    .right_col .form-wizard .form-design .form-label {
+    /* .right_col .form-wizard .form-design .form-label {
         font-size: 12px;
-    }
+    } */
 
     .right_col .form-wizard .form-design .drop-file .form-label {
         font-size: 14px;
@@ -6849,6 +6817,7 @@ h2.title-text {
 .select2-container .select2-search--inline .select2-search__field {
     font-size: 14px;
     margin-top: 8px;
+    width: auto !important;
 }
 
 input[type=time]::-webkit-datetime-edit-ampm-field {
@@ -7864,7 +7833,7 @@ div.dataTables_processing>div:last-child>div {
 .right_col .back-page{
     background: #fff;
     border-radius: 20px;
-    padding: 24px;
+    padding: 24px 30px;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
     margin-bottom: 22px;
 }
@@ -9370,7 +9339,7 @@ span.index-number.opt-incorrect {
     border-radius: 20px;
 }
 .bussniess_setting .card .card-body {
-    padding: 24px;
+    padding: 30px;
 }
 .bussniess_setting .userprofile {
     border: none;
@@ -9591,7 +9560,7 @@ span.index-number.opt-incorrect {
 }
 .settings_content .form-group .form-check-label {
     padding-left: 25px;
-    color: var(--dblue);
+    color: var(--primary-light);
     font-weight: 400;
 }
 .settings_content label {
@@ -9697,12 +9666,12 @@ span.index-number.opt-incorrect {
     background-color: #ddd;
 }
 .theme-btn.cancel-btn{
-    background-color: #F8FAFB;
-    color: var(--dblue);
+    background-color: var(--lightBlue);
+    color: var(--white);
     position: relative;
     overflow: hidden;
 }
-.theme-btn.cancel-btn::before{
+/* .theme-btn.cancel-btn::before{
     content: '';
     width: 100%;
     height: 100%;
@@ -9712,7 +9681,7 @@ span.index-number.opt-incorrect {
     margin: auto;
     border: 1px solid #D2D6E3;
     transition: all ease-in-out 0.3s;
-}
+} */
 .theme-btn.cancel-btn:hover{
     border-color: var(--primary);
     background-color: var(--primary);
@@ -9721,8 +9690,20 @@ span.index-number.opt-incorrect {
 .theme-btn.cancel-btn:hover::before{
     border-color: var(--primary);
 }
+.devider-border{
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
 .settings_content .tabcard .form-group {
     box-sizing: border-box;
+}
+.colorpicker-input>.input-group .form-control input{
+    margin-left: 0;
+    margin-top: 10px;
+}
+.colorpicker-input>.input-group input + span{
+    transform: translateY(-4px);
+    display: inline-block;
 }
 .settings_content .tabcard .btngroup{
     display: none;
@@ -13393,7 +13374,7 @@ span.duration-label {
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
 }
 .card_style>.card-body{
-    padding: 24px;
+    padding: 30px;
 }
 .table_dropdown .dropdown-toggle{
     border: none;
@@ -13619,7 +13600,7 @@ span.duration-label {
 }
 .select2-default-height .select2-container--default .select2-selection--multiple{
     height: auto;
-    min-height: 40px;
+    min-height: 44px;
 }
 /* .family-contacts-wrap{
     margin-bottom: 10px;
@@ -14008,22 +13989,23 @@ span.duration-label {
 } */
 .date-hide{ color: transparent !important; }
 .date-overlay{
-  position: absolute;
-  left: 52px;
-  right: 40px;
-  top: 23px;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--dblue);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background-color: var(--inputBg);
-  padding: 10px;
-  z-index: 3;
-  font-size: 12px;
+    position: absolute;
+    left: 0;
+    right: 40px;
+    top: 23px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--dblue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: var(--inputBg);
+    padding: 11px 15px;
+    z-index: 3;
+    font-size: 14px;
     font-weight: 400;
     line-height: 1.5;
+    border-radius: 8px 0 0 8px;
 }
 
 .learning_content_group{display: none;}
@@ -14688,12 +14670,38 @@ span.duration-label {
     .main_dash_cards{
         grid-template-columns: repeat(3, 1fr);
     }
+    .x_panel,
+    .card_style>.card-body,
+    .bussniess_setting .card .card-body,
+    .right_col .back-page,
+    .form-wizard .wizard-fieldset{
+        padding: 20px;
+    }
 }
 @media screen and (max-width: 991px){
     .modal-open .modal.bussiness-setting-modal{
         overflow-x: hidden;
         overflow-y: auto;
     }
+
+    .x_content div.dataTables_wrapper div.dataTables_length label select,
+    .x_panel .x_title .right-btns{
+        width: 100%;
+    }
+    .x_panel .x_title .right-btns>*,
+    .x_panel .x_title .right-btns .dropdown-toggle,
+    .x_panel .x_title .right-btns .theme-btn{
+        width: 100%;
+        margin: 0 !important;
+    }
+    .filter_top.date_dropdown{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .bus-outline-btn{
+        text-align: left;
+    }
+
     .bussiness-setting-modal .modal-content{
         max-height: max-content;
     }

@@ -13,7 +13,7 @@
                     class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/assessment.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/assessment.svg" class="mCS_img_loaded"></span> -->
                   <input type="text" name="name" class="form-control"  autocomplete="off" id="assessment_name" placeholder="Assessment Name">
                 </div>
               </div>
@@ -25,7 +25,7 @@
                   <label class="col-form-label label-align" for="tutor_id">Tutor <span class="required">*</span>
                   </label>
                   <div class="input-group">
-                    <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                    <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                     <select class="form-control select2" name="tutor_id" id="tutor" tabindex="-1" single>
                       <option value="">Select Tutor</option>
                       <% for(tutor of tutors) { %>
@@ -43,7 +43,7 @@
                 <label class="col-form-label label-align" for="student_id">Students <span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" name="student_ids[]" id="student_id" tabindex="-1" data-placeholder="Select Students" multiple>
                     <% for(student of students) { %>
                       <option value="<%=student.id%>">
@@ -59,7 +59,7 @@
                 <label class="col-form-label label-align" for="date">Date<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                   <input type="text" name="date" class="form-control" placeholder="Enter Date" id="datepicker">
                 </div>
               </div>
@@ -70,7 +70,7 @@
                     class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" name="task_types" id="assessment_type" tabindex="-1" multiple>
                     <option value="1">Practices</option>
                     <option value="2">Challenges</option>
@@ -94,7 +94,7 @@
                 <label class="col-form-label label-align" for="select_lesson">Grade <span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" data-placeholder="Select A Grade" id="sc_grade" tabindex="-1" single>
                     <% for(grade of activeGrades) { %>
                       <option value="<%=grade.id%>">
@@ -111,7 +111,7 @@
                 <label class="col-form-label label-align" for="select_lesson">Topic <span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" data-placeholder="Select A Topic" id="sc_topic" tabindex="-1" single>
                     <% for(topic of activeTopics) { %>
                       <option value="<%=topic.id%>">
@@ -128,7 +128,7 @@
                 <label class="col-form-label label-align" for="select_lesson">Sub Topic<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" data-placeholder="Select Sub Topic" id="sc_sub_topic" tabindex="-1" single>
                     <option value="">Select A Topic</option>
                     <!-- <% for(topic of activeTopics) { %>
@@ -146,7 +146,7 @@
                 <label class="col-form-label label-align" for="select_lesson">Learning Content <span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" data-placeholder="Select Learning Content" id="assignedLearningContents" tabindex="-1" single>
                     <option value="">Select Learning Content</option>
                     <!-- <% for(learningContent of learningContents){ %>
@@ -164,7 +164,7 @@
                 <label class="col-form-label label-align" for="select_lesson">Lessons<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2" data-placeholder="Select Lessons" id="assignedLessons" tabindex="-1"
                     multiple>
                   </select>
@@ -178,7 +178,7 @@
                     class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                  <!-- <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span> -->
                   <select class="form-control select2 challenges" data-placeholder="Select Content" id="assessment_content"
                     tabindex="-1" multiple>
                     
@@ -187,16 +187,15 @@
               </div>
             </div>
 
-            <div class="col-md-4">
-              <label class="d-block">&nbsp;</span>
-              </label>
+            <div class="col-md-12 text-right">
+              <div class="ln_solid"></div>
               <button type="button" class="content-submit theme-btn" id="add_content">Add Content</button>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-12 mt-4">
-              <h2 class="title-text fn-16">Homework Content</h2>
+              <h2 class="title-text">Homework Content</h2>
             </div>
             <div class="col-sm-12">
               <ul class="selectedcontent sortable select-assessment" id="select-assessment">

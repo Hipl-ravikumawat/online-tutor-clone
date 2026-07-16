@@ -1,22 +1,22 @@
 <div class="right_col" role="main">
   <!-- student page content starts -->
-  <div class="row main_row">
+  <div class="row main_row max-w-1440">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text">Edit Student</h2>
+        <h2 class="title-text mb-0">Edit Student</h2>
       </div>
       <div class="x_content">
         <form id="updateStudent" action="/students/update" method="post" class="form-horizontal form-label-left"
           enctype="multipart/form-data">
           <input type="hidden" name="student_id" value="<%=data.id %>">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="title">Title</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="title" id="title" tabindex="-1" single>
                         <option value="">Select Title</option>
                         <option value="Mr" <%=data.title=='Mr' ? 'selected' : '' %>>Mr</option>
@@ -31,7 +31,7 @@
                     <label class="col-form-label label-align" for="first_name">Account No.<span class="required">*</span>
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" class="form-control" placeholder="Registration No..."
                          value="<%=data.account_number %>" disabled readonly>
                     </div>
@@ -42,7 +42,7 @@
                     <label class="col-form-label label-align" for="first_name">First Name<span class="required">*</span>
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="first_name" class="form-control" placeholder="Enter First Name.."
                         id="first_name" value="<%=data.first_name %>" maxlength="50">
                     </div>
@@ -53,7 +53,7 @@
                     <label class="col-form-label label-align" for="last_name">Last Name<span class="required">*</span>
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/student.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="last_name" class="form-control" placeholder="Enter Last Name.."
                         value="<%=data.last_name %>" id="last_name" maxlength="50">
                     </div>
@@ -61,9 +61,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="phone">Contact No.
-                     
-                    </label>
+                    <label class="col-form-label label-align" for="phone">Contact No</label>
                     <div class="phone-group">
                       <input type="hidden" name="dial_code" id="dial_code" value="<%=data.dial_code%>">
                       <input type="hidden" name="iso_code" id="iso_code" value="<%=data.iso_code%>">
@@ -81,7 +79,7 @@
                     <label class="col-form-label label-align" for="email">Email Address
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span> -->
                       <input type="email" name="email" class="form-control" value="<%= data.email || '' %>" readonly
                         placeholder="<%= data.email ? '' : 'Enter Email...' %>" id="email">
                     </div>
@@ -92,7 +90,7 @@
                     <label class="col-form-label label-align" for="ndis_number">NDIS 
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" autocomplete="no-email" name="ndis_number" class="form-control" placeholder="Enter NDIS No.." id="ndis_number" value="<%=data.ndis_number %>">
                     </div>
                   </div>
@@ -101,7 +99,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="password">Password <span style="font-size: 8px;display: inline-block;">Leave blank If you don`t want to update password</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/lock.svg" class="mCS_img_loaded"></span> -->
                       <input type="password" name="password" class="form-control" placeholder="Update Password.."
                         id="password" value="">
                       <span toggle="#password"
@@ -113,7 +111,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Gender<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="gender">
                         <option value="1" <%=data.gender=='1' ? 'selected' : '' %>>Male</option>
                         <option value="0" <%=data.gender=='0' ? 'selected' : '' %>>Female</option>
@@ -126,7 +124,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="gender">Time Zone<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/gender.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="time_zone" id="time_zone">
                         <% for(let timeZone of timeZones) { %> 
                           <option value="<%=timeZone.tzid%>" <%=data.time_zone==timeZone.tzid ? 'selected' : '' %>><%=timeZone.name%></option>
@@ -139,17 +137,16 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="birth_day">Birthday</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                       <input type="date" name="birth_day" class="form-control " max="<%=moment().format('YYYY-MM-D');%>" id="birth_day" value="<%=birth_day %>">
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="col-form-label label-align" for="grade_id">Grade<span
-                        class="required">*</span></label>
+                    <label class="col-form-label label-align" for="grade_id">Grade<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/level.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/level.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="grade_id" id="grade_id">
                         <option value="">Select Grade</option>
                         <% for(Grade of grade){ %>
@@ -164,7 +161,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="school">School<span class="required">*</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="school_id" id="school_id">
                         <option value="">Select School</option>
                         <% for(school of school_data) { %>
@@ -180,7 +177,7 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="group_tag_id">Group Tag</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
                       <select class="form-control select2" name="group_tag_id" id="group_tag_id">
                         <option value="">Select Group Tag</option>
                         <% for(groupTag of groupTags) { %>
@@ -199,33 +196,19 @@
                   <div class="form-group">
                     <label class="col-form-label label-align" for="referrer">Referrer</label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/referrer.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/referrer.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="referrer" class="form-control " placeholder="Referrer.."
                         id="referrer" value="<%=data.referrer %>">
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2" name="status" id="status">
-                        <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
-                        <option value="2" <%=data.status=='2' ? 'selected' : '' %>>Trial</option>
-                        <option value="3" <%=data.status=='3' ? 'selected' : '' %>>Waiting</option>
-                        <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                
                 <div class="col-md-6">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="start_date">Start Date
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                       <input type="date" name="start_date" value="<%=moment(data.start_date).format('YYYY-MM-D');%>" class="form-control" id="start_date">
                     </div>
                   </div>
@@ -235,11 +218,28 @@
                     <label class="col-form-label label-align" for="end_date">End Date
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span>
+                      <!-- <span class="input-group-text"><img src="/images/date.svg" class="mCS_img_loaded"></span> -->
                       <input type="date" name="end_date" value="<%=moment(data.end_date).format('YYYY-MM-D');%>" class="form-control " id="end_date">
                     </div>
                   </div>
                 </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                      <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span> -->
+                      <select class="form-control select2" name="status" id="status">
+                        <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
+                        <option value="2" <%=data.status=='2' ? 'selected' : '' %>>Trial</option>
+                        <option value="3" <%=data.status=='3' ? 'selected' : '' %>>Waiting</option>
+                        <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="col-md-12">
                   <div class="form-group">
                     <label class="col-form-label label-align" for="notes">Notes </label>
@@ -249,15 +249,17 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group drop-file">
+            <div class="col-md-12">
+              <div class="form-group">
                 <label class="col-form-label label-align" for="profile_image">Profile Image</label>
-                <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto" <% if
-                  (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
-                data-default-file="/ProfileImage/<%=data.profile_image%>" <% }%>
-                    data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
-                    <% if (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
-                      value=" <%=data.profile_image %>" <% } else { %> value="" <% } %> >
+                <div class="drop-file">
+                  <input type="file" name="profile_image" id="profile_image" class="form-control dropify h-auto" <% if
+                    (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
+                  data-default-file="/ProfileImage/<%=data.profile_image%>" <% }%>
+                      data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
+                      <% if (data.profile_image !='' && fs.existsSync("assets/ProfileImage/"+data.profile_image)) { %>
+                        value=" <%=data.profile_image %>" <% } else { %> value="" <% } %> >
+                </div>
               </div>
               <input type="hidden" name="is_remove" id="is_image_removed" value="0">
               <input type="hidden" name="redirectUrl" value="<%= redirectUrl %>">
