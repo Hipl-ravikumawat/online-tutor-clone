@@ -10071,7 +10071,17 @@ span.index-number.opt-incorrect {
     background-color: rgba(212, 247, 255, 1);
 }
 .bg-LightCream{
-    background-color: #fbe5de;
+    background-color: #f8f3f5;
+}
+
+.recurring_Charge{
+    border-radius: 10px;
+}
+.settings_content .recurring_Charge .radio_group .radiolabel{
+    background-color: #e4edfa;
+}
+.bg-inner-input{
+    background-color: #e4edfa !important;
 }
 
 .dashboard-box{
