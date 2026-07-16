@@ -1,6 +1,5 @@
 <div class="right_col" role="main">
-    <!-- edit learningContent page content starts -->
-    <div class="form-wizard">
+    <div class="form-wizard max-w-1440">
         <form id="updateContent" action="/learning-content/update" class="form-design" method="post" enctype="multipart/form-data"
             autocomplete="off">
             <fieldset class="wizard-fieldset show">
@@ -81,30 +80,28 @@
                     </div>
         
                     <div class="col-sm-12">
-                        <div class="form-group">
+                        <div class="drop-file">
                             <label class="form-label">Upload Thumbnail</label>
-                            <div class="drop-file">
-                                <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
-                                data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" <% if
-                                (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
-                            data-default-file="/LearningContent/<%=LearningContent.content_directory+"/"+LearningContent.thumbnail%>" <% }%>
-                                data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
-                                <% if (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
-                                    value=" <%=LearningContent.thumbnail %>" <% } else { %> value="" <% } %> >
-                                    <input type="hidden" name="is_remove" id="is_image_removed" value="0">
-                            </div>
+                            <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
+                            data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" <% if
+                            (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
+                          data-default-file="/LearningContent/<%=LearningContent.content_directory+"/"+LearningContent.thumbnail%>" <% }%>
+                              data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M"
+                              <% if (LearningContent.thumbnail !='' && fs.existsSync("assets/LearningContent/"+LearningContent.content_directory+"/"+LearningContent.thumbnail)) { %>
+                                value=" <%=LearningContent.thumbnail %>" <% } else { %> value="" <% } %> >
+                                <input type="hidden" name="is_remove" id="is_image_removed" value="0">
                             <div class="wizard-form-error"></div>
                         </div>
+
                     </div>
+
                 </div>
-                <div class="ln_solid"></div>
                 <div class="form-group mb-0 mt-4 clearfix">
                     <button type="submit" class="form-wizard-submit theme-btn float-right" id="updateContentBtn">Update</button>
                 </div>
             </fieldset>
         </form>
     </div>
-    <!-- edit learningContent page content end -->
 </div>
 
 <%- include('./form_script'); %>

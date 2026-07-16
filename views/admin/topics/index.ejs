@@ -1,10 +1,23 @@
 <div class="right_col" role="main">
-  <!-- topic index page content starts -->
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade5"><%=topicObject.total ?? '0' %></span>
-        <h3 class="title-text mb-0">Total</h3>
+  <div class="max-w-1440">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade5"><%=topicObject.total ?? '0' %></span>
+          <h3 class="title-text mb-0">Total</h3>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade1"><%=topicObject.active ??'0' %></span>
+          <h3 class="title-text mb-0">Active</h3>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade3"><%=topicObject.deactive ?? '0' %></span>
+          <h3 class="title-text mb-0">Deactive</h3>
+        </div>
       </div>
     </div>
     <div class="row">
@@ -35,7 +48,7 @@
             </ul>
           </div>
           <div class="x_title">
-            <h2 class="title-text mb-0">Main Topics List</h2>
+            <h2 class="title-text">Main Topics List</h2>
             <ul class="right-btns">
               <li>
                 <a
@@ -47,16 +60,30 @@
                   title="Add Topic"
                   >+ Add Topic</a
                 >
-                  <thead>
-                    <tr>
-                      <th>Image</th>
-                      <th>Name</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                  <table
+                    id="topicTable"
+                    class="table table-striped table-bordered dt-responsive nowrap"
+                    cellspacing="0"
+                    width="100%"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -64,6 +91,5 @@
       </div>
     </div>
   </div>
-  <!-- topic index page content end -->
 </div>
 <%- include('./index_script'); %>

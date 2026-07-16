@@ -21,15 +21,15 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group">
+            <div class="form-group position-relative">
                 <label class="form-label" for="payment_refund_date">Date<span class="required">*</span></label>
                 <input 
                 type="text" 
-                class="form-control" 
+                class="form-control pl-40" 
                 id="payment_refund_date" 
                 name="payment_refund_date" 
                 value="<%= transaction ? moment(transaction.date, 'DD-MM-YYYY').format('DD-MM-YYYY') : '' %>">
-                <!-- <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span> -->
+                <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
             </div>
         </div>
         <div class="col-md-6">
@@ -63,14 +63,14 @@
         <div class="col-md-12">
             <div class="form-group">
                 <label for="note" class="form-label">Description</label>
-                <textarea class="form-control" name="note" rows="4" value="<%= transaction ? transaction.note : '' %>"><%= transaction ? transaction.note : '' %></textarea>
+                <textarea class="form-control" name="note" rows="3" value="<%= transaction ? transaction.note : '' %>"><%= transaction ? transaction.note : '' %></textarea>
             </div>
         </div>
         
         <% if(!transaction){ %>
             <div class="col-md-12">
                 <div id="send-receipt-wrapper">
-                    <div class="form-group form-check mb-3">
+                    <div class="form-group form-check mt-2 mb-3">
                         <input class="form-check-input mt-1" type="checkbox" id="sendReceipt" name="send_receipt" value="1" />
                         <label class="form-check-label" for="sendReceipt">Send Email Receipt</label>
                     </div>
@@ -85,7 +85,7 @@
                                 <input type="hidden" name="contact_user_id" id="contact_user_id" value="<%= transaction.email_recipient_id || '' %>" />
                             <% } %>
                         </div>
-                        <div class="form-group form-check mb-1">
+                        <div class="form-group form-check mb-2">
                             <input class="form-check-input mt-1" type="checkbox" id="ccEmail" name="cc_me_email" />
                             <label class="form-check-label" for="ccEmail">CC me in this email</label>
                         </div>
@@ -159,15 +159,15 @@
 
     <div class="row">
         <div class="col-md-6 mb-3">
-            <div class="form-group mb-0">
+            <div class="form-group mb-0 position-relative">
                 <label for="charges_discount_date" class="form-label">Date<span class="required">*</span></label>
                 <input 
                 type="text" 
-                class="form-control full_date_click" 
+                class="form-control pl-40 full_date_click" 
                 id="charges_discount_date" 
                 name="charges_discount_date" 
                 value="<%= transaction ? moment(transaction.date, 'DD-MM-YYYY').format('DD-MM-YYYY') : '' %>" />
-                <!-- <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span> -->
+                <span class="input-icon"><img src="/images/calendar.svg" alt="calendar-icon"></span>
             </div>
         </div>
         <div class="col-md-6 mb-3">

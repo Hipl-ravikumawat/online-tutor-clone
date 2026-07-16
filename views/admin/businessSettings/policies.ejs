@@ -20,7 +20,7 @@
                           </ul>
                         </div>
                         <div class="col-12 px-0">
-                          <h6 class="setting_name policy m-0">Allow prior cancellation up to</h6>
+                          <h6 class="setting_name policy">Allow prior cancellation up to</h6>
                           <div class="prior-input">
                             <input type="number" name="prior_cancellation_time" class="cancellation-input-group" value="<%=businessSetting?.cancellation_policy[0].prior_cancellation_time%>" min="0"  mix="72" disabled>
                             <label class="prior-label">Hours</label>
@@ -35,7 +35,7 @@
                           </ul>
                         </div>
                         <div class="col-12 px-0">
-                          <h6 class="setting_name policy m-0">If an event is cancelled before a deadline 
+                          <h6 class="setting_name policy">If an event is cancelled before a deadline 
                             <!-- <span class="subtitle">Mark as "Absent, Notice Given"</span> -->
                           </h6>
                           <div class="prior-input">
@@ -46,7 +46,7 @@
                           </div>
                         </div>
                         <div class="col-12 px-0">
-                          <h6 class="setting_name policy m-0">If an event is cancelled after a deadline 
+                          <h6 class="setting_name policy">If an event is cancelled after a deadline 
                             <!-- <span class="subtitle">Mark as "Absent, Bill & Give Make-Up Credit ($)"</span> -->
                           </h6>
                           <div class="prior-input">
@@ -57,8 +57,9 @@
                           </div>
                         </div>
                         <div class="col-12 px-0">
-                          <h6 class="setting_name policy m-0"><span>Policy Text <small>(Optional)</small></span> <span class="subtitle">No cancellation policy text has been added.</span></h6>
-                          <div class="prior-input mw-100">
+                          <h6 class="setting_name policy m-0"><span>Policy Text <small>(Optional)</small></span> </h6>
+                          <span class="subtitle size-12">No cancellation policy text has been added.</span>
+                          <div class="prior-input mw-100 mt-2">
                             <textarea name="policy_text" class="cancellation-input-group" disabled><%=businessSetting?.cancellation_policy[0].policy_text%></textarea>
                           </div>
                         </div>

@@ -97,7 +97,7 @@ async function index(req, res) {
     const sentFrom = [
       {
         value: process.env.APP_EMAIL || "alicia@pioneerstutoring.com",
-        label: process.env.APP_NAME ||  "Pioneers Learning Hub"
+        label: process.env.APP_NAME ||  "HIPL Learning Hub"
       },
       {
         value: userDetails.email,

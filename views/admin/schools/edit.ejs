@@ -1,8 +1,9 @@
 <div class="right_col" role="main">
-  <div class="row main_row max-w-1440">
+  <!-- edit school page content starts -->
+  <div class="row main_row">
     <div class="x_panel form_panel">
       <div class="x_title">
-        <h2 class="title-text mb-0">Edit School</h2>
+        <h2 class="title-text">Edit School</h2>
       </div>
       <div class="x_content">
         <form id="updateSchool" action="/schools/update" method="post" class="form-horizontal form-label-left">
@@ -13,7 +14,7 @@
                 <label class="col-form-label label-align" for="name">School Name<span class="required">*</span>
                 </label>
                 <div class="input-group">
-                  <!-- <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span> -->
+                  <span class="input-group-text"><img src="/images/school.svg" class="mCS_img_loaded"></span>
                   <input type="text" name="name" class="form-control" placeholder="Enter Name.." id="name"
                     value="<%=data.name %>" maxlength="100">
                 </div>
@@ -36,7 +37,7 @@
                 <label class="col-form-label label-align" for="email">Email Address
                 </label>
                 <div class="input-group">
-                  <!-- <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span> -->
+                  <span class="input-group-text"><img src="/images/email.svg" class="mCS_img_loaded"></span>
                   <input type="email" name="email" class="form-control" placeholder="Enter Email.." id="email"
                     value="<%=data.email %>">
                 </div>
@@ -47,7 +48,7 @@
                 <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
                 </label>
                 <div class="input-group flex-nowrap">
-                  <!-- <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span> -->
+                  <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
                   <select class="form-control" name="status" id="status" tabindex="-1" single>
                     <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
                     <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
@@ -74,6 +75,7 @@
       </div>
     </div>
   </div>
+  <!-- edit school page title end -->
 </div>
 </div>
 <script>

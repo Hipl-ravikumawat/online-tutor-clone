@@ -1,11 +1,15 @@
 <div class="right_col" role="main">
-    <div class="settings_content max-w-1440">
-        <a class="back-link" href="/families-invoices#Invoices"><span class="fa fa-chevron-left mr-2"></span>Back to invoices</a>
-        <h2 class="title-text mt-3 mb-4 size-22">New Invoice</h2>
-        <div class="card card_style">
+    <div class="settings_content">
+        <a class="back-link" href="/families-invoices#Invoices"><span class="fa fa-chevron-left mr-2"></span>Back to
+            invoices</a>
+        <h2 class="title-text my-4">New Invoice</h2>
+        <div class="card">
             <div class="card-body form-wizard">
                 <form class="form-design" action="/families-invoices/invoices/store" id="new-invoice-form" method="post">
+
+                    <!-- Add this hidden field at the top of the form -->
                     <input type="hidden" name="redirect_to" value="<%= studentId ? '/families-invoices/family/' + studentId + '#invoices' : '/families-invoices#Invoices' %>">
+                    
                     <h2 class="title-text mb-4" id="">Who do you want to create an invoice for?</h2>
                     <div class="form-group mb-2 select2-default-height">
                         <div class="d-flex justify-content-between">

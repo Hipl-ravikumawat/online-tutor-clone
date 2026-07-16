@@ -1,7 +1,5 @@
 /node_modules
-.env
-*.log
-*.zip
+/index.js
 /db    
 /db/*
 /assets/LearningContent    

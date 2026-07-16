@@ -1,11 +1,11 @@
 <div class="right_col" role="main">
   <div class="form-wizard max-w-1440">
-    <a class="back-link" href="/learning-content"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
-    <form id="createContent" action="./store" class="form-design mt-3" method="post" enctype="multipart/form-data"
+    <form id="createContent" action="./store" class="form-design" method="post" enctype="multipart/form-data"
       autocomplete="off">
       <fieldset class="wizard-fieldset show">
-        <div class="mb-20">
-          <h2 class="title-text mb-0">Basic Information</h2>
+        <div class="mb-30">
+          <a class="back-link" href="/learning-content"><span class="fa fa-chevron-left mr-2"></span>Back to list</a>
+          <h2 class="title-text mb-0 mt-3">Basic Information</h2>
         </div>
 
         <div class="row">
@@ -74,23 +74,22 @@
           </div>
 
           <div class="col-sm-12">
-            <div class="form-group">
+            <div class="drop-file">
               <label class="form-label">Upload Thumbnail</label>
-              <div class="drop-file">
-                <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto" data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="2M">
-              </div>
+              <input type="file" name="thumbnail" id="thumbnail" class="form-control h-auto"
+                data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="2M">
               <div class="wizard-form-error text-red"></div>
             </div>
           </div>
+
         </div>
-        <div class="ln_solid"></div>
+
         <div class="form-group mb-0 mt-4 clearfix">
           <button class="form-wizard-submit theme-btn float-right" id="createContentBtn">Save</button>
         </div>
       </fieldset>
     </form>
   </div>
-    <!-- create learningContent page content end -->
 </div>
 
 <%- include('./form_script'); %>
