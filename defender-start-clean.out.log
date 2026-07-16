@@ -1,0 +1,14 @@
+
+> tutorial@1.0.0 start
+> nodemon index.js
+
+[33m[nodemon] 2.0.22[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `node index.js`[39m
+Server is running on port: 8001
+connected to database :: MySQL
+Scheduling Auto-Invoicing at 2:00 -> cron: 0 2 * * *
+02:00 runTime
+Scheduling Auto-Invoicing at 2:00 -> cron: 0 2 * * *

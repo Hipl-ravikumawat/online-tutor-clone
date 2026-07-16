@@ -364,7 +364,24 @@
     <% } %>
     <% } %>
 
-    <% if (loggedUserInfo.role !== 2) { %>
+    <% if(loggedUserInfo.role === 4) { %>
+    <div class="main_dash_cards mb-5">
+      <div class="dashboard-box">
+        <div class="dash-leftblock">
+          <div class="dash_inner_icon">
+            <span><img src="/images/courses-orange.svg" alt=""></span>
+          </div>
+          <div class="dash_inner_content">
+            <h3 class="title-text mb-0">Active Learning Contents</h3>
+            <p><%= staticesData?.learningContents ?? 0 %></p>
+          </div>
+          <a href="/learning-content" class="see-more-btn">See details</a>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (loggedUserInfo.role === 1 || loggedUserInfo.role === 3) { %>
     <div class="week-agenda"></div>
     <% } %>
 
@@ -532,7 +549,7 @@
   }
 
   $(document).ready(function () {
-    <% if (loggedUserInfo.role !== 2) { %>
+    <% if (loggedUserInfo.role === 1 || loggedUserInfo.role === 3) { %>
       fetchWeekAgenda();
       <% } %>
 

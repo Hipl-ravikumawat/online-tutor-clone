@@ -1,5 +1,4 @@
 const mysqlOrm = require('mysql-orm');
-const { required } = require("nodemon/lib/config");
 const { generate } = require("randomstring");
 var slugify = require("slugify");
 

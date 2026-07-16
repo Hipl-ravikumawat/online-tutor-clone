@@ -1,0 +1,5 @@
+Server is running on port: 8001
+connected to database :: MySQL
+Scheduling Auto-Invoicing at 2:00 -> cron: 0 2 * * *
+02:00 runTime
+Scheduling Auto-Invoicing at 2:00 -> cron: 0 2 * * *
