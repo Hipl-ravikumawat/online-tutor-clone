@@ -4,8 +4,8 @@
     gap: 30px;
   }
   .main{
-    flex: 0 0 calc(100% - 310px); 
-    max-width: calc(100% - 310px);
+    flex: 0 0 calc(100% - 370px); 
+    max-width: calc(100% - 370px);
     flex-shrink: 0;
   }
   .top-controls{
@@ -26,8 +26,7 @@
     padding: 0 15px;
     color: var(--dblue);
     font-size: 14px;
-    font-weight: 500;
-    min-width: 270px;
+    min-width: 200px;
   }
 
   .view-select{
@@ -39,6 +38,7 @@
     font-size: 14px;
     cursor: pointer;
     min-width: 126px;
+    height: 40px;
     appearance: none;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none"><g clip-path="url(%23clip0_1861_2)"><path d="M12.2309 0.966797L7.90028 5.31346C7.38885 5.8268 6.55196 5.8268 6.04053 5.31346L1.70996 0.966797" stroke="%23020202" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_1861_2"><rect width="13" height="7" fill="white"/></clipPath></defs></svg>');
     background-repeat: no-repeat;
@@ -62,7 +62,7 @@
     gap: 8px;
   }
   .fc .fc-button-group .fc-button{
-    border-radius: 6px !important;
+    border-radius: 8px !important;
     box-shadow: none !important;
     width: 36px;
     height: 36px;
@@ -122,8 +122,8 @@
 
   /* Sidebar */
   .sidebar{
-    width: 280px;
-    flex: 0 0 280px;
+    width: 340px;
+    flex: 0 0 340px;
     flex-shrink: 0;
     overflow-y: auto;
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
@@ -136,32 +136,33 @@
     font-size: 18px;
     color: var(--dblue);
     font-weight: 600;
-    padding: 12px 25px;
-    border-bottom: 1px solid #cbd5e1;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
   }
   /* .sidebarInner{
     padding: 14px 25px;
   } */
   .sidebarInner_top{
-    padding: 14px 25px 0;
+    padding: 18px 24px 0;
   }
   .sidebarInner_top h5{
     color: var(--dblue);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 12px;
   }
   .sidebarInner_top>input{
-    width: 100%;
-    border: 1px solid #cbd5e1;
-    outline: none;
-    padding: 8px;
-    border-radius: 5px;
-    margin-bottom: 14px;
+    border-radius: 8px;
+    color: var(--dblue);
+    border: none !important;
+    background-color: var(--inputBg) !important;
+    padding-left: 15px;
+    padding-right: 15px;
     font-size: 14px;
+    height: 44px;
   }
   #userList{
-    padding: 0 25px 14px;
+    padding: 14px 24px;
     max-height: calc(100vh - 314px);
     overflow-y: auto;
   }
@@ -306,6 +307,28 @@
     border: none !important;
   }
 
+  @media screen and (max-width: 1200px){
+    .layout{
+      flex-wrap: wrap;
+    }
+    .sidebar>h3{
+      padding: 16px 20px;
+    }
+    .sidebarInner_top{
+      padding: 16px 20px 0;
+    }
+    .layout{
+      gap: 20px;
+    }
+    .sidebar {
+      order: -1;
+    }
+    .main, .sidebar {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
   @media screen and (min-width: 992px) and (max-width: 1599px){
     .fc-header-toolbar .fc-toolbar-chunk:last-child{
       min-width: 0;
@@ -314,27 +337,20 @@
       margin-left: auto;
     }
     .top-controls{
-      margin-bottom: 0;
+      margin-bottom: 10px;
+      margin-left: auto;
+      justify-content: center;
+      margin-right: auto;
     }
   }
   @media screen and (max-width: 991px){
-    .layout{
-      flex-wrap: wrap;
-    }
-    .main,
-    .sidebar{
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-    .sidebar{
-      order: -1;
-    }
+
     #userList{
       max-height: 200px;
     }
     
     .top-controls {
-      margin-bottom: 6px;
+      margin-bottom: 14px;
       margin-right: auto;
       flex-wrap: wrap;
       width: 100%;
@@ -367,7 +383,7 @@
 
   @media screen and (max-width: 575px){
     .top-controls{
-      margin-bottom: 6px;
+      margin-bottom: 14px;
       margin-right: auto;
       flex-wrap: wrap;
       width: 100%;
@@ -443,7 +459,7 @@
 
 </style>
 
-<div class="right_col" role="main">
+<div class="right_col mt-sm-3" role="main">
   <div class="layout max-w-1440">
     <div class="main">
       <div class="card-block">
@@ -534,15 +550,15 @@
               justify-content: space-between;
             ">
         <h5 class="mb-0">Tutors</h5>
-        <label class="user-item mb-0">
+        <label class="user-item mb-0 custom_checkbox">
           <input type="checkbox" id="selectAllTutors">
-          <span>Select All</span>
+          <span class="custom_checkbox_label">Select All</span>
         </label>
       </div>
         <input 
           type="text" 
           id="userSearch" 
-          class="sidebar-search" 
+          class="sidebar-search form-control" 
           placeholder="Search tutors..." 
         />
       </div>
@@ -1060,11 +1076,11 @@
         const checked = selectedUsers.includes(user.id) ? "checked" : "";
 
         const row = document.createElement("label");
-        row.className = "user-item";
+        row.className = "user-item custom_checkbox";
         row.innerHTML = `
           <input type="checkbox" ${checked} data-id="${user.id}">
           <span class="user-dot" style="background:${tutorColors[user.id] || user.color}"></span>
-          <span>${user.title}</span>
+          <span class="custom_checkbox_label">${user.title}</span>
         `;
 
         row.querySelector("input").addEventListener("change", function() {

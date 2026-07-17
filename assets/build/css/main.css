@@ -5461,6 +5461,88 @@ span.total-count {
     margin-top: 0px;
 }
 
+.custom_checkbox,
+.custom_radiobox{
+    position: relative;
+    display: block;
+}
+.custom_checkbox>input,
+.custom_radiobox>input{
+    display: none;
+}
+.custom_checkbox .custom_checkbox_label,
+.custom_radiobox .custom_radiobox_label{
+    padding-left: 25px;
+    color: var(--primary-light);
+    font-weight: 400;
+    position: relative;
+    font-size: 14px;
+    line-height: 21px;
+    cursor: pointer;
+}
+.custom_checkbox .custom_checkbox_label::before{
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+    border: 1px solid #C7D6DD;
+    background-color: transparent;
+    top: 0;
+    left: 0;
+}
+.custom_checkbox .custom_checkbox_label::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    background: white;
+    width: 2px;
+    height: 2px;
+    box-shadow: 2px 0 0 var(--white), 4px 0 0 var(--white), 4px -2px 0 var(--white), 4px -4px 0 var(--white), 4px -6px 0 var(--white), 4px -8px 0 var(--white);
+    transform: rotate(45deg);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.custom_radiobox .custom_radiobox_label{
+    padding-left: 28px !important;
+    color: var(--primary-light) !important;
+    font-weight: 400 !important;
+}
+.custom_radiobox .custom_radiobox_label::before{
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(199, 214, 221, 1);
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.custom_radiobox .custom_radiobox_label::after{
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    background-color: var(--secondary);
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.custom_checkbox input:checked ~ .custom_checkbox_label::before{
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+.custom_checkbox input:checked ~ .custom_checkbox_label::after,
+.custom_radiobox input:checked ~ .custom_radiobox_label::after{
+    opacity: 1;
+    visibility: visible;
+}
+
 
 
 @media (min-width: 1400px) {
@@ -5628,87 +5710,78 @@ span.total-count {
     .challenges-answer-part {
         max-width: 70%;
     }
-
     .challenges-screen .upper-content .counter-section .img-animation {
         max-width: 10vw !important;
     }
-
     .challenges-screen .upper-content .counter-section .teacher-block .img-animation {
         max-width: 12vw !important;
     }
-
     .challenges-answer-part .upper-content .output {
         font-size: 36px;
     }
-
     .base-timer {
         width: 60px;
         height: 60px;
     }
-
     .base-timer__label {
         width: 60px;
         height: 60px;
         font-size: 16px;
     }
-
     .challenges-screen .upper-content .counter-section .ques-attempt .quest-count {
         font-size: 12px;
         padding: 1px 6px;
     }
-
     .challenges-screen .upper-content .counter-section .teacher-block .ques-attempt {
         left: 4.6vw;
     }
-
     .challenges-screen .upper-content .counter-section .student-block .ques-attempt {
         right: 6.8vw;
     }
-
     /* Challenges Screen */
-
     .que-block .quest-imagelarge img {
         width: 60%;
         margin: 0 auto;
     }
-
-
-
     /* Review Assessment Submission */
     .reviewmodal .modal-content .modal-title {
         font-size: 18px;
     }
-
     .reviewmodal .answer-submissions {
         margin-bottom: 20px;
     }
-
     .reviewmodal .answer-submissions .ans-submission {
         font-size: 36px;
     }
-
     .reviewmodal .answer-submissions .ans-submission-subtitle {
         font-size: 14px;
         padding: 5px 15px;
         width: auto;
     }
-
     .reviewmodal .answer-info {
         margin-bottom: 20px;
     }
-
     .answergrid {
         grid-template-columns: repeat(5, 1fr);
     }
-
     .reviewmodal .finalScorebody .total-score-count {
         font-size: 20px;
         width: 120px;
         height: 120px;
         margin: 10px auto 15px;
     }
-
-    /* Review Assessment Submission */
+    .nav-sm .navbar.nav_title img{
+        width: 38px;
+    }
+    .nav.side-menu>li.current-page{
+        background: var(--secondary) !important;
+    }
+    .nav-sm .nav.side-menu>li>a:before{
+        background-color: var(--primary);
+    }
+    .nav-sm .nav.side-menu>li.active-sm>a:before{
+        opacity: 1;
+    }
 
 }
 
@@ -6248,7 +6321,9 @@ span.total-count {
         font-size: 14px;
     }
 
-    /* Challenges Screen */
+    .nav_menu{
+        margin-bottom: 10px;
+    }
 
 }
 
@@ -6276,7 +6351,6 @@ span.total-count {
 .sweet-alert button.cancel:hover {
     background-color: #038c00;
 }
-
 .img-thumbnail {
     padding: 0;
     background-color: var(--lightgray);
@@ -6286,53 +6360,62 @@ span.total-count {
     height: 50px;
     object-fit: contain;
 }
-
 .lb-nav {
     display: none !important;
 }
 
+div:where(.swal2-container) div:where(.swal2-popup){
+    border-radius: 20px !important;
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.03);
+}
+div:where(.swal2-icon){
+    margin-bottom: 0 !important;
+}
 .swal2-container .swal2-icon.swal2-question {
     border-color: var(--exLightBlue);
     color: var(--dblue);
     margin-top: 25px;
 }
-
 .swal2-container .swal2-icon.swal2-warning {
     border-color: var(--secondary);
     color: var(--secondary);
     margin-top: 25px;
 }
-
 .swal2-container .swal2-title {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 600;
     color: var(--dblue);
 }
-
 .swal2-container .swal2-html-container {
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 21px;
     font-weight: 400;
-    color: var(--dblue);
+    color: var(--primary-light);
+    padding-bottom: 0;
 }
-
+.swal2-actions{
+    margin-top: 10px;
+}
 .swal2-container .swal2-styled.swal2-confirm {
     background: var(--dgreen) !important;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 20px;
     font-weight: 500;
     color: #fff;
-    border-radius: 5px;
+    border-radius: 8px;
     transition: all 0.3s ease-in;
+    padding: 12px 25px;
 }
-
 .swal2-container .swal2-styled.swal2-cancel {
     background: var(--secondary) !important;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 20px;
     font-weight: 500;
     color: #fff;
-    border-radius: 5px;
+    border-radius: 8px;
     transition: all 0.3s ease-in;
+    padding: 12px 25px;
 }
-
 .courses-sidebar {
     display: none;
 }
@@ -10248,6 +10331,7 @@ table.dataTable.no-footer thead th,
 table.dataTable.no-footer tbody tr th,
 table.dataTable.no-footer tbody tr td{
     border-right: none;
+    vertical-align: middle;
 }
 
 .quest-imagelarge .answer-msg.incorrect-answer-msg img,
@@ -11660,11 +11744,13 @@ select.form-control[multiple] optgroup{
     background-color: var(--secondary);
     border-color: var(--secondary);
     border-radius: 8px;
+    height: 36px;
 }
 .fc-header-toolbar .fc-toolbar-chunk:first-child .fc-today-button{
     background-color: var(--primary);
     border-color: var(--primary);
     border-radius: 8px;
+    height: 36px;
 }
 #calendar{
     margin-top: 60px;
@@ -13988,7 +14074,7 @@ span.duration-label {
 
 .learning_content_group{display: none;}
 .add_content_checkbox input:checked ~ .learning_content_group{display: block;}
-.status-select{background-color: var(--lightgray) !important;border: 1px solid #CAD5D5;font-size: 14px;font-weight: 500;text-transform: capitalize;border-radius: 5px;max-width: 110px;}
+.status-select{background-color: var(--inputBg) !important;border: none;font-size: 14px;font-weight: 400;text-transform: capitalize;border-radius: 5px;max-width: 110px;}
 
 .text_link_orange{
     color: var(--secondary);
@@ -14542,7 +14628,18 @@ span.duration-label {
     max-width: 1440px;
     margin: 0 auto;
 }
-
+.table_action_btn{
+    gap: 5px;
+}
+.table_action_btn>*{
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--inputBg);
+    border-radius: 5px;
+}
 
 /* -----Responsive Bussiness Setting ------ */
 @media screen and (min-width: 1401px) and (max-width: 1599px){
@@ -14663,7 +14760,7 @@ span.duration-label {
         overflow-y: auto;
     }
 
-    .x_content div.dataTables_wrapper div.dataTables_length label select,
+    /* .x_content div.dataTables_wrapper div.dataTables_length label select, */
     .x_panel .x_title .right-btns{
         width: 100%;
     }
@@ -14672,6 +14769,16 @@ span.duration-label {
     .x_panel .x_title .right-btns .theme-btn{
         width: 100%;
         margin: 0 !important;
+    }
+    .tab_width_auto{
+        gap: 10px !important;
+    }
+    .tab_width_auto,
+    .tab_width_auto>*{
+        width: auto !important;
+    }
+    .tab_justify_between{
+        justify-content: space-between !important;
     }
     .filter_top.date_dropdown{
         flex-direction: column;
@@ -15214,7 +15321,8 @@ span.duration-label {
         margin: 0 !important;
     }
     .search_box .dropdown-menu-area,
-    .x_panel.message_full_panel .x_title .right-btns{
+    .x_panel.message_full_panel .x_title .right-btns,
+    .tab_width_auto>*{
         width: 100%;
         min-width: 100%;
     }
@@ -15276,6 +15384,12 @@ span.duration-label {
     }
     .main_calendar>#calendar{
         padding: 20px;
+    }
+    .tab_width_auto{
+        width: 100% !important;
+    }
+    .tab_justify_between{
+        justify-content: flex-start !important;
     }
 }
 

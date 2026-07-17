@@ -1909,16 +1909,22 @@ ul.challenge-summry .challenge-summry-list span {
     .nav_menu{
         border-radius: 0 0 20px 20px !important;
         box-shadow: none !important;
+        margin-bottom: 0;
     }
     .nav-sm .main_container .nav_menu{
         border-radius: 0 0 20px 0 !important;
+        padding-left: 0;
     }
     .nav-sm .main_container .top_nav{
-        margin-left: 85px !important;
+        margin-left: 60px !important;
     }
     .nav_title{
-        padding: 12px 10px 13px !important;
+        padding: 16px 10px !important;
         background-color: #fff;
+    }
+    .nav-sm .navbar.nav_title{
+        width: 60px;
+
     }
 }
 
@@ -2433,13 +2439,13 @@ a:focus {
     color: #fff
 }
 
-.nav.side-menu>li.active>a {
+/* .nav.side-menu>li.active>a {
     text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
     background: -webkit-gradient(linear, left top, left bottom, from(#334556), to(#2C4257)), #2A3F54;
     background: linear-gradient(#334556, #2C4257), #2A3F54;
     -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
     box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0
-}
+} */
 
 .navbar-brand,
 .navbar-nav>li>a {
@@ -2776,9 +2782,9 @@ h2 {
     margin: 5px 0 6px;
     float: left;
     display: block;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap
+    white-space: nowrap */
 }
 
 .x_title h2 small {
@@ -7555,13 +7561,13 @@ input:-webkit-autofill:active{
 }
 
 @media (max-width: 992px) {
-    .fc-dayGridMonth-button,
+    /* .fc-dayGridMonth-button,
     .fc-timeGridWeek-button {
         display: none !important;
     }
     .fc-timeGridDay-button {
         border-radius: 0.25em !important;
-    }
+    } */
     .fc-view-harness-active {
         min-height: 420px;
     }

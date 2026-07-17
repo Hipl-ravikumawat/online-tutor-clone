@@ -191,13 +191,13 @@
         {
           data: "",
           render: function (data, type, row) {
-            let html = `<div class="d-flex align-items-center">
+            let html = `<div class="d-flex align-items-center table_action_btn">
                       <a class="" href="/tutors/edit/${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top"
                         title="Edit"><img src="/images/edit.svg" alt="icon"></a>`;
-            html += ` <a href="javascript:void(0)"  onclick="confirmBeforeSecretLogin('/secret/${row._id}')" class="ml-2"><img src="/images/lock2.svg"
+            html += ` <a href="javascript:void(0)"  onclick="confirmBeforeSecretLogin('/secret/${row._id}')"><img src="/images/lock2.svg"
                         alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Secret Login"></a>`;
 
-            html += ` <a href="javascript:void(0)" class="ml-2"
+            html += ` <a href="javascript:void(0)"
                         onclick="confirmBeforeDeletion('/tutors/destroy/${row._id}')"><img src="/images/trash.svg"
                           alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
                       </div>`;

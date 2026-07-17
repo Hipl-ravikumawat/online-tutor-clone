@@ -63,10 +63,10 @@
                 id: 'hourly_rate_payment' , value: 'hourly_rate_payment' , label: 'Student pays an hourly rate' ,
                 note: 'Charges will automatically adjust to lesson duration' } ]; %>
                 <% billing.forEach(bill=> { %>
-                  <div class="form-check radio_group w-100">
+                  <div class="form-check radio_group w-100 custom_radiobox p-0">
                     <input type="radio" name="billing_list" value="<%= bill.value %>" id="edit_<%= bill.id %>"
                       class="form-check-input bill-type-radio">
-                    <label class="radiolabel" for="edit_<%= bill.id %>">
+                    <label class="radiolabel custom_radiobox_label" for="edit_<%= bill.id %>">
                       <%= bill.label %>
                         <% if (bill.note) { %>
                           <small class="d-block text-muted">

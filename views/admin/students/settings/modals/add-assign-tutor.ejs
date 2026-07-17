@@ -64,10 +64,10 @@
                 note: 'Charges will automatically adjust to lesson duration' } ]; %>
                 <% let selectDefault = true; %>
                 <% billing.forEach(bill=> { %>
-                  <div class="form-check radio_group w-100">
+                  <div class="form-check radio_group w-100 custom_radiobox p-0">
                     <input type="radio" name="billing_list" value="<%= bill.value %>" id="<%= bill.id %>"
                       class="form-check-input bill-type-radio" <%= selectDefault ? 'checked' : '' %>>
-                    <label class="radiolabel" for="<%= bill.id %>">
+                    <label class="radiolabel custom_radiobox_label" for="<%= bill.id %>">
                       <%= bill.label %>
                         <% if (bill.note) { %>
                           <small class="d-block text-muted">
