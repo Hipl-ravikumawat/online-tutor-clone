@@ -1,27 +1,27 @@
 <div class="tab-pane fade show active" id="familyAccounts" role="tabpanel" aria-labelledby="pills-general-tab">
-    <div class="card mb-3 position-relative">
-        <div class="card-body date_dropdown position-relative">
-            <div class="date_dropdown_block">
-                <h2 class="title-text">
-                    You're owed <strong>0</strong> as of
-                    <div class="contents" id="display-date"></div>
-                    <div class="position-relative">
-                        <span class="owed_date_family" style="cursor: pointer;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
-                                <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1"
-                                    stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </span>
-                        <input type="text" id="hidden-date-input" class="hidden_input_area" />
-                    </div>
-                </h2>
-            </div>
-            <p class="mb-0 prepaid_balance_summary">Prepaid Balance: <strong>0</strong></p>
-        </div>
-        <%- include('../partials/balance_date_prompt') %>
-    </div>
     <div class="x_panel">
+        <div class="filter_top">
+            <div class="date_dropdown top_date_row position-relative">
+                <div class="date_dropdown_block">
+                    <h2 class="title-text mb-0">
+                        You're owed <strong>0</strong> as of
+                        <div class="contents" id="display-date"></div>
+                        <div class="position-relative">
+                            <span class="owed_date_family" style="cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="7" viewBox="0 0 13 7" fill="none">
+                                    <path d="M12.1589 1L7.56569 5.59317C7.02325 6.13561 6.13561 6.13561 5.59317 5.59317L1 1"
+                                        stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </span>
+                            <input type="text" id="hidden-date-input" class="hidden_input_area" />
+                        </div>
+                    </h2>
+                </div>
+                <p class="mb-0 prepaid_balance_summary">Prepaid Balance: <strong>0</strong></p>
+            </div>
+            <%- include('../partials/balance_date_prompt') %>
+        </div>
         <div class="x_title">
             <div class="left-btns">
                 <ul>
@@ -139,7 +139,6 @@
                     </div>
                 </li>
             </ul>
-        <div class="clearfix"></div>
         </div>
         <div class="x_content">
             <div class="card-box allselect-table">

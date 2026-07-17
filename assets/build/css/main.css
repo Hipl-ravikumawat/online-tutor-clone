@@ -6157,12 +6157,6 @@ span.total-count {
         margin-top: 0;
         margin-bottom: 10px;
     }
-
-    .right_col .breadcrumb .breadcrumb-item a,
-    .right_col .breadcrumb .breadcrumb-item.active {
-        font-size: 12px;
-    }
-
     .practice-card .nav-pills li a {
         font-size: 8px;
         padding: 8px 3px;
@@ -6227,6 +6221,9 @@ span.total-count {
     .x_content div.dataTables_wrapper .dt-buttons {
         width: 100%;
         margin: 0 0 10px;
+    }
+    .x_content div.dataTables_wrapper .dt-buttons:empty{
+        display: none;
     }
 
     .selectedcontent>li {
@@ -9477,7 +9474,7 @@ span.index-number.opt-incorrect {
     text-align: center;
 }
 .bussniess_setting  .setting_tab ul .nav-item .nav-link{ 
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
     line-height: 19px;
@@ -9489,7 +9486,23 @@ span.index-number.opt-incorrect {
     background-color: var(--secondary);
     color: var(--white);
 }
-
+.cursor-default{
+    cursor: auto !important;
+}
+.top_date_row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.top_date_row .prepaid_balance_summary{
+    background-color: var(--inputBg);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 400;
+    font-size: 14px !important;
+    line-height: 20px;
+    color: var(--secondary);
+}
 /* navtabs css end */
 
 /* tab setting css start */
@@ -9933,6 +9946,10 @@ span.index-number.opt-incorrect {
 .bussiness-setting-modal .modal-body .form-area .form-group .mce-container>iframe{
     height: 260px !important;
 }
+.bussiness-setting-modal .form-group,
+.modal-form-area .form-group{
+    margin-bottom: 24px;
+}
 .bussiness-setting-modal .form-group>label,
 .modal-form-area .form-group>label{
     width: 100%;
@@ -9941,6 +9958,7 @@ span.index-number.opt-incorrect {
     line-height: 21px;
     color: var(--dblue);
     display: block;
+    margin-bottom: 6px;
 }
 .bussiness-setting-modal .form-group>label+small,
 .modal-form-area .form-group>label+small{
@@ -9959,14 +9977,12 @@ span.index-number.opt-incorrect {
 .modal-form-area .form-group input[type="date"],
 .modal-form-area .form-group input[type="time"]{
     width: 100%;
-    border-radius: 5px;
+    border-radius: 8px;
     color: var(--dblue);
-    height: 45px;
-    box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
-    -webkit-box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
-    background: #fff;
-    border: 1px solid #c5dae5;
-    padding: 10px;
+    height: 44px;
+    background: var(--inputBg);
+    border: none;
+    padding: 6px 15px;
     font-size: 14px;
 }
 .bussiness-setting-modal .form-group textarea,
@@ -10024,6 +10040,39 @@ span.index-number.opt-incorrect {
 }
 .popover .classContent ul.pro_classes:hover{
     background-color: #f1f5f9 !important;
+}
+.modal-content{
+    border-radius: 20px;
+}
+.modal-header{
+    border: none;
+    padding: 30px 30px 20px;
+}
+.modal_close{
+    width: 36px;
+    height: 36px;
+    background-color: #e4edfa;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: 50%;
+}
+.modal_close svg{
+    opacity: 0.5;
+}
+.modal-body{
+    padding: 0 30px;
+}
+.modal-footer{
+    border: none;
+    padding: 0 30px 30px;
+}
+.modal-footer .btn-rightarea{
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .restore-btn{
@@ -12927,10 +12976,10 @@ span.duration-label {
 }
 .voucher_card{
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 .voucher_card>h6{
-    color: #201b53;
+    color: var(--dblue);
     font-size: 14px;
     line-height: 21px;
     font-weight: 600;
@@ -12939,14 +12988,28 @@ span.duration-label {
     align-items: center;
     -webkit-align-items: center;
     gap: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
 }
 .voucher_card>p{
-    color: #201b53;
+    color: var(--primary-light);
     font-size: 14px;
     line-height: 21px;
     -webkit-line-clamp: inherit;
     margin: 0;
+}
+.voucher_action{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.voucher_action>*{
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--inputBg);
+    border-radius: 5px;
 }
 .canceled_filter_row .select2 .select2-selection__rendered .select2-selection__clear{
     display: none;
@@ -13045,11 +13108,12 @@ span.duration-label {
     right: 0;
 }
 .left-btns .bus-outline-btn{
-    background-color: #F8FAFB;
+    background-color: var(--inputBg);
+    color: var(--dblue);
 }
-.left-btns .bus-outline-btn:hover{
+/* .left-btns .bus-outline-btn:hover{
     color: #344242;
-}
+} */
 .left-btns ul{
     display: flex;
     display: -webkit-flex;
@@ -13380,8 +13444,8 @@ span.duration-label {
     position: absolute;
     top: 100%;
     z-index: 9998;
-    border: 1px solid #f1f1f1;
-    border-radius: .25rem;
+    /* border: 1px solid #f1f1f1; */
+    border-radius: 10px;
     background-color: #fff;
     background-clip: padding-box;
     margin: .125rem 0 0;
@@ -13400,6 +13464,7 @@ span.duration-label {
 .search_box .dropdown-menu-area .form-group:not(.form-check)>label{
     font-weight: 500;
     color: var(--dblue);
+    margin-bottom: 6px;
 }
 .search_box .dropdown-menu-area .form-group input,
 .search_box .dropdown-menu-area .form-group select{
@@ -14750,8 +14815,17 @@ span.duration-label {
     .bussniess_setting .card .card-body,
     .right_col .back-page,
     .form-wizard .wizard-fieldset,
-    .card-block{
+    .card-block,
+    .modal-header{
         padding: 20px;
+    }
+    .modal-body,
+    .modal-footer{
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .modal-footer{
+        padding-bottom: 20px;
     }
 }
 @media screen and (max-width: 991px){
@@ -15385,7 +15459,8 @@ span.duration-label {
     .main_calendar>#calendar{
         padding: 20px;
     }
-    .tab_width_auto{
+    .tab_width_auto,
+    .flex-panel>.theme-btn{
         width: 100% !important;
     }
     .tab_justify_between{
@@ -15686,34 +15761,28 @@ button.swal2-confirm.swal2-styled.swal2-default-outline:focus{
 }
 .settings_content .tabcard .setting_title.total-voucher {
     color: var(--secondary);
-    margin-left: 15px;
+    margin-left: 10px;
     font-size: 14px;
     font-weight: 600;
-    padding-left: 15px;
-    border-left: 2px solid var(--exLightBlue);
+    padding-left: 10px;
+    border-left: 1px solid #e4edfa;
     flex-shrink: 0;
     line-height: normal;
+}
+.settings_content .tabcard .setting_title.total-voucher>span{
+    background-color: var(--inputBg);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 400;
+}
+.settings_content .tabcard .setting_title.total-voucher>span>span{
+    font-weight: 600;
 }
 .voucher_card_list .voucher_card>h6 {
     justify-content: space-between;
 }
 .voucher_card_list .voucher_card {
-    background-color: #deffec;
-}
-.voucher_card_list .voucher_card:nth-child(2) {
-    background-color: #ffedae;
-}
-.voucher_card_list .voucher_card:nth-child(3) {
-    background-color: #ffe2e2;
-}
-.voucher_card_list .voucher_card:nth-child(4) {
-    background-color: #ede5fb;
-}
-.voucher_card_list .voucher_card:nth-child(5) {
-    background-color: #d4f7ff;
-}
-.voucher_card_list .voucher_card:nth-child(6) {
-    background-color: #fff1d4;
+    background-color: #e4edfa;
 }
 
 .declined-content {
