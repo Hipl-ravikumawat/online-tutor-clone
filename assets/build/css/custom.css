@@ -3306,7 +3306,6 @@ ul.msg_list li a .message {
     text-shadow: none;
     top: 100%;
     z-index: 9998;
-    border: 1px solid #D9DEE4;
     border-radius: 10px;
     margin: 0;
     overflow: hidden;
@@ -3320,8 +3319,8 @@ ul.msg_list li a .message {
     position: absolute;
     background: #fff;
     margin-top: 0;
-    border: 1px solid #D9DEE4;
-    -webkit-box-shadow: none;
+    -webkit-box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
     right: 0;
     left: auto;
     width: 220px
@@ -7508,10 +7507,10 @@ input:-webkit-autofill:active{
     text-align: center;
 }
 .checkbox_alignment.dataTable tbody tr td:first-child input[type=checkbox]::before{
-    left: -6px;
+    left: -13px;
 }
 .checkbox_alignment.dataTable tbody tr td:first-child input[type=checkbox]::after{
-    left: -1px;
+    left: -8px;
 }
 .mt-10px{
     margin-top: 10px !important;

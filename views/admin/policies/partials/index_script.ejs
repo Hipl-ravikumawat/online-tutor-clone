@@ -70,14 +70,14 @@
                 data: "",
                 render: function (data, type, row) {
                   if(userRole == 1){
-                    return `<div class="d-flex align-items-center">
+                    return `<div class="d-flex align-items-center table_action_btn">
                       <a class="" href="/policies/edit/${row.slug}" data-toggle="tooltip" rel="tooltip" data-placement="top"
                         title="Edit"><img src="/images/edit.svg" alt="icon"></a>
 
-                      <a href="/policies/policy-readers/${row.slug}" class="ml-2">
+                      <a href="/policies/policy-readers/${row.slug}">
                         <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Details"></a>
                 
-                      <a href="javascript:void(0)" class="ml-2"
+                      <a href="javascript:void(0)"
                         onclick="confirmBeforeDeletion('/policies/destroy/${row._id}')"><img src="/images/trash.svg"
                           alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
                     </div>`;

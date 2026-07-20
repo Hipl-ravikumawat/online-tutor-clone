@@ -1,7 +1,7 @@
 <div class="right_col mt-sm-3" role="main">
-  <!-- edit policy page content starts -->
   <div class="row main_row max-w-1440">
-    <div class="x_panel form_panel">
+    <a class="back-link" href="/policies"><span class="fa fa-chevron-left mr-2"></span>Back to policies</a>
+    <div class="x_panel form_panel mt-3">
       <div class="x_title">
         <h2 class="title-text mb-0">Edit Topic</h2>
       </div>
@@ -17,26 +17,10 @@
                     <label class="col-form-label label-align" for="title">Title<span class="required">*</span>
                     </label>
                     <div class="input-group">
-                      <!-- <span class="input-group-text"><img src="/images/categories.svg" class="mCS_img_loaded"></span> -->
                       <input type="text" name="title" class="form-control" placeholder="Enter Title.."  id="title" value="<%=data.title %>" maxlength="150">
                     </div>
                   </div>
                 </div>
-                
-                <!-- <div class="col-sm-12">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="status">Status<span class="required">*</span>
-                    </label>
-                    <div class="input-group flex-nowrap">
-                      <span class="input-group-text"><img src="/images/status.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control" name="status" id="status" tabindex="-1" single>
-                        <option value="1" <%=data.status=='1' ? 'selected' : '' %>>Active</option>
-                        <option value="0" <%=data.status=='0' ? 'selected' : '' %>>Deactive</option>
-                      </select>
-                    </div>
-                  </div>
-                </div> -->
-
               </div>
             </div>
             <div class="col-md-12">
@@ -59,7 +43,6 @@
       </div>
     </div>
   </div>
-  <!-- edit policy page content end -->
 </div>
 
 <%- include('./partials/form_script'); %>

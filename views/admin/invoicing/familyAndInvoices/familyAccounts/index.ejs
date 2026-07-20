@@ -22,17 +22,15 @@
             </div>
             <%- include('../partials/balance_date_prompt') %>
         </div>
-        <div class="x_title">
+        <div class="x_title mb-14px">
             <div class="left-btns">
                 <ul>
                     <li>
-                        <a href="/families-invoices/transaction-details" class="btn theme-btn" data-toggle="tooltip"
-                            rel="tooltip" data-placement="top" title="Add Transaction">+ Add Transaction</a>
+                        <a href="/families-invoices/transaction-details" class="btn theme-btn" title="Add Transaction">+ Add Transaction</a>
                     </li>
                     <% if(loggedUserInfo.role == 1) { %>
                     <li>
-                        <a href="/families-invoices/categories" class="bus-outline-btn"><img
-                                src="/images/categories-icon.svg" alt="Categories" class="mr-2">Charge Categories</a>
+                        <a href="/families-invoices/categories" class="bus-outline-btn"><img src="/images/categories-icon.svg" alt="Categories" class="mr-2">Charge Categories</a>
                     </li>
                     <% } %>
                     <li class="both-btnli">
@@ -49,7 +47,7 @@
                     </li>
                 </ul>
             </div>
-            <ul class="right-btns">
+            <ul class="right-btns tab_width_auto">
                 <li class="both-btnli">
                     <div class="dropdown select_all_dropdown" id="colvis-dropdown">
                         <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
@@ -130,8 +128,8 @@
                                         <% }) %>
                                     </select>
                                 </div>
-                                <div class="d-flex mt-20">
-                                    <button type="button" class="btn cancel-btn theme-btn mr-3 w-100">Clear</button>
+                                <div class="d-flex gap-10 mt-20">
+                                    <button type="button" class="btn cancel-btn theme-btn w-100">Clear</button>
                                     <button type="submit" class="btn theme-btn w-100">Search</button>
                                 </div>
                             </form>

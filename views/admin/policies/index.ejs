@@ -31,18 +31,14 @@
               </li>
             </ul>
           </div>
-          <div class="x_title">
-            <h2 class="title-text mb-0">Policy List</h2>
-            <ul class="right-btns">
+          <div class="x_title tab_justify_between">
+            <h2 class="title-text mb-0 tab_width_auto">Policy List</h2>
+            <ul class="right-btns tab_width_auto">
               <% if(loggedUserInfo.role == 1) { %>
               <li>
                 <a
                   href="/policies/create"
                   class="btn theme-btn"
-                  data-toggle="tooltip"
-                  rel="tooltip"
-                  data-placement="top"
-                  title="Add Policy"
                   >+ Add Policy</a
                 >
               </li>

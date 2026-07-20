@@ -26,11 +26,11 @@ function dataTable(name = "", status = "") {
         data: "_id",
         render: function (data, type, row) {
           return `
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center table_action_btn">
               <a href="/families-invoices/categories/edit/${data}" data-id="${data}" data-toggle="tooltip" title="Edit" class="edit-location">
                 <img src="/images/edit.svg" alt="Edit icon">
               </a>
-              <a href="javascript:void(0)" class="ml-2"
+              <a href="javascript:void(0)"
                  onclick="confirmBeforeDeletion('/families-invoices/categories/destroy/${data}')">
                 <img src="/images/trash.svg" alt="Delete icon" data-toggle="tooltip" title="Delete">
               </a>

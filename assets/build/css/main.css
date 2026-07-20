@@ -5819,12 +5819,12 @@ span.total-count {
     .right_col .form-wizard .accordion .chp-add-section .card-body .nav-item .nav-link img {
         margin-right: 3px !important;
     }
-    .x_content table thead th {
+    /* .x_content table thead th {
         font-size: 12px;
     }
     .x_content table tbody td {
         font-size: 11px;
-    }
+    } */
     .x_content div.dataTables_wrapper .dt-buttons {
         width: auto;
     }
@@ -6005,7 +6005,8 @@ span.total-count {
     .course-list .course-thumb {
         width: 100%;
     }
-    .course-list .course-description {
+    .course-list .course-description,
+    .course-search{
         width: 100%;
     }
     .course-list .course-description .course-detail {
@@ -6196,7 +6197,8 @@ span.total-count {
         padding: 20px 0;
     }
 
-    .right_col .slideshow .que-block p.desctext {
+    .right_col .slideshow .que-block p.desctext,
+    .course-search .input-search{
         max-width: 100%;
     }
 
@@ -10540,7 +10542,7 @@ table.dataTable.no-footer tbody tr td{
 }
 
 .common-form .form-group{
-    margin-bottom: 16px;
+    margin-bottom: 24px;
 }
 .common-form .form-group>label{
     width: auto;
@@ -10676,7 +10678,7 @@ table.dataTable.no-footer tbody tr td{
 }
 .change-family-modal .modal-form-area .form-group>label,
 .modal-label-style .modal-form-area .form-group>label{
-    font-weight: 600;
+    font-weight: 500;
     color: var(--dblue) !important;
 }
 
@@ -11243,6 +11245,7 @@ table.dataTable.no-footer tbody tr td{
 }
 .dropdown .input-icon{
     left: 10px;
+    top: 40px;
 }
 .flaticon.form-group .input-icon{
     top: 40px;
@@ -11977,21 +11980,20 @@ select.form-control[multiple] optgroup{
     width: 100%;
     border-radius: 5px;
     color: var(--dblue);
-    height: 45px;
-    box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
-    -webkit-box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
+    height: 44px;
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
+    -webkit-box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
     background: #fff;
-    border: 1px solid #c5dae5;
-    padding: 10px;
+    padding: 10px 15px;
     cursor: pointer;
     font-size: 14px;
-    line-height: 24px;
+    line-height: 21px;
 }
 .drop-down .selected::after{
     content: '';
     position: absolute;
     right: 10px;
-    top: 14px;
+    top: 12px;
     background-repeat: repeat;
     background-position: center;
     background-size: cover;
@@ -12005,25 +12007,22 @@ select.form-control[multiple] optgroup{
     left: 0;
     top: 100%;
     width: 100%;
-    box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
-    -webkit-box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 6%);
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
+    -webkit-box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
     background: #fff;
-    border: 1px solid #c5dae5;
     z-index: 1;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
     max-height: 200px;
     overflow-y: auto;
+    padding: 6px 0;
 }
 .drop-options li>a{
     display: block;
-    padding: 5px 10px;
+    padding: 6px 15px;
     color: var(--dblue);
     font-size: 14px;
     transition: all 350ms ease-in-out;
-}
-.drop-options li>a:hover{
-    background-color: #f7f7f7;
 }
 /* Custom Dropdown End */
 .cselect-arrow select{
@@ -13182,8 +13181,8 @@ span.duration-label {
 
 .family_card{
     background-color: rgba(248, 250, 251, 1);
-    border-radius: 5px;
-    padding: 10px 15px;
+    border-radius: 10px;
+    padding: 12px 14px;
 }
 .f_card_top{
     display: flex;
@@ -13197,7 +13196,7 @@ span.duration-label {
     gap: 5px;
 }
 .f_card_top h6{
-    color: rgba(74, 70, 116, 1);
+    color: var(--primary);
     font-weight: 500;
     font-size: 14px;
     margin-bottom: 0;
@@ -13225,32 +13224,34 @@ span.duration-label {
 .family_card .f_card_top .f_inactive{
     background-color: #ffdfdf;
     color: #f00;
+    font-weight: 500;
 }
 .family_card .f_card_top .f_active{
     background-color: #e4ffe4;
     color: #05c103;
+    font-weight: 500;
 }
 .family_card .f_card_top .f_trial{
     background-color: #e4e5ff;
     color: #2329cf;
+    font-weight: 500;
 }
 .family_card .f_card_top .f_waiting{
     background-color: #fff1e4;
     color: #dd6f0a;
+    font-weight: 500;
 }
 
 .f_card_body{
     padding-top: 10px;
 }
 .f_detail_link{
-    color: rgba(74, 70, 116, 1);
-    font-weight: 500;
+    color: var(--primary-light);
+    font-weight: 400;
     font-size: 14px;
-    /* text-decoration: underline; */
 }
 .f_detail_link:hover{
     color: var(--secondary);
-    text-decoration: underline;
 }
 .f_detail_link_area li{
     display: flex;
@@ -13296,9 +13297,10 @@ span.duration-label {
 .family_in_dropdown{
     display: inline-block;
     width: auto;
+    vertical-align: middle;
 }
 .family_in_dropdown .selected{
-    background-color: transparent;
+    background-color: var(--inputBg);
     border: none;
     box-shadow: none;
     width: 300px;
@@ -13306,24 +13308,19 @@ span.duration-label {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 34px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #201B53;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dblue);
+    border-radius: 8px;
 }
 .family_in_dropdown .selected a,
 .family_in_dropdown .selected a:hover{
-    color: #201B53;
-}
-.family_in_dropdown .selected:hover{
-    background-color: #ffe1ca;
+    color: var(--dblue);
 }
 .family_in_dropdown .drop-options{
     max-height: 275px;
 }
-.family_in_dropdown .drop-options li>a:hover,
-.family_in_dropdown .drop-options li>a.active{
-    background-color: #e3e3e3;
-}
+
 .text-underline,
 .text-underline:hover{
     text-decoration: underline;
@@ -13339,7 +13336,8 @@ span.duration-label {
 
 .whole_trans_box{
     background-color: rgba(248, 250, 251, 1);
-    border-radius: 5px;
+    border-radius: 10px;
+    padding: 5px;
 }
 .transaction-card{
     padding: 12px 14px;
@@ -13354,7 +13352,7 @@ span.duration-label {
     padding-left: 28px;
 }
 .transaction-desc{
-    color: rgba(74, 70, 116, 1);
+    color: var(--primary-light);
     font-size: 14px;
     font-weight: 400;
 }
@@ -13436,7 +13434,7 @@ span.duration-label {
     display: none;
 }
 .search_box .dropdown-menu-area{
-    padding: 10px 16px;
+    padding: 16px;
     min-width: 360px;
     display: none;
     float: left;
@@ -13476,12 +13474,38 @@ span.duration-label {
     font-weight: 400;
     color: var(--dblue);
 }
-
+.search_box .dropdown-menu-area .form-group select{
+    background-image: url("../../images/droparrow.svg");
+    background-repeat: no-repeat;
+    background-position: center right 15px;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
+}
+.table_design thead th{
+    color: var(--dblue);
+    font-size: 14px;
+    font-weight: 600 !important;
+    padding: 10px 15px !important;
+    background: var(--lightgray);
+    background-clip: padding-box;
+    padding-right: 26px !important;
+}
+.table_design tbody tr{
+    background-color: transparent !important;
+}
+.table_design tbody td{
+    font-size: 14px;
+    font-weight: 400;
+    padding: 10px 15px !important;
+    color: var(--dblue);
+    vertical-align: middle;
+}
 .search_drop_icon{
     position: absolute;
     right: 0;
     top: 0;
-    padding: 12px;
+    padding: 14px;
 }
 .mt-20{
     margin-top: 20px;
@@ -13675,17 +13699,18 @@ span.duration-label {
 }
 .balance-date-alert{
     padding: 20px 20px 20px 40px;
-    margin: 0px 25px 25px;
+    margin: 20px 0 0;
     color: var(--secondary);
-    background-color: #fff3ea;
-    border-radius: 8px;
-    border: 1px solid var(--secondary);
+    background-color: #fff8f7;
+    border-radius: 10px;
+    border: 1px solid var(--secondary-light);
     position: relative;
 }
 .balance-date-alert i {
     font-size: 16px;
     position: absolute;
     left: 20px;
+    margin-top: 2px;
 }
 .balance-date-alert p {
     font-size: 14px;
@@ -14705,6 +14730,9 @@ span.duration-label {
     background-color: var(--inputBg);
     border-radius: 5px;
 }
+.mb-14px{
+    margin-bottom: 14px !important;
+}
 
 /* -----Responsive Bussiness Setting ------ */
 @media screen and (min-width: 1401px) and (max-width: 1599px){
@@ -14734,6 +14762,23 @@ span.duration-label {
     }
     .auth-left img{
         max-width: 250px;
+    }
+    .filter_row_break{
+        flex-wrap: wrap;
+    }
+    .filter_row_break li:not(:last-child){
+        flex: 0 0 calc(50% - 10px);
+        max-width: calc(50% - 10px);
+    }
+    .filter_row_break li.filter-col-btn{
+        width: 100%;
+        flex: 0 0 100%;
+        -webkit-flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .filter_row_break li.filter-col-btn>*{
+        width: 100%;
+        max-width: 100%;
     }
 }
 @media screen and (max-width:1200px) {
@@ -14795,9 +14840,6 @@ span.duration-label {
     .left-btns + .right-btns{
         /* margin: 10px 0 0 !important; */
         width: 100%;
-    }
-    .balance-date-alert {
-        margin: 0px 20px 20px;
     }
     .x_panel.message_full_panel .x_title{
         justify-content: space-between;
@@ -15049,6 +15091,23 @@ span.duration-label {
     .custom-dropdown .dropdown-header{
         font-size: 16px !important;
     }
+    .filter_row_break{
+        flex-wrap: wrap;
+    }
+    .filter_row_break li:not(:last-child){
+        flex: 0 0 calc(50% - 8px);
+        max-width: calc(50% - 8px);
+    }
+    .filter_row_break li.filter-col-btn{
+        width: 100%;
+        flex: 0 0 100%;
+        -webkit-flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .filter_row_break li.filter-col-btn>*{
+        width: 100%;
+        max-width: 100%;
+    }
 
 }
 @media screen and (max-width: 767px){
@@ -15089,19 +15148,6 @@ span.duration-label {
         flex: 0 0 100%;
         -webkit-flex: 0 0 100%;
     }
-    /* .dash-leftblock{
-        flex: 0 0 calc(100% - 50px);
-        -webkit-flex: 0 0 calc(100% - 50px);
-        max-width: calc(100% - 50px);
-    }
-    .dash-rightblock{
-        flex: 0 0 50px;
-        -webkit-flex: 0 0 50px;
-        max-width: 50px;
-    }
-    .dash-rightblock>img{
-        width: 50px;
-    } */
     .average-attendance .col-block{
         flex: 0 0 50%;
         -webkit-flex: 0 0 50%;
@@ -15121,7 +15167,8 @@ span.duration-label {
         padding-bottom: 10px;
     }
     .availability-box .avail-left,
-    .availability-box .avail-right{
+    .availability-box .avail-right,
+    .filter_row_break li:not(:last-child){
         flex: 0 0 100%;
         -webkit-flex: 0 0 100%;
         max-width: 100%;
@@ -15148,16 +15195,11 @@ span.duration-label {
     .selected_less_preview .select_less_content{
         padding: 0 10px;
     }
-    /* #calendar .fc-view{
-        overflow-x: auto;
-    }
-    #calendar .fc-view>table.fc-scrollgrid{
-        width: 700px;
-    } */
     .tutor_availability_right, 
     .tutor_availability_right form .form-group,
     .tutors_area_top ul li,
-    .tutors_area_top ul{
+    .tutors_area_top ul,
+    .filter_row_break li:not(:last-child){
         flex: 0 0 100%;
         -webkit-flex: 0 0 100%;
     }
@@ -15184,8 +15226,8 @@ span.duration-label {
         min-width: 120px;
     }
     .bussniess_setting .families-tab>ul li.nav-item>.nav-link{
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 14px;
+        padding-right: 14px;
     }
     .add-category-box>div,
     .message-history-tab .card-body .setting_title,
@@ -15232,15 +15274,23 @@ span.duration-label {
         flex: 1;
         -webkit-flex: 1;
     }
+    .top_date_row{
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .top_date_row .date_dropdown_block,
+    .filter_row_break li:not(:last-child){
+        width: 100%;
+    }
 }
 @media screen and (max-width:576px) {
     .settings_content .tabcard .choosefile{
         margin-right: 0px;
     }
-    .bussniess_setting .setting_tab ul .nav-item .nav-link{
+    /* .bussniess_setting .setting_tab ul .nav-item .nav-link{
         font-size: 12px;
         line-height: 16px;
-    }
+    } */
     .settings_content .form-check input.form-control,
     .icon-rblock,
     .colorpicker-input>label{
@@ -15391,7 +15441,7 @@ span.duration-label {
     .left-btns + .right-btns li>*,
     .left-btns + .right-btns li .bus-outline-btn{
         width: 100%;
-        text-align: center;
+        /* text-align: center; */
         margin: 0 !important;
     }
     .search_box .dropdown-menu-area,
@@ -15412,10 +15462,10 @@ span.duration-label {
     .bottom_table_field .dataTables_length select{
         margin: 0 auto !important;
     }
-    .search_box.search_btn .dropdown-toggle{
+    /* .search_box.search_btn .dropdown-toggle{
         justify-content: center;
         -webkit-justify-content: center;
-    }
+    } */
     .view_session_header_left, 
     .view_session_header_right{
         flex: 0 0 100%;
@@ -15460,11 +15510,16 @@ span.duration-label {
         padding: 20px;
     }
     .tab_width_auto,
-    .flex-panel>.theme-btn{
+    .flex-panel>.theme-btn,
+    .family_in_dropdown,
+    .family_in_dropdown .selected{
         width: 100% !important;
     }
     .tab_justify_between{
         justify-content: flex-start !important;
+    }
+    .bussniess_setting .families-tab>ul{
+        flex-wrap: nowrap;
     }
 }
 
@@ -15482,13 +15537,6 @@ span.duration-label {
     .emailbtn>.btn{
         max-width: 100%;
         width: 100%;
-    }
-    .bussniess_setting .families-tab>ul{
-        gap: 0;
-    }
-    .bussniess_setting .families-tab>ul li.nav-item>.nav-link{
-        padding-left: 6px;
-        padding-right: 6px;
     }
     .table_filter_dropdown.drop-down .selected{
         max-width: 240px;
@@ -15759,7 +15807,8 @@ button.swal2-confirm.swal2-styled.swal2-default-outline:focus{
     display: flex;
     align-items: center;
 }
-.settings_content .tabcard .setting_title.total-voucher {
+.settings_content .tabcard .setting_title.total-voucher,
+.setting_voucher h6{
     color: var(--secondary);
     margin-left: 10px;
     font-size: 14px;
@@ -15769,13 +15818,20 @@ button.swal2-confirm.swal2-styled.swal2-default-outline:focus{
     flex-shrink: 0;
     line-height: normal;
 }
-.settings_content .tabcard .setting_title.total-voucher>span{
+.settings_content .tabcard .setting_title.total-voucher>span,
+.setting_voucher .total-count{
     background-color: var(--inputBg);
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: 400;
 }
-.settings_content .tabcard .setting_title.total-voucher>span>span{
+.setting_voucher .total-count{
+    margin: 0;
+    border: none;
+    display: inline-block;
+}
+.settings_content .tabcard .setting_title.total-voucher>span>span,
+.setting_voucher .total-count>span{
     font-weight: 600;
 }
 .voucher_card_list .voucher_card>h6 {

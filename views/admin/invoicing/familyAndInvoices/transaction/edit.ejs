@@ -13,7 +13,7 @@
         <div class="col-xl-9 col-lg-8">
           <div class="card">
             <div class="card-body settings_content">
-              <h2 class="title-text mb-4" id="transactionHeading"><%= editTransaction.transaction_type %> Details</h2>
+              <h2 class="title-text mb-3" id="transactionHeading"><%= editTransaction.transaction_type %> Details</h2>
                 <div class="form-wizard">
                   <form id="multi-step-form" method="post" action="/families-invoices/transaction/update/<%= editTransaction._id %>" class="form-design" autocomplete="off">
                     <%- include('./partials/_form',{studentId:editTransaction.student_id, families: families, recurringFrequency: recurringFrequency, repeatDays: repeatDays, taxes: taxes, chargeCategories: chargeCategories, formType: 'edit', transaction: editTransaction }); %>

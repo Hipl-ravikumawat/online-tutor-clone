@@ -18,7 +18,7 @@
   <h3 class="title-text mb-3"><i class="fa fa-refresh"></i> Recurring Charge</h3>
 
   <!-- Frequency -->
-  <label class="form-label">Frequency</label><br>
+  <label class="form-label">Frequency</label>
   <div class="mb-3 repeat_frequency_wrap">
     <div class="inline_radiobox">
       <% recurringFrequency.forEach(function(item) { 
@@ -27,7 +27,7 @@
       %>
         <div class="radio_group form-check form-check-inline m-0">
           <input class="form-check-input repeat-frequency" type="radio" name="recurring_info[frequency]" value="<%= item.val || '' %>" id="<%= item.val || '' %>Freq" <%= isChecked ? 'checked' : '' %> />
-          <label class="radiolabel" for="<%= item.val || '' %>Freq"><%= item.label || '' %></label>
+          <label class="radiolabel py-10px" for="<%= item.val || '' %>Freq"><%= item.label || '' %></label>
         </div>
       <% }) %>
     </div>
@@ -78,12 +78,12 @@
       <div class="radio_group form-check form-check-inline m-0">
         <input class="form-check-input" type="radio" name="recurring_info[recurring_montly_on]" value="monthly_on_date"
           id="monthly_on_date" <%= recurringMonthlyOn === 'monthly_on_date' ? 'checked' : '' %> />
-        <label class="radiolabel" for="monthly_on_date">Monthly on day <%= moment().format('D') %></label>
+        <label class="radiolabel py-10px" for="monthly_on_date">Monthly on day <%= moment().format('D') %></label>
       </div>
       <div class="radio_group form-check form-check-inline m-0">
         <input class="form-check-input" type="radio" name="recurring_info[recurring_montly_on]" value="monthly_on_day"
           id="monthly_on_day" <%= recurringMonthlyOn === 'monthly_on_day' ? 'checked' : '' %> />
-        <label class="radiolabel" for="monthly_on_day">Monthly on the fourth <%= moment().format('dddd') %></label>
+        <label class="radiolabel py-10px" for="monthly_on_day">Monthly on the fourth <%= moment().format('dddd') %></label>
       </div>
     </div>
   </div>

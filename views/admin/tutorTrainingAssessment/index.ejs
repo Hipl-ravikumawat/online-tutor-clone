@@ -1,7 +1,7 @@
 <div class="right_col mt-sm-3" role="main">
   <div class="max-w-1440">
     <div class="row">
-      <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
           <span class="shade5">
             <%=trainingAssessmentObject.total%>
@@ -10,7 +10,7 @@
           <img src="/images/favicon-32x32.png" class="hidden-bg">
         </div>
       </div>
-      <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
           <span class="shade1">
             <%=trainingAssessmentObject.completed%>
@@ -20,7 +20,7 @@
         </div>
       </div>
       <% if(userRole != 3) { %>
-      <div class="col-sm-12 col-md-6 col-lg-3">
+      <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
           <span class="shade2">
             <%=trainingAssessmentObject.pending%>
@@ -30,7 +30,7 @@
         </div>
       </div>
       <% } %>
-      <div class="col-sm-12 col-md-6 <%=(userRole == 3) ? 'col-lg-4' : 'col-lg-3'%>">
+      <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="stcard-box">
           <span class="shade3">
             <%=trainingAssessmentObject.not_completed%>
@@ -45,7 +45,7 @@
         <div class="x_panel">
           <div class="filter_top">
             <h2 class="title-text">Filter Staff Assessments</h2>
-            <ul class="filter-row">
+            <ul class="filter-row filter_row_break">
               <li class="filter-col">
                 <select class="form-control select2" id="trainingAssessment" tabindex="-1" data-placeholder="Select Staff Assessment" single>
                   <option value="">Select Staff Course</option>
@@ -87,37 +87,31 @@
               </li>
             </ul>
           </div>
-          <div class="x_title">
-            <h2 class="title-text mb-0">Staff Assessments List</h2>
-            <ul class="right-btns">
+          <div class="x_title tab_justify_between">
+            <h2 class="title-text mb-0 tab_width_auto">Staff Assessments List</h2>
+            <ul class="right-btns tab_width_auto">
             <% if(userRole == 1) { %> 
-              <li> <a href="/tutor-training-assessments/create" class="btn theme-btn" data-toggle="tooltip" rel="tooltip"
-                  data-placement="top" title="Assign Staff Assessment">+ Assign</a>
+              <li> <a href="/tutor-training-assessments/create" class="btn theme-btn">+ Assign</a>
               </li>
             <% } %>             
             </ul>
           </div>
           <div class="x_content">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="card-box table-responsive">
-                  <table id="trainingAssessmentTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
-                  width="100%">
-                  <thead>
-                    <tr>
-                      <!-- <th>#</th> -->
-                      <th>Staff Assessment</th>
-                      <th>Staff Courses</th>
-                      <th>Status</th>
-                      <th class="text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody> 
-                  </tbody>
-                </table>
-              </div>
+            <div class="card-box table-responsive">
+              <table id="trainingAssessmentTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
+              width="100%">
+                <thead>
+                  <tr>
+                    <th>Staff Assessment</th>
+                    <th>Staff Courses</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody> 
+                </tbody>
+              </table>
             </div>
-          </div>
           </div>
         </div>
       </div>
@@ -211,12 +205,12 @@
           data: "action",
           "render": function (data, type, row) {
             let tutorAssessment = row.tutor_assessment_ids;
-            let html = `<div class="d-flex">`;
+            let html = `<div class="d-flex table_action_btn">`;
               if(userRole == 1){
                 let tutorStatusArray = tutorAssessment.map(item => item.status);
                 let canDelete = tutorStatusArray.every(value => value === "N/A");
                 html += `
-                <a href="/tutor-training-assessments/detailed-report/${row.slug}" class="mr-1">
+                <a href="/tutor-training-assessments/detailed-report/${row.slug}">
                   <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Details">
                 </a>`;
 
@@ -225,7 +219,7 @@
                 } 
                 
                 if(canDelete){
-                  html += `<a href="javascript:void(0)" class="ml-2 delete-assessment-${row._id}" onclick="confirmBeforeDeletion('/tutor-training-assessments/destroy/${row._id}')">
+                  html += `<a href="javascript:void(0)" class="delete-assessment-${row._id}" onclick="confirmBeforeDeletion('/tutor-training-assessments/destroy/${row._id}')">
                     <img src="/images/trash.svg" alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete">
                   </a>`;
                 }

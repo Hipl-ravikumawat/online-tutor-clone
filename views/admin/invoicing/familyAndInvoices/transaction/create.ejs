@@ -9,13 +9,13 @@
     <div class="bussniess_setting">
       <a class="back-link" href="<%= (studentId) ? '/families-invoices/family/'+ studentId +'#account' : '/families-invoices#FamilyAccounts' %>"><span class="fa fa-chevron-left mr-2"></span>Back to Family Accounts</a>
       <h2 class="title-text mt-3 mb-4 size-22">Add Transaction</h2>
-      <div class="row row-gap-30">
+      <div class="row row-gap-20">
         <!-- Transaction Types -->
         <%- include('./partials/transaction_types',{ transactionTypes: transactionTypes }); %>
         <div class="col-xl-9 col-lg-8">
           <div class="card">
             <div class="card-body settings_content">
-              <h2 class="title-text mb-4" id="transactionHeading">Payment Transaction</h2>
+              <h2 class="title-text mb-3" id="transactionHeading">Payment Transaction</h2>
               <div class="form-wizard">
                 <form id="add-transaction-form" method="post" action="/families-invoices/transaction/store" class="form-design" autocomplete="off">
 
