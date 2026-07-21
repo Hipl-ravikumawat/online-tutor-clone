@@ -1,5 +1,5 @@
 <!-- tutor-training lesson row content starts -->
-<div class="col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3 lesson-grid" data-lesson-id="<%=lesson.id%>"
+<div class="col-sm-12 col-md-6 col-lg-6 col-xl-4 lesson-grid" data-lesson-id="<%=lesson.id%>"
     data-position="<%=count%>">
     <div class="lesson_card">
         <div class="floder-icon">
@@ -18,7 +18,7 @@
         </div>
         <div class="dropdown">
             <a class="actiondrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="/images/menudots.svg" alt="icon"> </a>
+                <img src="/images/menu-dot.svg" alt="icon"> </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a href="/tutor-training/<%=contentSlug%>/lessons/<%=lesson.slug%>/<%=lesson.id%>/<%=programId%>" style="cursor:pointer;"
                     class="editLesson" data-title="<%=lesson.title%>" data-id="<%=lesson.id%>" data-toggle="tooltip"
@@ -29,7 +29,7 @@
 
                     <a href="javascript:void(0)" class="lesson-duplication" data-content-slug="<%=contentSlug%>" data-lesson-id="<%=lesson.id%>" data-lesson-name="<%=lesson.title%>">Duplicate Lesson</a>
                     
-                    <a class="text-red" href="javascript:void(0)"
+                    <a href="javascript:void(0)"
                         onclick="confirmBeforeDeletion('/tutor-training/<%=contentSlug%>/lessons/destroy/<%=lesson.id%>')">Delete
                         Lesson</a>
                 <% } %>
