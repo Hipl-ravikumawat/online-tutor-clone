@@ -1046,6 +1046,9 @@ span.total-count {
     border-radius: 8px;
     min-height: 44px;
 }
+.select2-container--default.select2-container--disabled .select2-selection--multiple{
+    background-color: var(--inputBg);
+}
 .filter-col .select2-container{
     width: 100% !important;
 }
@@ -9153,7 +9156,7 @@ span.index-number.opt-incorrect {
     font-weight: 400;
     line-height: 18px;
     text-align: left;
-    color: #4A4674;
+    color: var(--primary-light);
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;  
@@ -9223,7 +9226,8 @@ span.index-number.opt-incorrect {
     margin: 0px;
     display: flex;
     align-items: center;
-    gap: 9px;
+    justify-content: space-between;
+    gap: 10px;
 }
 .settings_content .tabcard .setting_title .subtitle{
     font-size: 12px;
@@ -9234,20 +9238,27 @@ span.index-number.opt-incorrect {
     cursor: pointer;
     transition: all ease-in-out 0.3s;
 }
+.settings_content .tabcard .setting_title .editsetting{
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--inputBg);
+    border-radius: 5px;
+}
 .settings_content .tabcard.active .setting_title .editsetting{
     display: none;
 }
 .settings_content .tabcard .settings{
     margin: 20px 0px 0px;
-    padding: 20px 0px 0px;
-    border-top: 1px solid var(--border-color);
 }
 .settings_content .tabcard .settings .setting_name{
     font-size: 14px;
     font-weight: 500;
     line-height: 21px; 
     color: var(--dblue);
-    margin: 0px 0px 8px;
+    margin: 0px 0px 6px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -9258,6 +9269,13 @@ span.index-number.opt-incorrect {
 }
 .settings_content .tabcard .settings .setting_name + .form-group .form-control{
     font-size: 14px;
+    border-radius: 8px;
+    color: var(--dblue);
+    border: none !important;
+    background-color: var(--inputBg) !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 44px;
 }
 
 .settings_content .tabcard .settings .setting_name.policy{
@@ -9292,7 +9310,7 @@ span.index-number.opt-incorrect {
     font-weight: 400;
     line-height: 18px;
     padding: 11px 15px;
-    height: 40px;
+    height: 44px;
     border: 1px solid var(--exLightBlue);
     width: 50%;
 }
@@ -9304,7 +9322,7 @@ span.index-number.opt-incorrect {
 }
 .settings_content .form-check .open_group .inputgroup.iconfield span {
     width: 40px;
-    height: 40px;
+    height: 44px;
     position: absolute;
     top: 0;
     left: 0;
@@ -9316,9 +9334,6 @@ span.index-number.opt-incorrect {
     padding-left: 40px;
 }
 
-.settings_content .form-check input.form-control:focus {
-    border-color: var(--dblue);
-}
 .settings_content .form-check input[type="radio"]:checked~.open_group, .settings_content .form-check input[type="checkbox"]:checked~.open_group{
     display: flex;
 }
@@ -9339,6 +9354,17 @@ span.index-number.opt-incorrect {
     font-weight: 400;
     line-height: 21px;
     cursor: pointer;
+    margin-bottom: 6px;
+}
+.family-account .settinglist .inputgroup .form-control{
+    font-size: 14px;
+    border-radius: 8px;
+    color: var(--dblue);
+    border: none !important;
+    background-color: var(--inputBg) !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 44px;
 }
 .settings_content .form-group .form-check-label::before, .settings_content .form-group .form-check-label::after,
 .settings_content .radio_group .radiolabel::before, .settings_content .radio_group .radiolabel::after{
@@ -9479,7 +9505,9 @@ span.index-number.opt-incorrect {
     display: none;
 }
 .settings_content .tabcard.active .btngroup{
-    display: block;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 .settings_content .tabcard .choosefile{
     margin-right: 30px;
@@ -9525,7 +9553,7 @@ span.index-number.opt-incorrect {
     cursor: pointer;
 }
 .settings_content .tabcard .settings .paymentcard, .settings_content .tabcard .settings .emaildetails_card{
-   background-color: var(--lightgray);
+   background-color: var(--lightgray2);
 }
 .settings_content .tabcard .settings .paymentcard{
    padding: 50px 10px 40px;
@@ -9555,7 +9583,7 @@ span.index-number.opt-incorrect {
 .settings_content .tabcard .settings .emaildetails_card .list{
    display: flex;
    flex-direction: column;
-   gap: 10px;
+   gap: 6px;
 }
 .settings_content .tabcard .settings .emaildetails_card .list:not(:last-child){
     margin-bottom: 15px;
@@ -9566,7 +9594,7 @@ span.index-number.opt-incorrect {
     font-size: 12px;
     font-weight: 400;
     line-height: 18px;
-    color: #4A4674;
+    color: var(--primary-light);
 }
 .settings_content .tabcard .settings .emaildetails_card .list li .iconimg{
    width: 18px;
@@ -9586,20 +9614,47 @@ span.index-number.opt-incorrect {
 .settings_content .tabcard .settings .setting_name.emailtemplate{
     padding: 20px;
     flex-direction: row;
-    background-color: var(--lightgray);
+    background-color: var(--lightgray2);
     border-radius: 10px;
     margin: 0px;
+    justify-content: space-between;
+    align-items: center;
+}
+.settings_content .tabcard .settings .setting_name.emailtemplate .actions{
+    display: flex;
+    gap: 5px;
+}
+.settings_content .tabcard .settings .setting_name.emailtemplate .actions>*{
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e5effc;
+    border-radius: 5px;
 }
 .settings_content .tabcard .open_group {
     display: none;
     flex-direction: column;
-    padding-left: 12px;
+    padding-left: 10px;
 }
 .settings_content .tabcard .open_group label {
-    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.settings_content .tabcard .open_group .form-control{
+    background: var(--inputBg);
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dblue);
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .settings_content .tabcard .open_group label .inputgroup_value{
     font-size: 12px;
@@ -9621,16 +9676,9 @@ span.index-number.opt-incorrect {
     margin-bottom: 0px;
 }
 
-.modal-open .modal.bussiness-setting-modal{
-    overflow-x: inherit;
-    overflow-y: inherit;
-}
 .bussiness-setting-modal .modal-dialog{
     margin-top: 15px;
     margin-bottom: 15px;
-}
-.bussiness-setting-modal .modal-content{
-    max-height: 95vh;
 }
 .bussiness-setting-modal .modal-header{
     gap: 10px;
@@ -9646,12 +9694,12 @@ span.index-number.opt-incorrect {
 .bussiness-setting-modal .modal-header .close{
     padding: 0;
 }
-.bussiness-setting-modal .modal-body,
+/* .bussiness-setting-modal .modal-body,
 .modal-form-area .modal-body{
     max-height: 65vh;
     overflow-y: auto;
     overflow-x: hidden;
-}
+} */
 .bussiness-setting-modal .modal-body .form-area .form-group .mce-container>iframe{
     height: 260px !important;
 }
@@ -9709,32 +9757,28 @@ span.index-number.opt-incorrect {
     justify-content: space-between;
     gap: 10px;
 }
-.bussiness-setting-modal .modal-footer button{
-    height: 40px;
-}
 .bussiness-setting-modal .dropdown-menu{
     max-height: 230px !important;
     overflow: auto;
-    min-width: 240px;
+    min-width: 100%;
 }
 .bussiness-setting-modal .dropdown-menu .dropdown-item{
     padding: 9px 12px;
     font-size: 14px;
 }
 .bussiness-setting-modal .dropdown .btn{
-    min-width: 240px;
-    border-radius: 5px;
-    color: var(--dblue);
-    box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 9%);
-    -webkit-box-shadow: 9px 2px 29px 0px rgb(0 29 61 / 9%);
-    background: #fff;
-    border: 1px solid #c5dae5;
-    padding: 10px;
     padding-right: 20px;
     text-align: left;
     position: relative;
-    font-size: 14px;
     font-weight: 400;
+    width: 100%;
+    border-radius: 8px;
+    color: var(--dblue);
+    height: 44px;
+    background: var(--inputBg);
+    border: none;
+    padding: 6px 15px;
+    font-size: 14px;
 }
 .bussiness-setting-modal .dropdown .btn::after{
     margin: 0;
@@ -10030,15 +10074,19 @@ span.index-number.opt-incorrect {
 .prior-input input{
     padding-right: 55px !important;
 }
-.prior-input input,
+.prior-input input:not(.prior-input .select2 input),
 .prior-input select,
 .prior-input textarea{
     width: 100%;
-    padding: 8px;
-    background-color: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    background: var(--inputBg);
+    height: 44px;
+    border-radius: 8px;
+    border: none;
     font-size: 14px;
+    font-weight: 400;
+    color: var(--dblue);
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .prior-label{
     position: absolute !important;
@@ -10066,11 +10114,16 @@ span.index-number.opt-incorrect {
     outline: none;
 }
 .form-areablock input{
+    background: var(--inputBg);
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dblue);
+    padding-left: 15px;
+    padding-right: 15px;
     width: 100%;
-    padding: 8px;
-    background-color: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
 }
 .select2-Hequal .select2-container li.select2-search--inline .select2-search__field{
     padding: 8.4px;
@@ -10113,10 +10166,14 @@ table.dataTable.no-footer tbody tr td{
 }
 .colorpicker-input>label{
     width: 50%;
-    padding: 8px;
-    background-color: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    background: var(--inputBg);
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dblue);
+    padding: 9px 15px;
 }
 .colorpicker-input>.input-group{
     padding: 0;
@@ -11563,7 +11620,7 @@ select.form-control[multiple] optgroup{
 } */
 
 .settings_content .form-check .open_group input.form-control{
-    height: 45px;
+    height: 44px;
 }
 
 .template_note_lists{
@@ -14497,10 +14554,6 @@ span.duration-label {
     .student-notes{
         padding: 20px;
     }
-    .settings_content .tabcard .settings{
-        margin: 16px 0px 0px;
-        padding: 16px 0px 0px;
-    }
     .bussniess_setting .setting_tab ul .nav-item .nav-link{
         padding: 10px 14px;
     }
@@ -14509,26 +14562,9 @@ span.duration-label {
     .colorpicker-input>label{
         width: 80%;
     }
-    /* .dash-leftblock{
-        flex: 0 0 calc(100% - 50px);
-        -webkit-flex: 0 0 calc(100% - 50px);
-        max-width: calc(100% - 50px);
-    }
-    .dash-rightblock{
-        flex: 0 0 50px;
-        -webkit-flex: 0 0 50px;
-        max-width: 50px;
-    }
-    .dash-rightblock>img{
-        width: 50px;
-    } */
     .stuattach-bbtn>*{
         padding: 10px 6px;
     }
-    /* .cal-top-btarea{
-        margin: 0 0 20px;
-        padding-top: 0;
-    } */
     .fc-toolbar-chunk .fc-toolbar-title{
         margin-left: 0;
     }
@@ -14586,8 +14622,6 @@ span.duration-label {
         overflow-x: hidden;
         overflow-y: auto;
     }
-
-    /* .x_content div.dataTables_wrapper div.dataTables_length label select, */
     .x_panel .x_title .right-btns{
         width: 100%;
     }

@@ -1,10 +1,16 @@
 
 <div class="tab-pane fade" id="pills-policies" role="tabpanel" aria-labelledby="pills-policies-tab">
-    <div class="row mx-0 row-gap-30">
+    <div class="row mx-0 row-gap-20">
       <div class="col-12 px-0">
         <div class="card tabcard">
             <div class="card-body">
-                <h3 class="setting_title flex-column align-items-start"><span>Cancellation Policy <span class="editsetting"><img src="/images/edit.svg" alt=""></span></span><span class="subtitle">Define what happens when a student cancels through the Student Portal. As the tutor, you can overwrite the student's attendance at your discretion.</span></h3>
+                <h3 class="setting_title">
+                  <span>
+                    Cancellation Policy 
+                    <span class="subtitle d-block">Define what happens when a student cancels through the Student Portal. As the tutor, you can overwrite the student's attendance at your discretion.</span>
+                  </span>
+                  <span class="editsetting"><img src="/images/edit.svg" alt=""></span>
+                </h3>
                 <form class="policies" id="cancellation">
                   <div class="settings">
                     <div class="row mx-0 row-gap-20">
@@ -63,9 +69,9 @@
                             <textarea name="policy_text" class="cancellation-input-group" disabled><%=businessSetting?.cancellation_policy[0].policy_text%></textarea>
                           </div>
                         </div>
-                        <div class="col-12 px-0 text-right btngroup">
-                        <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
-                        <button type="button" class="btn form-button save-btn theme-btn">Save</button>
+                        <div class="col-12 px-0 text-right btngroup ln_solidGroup">
+                          <button type="button" class="btn form-button cancel-btn theme-btn">Cancel</button>
+                          <button type="button" class="btn form-button save-btn theme-btn">Save</button>
                         </div>
                     </div>
                   </div>
