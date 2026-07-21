@@ -191,20 +191,19 @@
             let html ='';
             if (userRole == 1 || userRole == 2) {
 
-              html = `<div class="d-flex align-items-center">
-                
+              html = `<div class="d-flex align-items-center table_action_btn">
                 <a href="/students/${row._id}/view-session" 
                   class="" data-toggle="tooltip" rel="tooltip" data-placement="top" title="View Program"><img src="/images/eye.svg" alt="icon"></a>`;
             }
 
             if (userRole == 1) {
-              html += `<a class="ml-2" href="/students/edit/${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top"
+              html += `<a href="/students/edit/${row._id}" data-toggle="tooltip" rel="tooltip" data-placement="top"
                 title="Edit"><img src="/images/edit.svg" alt="icon"></a>`;
               
-              html += `<a href="javascript:void(0)"  onclick="confirmBeforeSecretLogin('/secret/${row._id}')" class="ml-2 secret_login"><img src="/images/lock2.svg"
+              html += `<a href="javascript:void(0)"  onclick="confirmBeforeSecretLogin('/secret/${row._id}')" class="secret_login"><img src="/images/lock2.svg"
                   alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Secret Login"></a>`;
 
-              html += `<a href="javascript:void(0)" class="ml-2"
+              html += `<a href="javascript:void(0)"
                 onclick="confirmBeforeDeletion('/students/destroy/${row._id}')"><img src="/images/trash.svg"
                 alt="icon" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete"></a>
               </div>`;

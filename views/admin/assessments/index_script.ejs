@@ -128,13 +128,13 @@
         {
           data: "date",
           render: function (data, type, row) {
-            return `<span class="td-items"><i class="fa fa-calendar"></i>${row.date}</span>`;
+            return `<span class="td-items">${row.date}</span>`;
           }
         },
         {
           data: "created_at",
           render: function (data, type, row) {
-            return `<span class="td-items"><i class="fa fa-calendar"></i>${moment(row.created_at).format('DD MMM YYYY')}</span>`;
+            return `<span class="td-items">${moment(row.created_at).format('DD MMM YYYY')}</span>`;
           }
         },
         {
@@ -178,7 +178,7 @@
 
               actions = `<a href="${url}" class="badge badge-info ${statusClass} width-auto" data-id="${row._id}">${fStatus}</a>`;
             } else {
-              actions += `<div class="d-flex">
+              actions += `<div class="d-flex table_action_btn">
                 <a href="/attempted-assessments/detailed-report/${row.slug}" class="view-report" data-id="${row._id}">
                   <img src="/images/eye.svg" alt="icon" data-toggle="tooltip" title="View Details">
                 </a>`;

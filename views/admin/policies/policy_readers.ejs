@@ -1,92 +1,83 @@
-<div class="right_col" role="main">
-  <!-- policy readers page content starts -->
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade1"><%=policyObj?.policyAttachedTutorIds.length ?? '0' %></span>
-        <h3 class="title-text mb-0">Read</h3>
+<div class="right_col mt-sm-3" role="main">
+  <div class="max-w-1440">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade1"><%=policyObj?.policyAttachedTutorIds.length ?? '0' %></span>
+          <h3 class="title-text mb-0">Read</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="stcard-box">
+          <span class="shade3"><%=policyObj?.policyDetachedTutorIds.length ?? '0' %></span>
+          <h3 class="title-text mb-0">UnRead</h3>
+          <img src="/images/favicon-32x32.png" class="hidden-bg">
+        </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-      <div class="stcard-box">
-        <span class="shade3"><%=policyObj?.policyDetachedTutorIds.length ?? '0' %></span>
-        <h3 class="title-text mb-0">UnRead</h3>
-      </div>
-    </div>
-  </div>
-  <div class="card-block mb-30">
-    <h2 class="title-text">Filter Policies</h2> 
-    <ul class="filter-row">
-      <li class="filter-col">
-        <select class="form-control select2" id="tutors" tabindex="-1" single>
-          <option value="">Select Tutor</option>
-          <% for(tutor of tutors) { %>
-            <option value="<%=tutor.id%>">
-              <%=tutor.first_name+' '+tutor.last_name %>
-            </option>
-            <% } %>
-        </select>
-      </li>
-      <li class="filter-col">
-        <select class="form-control" id="reading-status" tabindex="-1" single>
-          <option value="">Select Status</option>
-          <option value="read">Read</option>
-          <option value="unread">Unread</option>
-        </select>
-      </li>
-      <li class="filter-col">
-        <button class="btn theme-btn filter">Filter</button>
-        <button class="btn theme-btn reset">Reset</button>
-      </li>
-    </ul>
-  </div>
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
-      <div class="x_panel">
-        <div class="back_btn">
-          <a href="javascript:void(0)" onclick="window.history.back();">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" class="mr-2">
-                  <path d="M7.57 0.930176L1.5 7.00018L7.57 13.0702M18.5 7.00018H1.67" stroke="#201B53" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Back
-          </a>
-        </div>
-        <div class="x_title">
-          <h2 class="title-text"><%=policy.title%> 's Reader List</h2>
-          <ul class="right-btns">
-            <li>
-              <a
-                href="/Policies/<%=policy.attachment%>" target="_blank"
-                class="btn theme-btn"
-                data-toggle="tooltip"
-                rel="tooltip"
-                data-placement="top"
-                title="View Policy Document"
-                >Policy Document</a
-              >
-            </li>
-          </ul>
-        </div>
-        <div class="x_content">
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="card-box table-responsive">
-                <table
-                  id="policyReadersTable"
-                  class="table table-striped table-bordered dt-responsive nowrap"
-                  cellspacing="0"
-                  width="100%"
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="filter_top">
+            <h2 class="title-text">Filter Policies</h2> 
+            <ul class="filter-row">
+              <li class="filter-col">
+                <select class="form-control select2" id="tutors" tabindex="-1" single>
+                  <option value="">Select Tutor</option>
+                  <% for(tutor of tutors) { %>
+                    <option value="<%=tutor.id%>">
+                      <%=tutor.first_name+' '+tutor.last_name %>
+                    </option>
+                    <% } %>
+                </select>
+              </li>
+              <li class="filter-col">
+                <select class="form-control" id="reading-status" tabindex="-1" single>
+                  <option value="">Select Status</option>
+                  <option value="read">Read</option>
+                  <option value="unread">Unread</option>
+                </select>
+              </li>
+              <li class="filter-col filter-col-btn">
+                <button class="btn theme-btn filter">Filter</button>
+                <button class="btn theme-btn reset">Reset</button>
+              </li>
+            </ul>
+          </div>
+          <div class="x_title tab_justify_between">
+            <h2 class="title-text mb-0 tab_width_auto"><%=policy.title%> 's Reader List</h2>
+            <ul class="right-btns tab_width_auto">
+              <li>
+                <a
+                  href="/Policies/<%=policy.attachment%>" target="_blank"
+                  class="btn theme-btn"
+                  >Policy Document</a
                 >
-                  <thead>
-                    <tr>
-                      <!-- <th>S.No</th> -->
-                      <th>Tutor Name</th>
-                      <th>Read/Unread</th>
-                      <th>Read At</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                  <table
+                    id="policyReadersTable"
+                    class="table table-striped table-bordered dt-responsive nowrap mt-0"
+                    cellspacing="0"
+                    width="100%"
+                  >
+                    <thead>
+                      <tr>
+                        <!-- <th>S.No</th> -->
+                        <th>Tutor Name</th>
+                        <th>Read/Unread</th>
+                        <th>Read At</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -94,7 +85,6 @@
       </div>
     </div>
   </div>
-  <!-- policy readers page content end -->
 </div>
 
 <script type="text/javascript">

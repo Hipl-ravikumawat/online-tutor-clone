@@ -1,4 +1,4 @@
-<div class="right_col" role="main">
+<div class="right_col mt-sm-3" role="main">
     <div class="max-w-1440">
         <% if(loggedUserRole==1){ %>
         <div class="row">
@@ -8,6 +8,7 @@
                         <%=learningContentObject.total%>
                     </span>
                     <h3 class="title-text mb-0">Total</h3>
+                    <img src="/images/favicon-32x32.png" class="hidden-bg">
                 </div>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-4">
@@ -16,6 +17,7 @@
                         <%=learningContentObject.active%>
                     </span>
                     <h3 class="title-text mb-0">Active</h3>
+                    <img src="/images/favicon-32x32.png" class="hidden-bg">
                 </div>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-4">
@@ -24,6 +26,7 @@
                         <%=learningContentObject.deactive%>
                     </span>
                     <h3 class="title-text mb-0">Deactive</h3>
+                    <img src="/images/favicon-32x32.png" class="hidden-bg">
                 </div>
             </div>
         </div>
@@ -31,7 +34,7 @@
         <div class="card-block">
             <div class="filter_top">
                 <h2 class="title-text">Filter Learning Contents</h2>
-                <ul class="filter-row">
+                <ul class="filter-row filter_row_break">
                     <li class="filter-col">
                         <select class="form-control select2" id="grades" tabindex="-1" single>
                             <option value="">Select Grade</option>
@@ -70,24 +73,23 @@
                     </li>
                 </ul>
             </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-4 align-self-center">
-                    <h2 class="title-text mb-0">Contents List <span class="total-count">Total Courses :
-                            <%=(loggedUserInfo.role > 1) ? '' :   +learningContentObject.total  %>
-                        </span></h2>
+            <div class="flex-panel">
+                <div class="setting_voucher">
+                    <h2 class="title-text mb-0">Contents List</h2>
+                    <h6 class="mb-0"><span class="total-count">Total Courses: <span class="total-count-number"></span></span></h6>
                 </div>
-                <div class="col-sm-12 col-md-8 align-self-center">
-                    <div class="course-pagination">
-                        <div class="input-group my-3 m-md-0 input-search">
-                            <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
-                            <span class="input-group-btn">
-                                <button class="btn" type="button"><i class="fa fa-search"></i></button>
-                            </span>
-                        </div>
+                <div class="course-search">
+                    <div class="input-group mb-0 input-search">
+                        <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button class="btn" type="button"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-12" id="myContent">
-                    <ul class="col-sm-12 course-list">
+                    <ul class="course-list learning_course_list mt-0">
 
                     </ul>
                 </div>

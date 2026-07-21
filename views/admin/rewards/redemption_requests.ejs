@@ -1,4 +1,4 @@
-<div class="right_col" role="main">
+<div class="right_col mt-sm-3" role="main">
   <div class="max-w-1440">
     <div class="back-page">
       <ol class="breadcrumb">
@@ -15,7 +15,7 @@
           <div class="x_panel">
             <div class="filter_top">
               <h2 class="title-text">Filter Requests</h2>
-              <ul class="filter-row">
+              <ul class="filter-row flex-wrap flex-xl-nowrap">
                 <li class="filter-col">
                   <select class="form-control select2" id="student" tabindex="-1" data-placeholder="Select Student">
                     <option value="">Select Student</option>
@@ -301,13 +301,13 @@
           {
             data: "",
             render: function (data, type, row) {
-              let html = `<div class="d-flex align-items-center">`;
+              let html = `<div class="d-flex align-items-center table_action_btn">`;
               if (loggedUserRole == 1 && row.status === 'Pending') {
                 html += `<a class="approve" href="javascript:void(0)" data-toggle="tooltip" rel="tooltip"
                               data-placement="top" title="" data-original-title="Approve" data-record-id="${row._id}">
                               <img src="/images/approved.svg" alt="icon">
                             </a> 
-                             <a class="decline ml-2" href="javascript:void(0)" data-record-id="${row._id}">
+                             <a class="decline" href="javascript:void(0)" data-record-id="${row._id}">
                               <img src="/images/declined.svg" alt="icon" data-toggle="tooltip" rel="tooltip"
                                 data-placement="top" title="" data-original-title="Decline">
                             </a>`;

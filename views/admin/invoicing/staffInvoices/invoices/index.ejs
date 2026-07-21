@@ -5,18 +5,18 @@
 </style>
 <div class="tab-pane fade" id="invoices" role="tabpanel" aria-labelledby="pills-invoices-tab">
   <div class="x_panel">
-    <div class="x_title">
-      <div class="left-btns">
+    <div class="x_title mb-14px">
+      <div class="left-btns tab_width_auto">
         <ul>
           <li>
-            <a href="/staff-invoices/add-invoice-details" class="btn theme-btn" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Add New Invoice">+ New Invoice</a>
+            <a href="/staff-invoices/add-invoice-details" class="btn theme-btn">+ New Invoice</a>
           </li>
           <li>
-            <button class="bus-outline-btn mb-0 mr-0 action-btn email-invoice-btn"  disabled><img src="/images/email-icon.svg" alt="Email">Email</button>
+            <button class="bus-outline-btn mb-0 mr-0 action-btn email-invoice-btn"  disabled><img src="/images/email-icon.svg" alt="Email" class="mr-2">Email</button>
           </li>
           <li class="both-btnli">
             <div class="dropdown">
-              <button class="bus-outline-btn dropdown-toggle action-btn" type="button" data-toggle="dropdown" aria-expanded="false" disabled><img src="/images/categories-icon.svg" alt="Options">Options</button>
+              <button class="bus-outline-btn dropdown-toggle action-btn" type="button" data-toggle="dropdown" aria-expanded="false" disabled><img src="/images/categories-icon.svg" alt="Options" class="mr-2">Options</button>
               <div class="dropdown-menu">
                 <button type="button" class="dropdown-item download-selected">Download Selected Invoices</button>
                 <button type="button" class="dropdown-item download-invoice-details">Download Invoice Details</button>
@@ -28,7 +28,7 @@
           </li>
         </ul>
       </div>
-      <ul class="right-btns">
+      <ul class="right-btns tab_width_auto">
         <li class="both-btnli">
           <div class="dropdown select_all_dropdown" id="invoice-colvis-dropdown">
             <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
@@ -105,8 +105,8 @@
                     <option value="unarchived">Unarchived</option>
                   </select>
                 </div>
-                <div class="d-flex mt-20">
-                  <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100">Clear</button>
+                <div class="d-flex gap-10 mt-20">
+                  <button type="button" class="btn form-button cancel-btn theme-btn cancel-event w-100">Clear</button>
                   <button type="submit" class="btn theme-btn w-100">Search</button>
                 </div>
               </form>
@@ -114,7 +114,6 @@
           </div>
         </li>
       </ul>
-      <div class="clearfix"></div>
     </div>
     <div class="x_content">
       <div class="card-box allselect-table">
@@ -211,9 +210,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <div class="d-flex w-100">
-            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
-            <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0 send-email-btn">Send</button>
+          <div class="d-flex w-100 gap-10">
+            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event w-100">Cancel</button>
+            <button type="submit" class="btn theme-btn w-100 mb-0 send-email-btn">Send</button>
           </div>
         </div>
       </form>
@@ -238,9 +237,9 @@
           <p class="main-color mb-0">Are you sure you want to void this invoice? You'll still be able to view, email, and download it from the list of invoices, but payments added to the Family Account will not mark this invoice as paid.</p>
         </div>
         <div class="modal-footer">
-          <div class="d-flex w-100">
-            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100 min-h-40">Cancel</button>
-            <button type="submit" class="btn theme-btn w-100 min-h-40 mb-0">Void Invoice</button>
+          <div class="d-flex w-100 gap-10">
+            <button type="button" data-dismiss="modal" class="btn form-button cancel-btn theme-btn cancel-event w-100">Cancel</button>
+            <button type="submit" class="btn theme-btn w-100 mb-0">Void Invoice</button>
           </div>
         </div>
     </div>

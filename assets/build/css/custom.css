@@ -1909,16 +1909,22 @@ ul.challenge-summry .challenge-summry-list span {
     .nav_menu{
         border-radius: 0 0 20px 20px !important;
         box-shadow: none !important;
+        margin-bottom: 0;
     }
     .nav-sm .main_container .nav_menu{
         border-radius: 0 0 20px 0 !important;
+        padding-left: 0;
     }
     .nav-sm .main_container .top_nav{
-        margin-left: 85px !important;
+        margin-left: 60px !important;
     }
     .nav_title{
-        padding: 12px 10px 13px !important;
+        padding: 16px 10px !important;
         background-color: #fff;
+    }
+    .nav-sm .navbar.nav_title{
+        width: 60px;
+
     }
 }
 
@@ -2433,13 +2439,13 @@ a:focus {
     color: #fff
 }
 
-.nav.side-menu>li.active>a {
+/* .nav.side-menu>li.active>a {
     text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
     background: -webkit-gradient(linear, left top, left bottom, from(#334556), to(#2C4257)), #2A3F54;
     background: linear-gradient(#334556, #2C4257), #2A3F54;
     -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
     box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0
-}
+} */
 
 .navbar-brand,
 .navbar-nav>li>a {
@@ -2776,9 +2782,9 @@ h2 {
     margin: 5px 0 6px;
     float: left;
     display: block;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap
+    white-space: nowrap */
 }
 
 .x_title h2 small {
@@ -3300,9 +3306,9 @@ ul.msg_list li a .message {
     text-shadow: none;
     top: 100%;
     z-index: 9998;
-    border: 1px solid #D9DEE4;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0
+    border-radius: 10px;
+    margin: 0;
+    overflow: hidden;
 }
 
 .dropdown-menu>li>a {
@@ -3313,8 +3319,8 @@ ul.msg_list li a .message {
     position: absolute;
     background: #fff;
     margin-top: 0;
-    border: 1px solid #D9DEE4;
-    -webkit-box-shadow: none;
+    -webkit-box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
+    box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
     right: 0;
     left: auto;
     width: 220px
@@ -3871,8 +3877,7 @@ a.star {
 
 button,
 .buttons,
-.btn,
-.modal-footer .btn+.btn {
+.btn{
     margin-bottom: 5px;
     margin-right: 5px
 }
@@ -5882,7 +5887,8 @@ div[data-role="editor-toolbar"] {
 }
 
 .dropdown-menu a {
-    cursor: pointer
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .select2-container--default .select2-selection--single,
@@ -6992,7 +6998,7 @@ li.ui-timepicker-am.ui-timepicker-selected, li.ui-timepicker-am.ui-timepicker-se
     border-radius: 4px;
     border: 1px solid #C7D6DD;
     background-color: transparent;
-    top: -10px;
+    top: -13px;
     left: 0;
 }
 .dataTable input[type="checkbox"]:checked::before {
@@ -7001,7 +7007,7 @@ li.ui-timepicker-am.ui-timepicker-selected, li.ui-timepicker-am.ui-timepicker-se
 }
 .dataTable input[type="checkbox"]::after {
     left: 5px;
-    top: 50%;
+    top: calc(50% - 4px);
     background: white;
     width: 2px;
     height: 2px;
@@ -7501,10 +7507,10 @@ input:-webkit-autofill:active{
     text-align: center;
 }
 .checkbox_alignment.dataTable tbody tr td:first-child input[type=checkbox]::before{
-    left: -6px;
+    left: -13px;
 }
 .checkbox_alignment.dataTable tbody tr td:first-child input[type=checkbox]::after{
-    left: -1px;
+    left: -8px;
 }
 .mt-10px{
     margin-top: 10px !important;
@@ -7553,13 +7559,13 @@ input:-webkit-autofill:active{
 }
 
 @media (max-width: 992px) {
-    .fc-dayGridMonth-button,
+    /* .fc-dayGridMonth-button,
     .fc-timeGridWeek-button {
         display: none !important;
     }
     .fc-timeGridDay-button {
         border-radius: 0.25em !important;
-    }
+    } */
     .fc-view-harness-active {
         min-height: 420px;
     }

@@ -58,7 +58,7 @@ async function loadDatatableFamilyAccounts() {
             { data: "auto_invoice_setting", orderable:false, render: (data, type, row) => data || '-' },
             { data: "last_invoice_date", orderable:false, render: (data) => `${data ? moment(new Date(data)).format('DD-MM-YYYY') : "-"}` },
             { data: "last_payment_date", orderable:false, render: (data) => `${data ? moment(new Date(data)).format('DD-MM-YYYY') : "-"}` },
-            { data: "_id", render: id => `<a href="/families-invoices/family/${id}" title=""><img src="/images/eye.svg" alt="Eye" /></a>`, orderable: false, responsivePriority: 1 }
+            { data: "_id", render: id => `<div class="d-flex align-items-center table_action_btn"><a href="/families-invoices/family/${id}"data-toggle="tooltip" data-placement="top" data-original-title="View"><img src="/images/eye.svg" alt="Eye" /></a></div>`, orderable: false, responsivePriority: 1 }
         ],
         select: {
           style: "multi",
@@ -74,6 +74,10 @@ async function loadDatatableFamilyAccounts() {
         initComplete: function(settings, json) {
           applySavedSort(table,'sort-dropdown',SORT_STORAGE_KEY);
         }
+    });
+    table.ajax.reload( function() {
+      $('[data-toggle="tooltip"]').tooltip('dispose'); 
+      $('[data-toggle="tooltip"]').tooltip();
     });
 }
 

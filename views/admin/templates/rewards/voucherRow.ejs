@@ -2,21 +2,11 @@
 <div class="voucher_card">
     <h6>
         <%= `Voucher ${i+1}` %>
-      <span>
+      <span class="voucher_action">
         <a href="javascript:void(0)" data-toggle="tooltip" rel="tooltip" data-placement="top" title="Edit" class="voucher_edit" data-slug="<%=voucher.slug%>">
-          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-            <g clip-path="url(#clip0_1291_7250)">
-            <path d="M7.79102 2.83398H2.83268C2.45696 2.83398 2.09662 2.98324 1.83095 3.24892C1.56527 3.51459 1.41602 3.87493 1.41602 4.25065V14.1673C1.41602 14.543 1.56527 14.9034 1.83095 15.1691C2.09662 15.4347 2.45696 15.584 2.83268 15.584H12.7493C13.1251 15.584 13.4854 15.4347 13.7511 15.1691C14.0168 14.9034 14.166 14.543 14.166 14.1673V9.20898" stroke="#27D06D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M13.1035 1.77018C13.3853 1.48839 13.7675 1.33008 14.166 1.33008C14.5645 1.33008 14.9467 1.48839 15.2285 1.77018C15.5103 2.05197 15.6686 2.43417 15.6686 2.83268C15.6686 3.23119 15.5103 3.61339 15.2285 3.89518L8.49935 10.6243L5.66602 11.3327L6.37435 8.49935L13.1035 1.77018Z" stroke="#27D06D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </g>
-            <defs>
-            <clipPath id="clip0_1291_7250">
-            <rect width="17" height="17" fill="white"/>
-            </clipPath>
-            </defs>
-            </svg>
+          <img src="/images/edit.svg" alt="icon">
         </a>
-        <a href="javascript:void(0)"  data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete" class="ml-2" onclick="confirmBeforeDeletion('/rewards/delete-voucher/<%=voucher._id%>')"><img src="/images/trash.svg" alt="icon" ></a>
+        <a href="javascript:void(0)"  data-toggle="tooltip" rel="tooltip" data-placement="top" title="Delete" onclick="confirmBeforeDeletion('/rewards/delete-voucher/<%=voucher._id%>')"><img src="/images/trash.svg" alt="icon" ></a>
       </span>
     </h6>
     <p><%= `${voucher.title} - ${appSymbol}${voucher.equivalent_amount} ${appCurrency} = ${voucher.required_points} Points` %></p>

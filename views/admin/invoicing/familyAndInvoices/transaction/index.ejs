@@ -1,12 +1,12 @@
 <!-- Transactions Tab -->
 <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="pills-transactions-tab">
   <div class="x_panel">
-    <div class="x_title">
+    <div class="x_title mb-14px">
       <div class="left-btns">
         <ul>
           <li>
             <div class="date_dropdown">
-              <h2 class="title-text">Showing transactions between 
+              <h2 class="title-text mb-0">Showing transactions between 
                 <div class="date_content" id="trans_start_date"></div> and
                 <div class="date_content" id="trans_end_date"></div>
                 <div class="position-relative">
@@ -25,7 +25,7 @@
         </ul>
       </div>
 
-      <ul class="right-btns">
+      <ul class="right-btns tab_width_auto">
         <li class="both-btnli">
           <div class="dropdown short_dropdown" id="transactions-sort-dropdown">
             <button class="bus-outline-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"><img src="/images/short-icon.svg" alt="Sort" class="mr-2">Sort</button>
@@ -46,7 +46,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-area dropdown-menu-right">
               <form id="transactionsSearchForm">
-                <div class="position-relative form-group">
+                <div class="position-relative form-group mb-20">
                   <input type="search" class="form-control search-input" id="search_family_note" name="family_or_note" placeholder="Family or notes..." />
                   <img src="/images/search-icon.svg" alt="Search" class="search_drop_icon">
                 </div>
@@ -56,7 +56,7 @@
                   <span class="input-icon"><i class="<%= currency.icon || 'fa fa-dollar' %>" aria-hidden="true"></i></span>
                 </div>
                 <div class="mt-20 mb-20">
-                  <div class="form-group form-check mb-2">
+                  <div class="form-group">
                     <label class="form-label">By Transaction Type</label>
                   </div>
                   <div class="form-group form-check mb-2">
@@ -80,8 +80,8 @@
                     <input class="form-check-input search-input" type="checkbox" value="1" id="show_zero_entries" name="show_zero_entries">
                     <label class="form-check-label" for="show_zero_entries">Show <%= currency.symbol %>0.00 Entries</label>
                 </div>
-                <div class="d-flex mt-20">
-                  <button type="button" class="btn form-button cancel-btn theme-btn cancel-event mr-3 w-100">Clear</button>
+                <div class="d-flex gap-10 mt-20">
+                  <button type="button" class="btn form-button cancel-btn theme-btn cancel-event w-100">Clear</button>
                   <button type="submit" class="btn theme-btn w-100">Search</button>
                 </div>
               </form>
@@ -89,7 +89,6 @@
           </div>
         </li>
       </ul>
-      <div class="clearfix"></div>
     </div>
     <div class="x_content">
       <div class="card-box table-responsive allselect-table nowrap-table">

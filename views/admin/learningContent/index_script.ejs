@@ -118,7 +118,7 @@
       },
       success: function (response) {
         const res = JSON.parse(response);
-        $(".total-count").html("Total Contents : " + res.recordsTotal);
+        $(".total-count .total-count-number").html(res.recordsTotal);
         $("#CurrentPageNumber").html(res.currentPage);
         $("#totalRecords").html(
           res.totalNoOfPages == 0 ? 1 : res.totalNoOfPages

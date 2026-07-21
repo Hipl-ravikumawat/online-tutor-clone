@@ -1,12 +1,12 @@
 <!-- tutor-training-assessment creation page content starts-->
-<div class="right_col" role="main">
-    <div class="row main_row">
-      <div class="x_panel form_panel">
+<div class="right_col mt-sm-3" role="main">
+    <div class="row main_row max-w-1440">
+      <a class="back-link" href="/tutor-training-assessments"><span class="fa fa-chevron-left mr-2"></span>Back to staff assessments</a>
+      <div class="x_panel form_panel mt-3">
         <div class="x_title">
-          <h2 class="title-text">Edit Staff Course Assessment</h2>
+          <h2 class="title-text mb-0">Edit Staff Course Assessment</h2>
         </div>
         <div class="x_content">
-
           <form id="storeTrainingContent" action="/tutor-training-assessments/update" method="post" class="form-horizontal form-label-left">
             <input type="hidden" name="tutor_assessment_id" value="<%=ObjectData.assessmentId%>">
             <div class="row">
@@ -36,73 +36,73 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12 mt-4">
-                <h2 class="title-text fn-16">Staff Courses For Assessment</h2>
+              <div class="col-md-12">
+                <h2 class="title-text mb-20 devider-border">Staff Courses For Assessment</h2>
               </div>
-              <div class="col-md-12 content_form" >  
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="topic">Topic <span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2 filter-content" id="sc_topic" tabindex="-1" single>
-                        <option value="">Select A Topic</option>
-                        <% for(topic of topics) { %>
-                          <option value="<%=topic.id%>"><%=topic.name%></option>
-                        <% } %>
-                      </select>
+              <div class="col-md-12 content_form">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="topic">Topic <span class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                        <select class="form-control select2 filter-content" id="sc_topic" tabindex="-1" single>
+                          <option value="">Select A Topic</option>
+                          <% for(topic of topics) { %>
+                            <option value="<%=topic.id%>"><%=topic.name%></option>
+                          <% } %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>      
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="sub_topic">Sub Topic</label>
+                      <div class="input-group">
+                        <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
+                        <select class="form-control select2 filter-content" id="sc_sub_topic" tabindex="-1" single>
+                          <option value="">Select A Sub Topic</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="training_content">Staff Course <span
+                          class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                        <select class="form-control select2" id="training_content" tabindex="-1" single>
+                          <option value="">Select Staff Course</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>      
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="sub_topic">Sub Topic</label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/classes.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2 filter-content" id="sc_sub_topic" tabindex="-1" single>
-                        <option value="">Select A Sub Topic</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>  
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="training_content">Staff Course <span
-                        class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2" id="training_content" tabindex="-1" single>
-                        <option value="">Select Staff Course</option>
-                      </select>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="col-form-label label-align" for="select_lesson">Lessons <span class="required">*</span>
+                      </label>
+                      <div class="input-group">
+                        <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
+                        <select class="form-control select2" data-placeholder="Select Lessons"
+                          id="lessons" tabindex="-1" multiple>
+                          <option value="">Select Lessons</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label class="col-form-label label-align" for="select_lesson">Lessons <span class="required">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text"><img src="/images/courses.svg" class="mCS_img_loaded"></span>
-                      <select class="form-control select2" data-placeholder="Select Lessons"
-                        id="lessons" tabindex="-1" multiple>
-                        <option value="">Select Lessons</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <label class="d-block">&nbsp;</span>
-                  </label>
-                  <button type="button" class="content-submit theme-btn" id="add_content">Add Content</button>
-                </div>
+              </div>
+              <div class="col-md-12">
+                <button type="button" class="content-submit theme-btn" id="add_content">Add Content</button>
               </div>
             </div>
             
             <div class="row">
                 <div class="col-md-12 mt-4">
-                  <h3 class="title-text fn-16">Assessment Content</h3>
+                  <h3 class="title-text">Assessment Content</h3>
                 </div>
                 <div class="col-sm-12">
                     <ul class="selectedcontent content-sortable" id="select-assessment">

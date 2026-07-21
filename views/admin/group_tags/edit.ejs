@@ -1,20 +1,23 @@
-<div class="right_col" role="main">
-  <div class="row main_row max-w-1440">
-    <div class="x_panel form_panel">
-      <div class="x_title">
-        <h2 class="title-text mb-0">Edit Group Tag</h2>
-      </div>
-      <div class="x_content">
-        <form id="updateGroupTagForm" action="/group-tags/update" method="post" class="form-horizontal form-label-left">
-          <input type="hidden" name="group_tag_id" value="<%=data._id %>" />
-          
-          <%- include('./partials/_form',{ data, tag_colors, students }) %>
+<div class="right_col mt-sm-3" role="main">
+  <div class="max-w-1440">
+    <a class="back-link" href="/group-tags"><span class="fa fa-chevron-left mr-2"></span>Back to Group Tag</a>
+    <div class="row main_row mt-3">
+      <div class="x_panel form_panel">
+        <div class="x_title">
+          <h2 class="title-text mb-0">Edit Group Tag</h2>
+        </div>
+        <div class="x_content">
+          <form id="updateGroupTagForm" action="/group-tags/update" method="post" class="form-horizontal form-label-left">
+            <input type="hidden" name="group_tag_id" value="<%=data._id %>" />
+            
+            <%- include('./partials/_form',{ data, tag_colors, students }) %>
 
-          <div class="ln_solid"></div>
-          <div class="text-right">
-            <button type="submit" id="updateBtn" class="btn theme-btn">Update</button>
-          </div>
-        </form>
+            <div class="ln_solid"></div>
+            <div class="text-right">
+              <button type="submit" id="updateBtn" class="btn theme-btn">Update</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
