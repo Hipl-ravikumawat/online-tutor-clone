@@ -19,6 +19,7 @@ module.exports = {
  */
 async function index(req, res) {
     try {
+        return res.redirect('/dashboard');
     } catch (error) {
         console.error(error);
         return res.status(500).json({

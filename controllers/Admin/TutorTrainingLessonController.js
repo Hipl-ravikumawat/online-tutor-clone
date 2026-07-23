@@ -46,6 +46,11 @@ async function index(req, res) {
         options: { sort: { position: 1, created_at: 1 } },
       });
 
+      if (!tutorTrainingContent) {
+        req.flash('error', 'Tutor training content not found.');
+        return res.redirect('back');
+      }
+
       totalLessons = tutorTrainingContent.lesson_ids !== null ? tutorTrainingContent.lesson_ids.length : 0;
       
       const allTutorTrainingContents = await TutorTrainingContent.find({status: 1}, "_id title")
