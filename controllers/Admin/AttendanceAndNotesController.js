@@ -1040,7 +1040,7 @@ async function createReport(req, res) {
       displayHeaderFooter: true,
       footerTemplate: `
         <footer class="clearboth">
-          <div class="left clearboth text-light">HIPL Learning Hub</div>
+          <div class="left clearboth text-light">Tutor Hub</div>
           <div class="right clearboth text-light">Student Attendance</div>
         </footer>
       `

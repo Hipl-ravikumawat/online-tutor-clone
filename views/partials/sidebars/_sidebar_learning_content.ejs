@@ -16,10 +16,12 @@
       
       <img class="mr-2" src="/images/arrow-left.svg" alt="img">Back
     </a>
-    <div class="course-title"><span class="icon"><img src="/images/folder-icon.svg" alt="img"></span>
+    <div class="course-title">
         <span><%= lesson.title ? lesson.title : '' ; %></span>
           <% if(loggedUserInfo.role !=3) { %>
-          <span class="ml-auto d-flex align-items-center"><i class="fa fa-clock-o" aria-hidden="true"></i> <span style="font-weight: 600;font-size: 11px;margin-left: 5px;"><%=lessonContentStatics.total_duration()%> Min</span></span>
+          <span class="ml-auto d-flex align-items-center justify-content-center course-time">
+            <span style="font-weight: 400;font-size: 11px;"><%=lessonContentStatics.total_duration()%> Min</span>
+          </span>
           <% } %>
     </div>
  
