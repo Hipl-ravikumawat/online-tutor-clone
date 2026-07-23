@@ -740,6 +740,7 @@ async function duplicateLesson(req, res) {
 async function viewSingle(req, res) {
   try {
     const taskType = req.params.type || "";
+    
     global.sidebarType = "learningContent";
 
     // Route to specific task handler
@@ -878,7 +879,8 @@ async function handleDefaultView(req, res) {
     contentSlug,
     lessonSlug: req.params.lessonSlug,
   });
-  // console.log(learningContent,'learningContent');
+  console.log(JSON.stringify(learningContent, null, 2),'learningContent');
+
   if (!learningContent?.lesson_ids?.[0]) {
     throw new Error("Learning content not found");
   }
@@ -910,7 +912,7 @@ async function fetchContent({
   matchChallengeIds = {}
 }) {
   const models = getContentModels(isAssessment);
-  
+
   return await models.content.findOne({ slug: contentSlug })
     .populate({
       path: "lesson_ids",
@@ -930,8 +932,7 @@ async function fetchContent({
           model: models.practice,
           match: matchPracticeIds,
           options: { sort: { position: 1, created_at: 1 } },
-          select: { _id: 1, question_type: 1, question_title: 1, question_slug: 1, 
-                   question_duration: 1, content_directory: 1 }
+          select: { _id: 1, question_type: 1, question_title: 1, question_slug: 1, question_duration: 1, content_directory: 1 }
         },
         {
           path: "challenge_ids",
@@ -1130,11 +1131,11 @@ async function contentSlider(req, res) {
     if (activeLessonContentType == "slides") {
       const slide = await models.slide.findById(activeContentId);
       let videoExtension = (pdfExtension = "");
-
-      if (slide?.attachments[0] != "") {
+      
+      if (slide?.attachments?.length && slide?.attachments[0] != "") {
         pdfExtension = path.extname(slide?.attachments[0]); // .pdf
       }
-      if (slide.video != "") {
+      if (typeof slide?.video === "string" && slide.video != "") {
         videoExtension = path.extname(slide?.video); // .pdf
       }
       contentHtml = template.render(
