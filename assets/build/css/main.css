@@ -4071,28 +4071,33 @@ span.total-count {
 .slide-action li:hover .dropdown .dropIcon path {
     fill: var(--white);
 }
-.courses-sidebar .slide-action li .dropdown .dropdown-menu {
+.courses-sidebar .slide-action li .dropdown .dropdown-menu,
+.outside_dropdown{
     min-width: 130px;
     border: none;
     border-radius: 10px;
     padding: 0;
     overflow: hidden;
     margin-bottom: 0;
-    transform: translateX(-100%) !important;
+    /* transform: translateX(-100%) !important; */
     -webkit-box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
     box-shadow: 6px 4px 14px rgba(32, 27, 83, 0.11);
+    max-width: max-content;
 }
-.courses-sidebar .slide-action li .dropdown .dropdown-menu a {
+.courses-sidebar .slide-action li .dropdown .dropdown-menu a,
+.outside_dropdown a{
     display: block;
     font-size: 14px;
     font-weight: 400;
-    color: var(--dblue);
+    color: var(--dblue) !important;
     padding: 6px 15px;
 }
-.courses-sidebar .slide-action li .dropdown .dropdown-menu a:hover {
+.courses-sidebar .slide-action li .dropdown .dropdown-menu a:hover,
+.outside_dropdown a:hover{
     background: var(--lightgray);
 }
-.courses-sidebar .slide-action li .dropdown .dropdown-menu a.delete-slide {
+.courses-sidebar .slide-action li .dropdown .dropdown-menu a.delete-slide,
+.outside_dropdown a.delete-slide{
     color: var(--red);
 }
 .modal-design .modal-content {
@@ -6573,7 +6578,7 @@ input[type=time]::-webkit-datetime-edit-ampm-field {
     height: 100%;
     overflow: auto;
     outline: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .answer-submitted {
@@ -9731,6 +9736,16 @@ span.index-number.opt-incorrect {
 }
 .modal_close svg{
     opacity: 0.5;
+}
+.modal_close.close{
+    background-color: #e4edfa !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.modal_close.close:hover,
+.modal_close.close:focus{
+    opacity: 1 !important;
 }
 .modal-body{
     padding: 0 30px;

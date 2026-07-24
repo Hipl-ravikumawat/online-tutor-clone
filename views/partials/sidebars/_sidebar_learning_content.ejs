@@ -16,12 +16,12 @@
         <img class="mr-2" src="/images/arrow-left.svg" alt="img">Back
       </a>
     <div class="course-title">
-        <span><%= lesson.title ? lesson.title : '' ; %></span>
-        <% if(loggedUserInfo.role !=3) { %>
-        <span class="ml-auto d-flex align-items-center justify-content-center course-time">
-          <span style="font-weight: 400;font-size: 11px;"><%=lessonContentStatics.total_duration()%> Min</span>
-        </span>
-        <% } %>
+      <span><%= lesson.title ? lesson.title : '' ; %></span>
+      <% if(loggedUserInfo.role !=3) { %>
+      <span class="ml-auto d-flex align-items-center justify-content-center course-time">
+        <span style="font-weight: 400;font-size: 11px;"><%=lessonContentStatics.total_duration()%> Min</span>
+      </span>
+      <% } %>
     </div>
  
     <div class="accordion" id="lesson_accordion" >
@@ -68,8 +68,7 @@
                     </a>
                  
                   <div class="dropdown">
-                    <a class="dropIcon" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true"
-                      aria-expanded="false">
+                    <a class="dropIcon" href="javascript:void(0);">
                       <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16" fill="none">
                         <path
                           d="M2 4.16664C3.10457 4.16664 4 3.23391 4 2.08332C4 0.932734 3.10457 0 2 0C0.89543 0 0 0.932734 0 2.08332C0 3.23391 0.89543 4.16664 2 4.16664Z"
@@ -82,7 +81,7 @@
                           fill="#55597D" />
                       </svg>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-right outside_dropdown">
                       <a class="edit-slide" data-slideid="<%=slide._id%>"
                         data-lessonid="<%=lesson._id%>">Edit</a>
                       
@@ -150,8 +149,7 @@
 
                   <% if(loggedUserInfo.role==1 || loggedUserInfo.role==4){ %>
                   <div class="dropdown">
-                    <a class="dropIcon" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true"
-                      aria-expanded="false">
+                    <a class="dropIcon" href="javascript:void(0);">
                       <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16" fill="none">
                         <path
                           d="M2 4.16664C3.10457 4.16664 4 3.23391 4 2.08332C4 0.932734 3.10457 0 2 0C0.89543 0 0 0.932734 0 2.08332C0 3.23391 0.89543 4.16664 2 4.16664Z"
@@ -164,7 +162,7 @@
                           fill="#55597D" />
                       </svg>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-right outside_dropdown">
                       <a class="edit-practice" data-practiceid="<%=practice._id.toString()%>"
                         data-lessonid="<%=lesson.id%>">Edit</a>
                         
@@ -221,8 +219,7 @@
                   </a>
                   <% if(loggedUserInfo.role==2){ %>
                   <div class="dropdown">
-                    <a class="dropIcon" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true"
-                      aria-expanded="false">
+                    <a class="dropIcon" href="javascript:void(0);">
                       <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16" fill="none">
                         <path
                           d="M2 4.16664C3.10457 4.16664 4 3.23391 4 2.08332C4 0.932734 3.10457 0 2 0C0.89543 0 0 0.932734 0 2.08332C0 3.23391 0.89543 4.16664 2 4.16664Z"
@@ -235,7 +232,7 @@
                           fill="#55597D" />
                       </svg>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-right outside_dropdown">
                       <a class="edit-challenge" data-challengeId="<%=challenge._id.toString()%>"
                         data-lessonId="<%=lesson.id%>">Edit</a>
 

@@ -402,3 +402,64 @@
    * @script end
    */
 </script>
+
+
+<script>
+  let activeMenu = null;
+
+  $(document).on("click", ".dropIcon", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Close previous menu
+      if (activeMenu && activeMenu[0] !== $(this).data("menu")[0]) {
+          closeMenu(activeMenu);
+      }
+
+      let $btn = $(this);
+      let $menu = $btn.data("menu");
+
+      // First time only
+      if (!$menu) {
+          $menu = $btn.siblings(".dropdown-menu");
+          $btn.data("menu", $menu);
+          $menu.data("parent", $menu.parent());
+      }
+
+      // If already open, close it
+      if ($menu.parent().is("body")) {
+          closeMenu($menu);
+          activeMenu = null;
+          return;
+      }
+
+      $("body").append($menu);
+
+      let offset = $btn.offset();
+
+      $menu.css({
+          position: "absolute",
+          display: "block",
+          top: offset.top + $btn.outerHeight(),
+          left: offset.left - $menu.outerWidth() + $btn.outerWidth(),
+          zIndex: 99999
+      });
+
+      activeMenu = $menu;
+  });
+
+  function closeMenu($menu) {
+      $menu.hide().appendTo($menu.data("parent"));
+  }
+
+  $(document).on("click", function () {
+      if (activeMenu) {
+          closeMenu(activeMenu);
+          activeMenu = null;
+      }
+  });
+
+  $(document).on("click", ".dropdown-menu", function (e) {
+      e.stopPropagation();
+  });
+</script>
