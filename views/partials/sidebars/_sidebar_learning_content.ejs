@@ -13,24 +13,30 @@
     <% }else{ %>
       <a href="javascript:void(0)" onclick="window.history.back()" class="back-course">
     <% } %>
-      
-      <img class="mr-2" src="/images/arrow-left.svg" alt="img">Back
-    </a>
+        <img class="mr-2" src="/images/arrow-left.svg" alt="img">Back
+      </a>
     <div class="course-title">
         <span><%= lesson.title ? lesson.title : '' ; %></span>
-          <% if(loggedUserInfo.role !=3) { %>
-          <span class="ml-auto d-flex align-items-center justify-content-center course-time">
-            <span style="font-weight: 400;font-size: 11px;"><%=lessonContentStatics.total_duration()%> Min</span>
-          </span>
-          <% } %>
+        <% if(loggedUserInfo.role !=3) { %>
+        <span class="ml-auto d-flex align-items-center justify-content-center course-time">
+          <span style="font-weight: 400;font-size: 11px;"><%=lessonContentStatics.total_duration()%> Min</span>
+        </span>
+        <% } %>
     </div>
  
     <div class="accordion" id="lesson_accordion" >
       <% if (!assessmentDetails.type || assessmentDetails.type.trim() === '') { %>
       <div class="card">
         <div class="card-header">
-          <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/lessons.svg" alt="img">
-            <span>Information Slides<small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i> <%=lessonContentStatics.slide_duration%> Min</small></span>
+          <div class="left-heading d-flex align-items-center">
+            <!-- <img class="mr-2" src="/images/lessons.svg" alt="img"> -->
+            <span>
+              Information Slides
+              <small class="d-flex align-items-center">
+                <i class="fa fa-clock-o mr-1" style="font-size: 15px; margin-top: -2px;"></i> 
+                <%=lessonContentStatics.slide_duration%> Min
+              </small>
+            </span>
           </div>
           <div class="right-icons">
             <% if(loggedUserInfo.role==1 || loggedUserInfo.role==4){ %>
@@ -110,8 +116,15 @@
        if((!assessmentDetails.type && loggedUserInfo.role!=3) || assessmentDetails.type == 'practices') { %>
       <div class="card">
         <div class="card-header">
-          <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/practice.svg" alt="img">
-            <span>Practices <small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i><%=lessonContentStatics.practice_duration%> Min</small></span>
+          <div class="left-heading d-flex align-items-center">
+            <!-- <img class="mr-2" src="/images/practice.svg" alt="img"> -->
+            <span>
+              Practices 
+              <small class="d-flex align-items-center">
+                <i class="fa fa-clock-o mr-1" style="font-size: 15px; margin-top: -2px;"></i>
+                <%=lessonContentStatics.practice_duration%> Min
+              </small>
+            </span>
           </div>
           <div class="right-icons">
             <% if(loggedUserInfo.role==1 || loggedUserInfo.role==4){ %>
@@ -174,8 +187,15 @@
       <% } if((!assessmentDetails.type && loggedUserInfo.role!=3) || assessmentDetails.type == 'challenges') { %>
       <div class="card">
         <div class="card-header">
-          <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/challenges.svg" alt="img">
-            <span>Challenges <small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i> <%=lessonContentStatics.challenge_duration%> Min</small></span>
+          <div class="left-heading d-flex align-items-center">
+            <!-- <img class="mr-2" src="/images/challenges.svg" alt="img"> -->
+            <span>
+              Challenges 
+              <small class="d-flex align-items-center">
+                <i class="fa fa-clock-o mr-1" style="font-size: 15px; margin-top: -2px;"></i> 
+                <%=lessonContentStatics.challenge_duration%> Min
+              </small>
+            </span>
           </div>
           <div class="right-icons">
             <% if(loggedUserInfo.role==2){ %>

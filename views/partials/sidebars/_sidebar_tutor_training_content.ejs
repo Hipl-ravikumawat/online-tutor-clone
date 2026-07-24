@@ -3,15 +3,22 @@
       <a href="javascript:void()" onclick="window.history.back()" class="back-course">        
         <img class="mr-2" src="/images/arrow-left.svg" alt="img"> Back
       </a> 
-      <div class="course-title"><span class="icon"><img src="/images/folder-icon.svg" alt="img"></span>
+      <div class="course-title">
           <span><%=lesson.title%> </span>
       </div>
       <div class="accordion" id="lesson_accordion">
         <% if(lessonContentStatics.assessment_type === 'slides' || lessonContentStatics.assessment_type === '') { %>
         <div class="card">
           <div class="card-header">
-            <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/lessons.svg" alt="img">
-              <span>Information Slides<small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i><%=lessonContentStatics.slide_duration%> Min</small></span>
+            <div class="left-heading d-flex align-items-center">
+              <!-- <img class="mr-2" src="/images/lessons.svg" alt="img"> -->
+              <span>
+                Information Slides
+                <small class="d-flex align-items-center">
+                  <i class="fa fa-clock-o mr-1" style="font-size: 15px; margin-top: -2px;"></i>
+                  <%=lessonContentStatics.slide_duration%> Min
+                </small>
+              </span>
             </div>
             <div class="right-icons">
                 <a href="javascript:void(0);" class="addIcon addSlides" data-id="" data-toggle="modal" data-backdrop="false" data-target="#slideModal"><img src="/images/add1.svg" alt="img"></a>
@@ -73,8 +80,15 @@
         <% } if(lessonContentStatics.assessment_type === 'practices' || lessonContentStatics.assessment_type === '') { %>
         <div class="card">
           <div class="card-header">
-            <div class="left-heading d-flex align-items-center"><img class="mr-2" src="/images/practice.svg" alt="img">
-              <span>Practices <small class="d-flex align-items-center"><i class="fa fa-clock-o mr-1" style="font-size: 16px; margin-top: -3px;"></i><%=lessonContentStatics.practice_duration%> Min</small></span>
+            <div class="left-heading d-flex align-items-center">
+              <!-- <img class="mr-2" src="/images/practice.svg" alt="img"> -->
+              <span>
+                Practices 
+                <small class="d-flex align-items-center">
+                  <i class="fa fa-clock-o mr-1" style="font-size: 15px; margin-top: -2px;"></i>
+                  <%=lessonContentStatics.practice_duration%> Min
+                </small>
+              </span>
             </div>
             <div class="right-icons">
               <% if(loggedUserInfo.role==1){ %>

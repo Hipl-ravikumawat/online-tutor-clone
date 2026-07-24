@@ -4,9 +4,9 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title title-text">Practice Form</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <h3 class="modal-title">Practice Form</h3>
+        <button type="button" class="modal_close" data-dismiss="modal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.04289 16.5413C5.65237 16.9318 5.65237 17.565 6.04289 17.9555C6.43342 18.346 7.06658 18.346 7.45711 17.9555L11.9987 13.4139L16.5408 17.956C16.9313 18.3466 17.5645 18.3466 17.955 17.956C18.3455 17.5655 18.3455 16.9323 17.955 16.5418L13.4129 11.9997L17.955 7.4576C18.3455 7.06707 18.3455 6.43391 17.955 6.04338C17.5645 5.65286 16.9313 5.65286 16.5408 6.04338L11.9987 10.5855L7.45711 6.0439C7.06658 5.65338 6.43342 5.65338 6.04289 6.0439C5.65237 6.43442 5.65237 7.06759 6.04289 7.45811L10.5845 11.9997L6.04289 16.5413Z" fill="currentColor"></path></svg>
         </button>
       </div>
       
@@ -77,7 +77,7 @@
                             <span class="question-error" style="color: red;font-weight: 400;display:none;">Practice Question can not be empty!</span>
                           </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
                           <div class="form-group">
                             <label class="form-label">Duration<span class="text-red">*</span></label>
                             <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
@@ -86,7 +86,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
                           <div class="form-group mb-0">
                             <label class="form-label d-block">Option Display Preference<span
                                 class="text-red">*</span></label>
@@ -110,17 +110,6 @@
                             <div id="option_display_preference"></div>
                           </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
-                          <!-- <div class="switch-yes-no">
-                            <span class="label-text">Show On Challenge ?</span>
-                            <label class="switch-left-right">
-                              <input class="switch-input" id="challenges_listing" name="challenges_listing"
-                                type="checkbox">
-                              <span class="switch-label" data-on="Yes" data-off="No"></span>
-                              <span class="switch-handle"></span>
-                            </label>
-                          </div> -->
-                        </div>
                       </div>
                     </div>
                     <div class="col-sm-12">
@@ -136,9 +125,8 @@
                       </ul>
 
                       <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade show active QuestionType" id="pills-home" role="tabpanel"
-                          aria-labelledby="pills-home-tab">
-                          <div class="addoptionsbar singletext mb-3" id="singletext">
+                        <div class="tab-pane fade show active QuestionType" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                          <div class="addoptionsbar singletext mb-4" id="singletext">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                               <h3 class="title-text">Add Options</h3>
                               <a class="add-text-option" href="javascript:void(0);" data-toggle="tooltip" rel="tooltip"
@@ -217,9 +205,11 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-explanation" role="tabpanel"
-                          aria-labelledby="pills-explanation-tab">
-                          <div class="form-group mb-0">
+                        <div class="tab-pane fade" id="pills-explanation" role="tabpanel" aria-labelledby="pills-explanation-tab">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h3 class="title-text">Explanation</h3>
+                          </div>
+                          <div class="form-group mb-4">
                             <textarea class="form-control editor" name="question_explanation"
                               placeholder="Enter Explanation" id="editorOne"></textarea>
                           </div>
@@ -265,7 +255,7 @@
                             <span class="question-error" style="color: red;font-weight: 400;display:none;">Practice Question can not be empty!</span>
                           </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
                           <div class="form-group">
                             <label class="form-label">Duration<span class="text-red">*</span></label>
                             <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
@@ -274,7 +264,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
                           <div class="form-group mb-0">
                             <label class="form-label d-block">Option Display Preference<span
                                 class="text-red">*</span></label>
@@ -314,8 +304,7 @@
                       </ul>
 
                       <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade show active QuestionType" id="pills-multiple-home" role="tabpanel"
-                          aria-labelledby="pills-multiple-home-tab">
+                        <div class="tab-pane fade show active QuestionType mb-4" id="pills-multiple-home" role="tabpanel" aria-labelledby="pills-multiple-home-tab">
                           <div class="addoptionsbar singletext" id="singletext">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                               <h3 class="title-text">Add Options</h3>
@@ -395,9 +384,11 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-explanation-multiple" role="tabpanel"
-                          aria-labelledby="pills-explanation-tab">
-                          <div class="form-group mb-0">
+                        <div class="tab-pane fade" id="pills-explanation-multiple" role="tabpanel" aria-labelledby="pills-explanation-tab">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h3 class="title-text">Explanation</h3>
+                          </div>
+                          <div class="form-group mb-4">
                             <textarea class="form-control editor" id="editorTwo" name="question_explanation"
                               placeholder="Enter Explanation"></textarea>
                           </div>
@@ -443,7 +434,7 @@
                               <span class="question-error" style="color: red; font-weight: 400;display:none;">Practice Question can not be empty!</span>
                           </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                        <div class="col-sm-12">
                           <div class="form-group">
                             <label class="form-label">Duration<span class="text-red">*</span></label>
                             <input type="text" class="form-control timepicker"  id="question_duration" placeholder="Enter Duration"
@@ -479,32 +470,32 @@
                 <fieldset disabled>
                   <input type="hidden" name="question_type" value="drag_and_drop" class="question_type">
                   <div class="row">
-                    <div class="col-md-12">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="form-label">Title<span class="text-red">*</span></label>
-                          <input type="text" class="form-control" name="question_title" id="question_title"
-                          placeholder="Enter Title">
-                          <span class="title-error" style="color: red; font-weight: 400;display:none;">Practice Title can not be empty!</span>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="form-label">Duration<span class="text-red">*</span></label>
-                          <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
-                            placeholder="Enter Duration">
-                          <span class="duration-error" style="color: red; font-weight: 400;display:none;">Practice duration can not be empty!</span>
-                        </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="form-label">Title<span class="text-red">*</span></label>
+                        <input type="text" class="form-control" name="question_title" id="question_title"
+                        placeholder="Enter Title">
+                        <span class="title-error" style="color: red; font-weight: 400;display:none;">Practice Title can not be empty!</span>
                       </div>
                     </div>
-                    <div class="learnosity-question-editor" data-type="scrollablepassage" data-border="true" data-height="150px"></div>
-                    <span class="drag-option-error" style="color: red;font-weight: 500;display: none;">Possible response are not equal to the response*</span>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="form-label">Duration<span class="text-red">*</span></label>
+                        <input type="text" class="form-control timepicker"  name="question_duration" id="question_duration"
+                          placeholder="Enter Duration">
+                        <span class="duration-error" style="color: red; font-weight: 400;display:none;">Practice duration can not be empty!</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <div class="learnosity-question-editor" data-type="scrollablepassage" data-border="true" data-height="150px"></div>
+                      <span class="drag-option-error" style="color: red;font-weight: 500;display: none;">Possible response are not equal to the response*</span>
+                    </div>
                   </div>
                 </fieldset>
               </div>
             </div>
-            <div class="modal-footer">
-              <button type="submit" class="theme-btn2" id="storePracticeBtn">Save</button>
+            <div class="modal-footer px-0">
+              <button type="submit" class="btn theme-btn" id="storePracticeBtn">Save</button>
             </div>
           </div>
         </div>

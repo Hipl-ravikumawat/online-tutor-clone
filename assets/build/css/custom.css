@@ -1322,9 +1322,9 @@
 .challenges-screen {
     display: flex;
     flex-wrap: wrap;
-    width: calc(100% + 50px);
+    /* width: calc(100% + 50px);
     margin-left: -25px;
-    margin-top: -25px;
+    margin-top: -25px; */
     min-height: 630px;
 }
 .challenges-screen .challenges-answer-part {
@@ -1624,20 +1624,21 @@ a.next-btn {
     margin: 0 auto;
     overflow: hidden;
   }
-
   .multiple-tab.card-block  .unassign-content {
     display: flex;
     transition: transform 0.3s ease-in-out;
     align-items: flex-start;
   }
-
+  .multiple-tab.card-block .unassign-content>.card-block{
+    padding: 0;
+    box-shadow: none;
+  }
   .multiple-tab.card-block  .tab-content {
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
     padding: 0 30px;
   }
-
   .multiple-tab.card-block  .unassign-nav {
     display: flex;
     justify-content: space-between;
@@ -1646,7 +1647,7 @@ a.next-btn {
     position: fixed;
     width: 100%;
     left: calc(50% + 160px);
-    bottom: 0;
+    bottom: 48px;
     background: rgba(0, 0, 0, 0.3);
     z-index: 999;
     padding: 10px 20px;
@@ -1850,7 +1851,7 @@ ul.challenge-summry .challenge-summry-list span {
 
 .nav-md .container.body .col-md-3.left_col {
     min-height: 100%;
-    width: 260px;
+    width: 280px;
     padding: 0;
     position: absolute;
     display: -webkit-box;
@@ -1872,15 +1873,18 @@ ul.challenge-summry .challenge-summry-list span {
 
 .nav-md .container.body .right_col {
     padding: 10px 20px 0;
-    margin-left: 260px
+    margin-left: 280px
 }
 
 .nav_title {
-    width: 260px;
+    width: 280px;
     float: left;
     border-radius: 0;
     /* height: 57px; */
     padding: 0px
+}
+.mobile-logo{
+    display: none;
 }
 
 @media (max-width: 991px) {
@@ -1919,12 +1923,17 @@ ul.challenge-summry .challenge-summry-list span {
         margin-left: 60px !important;
     }
     .nav_title{
-        padding: 16px 10px !important;
+        padding: 15px 10px !important;
         background-color: #fff;
     }
     .nav-sm .navbar.nav_title{
         width: 60px;
-
+    }
+    .mobile-logo{
+        display: block;
+    }
+    .desktop-logo{
+        display: none;
     }
 }
 
@@ -2070,7 +2079,7 @@ body {
 
 .main_container .top_nav {
     display: flex;
-    margin-left: 280px;
+    margin-left: 300px;
     padding-right: 20px;
     margin-top: 20px;
     border-radius: 20px;
@@ -3509,8 +3518,8 @@ span.right {
 
 @media (min-width: 992px) {
     footer {
-        margin-left: 260px;
-        width: calc(100% - 260px);
+        margin-left: 280px;
+        width: calc(100% - 280px);
     }
     .nav-sm footer{
         width: calc(100% - 85px);

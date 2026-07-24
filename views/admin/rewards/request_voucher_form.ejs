@@ -1,48 +1,49 @@
 <div class="right_col mt-sm-3" role="main">
-  <div class="back-page">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="javascript:void(0)">Rewards</a>
-      </li>
-      <li class="breadcrumb-item active">Request A Voucher</li>
-    </ol>
-  </div>
-
-  <div class="bussniess_setting">
-    <h2 class="titleheading"></h2>
-    <div class="row">
-      <div class="col-md-12 col-sm-12">
-        <div class="x_panel">
-          <div class="x_content voucher-request">
-            <div class="row">
-              <div class="col-md-12 col-sm-12">
-                <div class="dash-leftblock">
-                  <span class="bg-shoftGreen total-rewalrds-points" id="totalPoints">
-                    <%=stdPointBalanceData?.balance%>
-                  </span>
-                  <h3 class="title-text mb-0">Total Rewards Points</h3>
-                </div>
-                <form id="request-voucher-form" action="./store-redemption-request">
-                  <div class="form-group mt-3">
-                    <h2 class="title-text" id="selectVoucher">Select Voucher</h2>
-                    <span id=""></span>
-                    <div class="voucher-request-check">
-                      <% let increment=1; for(voucher of vouchers){ %>
-                        <div><input type="checkbox" name="voucher[]" id="checkbox_<%=increment%>"
-                            value="<%=voucher?._id.toString()%>" data-voucher-amount="<%=voucher?.required_points%>">
-                          <label for="checkbox_<%=increment%>">
-                            <%= `${voucher?.title} - ${appSymbol}${voucher?.equivalent_amount}
-                              ${appCurrency}=${voucher?.required_points} Points` %>
-                          </label>
-                        </div>
-                        <% increment++; } %>
+  <div class="max-w-1440">
+    <div class="back-page">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="javascript:void(0)">Rewards</a>
+        </li>
+        <li class="breadcrumb-item active">Request A Voucher</li>
+      </ol>
+    </div>
+    <div class="bussniess_setting">
+      <h2 class="titleheading"></h2>
+      <div class="row">
+        <div class="col-md-12 col-sm-12">
+          <div class="x_panel">
+            <div class="x_content voucher-request">
+              <div class="row">
+                <div class="col-md-12 col-sm-12">
+                  <div class="dash-leftblock">
+                    <span class="bg-shoftGreen total-rewalrds-points" id="totalPoints">
+                      <%=stdPointBalanceData?.balance%>
+                    </span>
+                    <h3 class="title-text mb-0">Total Rewards Points</h3>
+                  </div>
+                  <form id="request-voucher-form" action="./store-redemption-request">
+                    <div class="form-group mt-3">
+                      <h2 class="title-text" id="selectVoucher">Select Voucher</h2>
+                      <span id=""></span>
+                      <div class="voucher-request-check">
+                        <% let increment=1; for(voucher of vouchers){ %>
+                          <div><input type="checkbox" name="voucher[]" id="checkbox_<%=increment%>"
+                              value="<%=voucher?._id.toString()%>" data-voucher-amount="<%=voucher?.required_points%>">
+                            <label for="checkbox_<%=increment%>">
+                              <%= `${voucher?.title} - ${appSymbol}${voucher?.equivalent_amount}
+                                ${appCurrency}=${voucher?.required_points} Points` %>
+                            </label>
+                          </div>
+                          <% increment++; } %>
+                      </div>
                     </div>
-                  </div>
-                  <div class="form-btn">
-                    <button type="submit" class="btn form-button theme-btn" id="submitVoucherRequest"
-                      disabled>Submit</button>
-                  </div>
-                </form>
+                    <div class="form-btn">
+                      <button type="submit" class="btn form-button theme-btn" id="submitVoucherRequest"
+                        disabled>Submit</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
